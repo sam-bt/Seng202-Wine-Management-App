@@ -12,7 +12,7 @@ import seng202.team0.services.CounterService;
  * Controller for the main.fxml window
  * @author seng202 teaching team
  */
-public class MainController {
+public class MainController { // TODO Write some code !!
 
     private static final Logger log = LogManager.getLogger(MainController.class);
 
