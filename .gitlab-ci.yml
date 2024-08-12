@@ -9,4 +9,4 @@ generate_artifacts:
     - ./gradlew clean jar
   artifacts:
     paths:
-      - build/libs/wino.jar
+      - build/libs/wino-*.jar
