@@ -43,7 +43,6 @@ public class CounterServiceTest
      */
     @Test
     public void testIncrement() {
-        assertTrue(false);
         assertEquals(0, testCounterService.getCurrentCount());
         testCounterService.incrementCounter();
         assertEquals(1, testCounterService.getCurrentCount());
