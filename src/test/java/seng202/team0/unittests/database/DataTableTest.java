@@ -11,7 +11,7 @@ import seng202.team0.database.DataTable;
 import seng202.team0.database.Value;
 
 /**
- * Tests DataTable.
+ * Tests DataTable
  *
  * @author Angus McDougall
  */
@@ -20,7 +20,7 @@ public class DataTableTest {
   private DataTable table;
 
   /**
-   * Constructs a table to use for testing.
+   * Constructs a table to use for testing
    */
   @BeforeEach
   public void setUp() {
@@ -44,7 +44,7 @@ public class DataTableTest {
   }
 
   /**
-   * Tests if the table fails to construct on invalid dimensions.
+   * Tests if the table fails to construct on invalid dimensions
    */
   @Test
   public void invalidTableDimensions() {
@@ -69,7 +69,7 @@ public class DataTableTest {
   }
 
   /**
-   * Tests if the tale fails to construct on invalid types.
+   * Tests if the tale fails to construct on invalid types
    */
   @Test
   public void invalidTableType() {
@@ -85,7 +85,7 @@ public class DataTableTest {
 
 
   /**
-   * Tests columnSize.
+   * Tests columnSize
    */
   @Test
   public void columnSize() {
@@ -93,7 +93,7 @@ public class DataTableTest {
   }
 
   /**
-   * Tests rowSize.
+   * Tests rowSize
    */
   @Test
   void rowSize() {
@@ -101,7 +101,7 @@ public class DataTableTest {
   }
 
   /**
-   * Tests value access.
+   * Tests value access
    */
   @Test
   void getValue() {
@@ -147,7 +147,7 @@ public class DataTableTest {
    * Tests getting a record to a row.
    */
   @Test
-  void createRecord(){
+  void createRecord() {
     table.getRecordForIndex(0);
     assertThrows(IndexOutOfBoundsException.class, () -> {
       table.getRecordForIndex(3);

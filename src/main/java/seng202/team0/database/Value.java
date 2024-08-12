@@ -1,9 +1,12 @@
 package seng202.team0.database;
 
 /**
- * This class represents a variant of possible DataTable values. Type erasure puts no bound on
- * possible types and is a major source of bugs. We can solve this by enforcing a finite set.
- * Unfortunately there does not appear to be an easy or efficient way of representing a union.
+ * This class represents a variant of possible DataTable values
+ * <p>
+ * Type erasure puts no bound on possible types and is a major source of bugs. We can solve this by
+ * enforcing a finite set. Unfortunately there does not appear to be an easy or efficient way of
+ * representing a union.
+ * </p>
  *
  * @author Angus McDougall
  */
@@ -11,7 +14,7 @@ public abstract class Value {
 
 
   /**
-   * Makes a string value.
+   * Makes a string value
    *
    * @param value Value
    * @return String value
@@ -21,7 +24,7 @@ public abstract class Value {
   }
 
   /**
-   * Makes a real value.
+   * Makes a real value
    *
    * @param value Value
    * @return Real value
@@ -31,7 +34,7 @@ public abstract class Value {
   }
 
   /**
-   * Checks if the contained value is a string.
+   * Checks if the contained value is a string
    *
    * @return If the contained value is a string
    */
@@ -40,7 +43,7 @@ public abstract class Value {
   }
 
   /**
-   * Checks if the contained value is a real.
+   * Checks if the contained value is a real
    *
    * @return If the contained value is a real
    */
@@ -49,14 +52,14 @@ public abstract class Value {
   }
 
   /**
-   * Gets the type index of the contained value. This is deliberately opaque.
+   * Gets the type index of the contained value. This is deliberately opaque
    *
    * @return Index of the type
    */
   public abstract int getTypeIndex();
 
   /**
-   * Gets the contained value as a string.
+   * Gets the contained value as a string
    *
    * @return The current value as a string
    * @throws ClassCastException If the contained value is not a string
@@ -66,7 +69,7 @@ public abstract class Value {
   }
 
   /**
-   * Gets the contained value as a real.
+   * Gets the contained value as a real
    *
    * @return The current value as a real
    * @throws ClassCastException If the contained value is not a real
@@ -76,7 +79,7 @@ public abstract class Value {
   }
 
   /**
-   * Type representing a string.
+   * Type representing a string
    *
    * @author Angus McDougall
    */
@@ -103,7 +106,7 @@ public abstract class Value {
   }
 
   /**
-   * Type representing a real (currently double).
+   * Type representing a real (currently double)
    *
    * @author Angus McDougall
    */

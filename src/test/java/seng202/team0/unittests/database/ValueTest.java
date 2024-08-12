@@ -1,19 +1,23 @@
 package seng202.team0.unittests.database;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import seng202.team0.database.Value;
 
 /**
- * Tests Value type.
+ * Tests Value type
+ *
  * @author Angus McDougall
  */
 class ValueTest {
 
 
   /**
-   * Tests type querying.
+   * Tests type querying
    */
   @Test
   void is() {
@@ -22,7 +26,7 @@ class ValueTest {
   }
 
   /**
-   * Tests uniqueness of type index.
+   * Tests uniqueness of type index
    */
   @Test
   void getTypeIndex() {
@@ -30,7 +34,7 @@ class ValueTest {
   }
 
   /**
-   * Tests throwing on invalid access.
+   * Tests throwing on invalid access
    */
   @Test
   void throwsOnInvalidAccess() {
@@ -43,19 +47,19 @@ class ValueTest {
   }
 
   /**
-   * Tests contained value access.
+   * Tests contained value access
    */
   @Test
-  void get(){
+  void get() {
     assertEquals(Value.make(0.0).getAsReal(), 0.0);
     assertEquals(Value.make("foo").getAsString(), "foo");
   }
 
   /**
-   * Tests equality.
+   * Tests equality
    */
   @Test
-  void equals(){
+  void equals() {
     assertEquals(Value.make(1.0), Value.make(1.0));
     assertNotEquals(Value.make(0.0), Value.make(1.0));
     assertEquals(Value.make("foo"), Value.make("foo"));

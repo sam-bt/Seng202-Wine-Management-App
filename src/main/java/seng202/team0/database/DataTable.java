@@ -4,13 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DataTable encapsulates a singular table of data. Each row represents an entity.
+ * DataTable encapsulates a singular table of data. Each row represents an entity
  *
  * @author Angus McDougall
  */
 public class DataTable {
 
+  /**
+   * List of columns
+   */
   private final ArrayList<ArrayList<Value>> columns;
+  /**
+   * List of column names
+   */
   private final ArrayList<String> columnsNames;
 
   /**
@@ -34,7 +40,7 @@ public class DataTable {
   }
 
   /**
-   * Checks if all array lengths for columns are the same.
+   * Checks if all array lengths for columns are the same
    *
    * @return Whether the state of columns is consistent
    */
@@ -50,7 +56,7 @@ public class DataTable {
   }
 
   /**
-   * Checks if all types in a column are the same.
+   * Checks if all types in a column are the same
    *
    * @return If all types in a column are the same
    */
@@ -67,7 +73,7 @@ public class DataTable {
   }
 
   /**
-   * Gets the number of columns in the table.
+   * Gets the number of columns in the table
    *
    * @return The number of columns
    */
@@ -76,7 +82,7 @@ public class DataTable {
   }
 
   /**
-   * Gets the number of rows in the table.
+   * Gets the number of rows in the table
    *
    * @return The number of rows
    */
@@ -88,7 +94,7 @@ public class DataTable {
   }
 
   /**
-   * Gets the value at a given index.
+   * Gets the value at a given index
    *
    * @param column Column index
    * @param row    Row index
@@ -99,7 +105,7 @@ public class DataTable {
   }
 
   /**
-   * Gets the name of a column.
+   * Gets the name of a column
    *
    * @param column Column index
    * @return Name of the column
@@ -109,7 +115,7 @@ public class DataTable {
   }
 
   /**
-   * Gets an iterable to iterate a column.
+   * Gets an iterable to iterate a column
    *
    * @param column Column index
    * @return An iterable to the column
@@ -119,7 +125,7 @@ public class DataTable {
   }
 
   /**
-   * Gets the index of a given named column.
+   * Gets the index of a given named column
    *
    * @param columnName Column index
    * @return Index of a named column, -1 if not valid
@@ -129,7 +135,7 @@ public class DataTable {
   }
 
   /**
-   * Gets a Record as a handle to a given row.
+   * Gets a Record as a handle to a given row
    *
    * @param row Row
    * @return Record for a given row
