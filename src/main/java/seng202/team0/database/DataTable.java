@@ -40,7 +40,7 @@ public class DataTable {
    */
   private boolean isSizeConsistent() {
     if (columns.isEmpty() && columnsNames.isEmpty()) {
-      return false;
+      return true;
     }
     if (columns.size() != columnsNames.size()) {
       return false;
@@ -55,10 +55,8 @@ public class DataTable {
    * @return If all types in a column are the same
    */
   private boolean isTypeConsistent() {
+
     for (ArrayList<Value> column : columns) {
-      if (column.isEmpty()) {
-        return true;
-      }
       for (Value value : column) {
         if (value.getTypeIndex() != column.getFirst().getTypeIndex()) {
           return false;

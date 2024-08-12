@@ -59,6 +59,13 @@ public class DataTableTest {
 
       new DataTable(new String[]{"foo", "bar"}, columns);
     });
+    assertThrows(IllegalStateException.class, () -> {
+      ArrayList<ArrayList<Value>> columns = new ArrayList<>();
+      columns.add(new ArrayList<>());
+      columns.add(new ArrayList<>());
+      new DataTable(new String[]{"foo"}, columns);
+    });
+    new DataTable(new String[]{}, new ArrayList<>());
   }
 
   /**
@@ -134,6 +141,17 @@ public class DataTableTest {
     assertEquals(table.getColumnIndexFromName("baz"), 1);
     assertEquals(table.getColumnIndexFromName("bar"), 2);
     assertEquals(table.getColumnIndexFromName("dingus"), -1);
+  }
+
+  /**
+   * Tests getting a record to a row.
+   */
+  @Test
+  void createRecord(){
+    table.getRecordForIndex(0);
+    assertThrows(IndexOutOfBoundsException.class, () -> {
+      table.getRecordForIndex(3);
+    });
   }
 
 }
