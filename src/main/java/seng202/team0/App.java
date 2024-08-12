@@ -23,6 +23,6 @@ public class App {
         log.error("An error has occurred, thanks logging for helping find it! (This is a terrible error log message, but is only an example!')");
         log.log(Level.INFO, "There are many ways to log!");
 
-        MainWindow.main(args);
+        MainWindow.launchWrapper(args);
     }
 }
