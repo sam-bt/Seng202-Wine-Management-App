@@ -21,14 +21,13 @@ public class MainWindow extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
-        FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+        FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/InitialGuiPrototype.fxml"));
         Parent root = baseLoader.load();
 
-        MainController baseController = baseLoader.getController();
-        baseController.init(primaryStage);
+        GuiController baseController = baseLoader.getController();
 
         primaryStage.setTitle("WINO App [DEV]");
-        Scene scene = new Scene(root, 600, 400);
+        Scene scene = new Scene(root, 800, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
