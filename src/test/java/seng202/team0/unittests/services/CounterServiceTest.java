@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import seng202.team0.services.CounterService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**
@@ -36,11 +37,13 @@ public class CounterServiceTest
         }).when(testCounterServiceMock).incrementCounter();
     }
 
+
     /**
      * Test incrementing the counter by one, normal JUnit test
      */
     @Test
     public void testIncrement() {
+        assertTrue(false);
         assertEquals(0, testCounterService.getCurrentCount());
         testCounterService.incrementCounter();
         assertEquals(1, testCounterService.getCurrentCount());
