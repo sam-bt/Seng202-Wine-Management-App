@@ -1,5 +1,6 @@
 package seng202.team0.gui;
 
+import seng202.team0.WinoManager;
 import seng202.team0.managers.ManagerContext;
 
 /**
@@ -14,8 +15,8 @@ public abstract class Controller {
    * @param context Manager context (MORE DETAIL REQUIRED HERE!)
    */
   //FIXME ManagerContext needs to reference something
-  public Controller(ManagerContext context){
-    this.managerContext = context;
+  public Controller(WinoManager context){ // TODO add context later
+//    this.managerContext = context;
     //TODO Implement me!
   }
 

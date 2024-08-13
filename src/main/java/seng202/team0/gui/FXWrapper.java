@@ -27,7 +27,7 @@ public class FXWrapper {
      */
     public void init(Stage stage) {
         this.stage = stage;
-        new WinoManager(this::launchInitialGuiScreen);
+        new WinoManager(this::launchHomeScreen,this::launchWineScreen,this::launchListsScreen,this::launchVineyardsScreen,this::launchDataSetsScreen,this::launchConsumptionCalculatorScreen);
     }
 
     /**
@@ -56,8 +56,25 @@ public class FXWrapper {
      * Loads the initial GUI.
      * @param manager the WinoManager instance.
      */
-    public void launchInitialGuiScreen(WinoManager manager) {
-        loadScreen("/fxml/initial_gui_prototype.fxml", "Initial Gui Prototype", () -> new GuiController(manager));
+    public void launchHomeScreen(WinoManager manager) {
+        loadScreen("/fxml/home_screen.fxml", "Home", () -> new HomeScreenController(manager));
+    }
+
+    public void launchWineScreen(WinoManager manager) {
+        loadScreen("/fxml/wine_screen.fxml", "Wine Information", () -> new WineScreenController(manager));
+    }
+
+    public void launchListsScreen(WinoManager manager) {
+        loadScreen("/fxml/lists_screen.fxml", "My Lists", () -> new WishlistController(manager));
+    }
+    public void launchVineyardsScreen(WinoManager manager) {
+        loadScreen("/fxml/lists_screen.fxml", "My Lists", () -> new WishlistController(manager));
+    }
+    public void launchDataSetsScreen(WinoManager manager) {
+        loadScreen("/fxml/lists_screen.fxml", "My Lists", () -> new WishlistController(manager));
+    }
+    public void launchConsumptionCalculatorScreen(WinoManager manager) {
+        loadScreen("/fxml/lists_screen.fxml", "My Lists", () -> new WishlistController(manager));
     }
 
 }

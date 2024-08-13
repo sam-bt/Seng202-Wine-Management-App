@@ -1,6 +1,9 @@
 package seng202.team0.gui;
 
+import seng202.team0.WinoManager;
 import seng202.team0.managers.ManagerContext;
+
+// TODO change the name to listScreenController rather than wishlist to fit other conventions?
 
 /**
  * Wishlist Controller (MORE DETAIL HERE!)
@@ -12,7 +15,7 @@ public class WishlistController extends Controller{
    *
    * @param context Manager context (MORE DETAIL REQUIRED HERE!)
    */
-  public WishlistController(ManagerContext context) {
+  public WishlistController(WinoManager context) {
     super(context);
     //TODO Implement me!
   }

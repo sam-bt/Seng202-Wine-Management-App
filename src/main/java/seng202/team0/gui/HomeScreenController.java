@@ -1,9 +1,10 @@
 package seng202.team0.gui;
 
 
+import javafx.fxml.FXML;
 import seng202.team0.WinoManager;
 
-public class GuiController {
+public class HomeScreenController {
 
     /**
      * The WINO manager instance.
@@ -11,10 +12,17 @@ public class GuiController {
     private final WinoManager winoManager;
 
     /**
-     * Constructs the GuiController.
+     * Constructs the HomeScreenController.
      * @param manager The WINO manager instance.
      */
-    GuiController(WinoManager manager) {
+    HomeScreenController(WinoManager manager) {
         winoManager = manager;
+
+
     }
+@FXML
+    private void openHomeScreen(){
+        System.out.println("openinghomescnrees");
+    }
+
 }

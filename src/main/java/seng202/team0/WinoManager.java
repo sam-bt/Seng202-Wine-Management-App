@@ -7,21 +7,57 @@ public class WinoManager {
     /**
      * Launcher for the initial GUI screen.
      */
-    private final Consumer<WinoManager> initialGuiLauncher;
+    private final Consumer<WinoManager> homeScreenLauncher;
+    private final Consumer<WinoManager> wineScreenLauncher;
+    private final Consumer<WinoManager> listsScreenLauncher;
+    private final Consumer<WinoManager> vineyardsScreenLauncher;
+    private final Consumer<WinoManager> dataSetsScreenLauncher;
+    private final Consumer<WinoManager> consumptionCalculatorScreenLauncher;
 
     /**
      * Manages the Winos state by creating a GameManager.
-     * @param initialGuiLauncher is the launcher for the initial Gui Screen
+     *
+     * @param homeScreenLauncher is the launcher for the initial Gui Screen
      */
-    public WinoManager(Consumer<WinoManager> initialGuiLauncher) {
-        this.initialGuiLauncher = initialGuiLauncher;
-        launchInitialGuiScreen();
+    public WinoManager(final Consumer<WinoManager> homeScreenLauncher,
+        final Consumer<WinoManager> wineScreenLauncher,
+        final Consumer<WinoManager> listsScreenLauncher,
+        final Consumer<WinoManager> vineyardsScreenLauncher,
+        final Consumer<WinoManager> dataSetsScreenLauncher,
+        final Consumer<WinoManager> consumptionCalculatorScreenLauncher) {
+        this.homeScreenLauncher = homeScreenLauncher;
+        this.wineScreenLauncher = wineScreenLauncher;
+        this.listsScreenLauncher = listsScreenLauncher;
+        this.vineyardsScreenLauncher = vineyardsScreenLauncher;
+        this.dataSetsScreenLauncher = dataSetsScreenLauncher;
+        this.consumptionCalculatorScreenLauncher = consumptionCalculatorScreenLauncher;
+        launchHomeScreen();
     }
 
     /**
      * Launches the initial gui screen.
      */
-    public void launchInitialGuiScreen(){
-        initialGuiLauncher.accept(this);
+    public void launchHomeScreen() {
+        homeScreenLauncher.accept(this);
+    }
+
+    public void launchWineScreen() {
+        wineScreenLauncher.accept(this);
+    }
+
+    public void launchListsScreen() {
+        listsScreenLauncher.accept(this);
+    }
+
+    public void launchVineyardsScreen() {
+        vineyardsScreenLauncher.accept(this);
+    }
+
+    public void launchDataSetsScreen() {
+        dataSetsScreenLauncher.accept(this);
+    }
+
+    public void launchConsumptionCalculatorScreen() {
+        consumptionCalculatorScreenLauncher.accept(this);
     }
 }
