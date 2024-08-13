@@ -1,5 +1,8 @@
 package seng202.team0.gui;
 
+/**
+ * Login Controller (MORE DETAIL HERE!)
+ */
 public class LoginController extends Controller{
 
 
