@@ -1,5 +1,7 @@
 package seng202.team0.gui;
 
+import seng202.team0.managers.ManagerContext;
+
 /**
  * Login Controller (MORE DETAIL HERE!)
  */
@@ -17,11 +19,13 @@ public class LoginController extends Controller{
     //TODO Implement me!
   }
 
+  @Override
   public Object onPopped(){
     //TODO Implement me!
     return null;
   }
 
+  @Override
   public void onChildContextPopped(Object obj){
     //TODO Implement me!
   }

@@ -1,5 +1,7 @@
 package seng202.team0.gui;
 
+import seng202.team0.managers.ManagerContext;
+
 /**
  * Generic controller class parent
  */
