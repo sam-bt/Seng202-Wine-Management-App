@@ -3,7 +3,7 @@ package seng202.team0;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import seng202.team0.gui.MainWindow;
+import seng202.team0.gui.FXWindow;
 
 /**
  * Default entry point class
@@ -23,6 +23,6 @@ public class App {
         log.error("An error has occurred, thanks logging for helping find it! (This is a terrible error log message, but is only an example!')");
         log.log(Level.INFO, "There are many ways to log!");
 
-        MainWindow.launchWrapper(args);
+        FXWindow.launchWrapper(args);
     }
 }

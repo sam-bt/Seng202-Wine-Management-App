@@ -57,7 +57,7 @@ public class FXWrapper {
      * @param manager the WinoManager instance.
      */
     public void launchInitialGuiScreen(WinoManager manager) {
-        loadScreen("/fxml/InitialGuiPrototype.fxml", "Initial Gui Prototype", () -> new GuiController(manager));
+        loadScreen("/fxml/initial_gui_prototype.fxml", "Initial Gui Prototype", () -> new GuiController(manager));
     }
 
 }
