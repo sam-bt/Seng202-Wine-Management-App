@@ -12,7 +12,7 @@ import java.io.IOException;
  * Class starts the javaFX application window
  * @author seng202 teaching team
  */
-public class MainWindow extends Application {
+public class FXWindow extends Application {
 
     /**
      * Opens the gui with the fxml content specified in resources/fxml/main.fxml
@@ -21,12 +21,14 @@ public class MainWindow extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
-        FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/InitialGuiPrototype.fxml"));
+        FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/fx_wrapper.fxml"));
         Parent root = baseLoader.load();
 
-        GuiController baseController = baseLoader.getController();
+        FXWrapper baseController = baseLoader.getController();
+        baseController.init(primaryStage);
 
         primaryStage.setTitle("WINO App [DEV]");
+        primaryStage.setResizable(false);
         Scene scene = new Scene(root, 800, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -37,7 +39,7 @@ public class MainWindow extends Application {
      * errors out and does not run
      * @param args command line arguments
      */
-    public static void main(String [] args) {
+    public static void launchWrapper(String [] args) {
         launch(args);
     }
 

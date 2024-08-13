@@ -90,7 +90,7 @@ test {
     useJUnitPlatform()
 
     filter {
-        includeTestsMatching "seng202.team0.unittests.*"
+        //includeTestsMatching "seng202.team0.unittests.*"
     }
 
     finalizedBy jacocoTestReport
