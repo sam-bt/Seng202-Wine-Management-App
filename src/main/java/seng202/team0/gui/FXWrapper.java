@@ -43,6 +43,7 @@ public class FXWrapper {
             // provide a custom Controller with parameters
             loader.setControllerFactory(param -> builder.build());
             Parent parent = loader.load();
+            pane.getChildren().clear(); // IMPORTANT
             pane.getChildren().add(parent);
             stage.setTitle(title);
         } catch (IOException e) {
@@ -65,16 +66,16 @@ public class FXWrapper {
     }
 
     public void launchListsScreen(WinoManager manager) {
-        loadScreen("/fxml/lists_screen.fxml", "My Lists", () -> new WishlistController(manager));
+        loadScreen("/fxml/list_screen.fxml", "My Lists", () -> new WishlistController(manager));
     }
     public void launchVineyardsScreen(WinoManager manager) {
-        loadScreen("/fxml/lists_screen.fxml", "My Lists", () -> new WishlistController(manager));
+        loadScreen("/fxml/vineyard_screen.fxml", "Vineyards", () -> new VineyardScreenController(manager));
     }
     public void launchDataSetsScreen(WinoManager manager) {
-        loadScreen("/fxml/lists_screen.fxml", "My Lists", () -> new WishlistController(manager));
+        loadScreen("/fxml/dataset_screen.fxml", "Manage Data Sets", () -> new DataTableController(manager));
     }
     public void launchConsumptionCalculatorScreen(WinoManager manager) {
-        loadScreen("/fxml/lists_screen.fxml", "My Lists", () -> new WishlistController(manager));
+        loadScreen("/fxml/consumption_calculator_screen.fxml", "Consumption Calculator", () -> new ConsumptionCalculatorController(manager));
     }
 
 }

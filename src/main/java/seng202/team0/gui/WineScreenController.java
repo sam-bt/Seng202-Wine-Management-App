@@ -31,17 +31,17 @@ public class WineScreenController extends Controller{
   public void onChildContextPopped(Object obj) {
   }
 
-    @FXML public void openHomeScreen() {winoManager.launchHomeScreen();}
-    @FXML public void openListScreen() {winoManager.launchHomeScreen();}
-    @FXML public void openVineyardsScreen() {winoManager.launchHomeScreen();}
-    @FXML public void openDataSetsScreen() {winoManager.launchHomeScreen();}
-    @FXML public void openConsumptionCalculatorScreen() {winoManager.launchHomeScreen();}
+//    @FXML public void openHomeScreen() {winoManager.launchHomeScreen();}
+//    @FXML public void openListScreen() {winoManager.launchHomeScreen();}
+//    @FXML public void openVineyardsScreen() {winoManager.launchHomeScreen();}
+//    @FXML public void openDataSetsScreen() {winoManager.launchHomeScreen();}
+//    @FXML public void openConsumptionCalculatorScreen() {winoManager.launchHomeScreen();}
 
-//      @FXML public void openHomeScreen() {TabChangerService.onHome(winoManager);}
-//      @FXML public void openListScreen() {TabChangerService.onLists(winoManager);}
-//      @FXML public void openVineyardsScreen() {TabChangerService.onVineyards(winoManager);}
-//      @FXML public void openDataSetsScreen() {TabChangerService.onDatasets(winoManager);}
-//      @FXML public void openConsumptionCalculatorScreen() {TabChangerService.onConsumption(winoManager);
+      @FXML public void openHomeScreen() {TabChangerService.onHome(winoManager);}
+      @FXML public void openListScreen() {TabChangerService.onLists(winoManager);}
+      @FXML public void openVineyardsScreen() {TabChangerService.onVineyards(winoManager);}
+      @FXML public void openDataSetsScreen() {TabChangerService.onDatasets(winoManager);}
+      @FXML public void openConsumptionCalculatorScreen() {TabChangerService.onConsumption(winoManager);}
 
 
 }

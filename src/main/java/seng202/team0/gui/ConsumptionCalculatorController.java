@@ -1,5 +1,6 @@
 package seng202.team0.gui;
 
+import javafx.fxml.FXML;
 import seng202.team0.WinoManager;
 import seng202.team0.managers.ManagerContext;
 
@@ -8,13 +9,16 @@ import seng202.team0.managers.ManagerContext;
  */
 public class ConsumptionCalculatorController extends Controller{
 
+  private final WinoManager winoManager;
+
   /**
    * Constructor
    *
-   * @param context Manager context (MORE DETAIL REQUIRED HERE!)
+   * @param winoManager Manager context (MORE DETAIL REQUIRED HERE!)
    */
-  public ConsumptionCalculatorController(WinoManager context) {
-    super(context);
+  public ConsumptionCalculatorController(WinoManager winoManager) {
+    super(winoManager);
+    this.winoManager = winoManager;
     // TODO Implement me!
   }
 
@@ -38,4 +42,13 @@ public class ConsumptionCalculatorController extends Controller{
   public void onChildContextPopped(Object obj) {
     // TODO Implement me!
   }
+
+  @FXML public void openHomeScreen() {TabChangerService.onHome(winoManager);}
+  @FXML public void openWineScreen() {TabChangerService.onWine(winoManager);}
+  @FXML public void openListScreen() {TabChangerService.onLists(winoManager);}
+  @FXML public void openVineyardsScreen() {TabChangerService.onVineyards(winoManager);}
+  @FXML public void openDataSetsScreen() {TabChangerService.onDatasets(winoManager);}
+
+
+
 }
