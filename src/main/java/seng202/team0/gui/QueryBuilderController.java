@@ -1,5 +1,6 @@
 package seng202.team0.gui;
 
+import seng202.team0.WinoManager;
 import seng202.team0.managers.ManagerContext;
 
 /**
@@ -13,7 +14,7 @@ public class QueryBuilderController extends Controller{
    *
    * @param context Manager context (MORE DETAIL REQUIRED HERE!)
    */
-  public QueryBuilderController(ManagerContext context) {
+  public QueryBuilderController(WinoManager context) {
     super(context);
     // TODO Implement me!
   }

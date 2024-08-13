@@ -1,5 +1,6 @@
 package seng202.team0.gui;
 
+import seng202.team0.WinoManager;
 import seng202.team0.managers.ManagerContext;
 
 /**
@@ -14,7 +15,7 @@ public class LoginController extends Controller{
    * @param context Manager context (MORE DETAIL REQUIRED HERE!)
    */
   //FIXME ManagerContext needs to reference something
-  public LoginController(ManagerContext context) {
+  public LoginController(WinoManager context) {
     super(context);
     //TODO Implement me!
   }

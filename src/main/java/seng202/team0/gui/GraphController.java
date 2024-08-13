@@ -1,5 +1,6 @@
 package seng202.team0.gui;
 
+import seng202.team0.WinoManager;
 import seng202.team0.managers.ManagerContext;
 
 /**
@@ -12,7 +13,7 @@ public class GraphController extends Controller{
    *
    * @param context Manager context (MORE DETAIL REQUIRED HERE!)
    */
-  public GraphController(ManagerContext context) {
+  public GraphController(WinoManager context) {
     super(context);
     //TODO Implement me!
   }

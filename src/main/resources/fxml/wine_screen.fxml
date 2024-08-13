@@ -19,9 +19,9 @@
 
 <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.WineScreenController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="1200.0" minWidth="10.0" prefWidth="1200.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="406.22723388671875" minWidth="10.0" prefWidth="99.35968017578125" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints maxHeight="342.2725830078125" minHeight="4.131998062133789" prefHeight="4.131998062133789" vgrow="SOMETIMES" />
@@ -40,7 +40,7 @@
             <Font size="25.0" />
           </font>
         </Button>
-        <Button fx:id="homeScreenButton" disable="true" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Wines">
+        <Button disable="true" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Wines">
           <font>
             <Font size="25.0" />
           </font>
@@ -55,7 +55,7 @@
             <Font size="25.0" />
           </font>
         </Button>
-        <Button mnemonicParsing="false" onAction="#openDataSetsScreen" prefHeight="75.0" prefWidth="200.0" text="Datasets">
+        <Button fx:id="dataSetsScreenButton" mnemonicParsing="false" onAction="#openDataSetsScreen" prefHeight="75.0" prefWidth="200.0" text="Datasets">
           <font>
             <Font size="25.0" />
           </font>
@@ -231,14 +231,14 @@
         </Tab>
       </tabs>
     </TabPane>
-    <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
+    <VBox prefHeight="652.0" prefWidth="106.0" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
       <children>
-        <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="190.0" text="Open Dataset" textFill="#e11111">
+        <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="99.0" text="Open Dataset" textFill="#e11111">
           <VBox.margin>
             <Insets left="7.0" top="35.0" />
           </VBox.margin>
         </Button>
-        <Label alignment="TOP_LEFT" prefHeight="66.0" prefWidth="100.0" text="Datasets - redundant" textFill="RED" wrapText="true">
+        <Label alignment="TOP_LEFT" prefHeight="66.0" prefWidth="95.0" text="Datasets - redundant" textFill="RED" wrapText="true">
           <VBox.margin>
             <Insets left="20.0" top="5.0" />
           </VBox.margin>
@@ -246,7 +246,6 @@
             <Font size="21.0" />
           </font>
         </Label>
-        <Pane prefHeight="279.0" prefWidth="124.0" />
         <Button mnemonicParsing="false" prefHeight="49.0" prefWidth="178.0" text="Show Data">
           <VBox.margin>
             <Insets bottom="5.0" left="15.0" right="5.0" top="5.0" />

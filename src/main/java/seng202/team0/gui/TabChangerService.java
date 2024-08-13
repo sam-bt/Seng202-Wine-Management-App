@@ -5,9 +5,7 @@ import seng202.team0.WinoManager;
 
 public class TabChangerService {
   @FXML
-  public static void onHome(WinoManager winoManager) {
-    winoManager.launchHomeScreen();
-  }
+  public static void onHome(WinoManager winoManager) {winoManager.launchHomeScreen();}
   @FXML
   public static void onWine(WinoManager winoManager) {
     winoManager.launchWineScreen();

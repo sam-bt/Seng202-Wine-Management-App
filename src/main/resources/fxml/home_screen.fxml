@@ -11,9 +11,9 @@
 
 <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.HomeScreenController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="1200.0" minWidth="10.0" prefWidth="1200.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="406.22723388671875" minWidth="10.0" prefWidth="99.35968017578125" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints maxHeight="342.2725830078125" minHeight="4.131998062133789" prefHeight="4.131998062133789" vgrow="SOMETIMES" />
@@ -25,48 +25,48 @@
         <Insets left="20.0" />
       </GridPane.margin>
     </Button>
-    <HBox prefHeight="119.0" prefWidth="1026.0" GridPane.columnIndex="1">
-      <children>
-        <Button fx:id="homeScreenButton" disable="true" mnemonicParsing="false" onAction="#openHomeScreen" prefHeight="75.0" prefWidth="200.0" text="Home">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Wines">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="My Lists">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Vineyards">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Datasets">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button ellipsisString="" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Consumption Calculator" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
-          <font>
-            <Font size="24.0" />
-          </font>
-        </Button>
-      </children>
-      <GridPane.margin>
-        <Insets top="31.0" />
-      </GridPane.margin>
-    </HBox>
     <Button mnemonicParsing="false" text="Register" GridPane.columnIndex="2" GridPane.valignment="TOP" />
     <Label alignment="CENTER" contentDisplay="CENTER" text="WINO">
       <font>
         <Font size="27.0" />
       </font>
     </Label>
+      <HBox prefHeight="120.0" prefWidth="1200.0" GridPane.columnIndex="1">
+         <children>
+            <Button fx:id="homeScreenButton" disable="true" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Home">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Button>
+            <Button fx:id="wineScreenButton" mnemonicParsing="false" onAction="#openWineScreen" prefHeight="75.0" prefWidth="200.0" text="Wines">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Button>
+            <Button fx:id="listScreenButton" mnemonicParsing="false" onAction="#openListScreen" prefHeight="75.0" prefWidth="200.0" text="My Lists">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#openVineyardsScreen" prefHeight="75.0" prefWidth="200.0" text="Vineyards">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Button>
+            <Button fx:id="dataSetsScreenButton" mnemonicParsing="false" onAction="#openDataSetsScreen" prefHeight="75.0" prefWidth="200.0" text="Datasets">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Button>
+            <Button fx:id="consumptionCalculatorScreenButton" ellipsisString="" mnemonicParsing="false" onAction="#openConsumptionCalculatorScreen" prefHeight="75.0" prefWidth="200.0" text="Consumption Calculator" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+         </children>
+         <GridPane.margin>
+            <Insets top="31.0" />
+         </GridPane.margin>
+      </HBox>
   </children>
 </GridPane>

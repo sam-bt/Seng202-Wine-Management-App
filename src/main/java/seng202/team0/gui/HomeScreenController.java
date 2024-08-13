@@ -20,9 +20,20 @@ public class HomeScreenController {
 
 
     }
-@FXML
-    private void openHomeScreen(){
-        System.out.println("openinghomescnrees");
-    }
+//    @FXML public void openWineScreen() {TabChangerService.onWine(winoManager);}
+//    @FXML public void openListScreen() {TabChangerService.onLists(winoManager);}
+//    @FXML public void openVineyardsScreen() {
+//        TabChangerService.onVineyards(winoManager);
+//    }
+//    @FXML public void openDataSetsScreen() {
+//        TabChangerService.onDatasets(winoManager);
+//    }
+//    @FXML public void openConsumptionCalculatorScreen() {TabChangerService.onConsumption(winoManager);}
+
+      @FXML public void openWineScreen() {TabChangerService.onWine(winoManager);}
+      @FXML public void openListScreen() {TabChangerService.onLists(winoManager);}
+      @FXML public void openVineyardsScreen() {TabChangerService.onVineyards(winoManager);}
+      @FXML public void openDataSetsScreen() {TabChangerService.onDatasets(winoManager);}
+      @FXML public void openConsumptionCalculatorScreen() {TabChangerService.onConsumption(winoManager);
 
 }
