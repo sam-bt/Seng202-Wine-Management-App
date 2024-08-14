@@ -44,11 +44,25 @@ public class WishlistController extends Controller{
   public void onChildContextPopped(Object obj) {
     //TODO Implement me!
   }
+  /**
+   * Launches the home screen.
+   */
   @FXML public void openHomeScreen() {TabChangerService.onHome(winoManager);}
-  @FXML
-  public void openWineScreen() {TabChangerService.onWine(winoManager);}
+  /**
+   * Launches the wine screen.
+   */
+  @FXML public void openWineScreen() {TabChangerService.onWine(winoManager);}
+  /**
+   * Launches the vineyard screen.
+   */
   @FXML public void openVineyardsScreen() {TabChangerService.onVineyards(winoManager);}
+  /**
+   * Launches the data sets screen.
+   */
   @FXML public void openDataSetsScreen() {TabChangerService.onDatasets(winoManager);}
+  /**
+   * Launches the consumption calculator screen.
+   */
   @FXML public void openConsumptionCalculatorScreen() {TabChangerService.onConsumption(winoManager);}
 
 

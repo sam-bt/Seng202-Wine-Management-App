@@ -54,26 +54,44 @@ public class FXWrapper {
     }
 
     /**
-     * Loads the initial GUI.
+     * Loads the home screen.
      * @param manager the WinoManager instance.
      */
     public void launchHomeScreen(WinoManager manager) {
         loadScreen("/fxml/home_screen.fxml", "Home", () -> new HomeScreenController(manager));
     }
-
+    /**
+     * Loads the wine screen.
+     * @param manager the WinoManager instance.
+     */
     public void launchWineScreen(WinoManager manager) {
         loadScreen("/fxml/wine_screen.fxml", "Wine Information", () -> new WineScreenController(manager));
     }
-
+    /**
+     * Loads the lists screen.
+     * @param manager the WinoManager instance.
+     */
     public void launchListsScreen(WinoManager manager) {
         loadScreen("/fxml/list_screen.fxml", "My Lists", () -> new WishlistController(manager));
     }
+    /**
+     * Loads the vineyard screen.
+     * @param manager the WinoManager instance.
+     */
     public void launchVineyardsScreen(WinoManager manager) {
         loadScreen("/fxml/vineyard_screen.fxml", "Vineyards", () -> new VineyardScreenController(manager));
     }
+    /**
+     * Loads the datasets screen.
+     * @param manager the WinoManager instance.
+     */
     public void launchDataSetsScreen(WinoManager manager) {
         loadScreen("/fxml/dataset_screen.fxml", "Manage Data Sets", () -> new DataTableController(manager));
     }
+    /**
+     * Loads the consumption calculator screen.
+     * @param manager the WinoManager instance.
+     */
     public void launchConsumptionCalculatorScreen(WinoManager manager) {
         loadScreen("/fxml/consumption_calculator_screen.fxml", "Consumption Calculator", () -> new ConsumptionCalculatorController(manager));
     }

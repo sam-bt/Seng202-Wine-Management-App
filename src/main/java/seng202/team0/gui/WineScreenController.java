@@ -30,17 +30,25 @@ public class WineScreenController extends Controller{
   @Override
   public void onChildContextPopped(Object obj) {
   }
-
-//    @FXML public void openHomeScreen() {winoManager.launchHomeScreen();}
-//    @FXML public void openListScreen() {winoManager.launchHomeScreen();}
-//    @FXML public void openVineyardsScreen() {winoManager.launchHomeScreen();}
-//    @FXML public void openDataSetsScreen() {winoManager.launchHomeScreen();}
-//    @FXML public void openConsumptionCalculatorScreen() {winoManager.launchHomeScreen();}
-
+  /**
+   * Launches the home screen.
+   */
       @FXML public void openHomeScreen() {TabChangerService.onHome(winoManager);}
+  /**
+   * Launches the list screen.
+   */
       @FXML public void openListScreen() {TabChangerService.onLists(winoManager);}
+  /**
+   * Launches the vineyard screen.
+   */
       @FXML public void openVineyardsScreen() {TabChangerService.onVineyards(winoManager);}
-      @FXML public void openDataSetsScreen() {TabChangerService.onDatasets(winoManager);}
+  /**
+   * Launches the data sets screen.
+   */
+  @FXML public void openDataSetsScreen() {TabChangerService.onDatasets(winoManager);}
+  /**
+   * Launches the consumption calculator screen.
+   */
       @FXML public void openConsumptionCalculatorScreen() {TabChangerService.onConsumption(winoManager);}
 
 
