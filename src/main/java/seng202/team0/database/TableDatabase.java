@@ -2,18 +2,17 @@ package seng202.team0.database;
 
 
 import java.util.HashMap;
-import seng202.team0.exceptions.DuplicateRecordException;
 import seng202.team0.exceptions.DuplicateTableException;
-import seng202.team0.exceptions.RecordNotFoundException;
 import seng202.team0.exceptions.TableNotFoundException;
 
 /**
  * Table based implementation of a database. Intended to store a set of tables cheaply
+ *
  * @author Angus McDougall
  */
 public class TableDatabase extends Database {
 
-  HashMap<String, DataTable> tables = new HashMap<>();
+  private final HashMap<String, DataTable> tables = new HashMap<>();
 
   /**
    * Adds a table to the database
@@ -25,10 +24,10 @@ public class TableDatabase extends Database {
   @Override
   public void addTable(String tableName, DataTable source) throws DuplicateTableException {
     // Ensure null reference can never be stored
-    if(source == null){
+    if (source == null) {
       throw new NullPointerException("Non-null value expected");
     }
-    if(tables.containsKey(tableName)){
+    if (tables.containsKey(tableName)) {
       throw new DuplicateTableException("Attempted to add a duplicate table to database");
     }
     tables.put(tableName, source);
@@ -43,7 +42,7 @@ public class TableDatabase extends Database {
    */
   @Override
   public void removeTable(String tableName) throws TableNotFoundException {
-    if(tables.remove(tableName) == null){
+    if (tables.remove(tableName) == null) {
       throw new TableNotFoundException("Attempted to remove a non-existent table from database");
     }
   }

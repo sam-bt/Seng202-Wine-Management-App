@@ -1,12 +1,16 @@
 package seng202.team0.unittests.database;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team0.database.DataTable;
-import seng202.team0.database.Database;
 import seng202.team0.database.TableDatabase;
 import seng202.team0.database.Value;
 import seng202.team0.exceptions.DuplicateTableException;
@@ -14,16 +18,19 @@ import seng202.team0.exceptions.TableNotFoundException;
 
 /**
  * Tests the table database
+ *
  * @author Angus McDougall
  */
 class TableDatabaseTest {
+
   TableDatabase database;
 
   /**
    * Makes a table to test with
+   *
    * @return a table
    */
-  DataTable makeTable(){
+  DataTable makeTable() {
     ArrayList<ArrayList<Value>> columns = new ArrayList<>();
     columns.add(new ArrayList<>());
     columns.add(new ArrayList<>());
@@ -47,7 +54,7 @@ class TableDatabaseTest {
    * Initializes the database
    */
   @BeforeEach
-  void setup(){
+  void setup() {
     database = new TableDatabase();
   }
 
