@@ -1,7 +1,6 @@
 package seng202.team0.gui;
 
 import javafx.fxml.FXML;
-import seng202.team0.WinoManager;
 import seng202.team0.managers.ManagerContext;
 
 // TODO change the name to listScreenController rather than wishlist to fit other conventions?
@@ -11,59 +10,58 @@ import seng202.team0.managers.ManagerContext;
  */
 public class VineyardScreenController extends Controller{
 
-  WinoManager winoManager;
-
   /**
    * Constructor
    *
-   * @param winoManager Manager context (MORE DETAIL REQUIRED HERE!)
+   * @param managerContext manager context
    */
-  public VineyardScreenController(WinoManager winoManager) {
-    super(winoManager);
-    this.winoManager = winoManager;
-    //TODO Implement me!
+  public VineyardScreenController(ManagerContext managerContext) {
+    super(managerContext);
   }
 
-  /**
-   * Should be called whenever a controller is popped from the stack
-   *
-   * @return
-   */
-  @Override
-  public Object onPopped() {
-    return null;
-    //TODO Implement me!
-  }
 
   /**
-   * Should be called when the child of the controller is popped
-   *
-   * @param obj
+   * Launches the data set screen.
    */
-  @Override
-  public void onChildContextPopped(Object obj) {
-    //TODO Implement me!
+  @FXML
+  public void openDataSetsScreen() {
+    managerContext.interfaceManager.launchDataSetsScreen(managerContext);
   }
   /**
    * Launches the home screen.
    */
-  @FXML public void openHomeScreen() {TabChangerService.onHome(winoManager);}
+  @FXML
+  public void openHomeScreen() {
+    managerContext.interfaceManager.launchHomeScreen(managerContext);
+  }
   /**
    * Launches the wine screen.
    */
-  @FXML public void openWineScreen() {TabChangerService.onWine(winoManager);}
+  @FXML
+  public void openWineScreen() {
+    managerContext.interfaceManager.launchWineScreen(managerContext);
+  }
   /**
    * Launches the list screen.
    */
-  @FXML public void openListScreen() {TabChangerService.onLists(winoManager);}
+  @FXML
+  public void openListScreen() {
+    managerContext.interfaceManager.launchListsScreen(managerContext);
+  }
   /**
-   * Launches the data set screen.
+   * Launches the vineyard screen.
    */
-  @FXML public void openDataSetsScreen() {TabChangerService.onDatasets(winoManager);}
+  @FXML
+  public void openVineyardsScreen() {
+    managerContext.interfaceManager.launchVineyardsScreen(managerContext);
+  }
   /**
    * Launches the consumption calculator screen.
    */
-  @FXML public void openConsumptionCalculatorScreen() {TabChangerService.onConsumption(winoManager);}
+  @FXML
+  public void openConsumptionCalculatorScreen() {
+    managerContext.interfaceManager.launchConsumptionCalculatorScreen(managerContext);
+  }
 
 
 }

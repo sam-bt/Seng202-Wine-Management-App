@@ -1,6 +1,6 @@
 package seng202.team0.gui;
 
-import seng202.team0.WinoManager;
+import javafx.fxml.FXML;
 import seng202.team0.managers.ManagerContext;
 
 /**
@@ -11,31 +11,56 @@ public class WineEditPopupController extends Controller{
   /**
    * Constructor
    *
-   * @param context Manager context (MORE DETAIL REQUIRED HERE!)
+   * @param managerContext manager context
    */
-  public WineEditPopupController(WinoManager context) {
-    super(context);
-    // TODO Implement me!
+  public WineEditPopupController(ManagerContext managerContext) {
+    super(managerContext);
   }
 
   /**
-   * Should be called whenever a controller is popped from the stack
-   *
-   * @return
+   * Launches the data set screen.
    */
-  @Override
-  public Object onPopped() {
-    return null;
-    // TODO Implement me!
+  @FXML
+  public void openDataSetsScreen() {
+    managerContext.interfaceManager.launchDataSetsScreen(managerContext);
+  }
+  /**
+   * Launches the home screen.
+   */
+  @FXML
+  public void openHomeScreen() {
+    managerContext.interfaceManager.launchHomeScreen(managerContext);
   }
 
   /**
-   * Should be called when the child of the controller is popped
-   *
-   * @param obj
+   * Launches the wine screen.
    */
-  @Override
-  public void onChildContextPopped(Object obj) {
-    // TODO Implement me!
+  @FXML
+  public void openWineScreen() {
+    managerContext.interfaceManager.launchWineScreen(managerContext);
   }
+
+  /**
+   * Launches the list screen.
+   */
+  @FXML
+  public void openListScreen() {
+    managerContext.interfaceManager.launchListsScreen(managerContext);
+  }
+
+  /**
+   * Launches the vineyard screen.
+   */
+  @FXML
+  public void openVineyardsScreen() {
+    managerContext.interfaceManager.launchVineyardsScreen(managerContext);
+  }
+  /**
+   * Launches the consumption calculator screen.
+   */
+  @FXML
+  public void openConsumptionCalculatorScreen() {
+    managerContext.interfaceManager.launchConsumptionCalculatorScreen(managerContext);
+  }
+
 }

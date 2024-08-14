@@ -1,14 +1,17 @@
 package seng202.team0.gui;
 
+import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Builder;
-import seng202.team0.WinoManager;
-
-import java.io.IOException;
+import seng202.team0.managers.AuthenticationManager;
+import seng202.team0.managers.DatabaseManager;
+import seng202.team0.managers.InterfaceManager;
+import seng202.team0.managers.ManagerContext;
+import seng202.team0.managers.MapManager;
 
 /**
  * FXWrapper manages a pane in which the different GUIs are loaded.
@@ -19,6 +22,7 @@ public class FXWrapper {
     @FXML
     private Pane pane;
     private Stage stage;
+    private ManagerContext managerContext;
 
     /**
      * Initialises the wrapper.
@@ -27,7 +31,13 @@ public class FXWrapper {
      */
     public void init(Stage stage) {
         this.stage = stage;
-        new WinoManager(this::launchHomeScreen,this::launchWineScreen,this::launchListsScreen,this::launchVineyardsScreen,this::launchDataSetsScreen,this::launchConsumptionCalculatorScreen);
+        this.managerContext = new ManagerContext(
+            new DatabaseManager(),
+            new AuthenticationManager(),
+            new MapManager(),
+            new InterfaceManager(this)
+        );
+        this.managerContext.interfaceManager.launchHomeScreen(this.managerContext);
     }
 
     /**
@@ -37,7 +47,7 @@ public class FXWrapper {
      * @param title The window title to set.
      * @param builder The controller for this window. Used as a builder.
      */
-    private void loadScreen(String fxml, String title, Builder<?> builder) {
+    public void loadScreen(String fxml, String title, Builder<?> builder) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
             // provide a custom Controller with parameters
@@ -47,53 +57,10 @@ public class FXWrapper {
             pane.getChildren().add(parent);
             stage.setTitle(title);
         } catch (IOException e) {
-            System.out.println("Failed to load screen:");
-            e.getCause();
+            System.out.println("Failed to load screen: " + fxml);
             e.printStackTrace();
         }
     }
 
-    /**
-     * Loads the home screen.
-     * @param manager the WinoManager instance.
-     */
-    public void launchHomeScreen(WinoManager manager) {
-        loadScreen("/fxml/home_screen.fxml", "Home", () -> new HomeScreenController(manager));
-    }
-    /**
-     * Loads the wine screen.
-     * @param manager the WinoManager instance.
-     */
-    public void launchWineScreen(WinoManager manager) {
-        loadScreen("/fxml/wine_screen.fxml", "Wine Information", () -> new WineScreenController(manager));
-    }
-    /**
-     * Loads the lists screen.
-     * @param manager the WinoManager instance.
-     */
-    public void launchListsScreen(WinoManager manager) {
-        loadScreen("/fxml/list_screen.fxml", "My Lists", () -> new WishlistController(manager));
-    }
-    /**
-     * Loads the vineyard screen.
-     * @param manager the WinoManager instance.
-     */
-    public void launchVineyardsScreen(WinoManager manager) {
-        loadScreen("/fxml/vineyard_screen.fxml", "Vineyards", () -> new VineyardScreenController(manager));
-    }
-    /**
-     * Loads the datasets screen.
-     * @param manager the WinoManager instance.
-     */
-    public void launchDataSetsScreen(WinoManager manager) {
-        loadScreen("/fxml/dataset_screen.fxml", "Manage Data Sets", () -> new DataTableController(manager));
-    }
-    /**
-     * Loads the consumption calculator screen.
-     * @param manager the WinoManager instance.
-     */
-    public void launchConsumptionCalculatorScreen(WinoManager manager) {
-        loadScreen("/fxml/consumption_calculator_screen.fxml", "Consumption Calculator", () -> new ConsumptionCalculatorController(manager));
-    }
 
 }

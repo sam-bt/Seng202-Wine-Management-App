@@ -2,43 +2,61 @@ package seng202.team0.gui;
 
 
 import javafx.fxml.FXML;
-import seng202.team0.WinoManager;
+import seng202.team0.managers.ManagerContext;
 
-public class HomeScreenController {
+public class HomeScreenController extends Controller {
 
-    /**
-     * The WINO manager instance.
-     */
-    private final WinoManager winoManager;
-
-    /**
-     * Constructs the HomeScreenController.
-     * @param manager The WINO manager instance.
-     */
-    HomeScreenController(WinoManager manager) {
-        winoManager = manager;
-
-
-    }
   /**
-   * Launches the wine screen.
+   * Constructor
+   *
+   * @param managerContext manager context
    */
-      @FXML public void openWineScreen() {TabChangerService.onWine(winoManager);}
-  /**
-   * Launches the list screen.
-   */
-      @FXML public void openListScreen() {TabChangerService.onLists(winoManager);}
-  /**
-   * Launches the vineyard screen.
-   */
-      @FXML public void openVineyardsScreen() {TabChangerService.onVineyards(winoManager);}
+  public HomeScreenController(ManagerContext managerContext) {
+    super(managerContext);
+  }
+
   /**
    * Launches the data set screen.
    */
-      @FXML public void openDataSetsScreen() {TabChangerService.onDatasets(winoManager);}
+  @FXML
+  public void openDataSetsScreen() {
+    managerContext.interfaceManager.launchDataSetsScreen(managerContext);
+  }
+
+  /**
+   * Launches the home screen.
+   */
+  @FXML
+  public void openHomeScreen() {
+    managerContext.interfaceManager.launchHomeScreen(managerContext);
+  }
+  /**
+   * Launches the wine screen.
+   */
+  @FXML
+  public void openWineScreen() {
+    managerContext.interfaceManager.launchWineScreen(managerContext);
+  }
+  /**
+   * Launches the list screen.
+   */
+  @FXML
+  public void openListScreen() {
+    managerContext.interfaceManager.launchListsScreen(managerContext);
+  }
+  /**
+   * Launches the vineyard screen.
+   */
+  @FXML
+  public void openVineyardsScreen() {
+    managerContext.interfaceManager.launchVineyardsScreen(managerContext);
+  }
   /**
    * Launches the consumption calculator screen.
    */
-      @FXML public void openConsumptionCalculatorScreen() {TabChangerService.onConsumption(winoManager);}
+  @FXML
+  public void openConsumptionCalculatorScreen() {
+    managerContext.interfaceManager.launchConsumptionCalculatorScreen(managerContext);
+  }
 
 }

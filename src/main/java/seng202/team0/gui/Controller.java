@@ -1,34 +1,35 @@
 package seng202.team0.gui;
 
-import seng202.team0.WinoManager;
 import seng202.team0.managers.ManagerContext;
 
 /**
  * Generic controller class parent
  */
 public abstract class Controller {
-  //FIXME ManagerContext needs to reference something
   ManagerContext managerContext;
 
   /**
    * Constructor
    * @param context Manager context (MORE DETAIL REQUIRED HERE!)
    */
-  //FIXME ManagerContext needs to reference something
-  public Controller(WinoManager context){ // TODO add context later
-//    this.managerContext = context;
-    //TODO Implement me!
+  public Controller(ManagerContext context) {
+    this.managerContext = context;
   }
 
   /**
-   * Should be called whenever a controller is popped from the stack
-   * @return
+   * Called to get a return value when this controller is destroyed
+   * @return a value
    */
-  public abstract Object onPopped();
+  public Object onPopped() {
+    return null;
+  }
 
   /**
-   * Should be called when the child of the controller is popped
+   * Called to provide the value from onPopped on the successor controller
+   * @param obj object from 'called' controller
    */
-  public abstract void onChildContextPopped(Object obj);
+  public void onChildContextPopped(Object obj) {
+
+  }
 
 }

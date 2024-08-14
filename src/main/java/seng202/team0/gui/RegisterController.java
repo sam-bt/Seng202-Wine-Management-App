@@ -1,6 +1,5 @@
 package seng202.team0.gui;
 
-import seng202.team0.WinoManager;
 import seng202.team0.managers.ManagerContext;
 
 /**
@@ -11,21 +10,11 @@ public class RegisterController extends Controller{
   /**
    * Constructor
    *
-   * @param context Manager context (MORE DETAIL REQUIRED HERE!)
+   * @param managerContext manager context
    */
-  //FIXME ManagerContext needs to reference something
-  public RegisterController(WinoManager context) {
-    super(context);
-    //TODO Implement me!
+  public RegisterController(ManagerContext managerContext) {
+    super(managerContext);
   }
 
-  public Object onPopped(){
-    //TODO Implement me!
-    return null;
-  }
-
-  public void onChildContextPopped(Object obj){
-    //TODO Implement me!
-  }
 
 }

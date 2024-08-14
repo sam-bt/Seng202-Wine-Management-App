@@ -1,27 +1,32 @@
 package seng202.team0.managers;
 
 /**
- * Manager Context (MORE DETAIL HERE!)
+ * ManagerContext is simply a bag of managers. Members are public because of this
+ * @author Angus McDougall
  */
 public class ManagerContext {
 
   // Managers
-  final DatabaseManager databaseManager;
+  final public DatabaseManager databaseManager;
 
-  final AuthenticationManager authenticationManager;
+  final public AuthenticationManager authenticationManager;
 
-  final MapManager mapManager;
+  final public MapManager mapManager;
 
-  final InterfaceManager interfaceManager;
+  final public InterfaceManager interfaceManager;
 
   /**
-   * Constructor (MORE DETAIL HERE!)
-   * @param databaseManager (ADD DESCRIPTION!)
-   * @param authenticationManager (ADD DESCRIPTION!)
-   * @param mapManager (ADD DESCRIPTION!)
-   * @param interfaceManager (ADD DESCRIPTION!)
+   * Constructor for ManagerContext
+   * @param databaseManager database manager
+   * @param authenticationManager authentication manager
+   * @param mapManager map manager
+   * @param interfaceManager interface manager
    */
-  public ManagerContext(DatabaseManager databaseManager, AuthenticationManager authenticationManager, MapManager mapManager, InterfaceManager interfaceManager) {
+  public ManagerContext(
+      DatabaseManager databaseManager,
+      AuthenticationManager authenticationManager,
+      MapManager mapManager,
+      InterfaceManager interfaceManager) {
     this.databaseManager = databaseManager;
     this.authenticationManager = authenticationManager;
     this.mapManager = mapManager;
