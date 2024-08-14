@@ -35,28 +35,38 @@ public class WinoManager {
     }
 
     /**
-     * Launches the initial gui screen.
+     * Launches the home screen.
      */
     public void launchHomeScreen() {
         homeScreenLauncher.accept(this);
     }
-
+    /**
+     * Launches the wine screen.
+     */
     public void launchWineScreen() {
         wineScreenLauncher.accept(this);
     }
-
+    /**
+     * Launches the list screen.
+     */
     public void launchListsScreen() {
         listsScreenLauncher.accept(this);
     }
-
+    /**
+     * Launches the vineyard screen.
+     */
     public void launchVineyardsScreen() {
         vineyardsScreenLauncher.accept(this);
     }
-
+    /**
+     * Launches the data set screen.
+     */
     public void launchDataSetsScreen() {
         dataSetsScreenLauncher.accept(this);
     }
-
+    /**
+     * Launches the consumption calculator screen.
+     */
     public void launchConsumptionCalculatorScreen() {
         consumptionCalculatorScreenLauncher.accept(this);
     }
