@@ -13,11 +13,11 @@ import seng202.team0.gui.WishlistController;
  * Manager for interacting with the GUI
  * @author Angus McDougall
  */
-public class InterfaceManager {
+public class GUIManager {
 
   private final FXWrapper wrapper;
 
-  public InterfaceManager(FXWrapper wrapper) {
+  public GUIManager(FXWrapper wrapper) {
     this.wrapper = wrapper;
   }
 

@@ -24,21 +24,21 @@ public class WishlistController extends Controller{
    */
   @FXML
   public void openDataSetsScreen() {
-    managerContext.interfaceManager.launchDataSetsScreen(managerContext);
+    managerContext.GUIManager.launchDataSetsScreen(managerContext);
   }
   /**
    * Launches the home screen.
    */
   @FXML
   public void openHomeScreen() {
-    managerContext.interfaceManager.launchHomeScreen(managerContext);
+    managerContext.GUIManager.launchHomeScreen(managerContext);
   }
   /**
    * Launches the wine screen.
    */
   @FXML
   public void openWineScreen() {
-    managerContext.interfaceManager.launchWineScreen(managerContext);
+    managerContext.GUIManager.launchWineScreen(managerContext);
   }
 
   /**
@@ -46,21 +46,21 @@ public class WishlistController extends Controller{
    */
   @FXML
   public void openListScreen() {
-    managerContext.interfaceManager.launchListsScreen(managerContext);
+    managerContext.GUIManager.launchListsScreen(managerContext);
   }
   /**
    * Launches the vineyard screen.
    */
   @FXML
   public void openVineyardsScreen() {
-    managerContext.interfaceManager.launchVineyardsScreen(managerContext);
+    managerContext.GUIManager.launchVineyardsScreen(managerContext);
   }
   /**
    * Launches the consumption calculator screen.
    */
   @FXML
   public void openConsumptionCalculatorScreen() {
-    managerContext.interfaceManager.launchConsumptionCalculatorScreen(managerContext);
+    managerContext.GUIManager.launchConsumptionCalculatorScreen(managerContext);
   }
 
 

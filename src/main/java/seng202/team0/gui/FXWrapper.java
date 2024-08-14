@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import javafx.util.Builder;
 import seng202.team0.managers.AuthenticationManager;
 import seng202.team0.managers.DatabaseManager;
-import seng202.team0.managers.InterfaceManager;
+import seng202.team0.managers.GUIManager;
 import seng202.team0.managers.ManagerContext;
 import seng202.team0.managers.MapManager;
 
@@ -35,9 +35,9 @@ public class FXWrapper {
             new DatabaseManager(),
             new AuthenticationManager(),
             new MapManager(),
-            new InterfaceManager(this)
+            new GUIManager(this)
         );
-        this.managerContext.interfaceManager.launchHomeScreen(this.managerContext);
+        this.managerContext.GUIManager.launchHomeScreen(this.managerContext);
     }
 
     /**
