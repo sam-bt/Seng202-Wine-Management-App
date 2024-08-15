@@ -6,7 +6,7 @@ Development should be done according to this document to be merged.
 2. Commit changes to branch
 3. Create a merge request with 'Ready for review' for feedback when ready
 
-## Pre-Commit Checklist
+## Pre-Merge Checklist
 - [ ] Format according to conventions
 - [ ] Fix IDE warnings
 - [ ] Selected branch is Development
