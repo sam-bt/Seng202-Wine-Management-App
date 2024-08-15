@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>WINO Map</title>
+  <link href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" rel="stylesheet"/>
+  <link href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"
+        rel="stylesheet"/>
+  <meta content="initial-scale=1.0" name="viewport">
+  <meta charset="utf-8">
+  <style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    #map {
+        height: 100%;
+    }
+  </style>
+</head>
+<body>
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+<script src="leaflet_osm_map.js"></script>
+<script>
+  initMap();
+</script>
+</body>
+</html>
