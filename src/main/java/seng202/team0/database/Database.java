@@ -1,7 +1,7 @@
 package seng202.team0.database;
 
-import seng202.team0.exceptions.DuplicateTableException;
-import seng202.team0.exceptions.TableNotFoundException;
+import seng202.team0.database.exceptions.DuplicateTableException;
+import seng202.team0.database.exceptions.TableNotFoundException;
 
 /**
  * Database abstraction. Instantiate an inheritor to use

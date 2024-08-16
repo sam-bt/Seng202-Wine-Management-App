@@ -1,4 +1,4 @@
-package seng202.team0.exceptions;
+package seng202.team0.database.exceptions;
 
 /**
  * Thrown when there is a duplicate record in the database

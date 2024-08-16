@@ -1,18 +1,25 @@
 package seng202.team0.database;
 
-
-import java.util.HashMap;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import seng202.team0.database.exceptions.DuplicateTableException;
 import seng202.team0.database.exceptions.TableNotFoundException;
 
 /**
- * Table based implementation of a database. Intended to store a set of tables cheaply
+ * SQL Version of Database
+ * Uses JDBC
  *
- * @author Angus McDougall
+ * @author mpe133
  */
-public class TableDatabase extends Database {
+public class SQLDatabase extends Database {
 
-  private final HashMap<String, DataTable> tables = new HashMap<>();
+  // This is the path to the db file
+  final String dbPath = "jdbc:sqlite:SQLDatabase.db";
+  Connection connection;
+
+  public void connectDB() {
+  }
 
   /**
    * Adds a table to the database
@@ -23,14 +30,6 @@ public class TableDatabase extends Database {
    */
   @Override
   public void addTable(String tableName, DataTable source) throws DuplicateTableException {
-    // Ensure null reference can never be stored
-    if (source == null) {
-      throw new NullPointerException("Non-null value expected");
-    }
-    if (tables.containsKey(tableName)) {
-      throw new DuplicateTableException("Attempted to add a duplicate table to database");
-    }
-    tables.put(tableName, source);
 
   }
 
@@ -42,9 +41,7 @@ public class TableDatabase extends Database {
    */
   @Override
   public void removeTable(String tableName) throws TableNotFoundException {
-    if (tables.remove(tableName) == null) {
-      throw new TableNotFoundException("Attempted to remove a non-existent table from database");
-    }
+
   }
 
   /**
@@ -55,17 +52,17 @@ public class TableDatabase extends Database {
    */
   @Override
   public boolean tableExists(String tableName) {
-    return tables.containsKey(tableName);
+    return false;
   }
 
   /**
-   * Maybe gets a reference to a table
+   * maybe gets a reference to a table
    *
    * @param tableName name of table
    * @return a reference to the table if it exists, else null
    */
   @Override
   public DataTable tryGetTable(String tableName) {
-    return tables.get(tableName);
+    return null;
   }
 }

@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 import seng202.team0.database.DataTable;
 import seng202.team0.database.TableDatabase;
 import seng202.team0.database.Value;
-import seng202.team0.exceptions.DuplicateTableException;
-import seng202.team0.exceptions.TableNotFoundException;
+import seng202.team0.database.exceptions.DuplicateTableException;
+import seng202.team0.database.exceptions.TableNotFoundException;
 
 /**
  * Tests the table database
