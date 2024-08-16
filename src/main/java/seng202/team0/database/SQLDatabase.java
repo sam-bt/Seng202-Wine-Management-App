@@ -1,5 +1,9 @@
 package seng202.team0.database;
 
+import com.sun.scenario.DelayedRunnable;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,10 +19,51 @@ import seng202.team0.database.exceptions.TableNotFoundException;
 public class SQLDatabase extends Database {
 
   // This is the path to the db file
-  final String dbPath = "jdbc:sqlite:SQLDatabase.db";
-  Connection connection;
+  private final String dbPath = "jdbc:sqlite:sqlDatabase"+ File.separator + "SQLDatabase.db";
+  private Connection connection = null;
 
-  public void connectDB() {
+  /**
+   * Connects to a db file for management
+   * The path to the file is specified by dbpath
+   */
+  public void setupDb() {
+
+    // Check if the database is already connected
+    if (connection != null) {
+      System.out.println("Database already exists.");
+      return;
+    }
+
+    // Construct a file path for the database
+    File dir = new File("sqlDatabase");
+    if (!dir.exists()) {
+      dir.mkdirs();
+    }
+
+    try {
+      // Connect to database
+      this.connection = DriverManager.getConnection(dbPath);
+
+    } catch (SQLException e) {
+      // TODO More robust logging here
+      e.printStackTrace();
+    }
+
+  }
+
+  /**
+   * To disconnect/close database
+   */
+  public void disconnectDb() {
+    if (connection != null) {
+      try {
+        this.connection.close();
+
+      } catch (SQLException e) {
+        //TODO More robust logging here
+        e.printStackTrace();
+      }
+    }
   }
 
   /**
@@ -64,5 +109,10 @@ public class SQLDatabase extends Database {
   @Override
   public DataTable tryGetTable(String tableName) {
     return null;
+  }
+
+  // Getters and Setters:
+  public Connection getConnection() {
+    return connection;
   }
 }

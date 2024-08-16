@@ -15,3 +15,7 @@ build/
 
 # Gradle
 .gradle/
+
+# Database file
+sqlDatabase/
+*.db
