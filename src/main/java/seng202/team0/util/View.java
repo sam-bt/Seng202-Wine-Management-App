@@ -1,40 +1,28 @@
 package seng202.team0.util;
 
 import seng202.team0.database.Record;
-import java.util.List;
 
 /**
- * View parent class (MORE DETAIL HERE!)
+ * Views provide a way to iterate tables
+ * @author Angus McDougall
  */
 public abstract class View {
 
   /**
-   * Collect (MORE DETAIL HERE!)
-   * @return
-   */
-  public List<Record> collect(){
-    return null;
-    // TODO Implement me!
-  }
-
-  /**
-   * Empty (MORE DETAIL HERE!)
-   * @return
-   */
-  public boolean empty(){
-    // TODO Implement me!
-    return false;
-  }
-
-  /**
-   * next (MORE DETAIL HERE!)
-   * @return
+   * Returns the current record and increments to next
+   * @return current record
    */
   public abstract Record next();
 
   /**
-   * Deep copy (MORE DETAIL HERE!)
-   * @return
+   * Resets the view to the starting element
+   */
+  public abstract void reset();
+
+  /**
+   * Copies the view and all sub views
+   *
+   * @return copy of this
    */
   public abstract View deepCopy();
 }

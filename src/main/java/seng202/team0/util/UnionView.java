@@ -3,36 +3,55 @@ package seng202.team0.util;
 import seng202.team0.database.Record;
 
 /**
- * Union View (MORE DETAIL HERE!)
+ * Union view combines two sub views into one
+ * @author Angus McDougall
  */
 public class UnionView extends View{
 
+  View lhs;
+  View rhs;
+
   /**
-   * Constructor (MORE DETAIL HERE!)
-   * @param lhs
-   * @param rhs
+   * Creates a union view from two sub views
+   *
+   * @param lhs lhs view
+   * @param rhs rhs view
    */
-  public UnionView(View lhs, View rhs){
-    // TODO Implement me!
+  UnionView(View lhs, View rhs) {
+    this.lhs = lhs;
+    this.rhs = rhs;
   }
 
   /**
-   * next (MORE DETAIL HERE!)
-   * @return
+   * Returns the current record and increments to next
+   *
+   * @return current record
    */
   @Override
   public Record next() {
-    // TODO Implement me!
-    return null;
+    Record lhsRecord = lhs.next();
+    if (lhsRecord != null) {
+      return lhsRecord;
+    }
+    return rhs.next();
   }
 
   /**
-   * Deep copy (MORE DETAIL HERE!)
-   * @return
+   * Resets the view to the starting element
+   */
+  @Override
+  public void reset() {
+    lhs.reset();
+    rhs.reset();
+  }
+
+  /**
+   * Copies the view and all sub views
+   *
+   * @return copy of this
    */
   @Override
   public View deepCopy() {
-    // TODO Implement me!
-    return null;
+    return new UnionView(lhs.deepCopy(), rhs.deepCopy());
   }
 }
