@@ -10,9 +10,11 @@ import java.io.File;
 
 /**
  * Data Table Controller (MORE DETAIL HERE!)
- * @author sbe119, amc510
+ *
+ * @author Samuel Beattie
+ * @author Angus McDougall
  */
-public class DataTableController extends Controller{
+public class DataTableController extends Controller {
 
   /**
    * Constructor
@@ -33,6 +35,7 @@ public class DataTableController extends Controller{
   public void openDataSetsScreen() {
     managerContext.GUIManager.launchDataSetsScreen(managerContext);
   }
+
   /**
    * Launches the home screen.
    */
@@ -40,6 +43,7 @@ public class DataTableController extends Controller{
   public void openHomeScreen() {
     managerContext.GUIManager.launchHomeScreen(managerContext);
   }
+
   /**
    * Launches the wine screen.
    */
@@ -47,6 +51,7 @@ public class DataTableController extends Controller{
   public void openWineScreen() {
     managerContext.GUIManager.launchWineScreen(managerContext);
   }
+
   /**
    * Launches the list screen.
    */
@@ -54,6 +59,7 @@ public class DataTableController extends Controller{
   public void openListScreen() {
     managerContext.GUIManager.launchListsScreen(managerContext);
   }
+
   /**
    * Launches the vineyard screen.
    */
@@ -61,6 +67,7 @@ public class DataTableController extends Controller{
   public void openVineyardsScreen() {
     managerContext.GUIManager.launchVineyardsScreen(managerContext);
   }
+
   /**
    * Launches the consumption calculator screen.
    */
@@ -88,7 +95,7 @@ public class DataTableController extends Controller{
   /**
    * Stand-in function to process csv files (will be replaced when functionality added)
    */
-  public void processCSVFile(File file){
+  public void processCSVFile(File file) {
     System.out.println("file processing");
   }
 
