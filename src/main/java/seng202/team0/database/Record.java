@@ -10,12 +10,12 @@ public class Record {
   /**
    * Reference to owning table
    */
-  private DataTable dataTable;
+  private final DataTable dataTable;
 
   /**
    * Index of row
    */
-  private int rowIndex;
+  private final int rowIndex;
 
   /**
    * Constructs a Record from a table and index
@@ -40,11 +40,31 @@ public class Record {
   /**
    * Gets the attribute of a given index in the Record
    *
-   * @param index Index of attribute
-   * @return Value
+   * @param index index of attribute
+   * @return value
    */
-  private Value getItem(int index) {
+  public Value getItem(int index) {
     return dataTable.get(index, rowIndex);
+  }
+
+  /**
+   * Sets an attribute from an index
+   *
+   * @param index index of attribute
+   * @param value value
+   */
+  public void setItem(int index, Value value) {
+    dataTable.set(index, rowIndex, value);
+  }
+
+  /**
+   * Sets an attribute from a name
+   *
+   * @param string name of attribute
+   * @param value  value
+   */
+  public void setItem(String string, Value value) {
+    dataTable.set(dataTable.getColumnIndexFromName(string), rowIndex, value);
   }
 
 

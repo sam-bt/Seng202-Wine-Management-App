@@ -1,14 +1,17 @@
 package seng202.team0.gui;
 
+import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Builder;
-import seng202.team0.WinoManager;
-
-import java.io.IOException;
+import seng202.team0.managers.AuthenticationManager;
+import seng202.team0.managers.DatabaseManager;
+import seng202.team0.managers.GUIManager;
+import seng202.team0.managers.ManagerContext;
+import seng202.team0.managers.MapManager;
 
 /**
  * FXWrapper manages a pane in which the different GUIs are loaded.
@@ -19,6 +22,7 @@ public class FXWrapper {
     @FXML
     private Pane pane;
     private Stage stage;
+    private ManagerContext managerContext;
 
     /**
      * Initialises the wrapper.
@@ -27,7 +31,13 @@ public class FXWrapper {
      */
     public void init(Stage stage) {
         this.stage = stage;
-        new WinoManager(this::launchInitialGuiScreen);
+        this.managerContext = new ManagerContext(
+            new DatabaseManager(),
+            new AuthenticationManager(),
+            new MapManager(),
+            new GUIManager(this)
+        );
+        this.managerContext.GUIManager.launchHomeScreen(this.managerContext);
     }
 
     /**
@@ -37,27 +47,20 @@ public class FXWrapper {
      * @param title The window title to set.
      * @param builder The controller for this window. Used as a builder.
      */
-    private void loadScreen(String fxml, String title, Builder<?> builder) {
+    public void loadScreen(String fxml, String title, Builder<?> builder) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
             // provide a custom Controller with parameters
             loader.setControllerFactory(param -> builder.build());
             Parent parent = loader.load();
+            pane.getChildren().clear(); // IMPORTANT
             pane.getChildren().add(parent);
             stage.setTitle(title);
         } catch (IOException e) {
-            System.out.println("Failed to load screen:");
-            e.getCause();
+            System.out.println("Failed to load screen: " + fxml);
             e.printStackTrace();
         }
     }
 
-    /**
-     * Loads the initial GUI.
-     * @param manager the WinoManager instance.
-     */
-    public void launchInitialGuiScreen(WinoManager manager) {
-        loadScreen("/fxml/initial_gui_prototype.fxml", "Initial Gui Prototype", () -> new GuiController(manager));
-    }
 
 }

@@ -1,7 +1,9 @@
 package seng202.team0.database;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
+import seng202.team0.exceptions.InvalidRecordException;
 
 /**
  * DataTable encapsulates a singular table of data. Each row represents an entity
@@ -17,20 +19,30 @@ public class DataTable {
   /**
    * List of column names
    */
-  private final ArrayList<String> columnsNames;
+  private final String[] columnNames;
+
+  private final int[] columnTypes;
 
   /**
    * Constructs a DataTable from a list of columns and names
    *
-   * @param columnsNames Name of each column
+   * @param columnNames Name of each column
    * @param columns      List of columns
    */
   public DataTable(
-      String[] columnsNames,
+      String[] columnNames,
       ArrayList<ArrayList<Value>> columns
   ) {
     this.columns = columns;
-    this.columnsNames = new ArrayList<>(List.of(columnsNames));
+    this.columnTypes = new int[this.columns.size()];
+    int i = 0;
+    for (ArrayList<Value> column : columns) {
+      if (column.isEmpty()) {
+        throw new IllegalStateException("Must have one entry to infer types");
+      }
+      columnTypes[i++] = column.getFirst().getTypeIndex();
+    }
+    this.columnNames = columnNames;
     if (!isSizeConsistent()) {
       throw new IllegalStateException("Inconsistent sizes in table");
     }
@@ -40,15 +52,39 @@ public class DataTable {
   }
 
   /**
+   * Constructs a datatable with an infered schema from a class
+   *
+   * @param clazz schema
+   */
+  public DataTable(Class<?> clazz) {
+    Field[] fields = clazz.getFields();
+    this.columnTypes = new int[fields.length];
+    this.columnNames = new String[fields.length];
+    this.columns = new ArrayList<>();
+    int i = 0;
+    for (Field field : fields) {
+      this.columns.add(new ArrayList<>());
+      this.columnNames[i] = field.getName();
+      int typeIndex = Value.getTypeIndex(field.getType());
+      if (Value.isInvalidTypeIndex(typeIndex)) {
+        throw new IllegalStateException("Constructing a table with an invalid type in schema");
+      }
+      columnTypes[i] = typeIndex;
+      i++;
+    }
+
+  }
+
+  /**
    * Checks if all array lengths for columns are the same
    *
    * @return Whether the state of columns is consistent
    */
   private boolean isSizeConsistent() {
-    if (columns.isEmpty() && columnsNames.isEmpty()) {
+    if (columns.isEmpty() && columnNames.length == 0) {
       return true;
     }
-    if (columns.size() != columnsNames.size()) {
+    if (columns.size() != columnNames.length) {
       return false;
     }
     int firstSize = columns.getFirst().size();
@@ -61,13 +97,14 @@ public class DataTable {
    * @return If all types in a column are the same
    */
   private boolean isTypeConsistent() {
-
+    int i = 0;
     for (ArrayList<Value> column : columns) {
       for (Value value : column) {
-        if (value.getTypeIndex() != column.getFirst().getTypeIndex()) {
+        if (value.getTypeIndex() != columnTypes[i]) {
           return false;
         }
       }
+      i++;
     }
     return true;
   }
@@ -104,6 +141,11 @@ public class DataTable {
     return columns.get(column).get(row);
   }
 
+  public void set(int column, int row, Value value) {
+    columns.get(column).set(row, value);
+  }
+
+
   /**
    * Gets the name of a column
    *
@@ -111,7 +153,7 @@ public class DataTable {
    * @return Name of the column
    */
   public String getColumnName(int column) {
-    return columnsNames.get(column);
+    return columnNames[column];
   }
 
   /**
@@ -131,7 +173,12 @@ public class DataTable {
    * @return Index of a named column, -1 if not valid
    */
   public int getColumnIndexFromName(String columnName) {
-    return columnsNames.indexOf(columnName);
+    for (int i = 0; i < columnNames.length; i++) {
+      if (Objects.equals(columnName, columnNames[i])) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   /**
@@ -147,4 +194,44 @@ public class DataTable {
     return new Record(this, row);
   }
 
+  /**
+   * Adds a new null filled record to the table
+   */
+  private void pushRecord() {
+    for (ArrayList<Value> column : columns) {
+      column.add(null);
+    }
+  }
+
+  /**
+   * Pops the most recent record from the table
+   */
+  private void popRecord() {
+    for (ArrayList<Value> column : columns) {
+      column.removeLast();
+    }
+  }
+
+  /**
+   * Inserts a row into the table from an object
+   *
+   * @param record trivial object to insert
+   */
+  public void addRecordFromClass(ToRecord record) {
+    pushRecord();
+    try {
+      record.toRecord(getRecordForIndex(rowSize() - 1));
+    } catch (Exception exception) {
+      throw new InvalidRecordException(exception);
+    }
+    // Verify no nulls and type
+    int i = 0;
+    for (ArrayList<Value> column : columns) {
+      Value attribute = column.getLast();
+      if (attribute == null || attribute.getTypeIndex() != columnTypes[i++]) {
+        popRecord();
+        return;
+      }
+    }
+  }
 }
