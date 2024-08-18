@@ -4,36 +4,41 @@ import java.util.function.Function;
 import seng202.team0.database.Record;
 
 /**
- * Filter view (MORE DETAIL HERE!)
+ * Filter view filters a view according to a predicate
+ * @author Angus McDougall
  */
 public class FilterView extends View {
 
-  /**
-   * Contstructor (MORE DETAIL HERE!)
-   * @param view
-   * @param filter
-   */
+  private final View view;
+  private final Function<Record, Boolean> filter;
   public FilterView(View view, Function<Record, Boolean> filter){
-    // TODO Implement me!
+    this.view = view;
+    this.filter = filter;
   }
 
-  /**
-   * next (MORE DETAIL HERE!)
-   * @return
-   */
   @Override
   public Record next() {
-    // TODO Implement me!
-    return null;
+    while (true) {
+      Record current = view.next();
+      if (current == null) {
+        return null;
+      }
+      if (filter.apply(current)) {
+        return current;
+      }
+    }
   }
 
   /**
-   * deep copy (MORE DETAIL HERE!)
-   * @return
+   * Resets the view to the starting element
    */
   @Override
+  public void reset() {
+    view.reset();
+  }
+
+  @Override
   public View deepCopy() {
-    // TODO Implement me!
-    return null;
+    return new FilterView(view.deepCopy(), filter);
   }
 }
