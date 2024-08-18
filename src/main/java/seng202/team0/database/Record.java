@@ -62,6 +62,16 @@ public class Record {
   }
 
   /**
+   * Gets a comparator for a given table and attribute name without caching index
+   *
+   * @param attributeName name of attribute to compare
+   * @return a comparator for the name
+   */
+  public static Comparator<Record> getComparator(String attributeName) {
+    return Comparator.comparing(record -> record.getItem(attributeName));
+  }
+
+  /**
    * Sets an attribute from an index
    *
    * @param index index of attribute
