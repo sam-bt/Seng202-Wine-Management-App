@@ -1,5 +1,7 @@
 package seng202.team0.database;
 
+import java.util.Comparator;
+
 /**
  * Record represents a named tuple. This class acts as a handle to a row in a DataTable
  *
@@ -48,6 +50,18 @@ public class Record {
   }
 
   /**
+   * Gets a comparator for a given table and attribute name
+   *
+   * @param attributeName name of attribute to compare
+   * @return a comparator for the name
+   */
+  public static Comparator<Record> getComparator(String attributeName, DataTable table) {
+    // Cache index
+    int index = table.getColumnIndexFromName(attributeName);
+    return Comparator.comparing(record -> record.getItem(index));
+  }
+
+  /**
    * Sets an attribute from an index
    *
    * @param index index of attribute
@@ -58,13 +72,23 @@ public class Record {
   }
 
   /**
+   * Gets the attribute of a given name in the Record
+   *
+   * @param attributeName index of attribute
+   * @return value
+   */
+  public Value getItem(String attributeName) {
+    return dataTable.get(dataTable.getColumnIndexFromName(attributeName), rowIndex);
+  }
+
+  /**
    * Sets an attribute from a name
    *
-   * @param string name of attribute
+   * @param attributeName name of attribute
    * @param value  value
    */
-  public void setItem(String string, Value value) {
-    dataTable.set(dataTable.getColumnIndexFromName(string), rowIndex, value);
+  public void setItem(String attributeName, Value value) {
+    dataTable.set(dataTable.getColumnIndexFromName(attributeName), rowIndex, value);
   }
 
 
