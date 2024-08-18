@@ -53,7 +53,9 @@ public class DataTable {
 
   /**
    * Constructs a datatable with an infered schema from a class
-   *
+   * <p>
+   *   Note that all members of the class must be public
+   * </p>
    * @param clazz schema
    */
   public DataTable(Class<?> clazz) {
@@ -190,6 +192,19 @@ public class DataTable {
   public Record getRecordForIndex(int row) {
     if (row >= rowSize()) {
       throw new IndexOutOfBoundsException();
+    }
+    return new Record(this, row);
+  }
+
+  /**
+   * Tries to get a Record as a handle to a given row
+   *
+   * @param row Row
+   * @return Record for a given row, null if oob
+   */
+  public Record tryGetRecordForIndex(int row) {
+    if (row >= rowSize()) {
+      return null;
     }
     return new Record(this, row);
   }

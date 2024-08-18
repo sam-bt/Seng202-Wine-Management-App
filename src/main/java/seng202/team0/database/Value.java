@@ -10,7 +10,7 @@ package seng202.team0.database;
  *
  * @author Angus McDougall
  */
-public abstract class Value {
+public abstract class Value implements Comparable<Value> {
 
   private static final int STRING_TYPE_INDEX = 0;
   private static final int REAL_TYPE_INDEX = 1;
@@ -136,7 +136,7 @@ public abstract class Value {
    *
    * @author Angus McDougall
    */
-  private static class StringValue extends Value {
+  private static class StringValue extends Value implements Comparable<Value> {
 
     public String value;
 
@@ -162,6 +162,11 @@ public abstract class Value {
       return false;
     }
 
+    @Override
+    public int compareTo(Value stringValue) {
+      return value.compareTo(((StringValue) stringValue).value);
+    }
+
   }
 
   /**
@@ -169,7 +174,7 @@ public abstract class Value {
    *
    * @author Angus McDougall
    */
-  private static class RealValue extends Value {
+  private static class RealValue extends Value implements Comparable<Value> {
 
     public double value;
 
@@ -194,6 +199,10 @@ public abstract class Value {
       }
       return false;
     }
-  }
 
+    @Override
+    public int compareTo(Value value2) {
+      return Double.compare(value, ((RealValue) value2).value);
+    }
+  }
 }
