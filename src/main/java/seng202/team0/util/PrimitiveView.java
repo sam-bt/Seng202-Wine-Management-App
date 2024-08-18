@@ -37,9 +37,7 @@ public class PrimitiveView extends View {
    */
   @Override
   public Record next() {
-    Record record = table.getRecordForIndex(index);
-    index++;
-    return record;
+    return table.tryGetRecordForIndex(index++);
   }
 
   /**

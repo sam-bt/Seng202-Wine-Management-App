@@ -15,7 +15,7 @@ public class SortedView extends View {
   private final Record[] records;
   private final View view;
   private int index;
-  private Comparator<Record> comparator;
+  private final Comparator<Record> comparator;
 
   /**
    * Sorts a view according to a comparator
@@ -52,6 +52,9 @@ public class SortedView extends View {
    */
   @Override
   public Record next() {
+    if (index >= records.length) {
+      return null;
+    }
     return records[index++];
   }
 

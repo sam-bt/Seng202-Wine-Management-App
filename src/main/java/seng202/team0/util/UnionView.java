@@ -17,7 +17,7 @@ public class UnionView extends View{
    * @param lhs lhs view
    * @param rhs rhs view
    */
-  UnionView(View lhs, View rhs) {
+  public UnionView(View lhs, View rhs) {
     this.lhs = lhs;
     this.rhs = rhs;
   }
