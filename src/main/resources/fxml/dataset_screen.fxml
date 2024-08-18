@@ -68,5 +68,13 @@
         <Insets top="31.0" />
       </GridPane.margin>
     </HBox>
+    <Button fx:id="uploadCSVButton" mnemonicParsing="false" onAction="#uploadCSVFile" prefHeight="50.0" prefWidth="200.0" text="Upload CSV" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <font>
+        <Font size="20.0" />
+      </font>
+      <GridPane.margin>
+        <Insets top="10.0" left="10.0" />
+      </GridPane.margin>
+    </Button>
   </children>
 </GridPane>
