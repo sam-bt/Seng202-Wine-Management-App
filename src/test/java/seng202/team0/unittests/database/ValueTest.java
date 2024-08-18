@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 import seng202.team0.database.Value;
+import seng202.team0.database.ValueVisitor;
 
 /**
  * Tests Value type
@@ -68,4 +70,35 @@ class ValueTest {
     assertNotEquals(Value.make("foo"), Value.make(1.0));
     assertNotEquals(Value.make(1.0), Value.make("foo"));
   }
+
+  /**
+   * Tests visitor access
+   */
+  @Test
+  void visitor() {
+    Value.make(0.0).visit(new ValueVisitor() {
+      @Override
+      public void visit(double value) {
+        assertEquals(value, 0);
+      }
+
+      @Override
+      public void visit(String string) {
+        fail();
+      }
+    });
+    Value.make("foo").visit(new ValueVisitor() {
+      @Override
+      public void visit(double value) {
+        fail();
+      }
+
+      @Override
+      public void visit(String string) {
+        assertEquals(string, "foo");
+      }
+    });
+
+  }
+
 }

@@ -51,6 +51,9 @@ public abstract class Value {
 
   /**
    * Gets the type index for a class object
+   * <p>
+   *   Type index is subject to change and should only be used to test if two types are the same.
+   * </p>
    *
    * @param clazz class object
    * @return index of type if valid else -1
@@ -74,6 +77,14 @@ public abstract class Value {
     return idx == -1;
   }
 
+  /**
+   * Visits the value
+   * <p>
+   *   This should be the preferred method of type-dependant access
+   * </p>
+   * @param visitor visitor
+   */
+  public abstract void visit(ValueVisitor visitor);
 
   /**
    * Checks if the contained value is a string
@@ -134,6 +145,11 @@ public abstract class Value {
     }
 
     @Override
+    public void visit(ValueVisitor visitor) {
+      visitor.visit(value);
+    }
+
+    @Override
     public int getTypeIndex() {
       return STRING_TYPE_INDEX;
     }
@@ -145,6 +161,7 @@ public abstract class Value {
       }
       return false;
     }
+
   }
 
   /**
@@ -163,6 +180,11 @@ public abstract class Value {
     @Override
     public int getTypeIndex() {
       return REAL_TYPE_INDEX;
+    }
+
+    @Override
+    public void visit(ValueVisitor visitor) {
+      visitor.visit(value);
     }
 
     @Override
