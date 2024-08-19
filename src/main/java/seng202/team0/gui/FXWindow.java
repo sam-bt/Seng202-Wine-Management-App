@@ -29,7 +29,7 @@ public class FXWindow extends Application {
 
         primaryStage.setTitle("WINO App [DEV]");
         //primaryStage.setResizable(false); No need for this anymore
-        Scene scene = new Scene(root, 1440, 900);
+        Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

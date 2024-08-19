@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -10,71 +11,79 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.MainController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" percentWidth="10.0" />
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="80.0" />
-    <ColumnConstraints hgrow="SOMETIMES" percentWidth="10.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints maxHeight="120.0" minHeight="120.0" prefHeight="120.0" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="874.0" minHeight="10.0" prefHeight="772.0" vgrow="SOMETIMES" />
-  </rowConstraints>
-  <children>
-    <Button minWidth="75.0" mnemonicParsing="false" text="Login" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
-      <GridPane.margin>
-        <Insets bottom="14.0" />
-      </GridPane.margin>
-    </Button>
-    <Button minWidth="75.0" mnemonicParsing="false" text="Register" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="TOP">
-      <GridPane.margin>
-        <Insets top="30.0" />
-      </GridPane.margin></Button>
-    <Label alignment="CENTER" contentDisplay="CENTER" text="WINO">
-      <font>
-        <Font size="27.0" />
-      </font>
-      <GridPane.margin>
-        <Insets left="10.0" />
-      </GridPane.margin>
-    </Label>
-    <HBox maxWidth="1.7976931348623157E308" prefHeight="120.0" GridPane.columnIndex="1">
-      <children>
-        <Button fx:id="homeScreenButton" mnemonicParsing="false" onAction="#openHomeScreen" prefHeight="75.0" prefWidth="200.0" text="Home">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button fx:id="wineScreenButton" mnemonicParsing="false" onAction="#openWineScreen" prefHeight="75.0" prefWidth="200.0" text="Wines">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button fx:id="listScreenButton" mnemonicParsing="false" onAction="#openListScreen" prefHeight="75.0" prefWidth="200.0" text="My Lists">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button mnemonicParsing="false" onAction="#openVineyardsScreen" prefHeight="75.0" prefWidth="200.0" text="Vineyards">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button fx:id="dataSetsScreenButton" mnemonicParsing="false" onAction="#openDataSetsScreen" prefHeight="75.0" prefWidth="200.0" text="Datasets">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button fx:id="consumptionCalculatorScreenButton" disable="true" ellipsisString="" mnemonicParsing="false" onAction="#openConsumptionCalculatorScreen" prefHeight="75.0" prefWidth="200.0" text="Consumption Calculator" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
-          <font>
-            <Font size="24.0" />
-          </font>
-        </Button>
-      </children>
-      <GridPane.margin>
-        <Insets top="32.0" />
-      </GridPane.margin>
-    </HBox>
-    <BorderPane id="borderPane" fx:id="borderPane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1" GridPane.vgrow="SOMETIMES" />
-  </children>
-</GridPane>
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.MainController">
+   <children>
+      <GridPane gridLinesVisible="true" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="120.0" minHeight="120.0" prefHeight="120.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="874.0" minHeight="10.0" prefHeight="772.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Button minWidth="75.0" mnemonicParsing="false" text="Login" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets bottom="14.0" />
+               </GridPane.margin>
+            </Button>
+            <Button minWidth="75.0" mnemonicParsing="false" text="Register" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="TOP">
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" top="30.0" />
+               </GridPane.margin>
+            </Button>
+            <Label alignment="CENTER" contentDisplay="CENTER" text="WINO">
+               <font>
+                  <Font size="27.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <HBox prefHeight="120.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="homeScreenButton" mnemonicParsing="false" onAction="#openHomeScreen" prefHeight="75.0" prefWidth="200.0" text="Home">
+                     <font>
+                        <Font size="25.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="wineScreenButton" mnemonicParsing="false" onAction="#openWineScreen" prefHeight="75.0" prefWidth="200.0" text="Wines">
+                     <font>
+                        <Font size="25.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="listScreenButton" mnemonicParsing="false" onAction="#openListScreen" prefHeight="75.0" prefWidth="200.0" text="My Lists">
+                     <font>
+                        <Font size="25.0" />
+                     </font>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#openVineyardsScreen" prefHeight="75.0" prefWidth="200.0" text="Vineyards">
+                     <font>
+                        <Font size="25.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="dataSetsScreenButton" mnemonicParsing="false" onAction="#openDataSetsScreen" prefHeight="75.0" prefWidth="200.0" text="Datasets">
+                     <font>
+                        <Font size="25.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="consumptionCalculatorScreenButton" disable="true" ellipsisString="" mnemonicParsing="false" onAction="#openConsumptionCalculatorScreen" prefHeight="75.0" prefWidth="200.0" text="Consumption Calculator" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+               </children>
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" top="32.0" />
+               </GridPane.margin>
+            </HBox>
+            <BorderPane id="borderPane" fx:id="borderPane" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1" GridPane.vgrow="SOMETIMES" />
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>
