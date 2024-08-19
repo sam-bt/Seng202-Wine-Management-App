@@ -57,7 +57,7 @@ public class FXWrapper {
             // provide a custom Controller with parameters
             loader.setControllerFactory(param -> builder.build());
             Parent parent = loader.load();
-            pane.getChildren().clear(); // IMPORTANT
+            //pane.getChildren().clear(); // IMPORTANT
             pane.getChildren().add(parent);
             stage.setTitle(title);
         } catch (IOException e) {
