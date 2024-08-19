@@ -1,10 +1,6 @@
 package seng202.team0.database;
 
-import com.sun.scenario.DelayedRunnable;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -15,31 +11,22 @@ import seng202.team0.database.exceptions.DuplicateTableException;
 import seng202.team0.database.exceptions.TableNotFoundException;
 
 /**
- * SQL Version of Database
- * Uses JDBC
+ * SQL Version of Database Uses JDBC
  *
  * @author mpe133
  */
 public class SQLDatabase extends Database {
 
   // This is the path to the db file
-  private final String dbPath = "jdbc:sqlite:sqlDatabase"+ File.separator + "SQLDatabase.db";
+  private final String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + "SQLDatabase.db";
 
   // Connection to the database
   private Connection connection = null;
 
   /**
-   * Connects to a db file for management
-   * The path to the file is specified by dbpath
-   *
+   * Connects to a db file for management The path to the file is specified by dbpath
    */
-  public void setupDb() {
-
-    // Check if the database is already connected
-    if (connection != null) {
-      System.out.println("Database already exists.");
-      return;
-    }
+  public SQLDatabase() {
 
     // Construct a file path for the database
     File dir = new File("sqlDatabase");
@@ -55,54 +42,22 @@ public class SQLDatabase extends Database {
       // TODO More robust logging here
       e.printStackTrace();
     }
-
   }
 
-  /**
-   * Connects to the database, does not create db file!
-   *
-   * @throws FileNotFoundException if the db file doesn't exist
-   */
-  public void connectDb() throws FileNotFoundException {
-
-    // Check if the database is already connected
-    if (connection != null) {
-      System.out.println("Database already exists.");
-      return;
-    }
-
-    // Ensure database has already been made
-    if (!Files.exists(Paths.get(dbPath))) {
-      throw new FileNotFoundException(dbPath + " does not exist.");
-    }
-
-    try {
-      // Connect to database
-      connection = DriverManager.getConnection(dbPath);
-
-    } catch (SQLException e) {
-      // TODO More robust logging
-      e.printStackTrace();
-
-    }
-  }
 
   /**
    * To disconnect/close database
-   *
    */
   public void disconnectDb() {
-    if (connection != null) {
-      try {
-        this.connection.close();
+    try {
+      this.connection.close();
 
-        // Reset connection
-        connection = null;
+      // Reset connection
+      connection = null;
 
-      } catch (SQLException e) {
-        //TODO More robust logging here
-        e.printStackTrace();
-      }
+    } catch (SQLException e) {
+      //TODO More robust logging here
+      e.printStackTrace();
     }
   }
 
@@ -117,8 +72,7 @@ public class SQLDatabase extends Database {
   public void addTable(String tableName, DataTable source) throws DuplicateTableException {
     // Ensure the database is connected
     if (connection == null) {
-      System.err.println("No database connection.");
-      return;
+      throw new IllegalStateException("Database not connected");
     }
 
     // Check if table exists
@@ -142,14 +96,15 @@ public class SQLDatabase extends Database {
   }
 
   /**
-   * Takes a table and constructs a SQL statement that can be used<br>
-   * to a table based of tableName parameters
+   * Takes a table and constructs a SQL statement that can be used<br> to a table based of tableName
+   * parameters
    *
    * @param tableName name of the SQL table
-   * @param source DataTable that will be read from to construct statement
+   * @param source    DataTable that will be read from to construct statement
    * @return the SQL statement itself
    */
   public String constructTableStatementString(String tableName, DataTable source) {
+    //TODO Rewrite primary key autogen
 
     // Construct start of prompt
     StringBuilder statement = new StringBuilder();
@@ -190,6 +145,16 @@ public class SQLDatabase extends Database {
   }
 
   /**
+   * Uses the INSERT command in sql to add a Datatable into a sql table
+   *
+   * @param targetTable the name of the sql table
+   * @param source      the source table
+   */
+  public void insertIntoTable(String targetTable, DataTable source) {
+
+  }
+
+  /**
    * Removes a table from the database
    *
    * @param tableName name of table to remove
@@ -198,6 +163,32 @@ public class SQLDatabase extends Database {
   @Override
   public void removeTable(String tableName) throws TableNotFoundException {
 
+    // Ensure database is connected
+    if (connection == null) {
+      throw new IllegalStateException("Database not connected");
+    }
+
+    // Remove whitespace
+    tableName = tableName.replaceAll("\\s+", "");
+
+    // Make sure table exists
+    if (!tableExists(tableName)) {
+      throw new TableNotFoundException(tableName + " does not exist.");
+    }
+
+    // Create string statement
+    String removeTableStatement = "DROP TABLE IF EXISTS " + tableName;
+
+    // Execute statement
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(removeTableStatement);
+      System.out.println(tableName + "removed");
+
+    } catch (SQLException e) {
+      // TODO More robust logging
+      e.printStackTrace();
+      System.err.println(e.getMessage());
+    }
   }
 
   /**
@@ -220,6 +211,7 @@ public class SQLDatabase extends Database {
       ResultSet tables = metaData.getTables(null, null, tableName, null);
 
       if (tables.next()) {
+        tables.close();
         return true;
       }
 

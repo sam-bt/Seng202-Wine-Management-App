@@ -12,9 +12,11 @@ import seng202.team0.database.DataTable;
 import seng202.team0.database.SQLDatabase;
 import seng202.team0.database.Value;
 import seng202.team0.database.exceptions.DuplicateTableException;
+import seng202.team0.database.exceptions.TableNotFoundException;
 
 public class SQLDatabaseTest {
-  SQLDatabase db = new SQLDatabase();
+
+  SQLDatabase db;
 
   @BeforeEach
   public void setUp() {
@@ -22,7 +24,7 @@ public class SQLDatabaseTest {
       Files.deleteIfExists(Paths.get("sqlDatabase/SQLDatabase.db"));
     } catch (IOException ignored) {
     }
-    db.setupDb();
+    db = new SQLDatabase();
   }
 
   @Test
@@ -75,5 +77,38 @@ public class SQLDatabaseTest {
     }
 
     Assertions.assertTrue(db.tableExists("test_table"));
+  }
+
+  @Test
+  public void testRemoveTable() {
+    ArrayList<ArrayList<Value>> columns = new ArrayList<>();
+    columns.add(new ArrayList<>());
+    columns.add(new ArrayList<>());
+    columns.add(new ArrayList<>());
+    columns.get(0).add(Value.make(0.0));
+    columns.get(0).add(Value.make(1.0));
+
+    columns.get(1).add(Value.make("fing"));
+    columns.get(1).add(Value.make("ding"));
+
+    columns.get(2).add(Value.make(0.0));
+    columns.get(2).add(Value.make(-1.0));
+
+    DataTable testTable = new DataTable(
+        new String[]{"foo", "baz", "bar"},
+        columns
+    );
+
+    try {
+      db.addTable("test_table", testTable);
+      db.addTable("test_table2", testTable);
+      db.removeTable("test_table");
+      Assertions.assertFalse(db.tableExists("test_table"));
+      Assertions.assertTrue(db.tableExists("test_table2"));
+
+    } catch (DuplicateTableException | TableNotFoundException b) {
+      Assertions.fail();
+    }
+
   }
 }
