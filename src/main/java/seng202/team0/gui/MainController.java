@@ -24,15 +24,18 @@ public class MainController extends Controller {
    */
   public MainController(ManagerContext managerContext) {
     super(managerContext);
+    // This is an ugly circular dependency. It is easier to resolve here
+    managerContext.GUIManager.setMainController(this);
   }
 
-  public void switchScene(String fxml, Builder<?> builder) {
+  public void switchScene(String fxml, String title, Builder<?> builder) {
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
       // provide a custom Controller with parameters
       loader.setControllerFactory(param -> builder.build());
       Parent parent = loader.load();
       borderPane.setCenter(parent);
+      managerContext.GUIManager.setWindowTitle(title);
     } catch (IOException e) {
       System.err.println("Failed to load screen: " + fxml);
       e.printStackTrace();
@@ -45,7 +48,7 @@ public class MainController extends Controller {
    */
   @FXML
   public void openDataSetsScreen() {
-    switchScene("/fxml/dataset_screen.fxml", () -> new DataTableController(managerContext));
+    switchScene("/fxml/dataset_screen.fxml", "Manage Datasets", () -> new DataTableController(managerContext));
   }
 
   /**
@@ -53,35 +56,35 @@ public class MainController extends Controller {
    */
   @FXML
   public void openHomeScreen() {
-    switchScene("/fxml/home_screen.fxml", () -> new HomeScreenController(managerContext));
+    switchScene("/fxml/home_screen.fxml", "Home", () -> new HomeScreenController(managerContext));
   }
   /**
    * Launches the wine screen.
    */
   @FXML
   public void openWineScreen() {
-    switchScene("/fxml/wine_screen.fxml", () -> new WineScreenController(managerContext));
+    switchScene("/fxml/wine_screen.fxml", "Wine Information", () -> new WineScreenController(managerContext));
   }
   /**
    * Launches the list screen.
    */
   @FXML
   public void openListScreen() {
-    switchScene("/fxml/list_screen.fxml", () -> new WishlistController(managerContext));
+    switchScene("/fxml/list_screen.fxml", "My Lists", () -> new WishlistController(managerContext));
   }
   /**
    * Launches the vineyard screen.
    */
   @FXML
   public void openVineyardsScreen() {
-    switchScene("/fxml/vineyard_screen.fxml", () -> new VineyardScreenController(managerContext));
+    switchScene("/fxml/vineyard_screen.fxml", "Vineyards",  () -> new VineyardScreenController(managerContext));
   }
   /**
    * Launches the consumption calculator screen.
    */
   @FXML
   public void openConsumptionCalculatorScreen() {
-    switchScene("/fxml/consumption_calculator_screen.fxml", () -> new ConsumptionCalculatorController(managerContext));
+    switchScene("/fxml/consumption_calculator_screen.fxml", "Consumption Calculator",  () -> new ConsumptionCalculatorController(managerContext));
   }
 
 }

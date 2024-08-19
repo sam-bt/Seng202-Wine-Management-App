@@ -38,7 +38,10 @@ public class FXWrapper {
             new GUIManager(this)
         );
         loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
-        //this.managerContext.GUIManager.launchHomeScreen(this.managerContext);
+
+    }
+    public void setWindowTitle(String title){
+        stage.setTitle(title);
     }
 
     /**
