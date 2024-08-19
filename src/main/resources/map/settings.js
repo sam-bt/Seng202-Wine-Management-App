@@ -13,3 +13,10 @@ const MAP_CONFIG = {
     center: [-44.0, 171.0],
     zoom: 6
 }
+
+const WINE_ICON = L.icon({
+    iconUrl: "wine_glass_small.png",
+    iconSize: [36, 60],
+    iconAnchor: [24, 40],
+    popupAnchor: [0, -40],
+});
