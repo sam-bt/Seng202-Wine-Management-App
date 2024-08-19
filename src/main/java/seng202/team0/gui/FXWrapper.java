@@ -57,8 +57,11 @@ public class FXWrapper {
             // provide a custom Controller with parameters
             loader.setControllerFactory(param -> builder.build());
             Parent parent = loader.load();
-            //pane.getChildren().clear(); // IMPORTANT
+            pane.getChildren().clear(); // IMPORTANT
             pane.getChildren().add(parent);
+            if(loader.getController() instanceof Controller controller){
+                controller.init();
+            }
             stage.setTitle(title);
         } catch (IOException e) {
             System.out.println("Failed to load screen: " + fxml);

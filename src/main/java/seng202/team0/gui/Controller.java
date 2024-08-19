@@ -17,6 +17,10 @@ public abstract class Controller {
   }
 
   /**
+   * Called after the constructor for when fxml is loaded
+   */
+  public void init(){}
+  /**
    * Called to get a return value when this controller is destroyed
    * @return a value
    */

@@ -35,6 +35,9 @@ public class MainController extends Controller {
       loader.setControllerFactory(param -> builder.build());
       Parent parent = loader.load();
       borderPane.setCenter(parent);
+      if(loader.getController() instanceof Controller controller){
+        controller.init();
+      }
       managerContext.GUIManager.setWindowTitle(title);
     } catch (IOException e) {
       System.err.println("Failed to load screen: " + fxml);
