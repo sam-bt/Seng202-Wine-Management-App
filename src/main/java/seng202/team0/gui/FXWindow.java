@@ -28,7 +28,7 @@ public class FXWindow extends Application {
         baseController.init(primaryStage);
 
         primaryStage.setTitle("WINO App [DEV]");
-        primaryStage.setResizable(false);
+        //primaryStage.setResizable(false); No need for this anymore
         Scene scene = new Scene(root, 1440, 900);
         primaryStage.setScene(scene);
         primaryStage.show();
