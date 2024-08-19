@@ -6,7 +6,7 @@ import seng202.team0.managers.ManagerContext;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
-
+import seng202.team0.util.ProcessCSV;
 
 /**
  * Data Table Controller (MORE DETAIL HERE!)
@@ -88,15 +88,8 @@ public class DataTableController extends Controller {
     File selectedFile = fileChooser.showOpenDialog(stage);
 
     if (selectedFile != null) {
-      processCSVFile(selectedFile);
+      ProcessCSV.processFile(selectedFile);
     }
-  }
-
-  /**
-   * Stand-in function to process csv files (will be replaced when functionality added)
-   */
-  public void processCSVFile(File file) {
-    System.out.println("file processing");
   }
 
 }
