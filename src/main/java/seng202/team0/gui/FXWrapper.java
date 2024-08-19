@@ -37,7 +37,8 @@ public class FXWrapper {
             new MapManager(),
             new GUIManager(this)
         );
-        this.managerContext.GUIManager.launchHomeScreen(this.managerContext);
+        loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
+        //this.managerContext.GUIManager.launchHomeScreen(this.managerContext);
     }
 
     /**
