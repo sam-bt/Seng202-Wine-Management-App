@@ -33,12 +33,12 @@
     </Label>
     <HBox prefHeight="120.0" prefWidth="1200.0" GridPane.columnIndex="1">
       <children>
-        <Button fx:id="homeScreenButton" mnemonicParsing="false" onAction="#openHomeScreen" prefHeight="75.0" prefWidth="200.0" text="Home">
+        <Button mnemonicParsing="false" onAction="#openHomeScreen" prefHeight="75.0" prefWidth="200.0" text="Home">
           <font>
             <Font size="25.0" />
           </font>
         </Button>
-        <Button fx:id="wineScreenButton" mnemonicParsing="false" onAction="#openWineScreen" prefHeight="75.0" prefWidth="200.0" text="Wines">
+        <Button mnemonicParsing="false" onAction="#openWineScreen" prefHeight="75.0" prefWidth="200.0" text="Wines">
           <font>
             <Font size="25.0" />
           </font>

@@ -33,32 +33,32 @@
     </Label>
       <HBox prefHeight="120.0" prefWidth="1200.0" GridPane.columnIndex="1">
          <children>
-            <Button fx:id="homeScreenButton" disable="true" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Home">
+            <Button disable="true" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Home">
                <font>
                   <Font size="25.0" />
                </font>
             </Button>
-            <Button fx:id="wineScreenButton" mnemonicParsing="false" onAction="#openWineScreen" prefHeight="75.0" prefWidth="200.0" text="Wines">
+            <Button mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Wines">
                <font>
                   <Font size="25.0" />
                </font>
             </Button>
-            <Button fx:id="listScreenButton" mnemonicParsing="false" onAction="#openListScreen" prefHeight="75.0" prefWidth="200.0" text="My Lists">
+            <Button mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="My Lists">
                <font>
                   <Font size="25.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" onAction="#openVineyardsScreen" prefHeight="75.0" prefWidth="200.0" text="Vineyards">
+            <Button mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Vineyards">
                <font>
                   <Font size="25.0" />
                </font>
             </Button>
-            <Button fx:id="dataSetsScreenButton" mnemonicParsing="false" onAction="#openDataSetsScreen" prefHeight="75.0" prefWidth="200.0" text="Datasets">
+            <Button mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Datasets">
                <font>
                   <Font size="25.0" />
                </font>
             </Button>
-            <Button fx:id="consumptionCalculatorScreenButton" ellipsisString="" mnemonicParsing="false" onAction="#openConsumptionCalculatorScreen" prefHeight="75.0" prefWidth="200.0" text="Consumption Calculator" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+            <Button ellipsisString="" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Consumption Calculator" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
                <font>
                   <Font size="24.0" />
                </font>
