@@ -22,8 +22,9 @@ function initMap(format, data) {
 
     initTestData();
 
-    console.log(heatMapData);
     heatMapLayer.setData({data: heatMapData}, data);
+
+    findCoordinatesFromLocation("Christchurch");
 }
 
 function initTestData() {
