@@ -23,7 +23,7 @@ public class ProcessCSV {
         return false;
       }
 
-      System.out.println(Arrays.toString(columnNames));
+      System.out.println("Column Names: "+Arrays.toString(columnNames));
 
       while ((nextLine = fileReader.readNext()) != null) {
         System.out.println(Arrays.toString(nextLine));
