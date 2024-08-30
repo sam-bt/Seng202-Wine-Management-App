@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public class ProcessCSV {
 
-  public static boolean processFile(File file) {
+  public static boolean processFile(File file) { //TODO bind attributes to wine class
     try (CSVReader fileReader = new CSVReader(new FileReader(file))) {
       String[] nextLine;
       String[] columnNames;
