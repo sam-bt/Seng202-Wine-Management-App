@@ -27,24 +27,9 @@ public class WineScreenController extends Controller{
 
   }
 
-  /**
-   * Called after the constructor for when fxml is loaded
-   * <p>
-   *   Gets, loads, and displays a table from a list of wines from the controller layer
-   * </p>
-   */
-  @Override
-  public void init() {
+  private void openWineRange(int begin, int end) {
 
-    ObservableList<Wine> wines = FXCollections.observableArrayList(
-        new Wine("Joe Wine", "Jeaux", "New Zealand", "Joetown Wines", "Hints of joe", 100, 15.0f,
-            10.0f),
-        new Wine("Joe Wine2", "Jeaux", "New Zealand", "Joetown Wines", "Hints of joe", 50, 10.0f,
-            12.0f)
-
-    );
-
-    tableView.setItems(wines);
+    tableView.setItems(managerContext.databaseManager.getWinesInRange(begin, end));
     tableView.setEditable(false);
     TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
     titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
@@ -73,7 +58,17 @@ public class WineScreenController extends Controller{
     TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
     tableView.getColumns().add(priceColumn);
+  }
 
+  /**
+   * Called after the constructor for when fxml is loaded
+   * <p>
+   *   Gets, loads, and displays a table from a list of wines from the controller layer
+   * </p>
+   */
+  @Override
+  public void init() {
+    openWineRange(0, 100);
   }
 
 }
