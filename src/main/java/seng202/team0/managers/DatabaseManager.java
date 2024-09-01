@@ -21,9 +21,9 @@ public class DatabaseManager {
    */
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
     ObservableList<Wine> wines = FXCollections.observableArrayList(
-        new Wine("Joe Wine", "Jeaux", "New Zealand", "Joetown Wines", "Hints of joe", 100, 15.0f,
+        new Wine("Plume Pinot Noir", "Pinot Noir", "New Zealand", "Lake Chalice", "", 75, 0.0f,
             10.0f),
-        new Wine("Joe Wine2", "Jeaux", "New Zealand", "Joetown Wines", "Hints of joe", 50, 10.0f,
+        new Wine("Clayvin Single Vineyard Chardonnay", "Chardonnay", "New Zealand", "Giesen Group", "", 50, 0.0f,
             12.0f)
     );
     return wines;
