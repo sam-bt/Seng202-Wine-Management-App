@@ -19,49 +19,4 @@ public class WishlistController extends Controller{
     super(managerContext);
   }
 
-  /**
-   * Launches the data set screen.
-   */
-  @FXML
-  public void openDataSetsScreen() {
-    managerContext.GUIManager.launchDataSetsScreen(managerContext);
-  }
-  /**
-   * Launches the home screen.
-   */
-  @FXML
-  public void openHomeScreen() {
-    managerContext.GUIManager.launchHomeScreen(managerContext);
-  }
-  /**
-   * Launches the wine screen.
-   */
-  @FXML
-  public void openWineScreen() {
-    managerContext.GUIManager.launchWineScreen(managerContext);
-  }
-
-  /**
-   * Launches the list screen.
-   */
-  @FXML
-  public void openListScreen() {
-    managerContext.GUIManager.launchListsScreen(managerContext);
-  }
-  /**
-   * Launches the vineyard screen.
-   */
-  @FXML
-  public void openVineyardsScreen() {
-    managerContext.GUIManager.launchVineyardsScreen(managerContext);
-  }
-  /**
-   * Launches the consumption calculator screen.
-   */
-  @FXML
-  public void openConsumptionCalculatorScreen() {
-    managerContext.GUIManager.launchConsumptionCalculatorScreen(managerContext);
-  }
-
-
 }

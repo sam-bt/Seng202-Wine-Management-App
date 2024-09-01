@@ -37,7 +37,11 @@ public class FXWrapper {
             new MapManager(),
             new GUIManager(this)
         );
-        this.managerContext.GUIManager.launchHomeScreen(this.managerContext);
+        loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
+
+    }
+    public void setWindowTitle(String title){
+        stage.setTitle(title);
     }
 
     /**
@@ -55,6 +59,9 @@ public class FXWrapper {
             Parent parent = loader.load();
             pane.getChildren().clear(); // IMPORTANT
             pane.getChildren().add(parent);
+            if(loader.getController() instanceof Controller controller){
+                controller.init();
+            }
             stage.setTitle(title);
         } catch (IOException e) {
             System.out.println("Failed to load screen: " + fxml);
