@@ -1,21 +1,12 @@
 package seng202.team0.gui;
 
-import java.util.ArrayList;
-import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableListValue;
-import javafx.beans.value.ObservableStringValue;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
-import javafx.util.Callback;
-import seng202.team0.database.DataTable;
-import seng202.team0.database.Record;
-import seng202.team0.database.Value;
+import javafx.scene.control.cell.PropertyValueFactory;
+import seng202.team0.database.Wine;
 import seng202.team0.managers.ManagerContext;
 
 /**
@@ -25,7 +16,7 @@ import seng202.team0.managers.ManagerContext;
 public class WineScreenController extends Controller{
 
   @FXML
-  TableView<Record> tableView;
+  TableView<Wine> tableView;
   /**
    * Constructor
    *
@@ -38,74 +29,51 @@ public class WineScreenController extends Controller{
 
   /**
    * Called after the constructor for when fxml is loaded
+   * <p>
+   *   Gets, loads, and displays a table from a list of wines from the controller layer
+   * </p>
    */
   @Override
   public void init() {
-    // Would get wines table here
 
-    ArrayList<ArrayList<Value>> columns = new ArrayList<>();
-    columns.add(new ArrayList<>());
-    columns.add(new ArrayList<>());
-    columns.add(new ArrayList<>());
-    columns.get(0).add(Value.make("Good wine"));
-    columns.get(0).add(Value.make("Joe's Better Wine"));
+    ObservableList<Wine> wines = FXCollections.observableArrayList(
+        new Wine("Joe Wine", "Jeaux", "New Zealand", "Joetown Wines", "Hints of joe", 100, 15.0f,
+            10.0f),
+        new Wine("Joe Wine2", "Jeaux", "New Zealand", "Joetown Wines", "Hints of joe", 50, 10.0f,
+            12.0f)
 
-    columns.get(1).add(Value.make("Bob"));
-    columns.get(1).add(Value.make("Joe"));
-
-    columns.get(2).add(Value.make(90.0));
-    columns.get(2).add(Value.make(100.0));
-
-    DataTable table = new DataTable(new String[]{"Name", "Producer", "Score"}, columns);
-
-    ObservableList<Record> records = FXCollections.observableArrayList(
-        table.getRecordForIndex(0),
-        table.getRecordForIndex(1)
     );
 
-    tableView.setItems(records);
+    tableView.setItems(wines);
     tableView.setEditable(false);
-    for(int i=0; i < table.columnSize(); i++){
-      String name = table.getColumnName(i);
-      TableColumn<Record, String> column = new TableColumn<>(name);
-      column.setCellValueFactory(recordStringCellDataFeatures -> {
-        return new ObservableStringValue() {
-          @Override
-          public String get() {
-            return "joe";
-          }
+    TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
+    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+    tableView.getColumns().add(titleColumn);
 
-          @Override
-          public void addListener(ChangeListener<? super String> changeListener) {
+    TableColumn<Wine, String> varietyColumn = new TableColumn<>("Variety");
+    varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));
+    tableView.getColumns().add(varietyColumn);
 
-          }
+    TableColumn<Wine, String> wineryColumn = new TableColumn<>("Winery");
+    wineryColumn.setCellValueFactory(new PropertyValueFactory<>("winery"));
+    tableView.getColumns().add(wineryColumn);
 
-          @Override
-          public void removeListener(ChangeListener<? super String> changeListener) {
+    TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
+    descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+    tableView.getColumns().add(descriptionColumn);
 
-          }
+    TableColumn<Wine, String> scoreColumn = new TableColumn<>("Score");
+    scoreColumn.setCellValueFactory(new PropertyValueFactory<>("scorePercent"));
+    tableView.getColumns().add(scoreColumn);
 
-          @Override
-          public String getValue() {
-            return "joe";
-          }
+    TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
+    abvColumn.setCellValueFactory(new PropertyValueFactory<>("abv"));
+    tableView.getColumns().add(abvColumn);
 
-          @Override
-          public void addListener(InvalidationListener invalidationListener) {
+    TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
+    priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+    tableView.getColumns().add(priceColumn);
 
-          }
-
-          @Override
-          public void removeListener(InvalidationListener invalidationListener) {
-
-          }
-        };
-      });
-      tableView.getColumns().add(column);
-    }
-
-
-    System.out.println("Hi");
   }
 
 }
