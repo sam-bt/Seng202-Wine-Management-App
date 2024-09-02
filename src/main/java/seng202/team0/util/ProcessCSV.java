@@ -44,17 +44,16 @@ public class ProcessCSV {
   }
 
   /**
-   * Gets the column names of a csv file
-   * <p>
-   *   Strips empty column names
-   * </p>
+   * Gets a row from a csv file
    * @param file file to read
-   * @return names of columns if success
+   * @return given row if successful
    */
-  public static String[] getColumnNames(File file) throws IOException, CsvValidationException{
+  public static String[] getCSVRow(File file, int row) throws IOException, CsvValidationException{
     try (CSVReader fileReader = new CSVReader(new FileReader(file))) {
-      String[] columnNames = fileReader.readNext();
-      return Arrays.stream(columnNames).filter(string -> !string.isEmpty()).toArray(String[]::new);
+      for(int i=0; i < row; i++){
+        fileReader.readNext();
+      }
+      return fileReader.readNext();
 
     } catch (IOException | CsvValidationException e) {
       LogManager.getLogger(ProcessCSV.class).error("Failed to open csv file: " + file.getAbsolutePath(), e);
@@ -65,4 +64,28 @@ public class ProcessCSV {
     System.out.println("Inserting");
 
   }
+
+  /**
+   * Gets a CSV file as a list of rows
+   * @param file file to read
+   * @return rows if successful
+   */
+  public static ArrayList<String[]> getCSVRows(File file) throws IOException, CsvValidationException{
+    ArrayList<String[]> rows = new ArrayList<>();
+    String[] nextLine;
+    try (CSVReader fileReader = new CSVReader(new FileReader(file))) {
+
+      while ((nextLine = fileReader.readNext()) != null) {
+        System.out.println(Arrays.toString(nextLine));
+        rows.add(nextLine);
+      }
+
+    } catch (IOException | CsvValidationException e) {
+      LogManager.getLogger(ProcessCSV.class).error("Failed to open csv file: " + file.getAbsolutePath(), e);
+      throw e;
+    }
+    return rows;
+  }
+
+
 }

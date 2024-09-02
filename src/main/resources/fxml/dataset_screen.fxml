@@ -8,9 +8,19 @@
 
 <HBox xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.DataTableController">
    <children>
-      <VBox alignment="CENTER_LEFT">
+      <VBox alignment="CENTER" spacing="25.0">
          <children>
-            <Button fx:id="uploadCSVButton" minHeight="50.0" minWidth="200.0" mnemonicParsing="false" onAction="#uploadCSVFile" prefHeight="50.0" prefWidth="200.0" text="Upload CSV">
+            <Button fx:id="importCSVButton" minHeight="50.0" minWidth="200.0" mnemonicParsing="false" onAction="#importCSVFile" prefHeight="50.0" prefWidth="200.0" text="Import CSV">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="appendButton" disable="true" minHeight="30.0" minWidth="150.0" mnemonicParsing="false" onAction="#appendCSVFile" text="Append">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="replaceButton" disable="true" minHeight="30.0" minWidth="150.0" mnemonicParsing="false" onAction="#replaceCSVFile" text="Replace">
                <font>
                   <Font size="20.0" />
                </font>
@@ -19,7 +29,7 @@
       </VBox>
       <ScrollPane>
          <content>
-            <HBox fx:id="columnRemapList" />
+            <HBox fx:id="columnRemapList" spacing="15.0" />
          </content>
       </ScrollPane>
    </children>
