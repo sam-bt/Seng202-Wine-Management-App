@@ -122,7 +122,7 @@ public class SQLDatabase extends Database {
       statement.append(source.getColumnName(i));
 
       // Check type of col
-      Value checkValue = source.get(i, 1);
+      Value checkValue = source.get(i, 0);
       if (checkValue.getTypeIndex() == 0) {
         statement.append(" TEXT");
       } else {
@@ -166,14 +166,14 @@ public class SQLDatabase extends Database {
       // Iterate through table, get values and construct statements
       for (int i = 0; i < source.rowSize(); i++) {
         for (int j = 0; j < source.columnSize(); j++) {
-          Value checkValue = source.get(i, j);
+          Value checkValue = source.get(j, i);
           switch (checkValue.getTypeIndex()) {
             case 0:
-              preparedStatement.setString(j, checkValue.getAsString());
+              preparedStatement.setString(j + 1, checkValue.getAsString());
               break;
 
             case 1:
-              preparedStatement.setDouble(j, checkValue.getAsReal());
+              preparedStatement.setDouble(j + 1, checkValue.getAsReal());
               break;
 
             default:

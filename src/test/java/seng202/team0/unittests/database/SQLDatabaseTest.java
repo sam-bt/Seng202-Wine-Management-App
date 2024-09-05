@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -116,6 +117,7 @@ public class SQLDatabaseTest {
 
   @Test
   public void testInsertTable() {
+    // TODO Ensure this test passes
     ArrayList<ArrayList<Value>> columns = new ArrayList<>();
     columns.add(new ArrayList<>());
     columns.add(new ArrayList<>());
@@ -129,10 +131,18 @@ public class SQLDatabaseTest {
     columns.get(2).add(Value.make(0.0));
     columns.get(2).add(Value.make(-1.0));
 
+    ArrayList<ArrayList<Value>> singleRow = new ArrayList<>();
+    singleRow.add(new ArrayList<>());
+    singleRow.add(new ArrayList<>());
+    singleRow.add(new ArrayList<>());
+    singleRow.get(0).add(Value.make(0.0));
+    singleRow.get(1).add(Value.make("1.0"));
+    singleRow.get(2).add(Value.make(1.0));
+
     // Initial empty table
     DataTable testTable = new DataTable(
         new String[]{"foo", "baz", "bar"},
-        new ArrayList<>()
+        singleRow
     );
 
     // Table with data
@@ -151,14 +161,15 @@ public class SQLDatabaseTest {
     // Check everything was inserted correctly
     try (Statement statement = db.getConnection().createStatement()) {
       ResultSet resultSet = statement.executeQuery("SELECT * FROM test_table");
+      resultSet.next(); // skip pre-added row
 
-      // Check row 1
+      // Check inserted row 1
       resultSet.next();
       Assertions.assertEquals(0.0, resultSet.getDouble("foo"));
       Assertions.assertEquals("fing", resultSet.getString("baz"));
       Assertions.assertEquals(0.0, resultSet.getDouble("bar"));
 
-      // Check row 2
+      // Check inserted row 2
       resultSet.next();
       Assertions.assertEquals(1.0, resultSet.getDouble("foo"));
       Assertions.assertEquals("ding", resultSet.getString("baz"));
