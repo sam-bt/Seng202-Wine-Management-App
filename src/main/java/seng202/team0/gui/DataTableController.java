@@ -156,7 +156,14 @@ public class DataTableController extends Controller {
 
     ArrayList<Wine> wines = new ArrayList<>();
     for (int row = 1; row < selectedTable.size(); row++) {
+
       String[] tuple = selectedTable.get(row);
+
+      // Ignore countries other than NZ
+      if(country != -1 && tuple[country].compareToIgnoreCase("New Zealand") != 0) {
+        continue;
+      }
+
       wines.add(Validator.parseWine(
           title != -1 ? tuple[title] : "",
           variety != -1 ? tuple[variety] : "",
