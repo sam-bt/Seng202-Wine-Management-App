@@ -1,10 +1,8 @@
 package seng202.team0.gui;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -13,12 +11,15 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.apache.logging.log4j.LogManager;
-import seng202.team0.managers.ManagerContext;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import java.io.File;
+import javafx.util.StringConverter;
+import org.apache.logging.log4j.LogManager;
+import seng202.team0.database.Wine;
+import seng202.team0.managers.ManagerContext;
+import seng202.team0.util.Exceptions.ValidationException;
 import seng202.team0.util.ProcessCSV;
+import seng202.team0.util.Validator;
 
 /**
  * This class handles importing existing data into the managers
@@ -50,42 +51,24 @@ public class DataTableController extends Controller {
   @FXML
   private Button replaceButton;
 
-  ArrayList<ChoiceBox<String>> columnNames = new ArrayList<>();
-
+  /**
+   * List of column name buttons
+   */
+  ArrayList<ChoiceBox<PrettyName>> columnNames = new ArrayList<>();
   /**
    * Names of columns
    */
-  private String[] prettyNames = new String[]{
-      "",
-      "Title",
-      "Variety",
-      "Country",
-      "Winery",
-      "Description",
-      "Score",
-      "ABV",
-      "NZD",
+  private final PrettyName[] prettyNames = new PrettyName[]{
+      PrettyName.NIL,
+      PrettyName.TITLE,
+      PrettyName.VARIETY,
+      PrettyName.COUNTRY,
+      PrettyName.WINERY,
+      PrettyName.DESCRIPTION,
+      PrettyName.SCORE,
+      PrettyName.ABV,
+      PrettyName.NZD,
   };
-
-  /**
-   * Array of rows of current csv
-   * <p>
-   *   Might be null
-   * </p>
-   */
-  private ArrayList<String[]> selectedTable;
-
-
-
-
-  /**
-   * Constructor
-   *
-   * @param managerContext manager context
-   */
-  public DataTableController(ManagerContext managerContext) {
-    super(managerContext);
-  }
 
   /**
    * Checks that all remap columns are in a valid state
@@ -100,36 +83,119 @@ public class DataTableController extends Controller {
 
     // Check for each box if there are any others with same value
     for(int i=0; i < columnNames.size(); i++) {
-      String value = columnNames.get(i).getValue();
-      if(value == null || Objects.equals(value, ""))
+      PrettyName name = columnNames.get(i).getValue();
+      if (name == null || name == PrettyName.NIL)
         continue;
 
       for(int j=0; j < columnNames.size(); j++) {
         if(i != j) {
-          if(Objects.equals(value, columnNames.get(j).getValue()))
+          if (columnNames.get(j).getValue() == name)
             return false;
         }
       }
     }
     // Check there is a title box
-    boolean containsTitle = columnNames.stream().anyMatch(stringChoiceBox -> Objects.equals(
-        stringChoiceBox.getValue(), "Title"));
+    boolean containsTitle = columnNames.stream()
+        .anyMatch(stringChoiceBox -> stringChoiceBox.getValue() == PrettyName.TITLE);
 
     return containsTitle;
 
   }
-  boolean validateColumns() {
+
+  /**
+   * Array of rows of current csv
+   * <p>
+   *   Might be null
+   * </p>
+   */
+  private ArrayList<String[]> selectedTable;
+
+  /**
+   * Constructor
+   *
+   * @param managerContext manager context
+   */
+  public DataTableController(ManagerContext managerContext) {
+    super(managerContext);
+  }
+
+  /**
+   * Gets column idx from name
+   * <p>
+   * requires each column name to be unique
+   * </p>
+   *
+   * @param name name
+   * @return index
+   */
+  int getRenamedColumn(PrettyName name) {
+    for (int i = 0; i < columnNames.size(); i++) {
+      if (columnNames.get(i).getValue() == name) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Gets a list of wines from the currently selected table
+   * @return list of wines
+   * @throws ValidationException if validation error
+   */
+  ArrayList<Wine> getWinesFromTable() throws ValidationException {
+
+    // It is possible value might be null. Validator should catch if attribute is needed
+    int title = getRenamedColumn(PrettyName.TITLE);
+    int variety = getRenamedColumn(PrettyName.VARIETY);
+    int country = getRenamedColumn(PrettyName.COUNTRY);
+    int winery = getRenamedColumn(PrettyName.WINERY);
+    int description = getRenamedColumn(PrettyName.DESCRIPTION);
+    int score = getRenamedColumn(PrettyName.SCORE);
+    int abv = getRenamedColumn(PrettyName.ABV);
+    int nzd = getRenamedColumn(PrettyName.NZD);
+
+    ArrayList<Wine> wines = new ArrayList<>();
+    for (int row = 1; row < selectedTable.size(); row++) {
+      String[] tuple = selectedTable.get(row);
+      wines.add(Validator.parseWine(
+          title != -1 ? tuple[title] : "",
+          variety != -1 ? tuple[variety] : "",
+          country != -1 ? tuple[country] : "",
+          winery != -1 ? tuple[winery] : "",
+          description != -1 ? tuple[description] : "",
+          score != -1 ? tuple[score] : "",
+          abv != -1 ? tuple[abv] : "",
+          nzd != -1 ? tuple[nzd] : ""
+      ));
+    }
+    return wines;
+
+  }
+
+  /**
+   * Checks if each row is suitable to construct a wine with
+   *
+   * @return if all rows are valid
+   */
+  boolean validateColumnValues() {
     if(selectedTable == null)
       return false;
+
+    try {
+      getWinesFromTable();
+    } catch (Exception ignored) {
+      return false;
+    }
+
     return true;
   }
 
   /**
-   * updates the state of if this selection of rows to remap is valid
+   * Updates the state of if this selection of rows to remap is valid
    */
   void updateValidation() {
     // Check all option boxes only correspond to one
-    if (!isValidRemapping()) {
+    if (!isValidRemapping() || !validateColumnValues()) {
       appendButton.setDisable(true);
       replaceButton.setDisable(true);
       return;
@@ -138,8 +204,6 @@ public class DataTableController extends Controller {
     replaceButton.setDisable(false);
   }
 
-
-
   /**
    * Makes the option box
    * @param name name to maybe preselect
@@ -147,11 +211,27 @@ public class DataTableController extends Controller {
    */
   private Node makeOptionBox(String name) {
 
-    ChoiceBox<String> choiceBox = new ChoiceBox<>();
+    ChoiceBox<PrettyName> choiceBox = new ChoiceBox<>();
     choiceBox.getItems().addAll(prettyNames);
     choiceBox.setMaxWidth(Double.MAX_VALUE);
-    for(String prettyName : prettyNames){
-      if(prettyName.compareToIgnoreCase(name) == 0) {
+    choiceBox.setValue(PrettyName.NIL);
+    choiceBox.setConverter(new StringConverter<>() {
+      @Override
+      public String toString(PrettyName prettyName) {
+        if (prettyName == null) {
+          return "";
+        }
+        return prettyName.getName();
+      }
+
+      @Override
+      public PrettyName fromString(String s) {
+        return null;
+      }
+    });
+
+    for (PrettyName prettyName : prettyNames) {
+      if (prettyName.getName().compareToIgnoreCase(name) == 0) {
         choiceBox.setValue(prettyName);
         break;
       }
@@ -161,6 +241,31 @@ public class DataTableController extends Controller {
 
     columnNames.add(choiceBox);
     return choiceBox;
+  }
+
+  /**
+   * Enum for column renaming names
+   */
+  enum PrettyName {
+    NIL(""),
+    TITLE("Title"),
+    VARIETY("Variety"),
+    COUNTRY("Country"),
+    WINERY("Winery"),
+    DESCRIPTION("Description"),
+    SCORE("Score"),
+    ABV("ABV"),
+    NZD("NZD");
+
+    private final String name;
+
+    PrettyName(String prettyName) {
+      this.name = prettyName;
+    }
+
+    public String getName() {
+      return name;
+    }
   }
 
 

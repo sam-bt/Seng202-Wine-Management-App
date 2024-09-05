@@ -1,8 +1,16 @@
 package seng202.team0.util;
 
+import java.util.Objects;
 import seng202.team0.database.Wine;
 import seng202.team0.util.Exceptions.ValidationException;
 
+/**
+ * Validator is used validating and unmarshalling data
+ * <p>
+ * The API of this is deliberately made so you validate/construct in one call. This is to prevent
+ * scenarios where one forgets to validate an input or constructs a broken object.
+ * </p>
+ */
 public class Validator {
 
   /**
@@ -18,7 +26,7 @@ public class Validator {
    * @param price price
    * @return wine
    */
-  Wine parseWine(
+  public static Wine parseWine(
       String title,
       String variety,
       String country,
@@ -29,15 +37,16 @@ public class Validator {
       String price
       ) throws ValidationException {
       try {
+
         return new Wine(
             title,
             variety,
             country,
             winery,
             description,
-            Integer.parseInt(scorePercent),
-            Float.parseFloat(abv),
-            Float.parseFloat(price)
+            Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
+            Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
+            Objects.equals(price, "") ? 0 : Float.parseFloat(price)
         );
       }  catch (Exception e) {
         throw new ValidationException("Failed to parse wine", e);
