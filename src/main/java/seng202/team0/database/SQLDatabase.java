@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -151,7 +152,81 @@ public class SQLDatabase extends Database {
    * @param source      the source table
    */
   public void insertIntoTable(String targetTable, DataTable source) {
+    // Ensure connected
+    if (connection == null) {
+      throw new IllegalStateException("Database not connected");
+    }
 
+    //Create statement
+    String preparedRowString = buildPreparedRowInsertStatement(source, targetTable);
+
+    try {
+      PreparedStatement preparedStatement = connection.prepareStatement(preparedRowString);
+
+      // Iterate through table, get values and construct statements
+      for (int i = 0; i < source.rowSize(); i++) {
+        for (int j = 0; j < source.columnSize(); j++) {
+          Value checkValue = source.get(i, j);
+          switch (checkValue.getTypeIndex()) {
+            case 0:
+              preparedStatement.setString(j, checkValue.getAsString());
+              break;
+
+            case 1:
+              preparedStatement.setDouble(j, checkValue.getAsReal());
+              break;
+
+            default:
+              throw new IllegalArgumentException("Invalid type index"); // Wrong data type
+          }
+        }
+        preparedStatement.addBatch(); // Add to batch of statements to be executed
+      }
+
+      int[] rowsAffected = preparedStatement.executeBatch();
+      System.out.println("Rows affected: " + rowsAffected.length);
+
+
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+  }
+
+  /**
+   * Generates the insert statment for a given table
+   *
+   * @param dataTable
+   * @return
+   */
+  public String buildPreparedRowInsertStatement(DataTable dataTable, String targetTable) {
+    StringBuilder statement = new StringBuilder();
+    statement.append("INSERT INTO ");
+    statement.append(targetTable.replaceAll("\\s+", ""));
+    statement.append(" (");
+
+    // Get columns for target fields
+    int numOfCols = dataTable.columnSize();
+    for (int i = 0; i < numOfCols; i++) {
+      statement.append(dataTable.getColumnName(i));
+      if (i < numOfCols - 1) {
+        statement.append(",");
+      }
+    }
+
+    statement.append(") VALUES (");
+
+    // Get values
+    for (int i = 0; i < numOfCols; i++) {
+      statement.append("?"); // Used later on to set values
+      if (i < numOfCols - 1) {
+        statement.append(",");
+      }
+    }
+    statement.append(")");
+
+    // Return string
+    return statement.toString();
   }
 
   /**

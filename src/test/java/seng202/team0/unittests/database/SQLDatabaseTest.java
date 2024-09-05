@@ -3,7 +3,9 @@ package seng202.team0.unittests.database;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -110,5 +112,60 @@ public class SQLDatabaseTest {
       Assertions.fail();
     }
 
+  }
+
+  @Test
+  public void testInsertTable() {
+    ArrayList<ArrayList<Value>> columns = new ArrayList<>();
+    columns.add(new ArrayList<>());
+    columns.add(new ArrayList<>());
+    columns.add(new ArrayList<>());
+    columns.get(0).add(Value.make(0.0));
+    columns.get(0).add(Value.make(1.0));
+
+    columns.get(1).add(Value.make("fing"));
+    columns.get(1).add(Value.make("ding"));
+
+    columns.get(2).add(Value.make(0.0));
+    columns.get(2).add(Value.make(-1.0));
+
+    // Initial empty table
+    DataTable testTable = new DataTable(
+        new String[]{"foo", "baz", "bar"},
+        new ArrayList<>()
+    );
+
+    // Table with data
+    DataTable testTable2 = new DataTable(
+        new String[]{"foo", "baz", "bar"},
+        columns
+    );
+
+    try {
+      db.addTable("test_table", testTable);
+      db.insertIntoTable("test_table", testTable2);
+    } catch (DuplicateTableException e) {
+      throw new RuntimeException(e);
+    }
+
+    // Check everything was inserted correctly
+    try (Statement statement = db.getConnection().createStatement()) {
+      ResultSet resultSet = statement.executeQuery("SELECT * FROM test_table");
+
+      // Check row 1
+      resultSet.next();
+      Assertions.assertEquals(0.0, resultSet.getDouble("foo"));
+      Assertions.assertEquals("fing", resultSet.getString("baz"));
+      Assertions.assertEquals(0.0, resultSet.getDouble("bar"));
+
+      // Check row 2
+      resultSet.next();
+      Assertions.assertEquals(1.0, resultSet.getDouble("foo"));
+      Assertions.assertEquals("ding", resultSet.getString("baz"));
+      Assertions.assertEquals(-1.0, resultSet.getDouble("bar"));
+
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
