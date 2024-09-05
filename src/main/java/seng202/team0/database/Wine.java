@@ -69,7 +69,7 @@ public class Wine {
       String description,
       Integer scorePercent,
       Float abv,
-      Integer price
+      Float price
   ) {
     this.title = new SimpleStringProperty(this, "title", title);
     this.variety = new SimpleStringProperty(this, "variety", variety);

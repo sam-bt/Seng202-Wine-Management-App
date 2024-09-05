@@ -1,7 +1,10 @@
 package seng202.team0.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -47,6 +50,34 @@ public class DataTableController extends Controller {
   @FXML
   private Button replaceButton;
 
+  ArrayList<ChoiceBox<String>> columnNames = new ArrayList<>();
+
+  /**
+   * Names of columns
+   */
+  private String[] prettyNames = new String[]{
+      "",
+      "Title",
+      "Variety",
+      "Country",
+      "Winery",
+      "Description",
+      "Score",
+      "ABV",
+      "NZD",
+  };
+
+  /**
+   * Array of rows of current csv
+   * <p>
+   *   Might be null
+   * </p>
+   */
+  private ArrayList<String[]> selectedTable;
+
+
+
+
   /**
    * Constructor
    *
@@ -57,22 +88,65 @@ public class DataTableController extends Controller {
   }
 
   /**
+   * Checks that all remap columns are in a valid state
+   * <p>
+   *   A state is valid if:
+   *   - Only one column of each type is selected
+   *   - The title is selected
+   * </p>
+   * @return if state is valid
+   */
+  boolean isValidRemapping() {
+
+    // Check for each box if there are any others with same value
+    for(int i=0; i < columnNames.size(); i++) {
+      String value = columnNames.get(i).getValue();
+      if(value == null || Objects.equals(value, ""))
+        continue;
+
+      for(int j=0; j < columnNames.size(); j++) {
+        if(i != j) {
+          if(Objects.equals(value, columnNames.get(j).getValue()))
+            return false;
+        }
+      }
+    }
+    // Check there is a title box
+    boolean containsTitle = columnNames.stream().anyMatch(stringChoiceBox -> Objects.equals(
+        stringChoiceBox.getValue(), "Title"));
+
+    return containsTitle;
+
+  }
+  boolean validateColumns() {
+    if(selectedTable == null)
+      return false;
+    return true;
+  }
+
+  /**
+   * updates the state of if this selection of rows to remap is valid
+   */
+  void updateValidation() {
+    // Check all option boxes only correspond to one
+    if (!isValidRemapping()) {
+      appendButton.setDisable(true);
+      replaceButton.setDisable(true);
+      return;
+    }
+    appendButton.setDisable(false);
+    replaceButton.setDisable(false);
+  }
+
+
+
+  /**
    * Makes the option box
    * @param name name to maybe preselect
    * @return option box
    */
   private Node makeOptionBox(String name) {
-    String[] prettyNames = new String[]{
-        "Title",
-        "Variety",
-        "Country",
-        "Winery",
-        "Description",
-        "Score",
-        "ABV",
-        "NZD",
-        ""
-    };
+
     ChoiceBox<String> choiceBox = new ChoiceBox<>();
     choiceBox.getItems().addAll(prettyNames);
     choiceBox.setMaxWidth(Double.MAX_VALUE);
@@ -82,6 +156,10 @@ public class DataTableController extends Controller {
         break;
       }
     }
+
+    choiceBox.setOnAction(actionEvent -> updateValidation());
+
+    columnNames.add(choiceBox);
     return choiceBox;
   }
 
@@ -115,6 +193,7 @@ public class DataTableController extends Controller {
   private void makeColumnRemapList(String[] columnNames, List<String[]> rows){
 
     columnRemapList.getChildren().clear();
+    this.columnNames.clear();
     for(int i=0; i < columnNames.length; i++) {
       // First row
       String[] column = new String[rows.size()];
@@ -138,17 +217,19 @@ public class DataTableController extends Controller {
     File selectedFile = fileChooser.showOpenDialog(stage);
     if (selectedFile == null)
       return;
-    try{
+    try {
       // Should be first row on pretty much all files
       ArrayList<String[]> rows = ProcessCSV.getCSVRows(selectedFile);
 
       String[] columnNames = rows.getFirst();
       makeColumnRemapList(columnNames, rows.subList(1, Math.min(10, rows.size())));
-
+      selectedTable = rows;
     } catch(Exception exception) {
       LogManager.getLogger(getClass())
           .error("Failed to read CSV file: {}", selectedFile.getAbsolutePath(), exception);
     }
+
+    updateValidation();
   }
 
   /**
