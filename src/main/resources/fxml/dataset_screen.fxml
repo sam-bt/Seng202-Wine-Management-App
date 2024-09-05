@@ -1,16 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.DataTableController">
+<HBox xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.DataTableController">
    <children>
-      <Button fx:id="uploadCSVButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#uploadCSVFile" prefHeight="50.0" prefWidth="200.0" text="Upload CSV">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Button>
+      <VBox alignment="CENTER" spacing="25.0">
+         <children>
+            <Button fx:id="importCSVButton" minHeight="50.0" minWidth="200.0" mnemonicParsing="false" onAction="#importCSVFile" prefHeight="50.0" prefWidth="200.0" text="Import CSV">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="appendButton" disable="true" minHeight="30.0" minWidth="150.0" mnemonicParsing="false" onAction="#appendCSVFile" text="Append">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="replaceButton" disable="true" minHeight="30.0" minWidth="150.0" mnemonicParsing="false" onAction="#replaceCSVFile" text="Replace">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
+      <ScrollPane>
+         <content>
+            <HBox fx:id="columnRemapList" spacing="15.0" />
+         </content>
+      </ScrollPane>
    </children>
-</AnchorPane>
+</HBox>
