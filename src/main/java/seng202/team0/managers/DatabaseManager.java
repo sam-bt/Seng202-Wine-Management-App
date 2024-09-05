@@ -1,6 +1,8 @@
 package seng202.team0.managers;
 
-import seng202.team0.managers.exceptions.TransactionException;
+import java.util.List;
+import seng202.team0.database.Wine;
+
 
 /**
  * Database Manager (MORE DETAIL HERE!)
@@ -24,4 +26,20 @@ public class DatabaseManager {
     // TODO Implement me!
   }
    */
+
+  /**
+   * Replaces all wines in the database with a new list
+   * @param list list of wines
+   */
+  public void replaceAllWines(List<Wine> list) {
+
+  }
+
+  /**
+   * Adds the wines in the list to the database
+   * @param list list of wines
+   */
+  public void addWines(List<Wine> list) {
+
+  }
 }

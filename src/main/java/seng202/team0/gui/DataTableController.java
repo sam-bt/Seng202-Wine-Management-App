@@ -310,6 +310,13 @@ public class DataTableController extends Controller {
     }
   }
 
+  void clearMainScreen() {
+    selectedTable = null;
+    columnRemapList.getChildren().clear();
+    this.columnNames.clear();
+
+    updateValidation();
+  }
   /**
    * Triggers the extension to import a file when the upload csv button is pressed
    */
@@ -341,13 +348,25 @@ public class DataTableController extends Controller {
    * Called to append the current file to the database
    */
   public void appendCSVFile() {
-    // TODO validate + stubs
+    try {
+      List<Wine> wines = getWinesFromTable();
+      managerContext.databaseManager.addWines(wines);
+    } catch (Exception e) {
+      LogManager.getLogger(getClass()).error("Expected wines to be valid", e);
+    }
+    clearMainScreen();
   }
 
   /**
    * Called to replace the current database with this file
    */
   public void replaceCSVFile() {
-
+    try {
+      List<Wine> wines = getWinesFromTable();
+      managerContext.databaseManager.replaceAllWines(wines);
+    } catch (Exception e) {
+      LogManager.getLogger(getClass()).error("Expected wines to be valid", e);
+    }
+    clearMainScreen();
   }
 }
