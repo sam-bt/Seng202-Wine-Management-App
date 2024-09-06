@@ -18,9 +18,6 @@ import seng202.team0.database.exceptions.TableNotFoundException;
  */
 public class SQLDatabase extends Database {
 
-  // This is the path to the db file
-  private final String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + "SQLDatabase.db";
-
   // Connection to the database
   private Connection connection = null;
 
@@ -32,16 +29,22 @@ public class SQLDatabase extends Database {
     // Construct a file path for the database
     File dir = new File("sqlDatabase");
     if (!dir.exists()) {
-      dir.mkdirs();
+      boolean created = dir.mkdirs();
+
+      if (!created) {
+        System.err.println("Error creating database directory");
+      }
+
     }
 
     try {
       // Connect to database
+      // This is the path to the db file
+      String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + "SQLDatabase.db";
       this.connection = DriverManager.getConnection(dbPath);
 
     } catch (SQLException e) {
-      // TODO More robust logging here
-      e.printStackTrace();
+      System.err.println(e.getMessage());
     }
   }
 
@@ -57,8 +60,8 @@ public class SQLDatabase extends Database {
       connection = null;
 
     } catch (SQLException e) {
-      //TODO More robust logging here
-      e.printStackTrace();
+      System.err.println("Error closing connection");
+      System.err.println(e.getMessage());
     }
   }
 
@@ -89,9 +92,8 @@ public class SQLDatabase extends Database {
       System.out.println("Table " + tableName + " has been added.");
 
     } catch (SQLException e) {
-      e.printStackTrace();
       System.err.println("Table " + tableName + " could not be added.");
-
+      System.err.println(e.getMessage());
     }
 
   }
@@ -105,13 +107,15 @@ public class SQLDatabase extends Database {
    * @return the SQL statement itself
    */
   public String constructTableStatementString(String tableName, DataTable source) {
-    //TODO Rewrite primary key autogen
 
     // Construct start of prompt
     StringBuilder statement = new StringBuilder();
     statement.append("CREATE TABLE IF NOT EXISTS "); // Create table
     statement.append(tableName.replaceAll("\\s+", "")); // Using table name with no whitespace
     statement.append(" ("); // Opening bracket for col names
+
+    // Create auto increment id
+    statement.append("id INTEGER PRIMARY KEY AUTOINCREMENT,");
 
     int numOfCols = source.columnSize();
 
@@ -127,11 +131,6 @@ public class SQLDatabase extends Database {
         statement.append(" TEXT");
       } else {
         statement.append(" INTEGER");
-      }
-
-      // This assumes the primary key is in the first row
-      if (i == 0) {
-        statement.append(" PRIMARY KEY");
       }
 
       // Comma for last statement
@@ -160,12 +159,11 @@ public class SQLDatabase extends Database {
     //Create statement
     String preparedRowString = buildPreparedRowInsertStatement(source, targetTable);
 
-    try {
-      PreparedStatement preparedStatement = connection.prepareStatement(preparedRowString);
+    try (PreparedStatement preparedStatement = connection.prepareStatement(preparedRowString)) {
 
       // Iterate through table, get values and construct statements
-      for (int i = 0; i < source.rowSize(); i++) {
-        for (int j = 0; j < source.columnSize(); j++) {
+      for (int i = 0; i < source.rowSize(); i++) { // Rows
+        for (int j = 0; j < source.columnSize(); j++) { // Cols
           Value checkValue = source.get(j, i);
           switch (checkValue.getTypeIndex()) {
             case 0:
@@ -186,18 +184,19 @@ public class SQLDatabase extends Database {
       int[] rowsAffected = preparedStatement.executeBatch();
       System.out.println("Rows affected: " + rowsAffected.length);
 
-
     } catch (SQLException e) {
-      e.printStackTrace();
+      System.err.println("Table " + targetTable + " could not be inserted.");
+      System.err.println(e.getMessage());
     }
 
   }
 
   /**
-   * Generates the insert statment for a given table
+   * Generates the insert statement for a given table <br>
+   * value locations are set to '?' for the prepared statement
    *
-   * @param dataTable
-   * @return
+   * @param dataTable dataTable from which data will be inserted
+   * @return The sql statement to be used
    */
   public String buildPreparedRowInsertStatement(DataTable dataTable, String targetTable) {
     StringBuilder statement = new StringBuilder();
@@ -260,8 +259,7 @@ public class SQLDatabase extends Database {
       System.out.println(tableName + "removed");
 
     } catch (SQLException e) {
-      // TODO More robust logging
-      e.printStackTrace();
+      System.err.println("Table " + tableName + " could not be removed.");
       System.err.println(e.getMessage());
     }
   }
@@ -293,7 +291,7 @@ public class SQLDatabase extends Database {
       tables.close();
 
     } catch (SQLException e) {
-      e.printStackTrace();
+      System.err.println(e.getMessage());
     }
 
     return false;

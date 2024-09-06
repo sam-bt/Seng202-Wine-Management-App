@@ -3,11 +3,14 @@ package seng202.team0.unittests.database;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,10 +28,19 @@ public class SQLDatabaseTest {
   public void setUp() {
     try {
       Files.deleteIfExists(Paths.get("sqlDatabase/SQLDatabase.db"));
-    } catch (IOException ignored) {
+    } catch (IOException e) {
+      System.out.println("Error deleting SQLDatabase: " + e.getMessage());
     }
     db = new SQLDatabase();
   }
+
+  @AfterEach
+  public void tearDown() {
+    if (db.getConnection() != null) {
+      db.disconnectDb();
+    }
+  }
+
 
   @Test
   public void testSetupDb() {
@@ -79,7 +91,30 @@ public class SQLDatabaseTest {
       Assertions.fail();
     }
 
+    // Table exists
     Assertions.assertTrue(db.tableExists("test_table"));
+
+    // Table has correct cols
+    try (Statement statement = db.getConnection().createStatement()) {
+      ResultSet resultSet = statement.executeQuery("SELECT * FROM test_table");
+      ResultSetMetaData metaData = resultSet.getMetaData();
+
+      // Col count is equal (+1 is for auto increment id)
+      Assertions.assertEquals(metaData.getColumnCount(), testTable.columnSize() + 1);
+
+      // First col (Should be id / primary key)
+      String firstColName = metaData.getColumnName(1);
+
+      // Get database meta data
+      DatabaseMetaData dbmd = db.getConnection().getMetaData();
+      ResultSet pkRs = dbmd.getPrimaryKeys(null, null, "test_table");
+
+      // Get primary key (Should only be one)
+      pkRs.next();
+      Assertions.assertEquals(firstColName, pkRs.getString("COLUMN_NAME"));
+    } catch (SQLException e) {
+      Assertions.fail();
+    }
   }
 
   @Test
@@ -158,10 +193,11 @@ public class SQLDatabaseTest {
       throw new RuntimeException(e);
     }
 
+    printSQLTable("test_table");
+
     // Check everything was inserted correctly
     try (Statement statement = db.getConnection().createStatement()) {
-      ResultSet resultSet = statement.executeQuery("SELECT * FROM test_table");
-      resultSet.next(); // skip pre-added row
+      ResultSet resultSet = statement.executeQuery("SELECT * FROM test_table ORDER BY id");
 
       // Check inserted row 1
       resultSet.next();
@@ -174,6 +210,45 @@ public class SQLDatabaseTest {
       Assertions.assertEquals(1.0, resultSet.getDouble("foo"));
       Assertions.assertEquals("ding", resultSet.getString("baz"));
       Assertions.assertEquals(-1.0, resultSet.getDouble("bar"));
+
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Prints an sql table with each row as a line
+   *
+   * @param tableName name of sql table in database
+   */
+  public void printSQLTable(String tableName) {
+    try {
+      Connection conn = db.getConnection();
+      Statement stmt = conn.createStatement();
+      ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName + " ORDER BY id");
+      ResultSetMetaData metaData = rs.getMetaData();
+
+      // Iterate through data and create a string to print on each line
+      while (rs.next()) {
+        StringBuilder row = new StringBuilder();
+
+        // Construct string from row
+        for (int i = 1; i <= metaData.getColumnCount(); i++) {
+          String colValue = rs.getString(i);
+          row.append(metaData.getColumnName(i)).append(": ").append(colValue);
+
+          // Add separator
+          if (i < metaData.getColumnCount()) {
+            row.append(", ");
+          }
+        }
+
+        System.out.println(row);
+      }
+
+      // Close resources
+      rs.close();
+      stmt.close();
 
     } catch (SQLException e) {
       throw new RuntimeException(e);
