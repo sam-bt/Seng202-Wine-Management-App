@@ -31,12 +31,17 @@ public class FXWrapper {
      */
     public void init(Stage stage) {
         this.stage = stage;
-        this.managerContext = new ManagerContext(
-            new DatabaseManager(),
-            new AuthenticationManager(),
-            new MapManager(),
-            new GUIManager(this)
-        );
+        try {
+            this.managerContext = new ManagerContext(
+                new DatabaseManager(),
+                new AuthenticationManager(),
+                new MapManager(),
+                new GUIManager(this)
+            );
+        } catch(Exception exception) {
+            // If we fail to initialize the managers we are kinda screwed
+            throw new RuntimeException("Failed to instantiate manager context", exception);
+        }
         loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
 
     }

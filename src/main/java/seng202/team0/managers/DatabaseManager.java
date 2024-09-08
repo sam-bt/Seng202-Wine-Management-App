@@ -20,13 +20,19 @@ import seng202.team0.database.Wine;
  */
 public class DatabaseManager implements AutoCloseable {
 
-  // Connection to the database
-  private Connection connection = null;
+  /**
+   * Database connection
+   * <p>
+   *   This is ensured to be always valid
+   * </p>
+   */
+  private Connection connection;
 
   /**
-   * Connects to a db file for management The path to the file is specified by dbpath
+   * Connects to a db file for management. The path to the file is specified by dbpath
+   * @throws SQLException if failed to initialize
    */
-  public DatabaseManager() {
+  public DatabaseManager() throws SQLException {
 
     // Construct a file path for the database
     File dir = new File("sqlDatabase");
@@ -39,19 +45,19 @@ public class DatabaseManager implements AutoCloseable {
 
     }
 
-    try {
-      // Connect to database
-      // This is the path to the db file
-      //String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + "SQLDatabase.db";
-      //this.connection = DriverManager.getConnection(dbPath);
-      this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
-      createWinesTable();
-    } catch (SQLException e) {
-      System.err.println(e.getMessage());
-    }
+    // Connect to database
+    // This is the path to the db file
+    //String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + "SQLDatabase.db";
+    //this.connection = DriverManager.getConnection(dbPath);
+    this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
+    createWinesTable();
+
   }
 
-  public void createWinesTable() throws SQLException {
+  /**
+   * @throws SQLException on sql error
+   */
+  private void createWinesTable() throws SQLException {
     if (tableExists("WINE")) {
       return;
     }
@@ -123,15 +129,20 @@ public class DatabaseManager implements AutoCloseable {
    * Replaces all wines in the database with a new list
    * @param list list of wines
    */
-  public void replaceAllWines(List<Wine> list) {
+  public void replaceAllWines(List<Wine> list) throws SQLException {
+    String delete = "delete from WINE;";
+    try(Statement statement = connection.createStatement()) {
+      statement.executeUpdate(delete);
+    }
 
+    addWines(list);
   }
 
   /**
    * Adds the wines in the list to the database
    * @param list list of wines
    */
-  public void addWines(List<Wine> list) {
+  public void addWines(List<Wine> list) throws SQLException {
     // null key is auto generated
     String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?);";
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
@@ -146,8 +157,7 @@ public class DatabaseManager implements AutoCloseable {
         insertStatement.setFloat(8, wine.getPrice());
         insertStatement.executeUpdate();
       }
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
+
     }
   }
 
