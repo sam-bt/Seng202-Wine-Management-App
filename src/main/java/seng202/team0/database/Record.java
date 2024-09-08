@@ -1,5 +1,7 @@
 package seng202.team0.database;
 
+import java.util.Comparator;
+
 /**
  * Record represents a named tuple. This class acts as a handle to a row in a DataTable
  *
@@ -10,12 +12,12 @@ public class Record {
   /**
    * Reference to owning table
    */
-  private DataTable dataTable;
+  private final DataTable dataTable;
 
   /**
    * Index of row
    */
-  private int rowIndex;
+  private final int rowIndex;
 
   /**
    * Constructs a Record from a table and index
@@ -40,11 +42,63 @@ public class Record {
   /**
    * Gets the attribute of a given index in the Record
    *
-   * @param index Index of attribute
-   * @return Value
+   * @param index index of attribute
+   * @return value
    */
-  private Value getItem(int index) {
+  public Value getItem(int index) {
     return dataTable.get(index, rowIndex);
+  }
+
+  /**
+   * Gets a comparator for a given table and attribute name
+   *
+   * @param attributeName name of attribute to compare
+   * @return a comparator for the name
+   */
+  public static Comparator<Record> getComparator(String attributeName, DataTable table) {
+    // Cache index
+    int index = table.getColumnIndexFromName(attributeName);
+    return Comparator.comparing(record -> record.getItem(index));
+  }
+
+  /**
+   * Gets a comparator for a given table and attribute name without caching index
+   *
+   * @param attributeName name of attribute to compare
+   * @return a comparator for the name
+   */
+  public static Comparator<Record> getComparator(String attributeName) {
+    return Comparator.comparing(record -> record.getItem(attributeName));
+  }
+
+  /**
+   * Sets an attribute from an index
+   *
+   * @param index index of attribute
+   * @param value value
+   */
+  public void setItem(int index, Value value) {
+    dataTable.set(index, rowIndex, value);
+  }
+
+  /**
+   * Gets the attribute of a given name in the Record
+   *
+   * @param attributeName index of attribute
+   * @return value
+   */
+  public Value getItem(String attributeName) {
+    return dataTable.get(dataTable.getColumnIndexFromName(attributeName), rowIndex);
+  }
+
+  /**
+   * Sets an attribute from a name
+   *
+   * @param attributeName name of attribute
+   * @param value  value
+   */
+  public void setItem(String attributeName, Value value) {
+    dataTable.set(dataTable.getColumnIndexFromName(attributeName), rowIndex, value);
   }
 
 

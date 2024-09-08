@@ -1,10 +1,14 @@
 package seng202.team0.util;
 
 /**
- * Listener (MORE DETAIL HERE!)
+ * Listener for use in the observer pattern
+ * @author Angus McDougall
  */
-public interface Listener {
-  /* UNCOMMENT IF T HAS A DEFINITION
-  public abstract void run(T arg);
+public interface Listener<T> {
+
+  /**
+   * Invokes the listener with an object argument
+   * @param arg argument
    */
+  public abstract void run(T arg);
 }

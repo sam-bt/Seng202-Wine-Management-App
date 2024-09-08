@@ -4,37 +4,58 @@ import seng202.team0.database.DataTable;
 import seng202.team0.database.Record;
 
 /**
- * Primitive view (MORE DETAIL HERE!)
+ * Simple view over all records in a table
  */
 public class PrimitiveView extends View {
 
+  int index;
+  DataTable table;
+
   /**
-   * Constructor (MORE DETAIL HERE!)
-   * @param table
+   * Constructs a view from a table
+   * @param index index of row
+   * @param table table
    */
-  public PrimitiveView(DataTable table) {
-    // TODO Implement me!
+  public PrimitiveView(int index, DataTable table) {
+    this.index = index;
+    this.table = table;
   }
 
   /**
-   * next (MORE DETAIL HERE!)
+   * Constructs a view from a table starting at the beginning
+   * @param table table
+   */
+  public PrimitiveView(DataTable table) {
+    this.index = 0;
+    this.table = table;
+  }
+
+  /**
+   * Gets the current element and increments
    *
-   * @return
+   * @return current record
    */
   @Override
   public Record next() {
-    // TODO Implement me!
-    return null;
+    return table.tryGetRecordForIndex(index++);
   }
 
   /**
-   * Deep copy (MORE DETAIL HERE!)
+   * Resets the view to the starting element
+   */
+  @Override
+  public void reset() {
+    index = 0;
+  }
+
+  /**
+   * Copies the view and all sub views
    *
-   * @return
+   * @return copy of this
    */
   @Override
   public View deepCopy() {
-    // TODO Implement me!
-    return null;
+    return new PrimitiveView(index, table);
   }
+
 }

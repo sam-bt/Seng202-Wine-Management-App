@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team0.database.DataTable;
+import seng202.team0.database.Record;
+import seng202.team0.database.ToRecord;
 import seng202.team0.database.Value;
+import seng202.team0.exceptions.InvalidRecordException;
 
 /**
  * Tests DataTable
@@ -48,6 +51,7 @@ public class DataTableTest {
    */
   @Test
   public void invalidTableDimensions() {
+    // Jagged array
     assertThrows(IllegalStateException.class, () -> {
       ArrayList<ArrayList<Value>> columns = new ArrayList<>();
       columns.add(new ArrayList<>());
@@ -59,11 +63,17 @@ public class DataTableTest {
 
       new DataTable(new String[]{"foo", "bar"}, columns);
     });
+    // Too many columns
     assertThrows(IllegalStateException.class, () -> {
       ArrayList<ArrayList<Value>> columns = new ArrayList<>();
       columns.add(new ArrayList<>());
       columns.add(new ArrayList<>());
       new DataTable(new String[]{"foo"}, columns);
+    });
+    // Too many names
+    assertThrows(IllegalStateException.class, () -> {
+      ArrayList<ArrayList<Value>> columns = new ArrayList<>();
+      new DataTable(new String[]{"bob"}, columns);
     });
     new DataTable(new String[]{}, new ArrayList<>());
   }
@@ -98,15 +108,19 @@ public class DataTableTest {
   @Test
   void rowSize() {
     assertEquals(table.rowSize(), 2);
+    assertEquals((new DataTable(new String[]{}, new ArrayList<>())).rowSize(), 0);
   }
 
   /**
    * Tests value access
    */
   @Test
-  void getValue() {
+  void getAndSetValue() {
     assertEquals(table.get(1, 0), Value.make("fing"));
-
+    table.set(1, 0, Value.make("bing"));
+    assertEquals(table.get(1, 0), Value.make("bing"));
+    // Test adding self
+    table.set(1, 0, table.get(1, 0));
   }
 
 
@@ -152,6 +166,82 @@ public class DataTableTest {
     assertThrows(IndexOutOfBoundsException.class, () -> {
       table.getRecordForIndex(3);
     });
+  }
+
+  /**
+   * Tests data insertion
+   */
+  @Test
+  void dataInsertion() {
+    DataTable table = new DataTable(RecordClass.class);
+    table.addRecordFromClass(new RecordClass("foo", -1));
+    table.addRecordFromClass(new RecordClass("boo", 1));
+    assertEquals(table.get(0, 1), Value.make("boo"));
+    assertEquals(table.get(1, 0), Value.make(-1));
+    assertThrows(InvalidRecordException.class, () -> {
+      table.addRecordFromClass(new RecordClass2("invalid", -1, 1));
+    });
+  }
+
+  /**
+   * Test record
+   * @author Angus McDougall
+   */
+  static class RecordClass implements ToRecord {
+
+    public String string;
+    public double num;
+
+    public RecordClass(String string, double num) {
+      this.num = num;
+      this.string = string;
+    }
+
+    /**
+     * This method must fill all the attributes of the record
+     * <p>
+     * Each attribute should be set on the given record
+     * </p>
+     *
+     * @param record record to set
+     */
+    @Override
+    public void toRecord(Record record) {
+      record.setItem("string", Value.make(string));
+      record.setItem("num", Value.make(num));
+    }
+  }
+
+  /**
+   * Test record with different size
+   * @author Angus McDougall
+   */
+  static class RecordClass2 implements ToRecord {
+
+    public String string;
+    public double num;
+    public double num2;
+
+    public RecordClass2(String string, double num, double num2) {
+      this.num = num;
+      this.num2 = num2;
+      this.string = string;
+    }
+
+    /**
+     * This method must fill all the attributes of the record
+     * <p>
+     * Each attribute should be set on the given record
+     * </p>
+     *
+     * @param record record to set
+     */
+    @Override
+    public void toRecord(Record record) {
+      record.setItem("string", Value.make(string));
+      record.setItem("num", Value.make(num));
+      record.setItem("num2", Value.make(num2));
+    }
   }
 
 }

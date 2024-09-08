@@ -10,9 +10,10 @@ package seng202.team0.database;
  *
  * @author Angus McDougall
  */
-public abstract class Value {
+public abstract class Value implements Comparable<Value> {
 
-
+  private static final int STRING_TYPE_INDEX = 0;
+  private static final int REAL_TYPE_INDEX = 1;
   /**
    * Makes a string value
    *
@@ -32,6 +33,58 @@ public abstract class Value {
   public static Value make(double value) {
     return new RealValue(value);
   }
+
+  /**
+   * Maybe returns a value constructed from object if it is a valid value
+   *
+   * @param object object
+   * @return maybe a value
+   */
+  public static Value tryMakeFromObject(Object object) {
+    if (object instanceof String string) {
+      return make(string);
+    } else if (object instanceof Double doubleVal) {
+      return make(doubleVal);
+    }
+    return null;
+  }
+
+  /**
+   * Gets the type index for a class object
+   * <p>
+   *   Type index is subject to change and should only be used to test if two types are the same.
+   * </p>
+   *
+   * @param clazz class object
+   * @return index of type if valid else -1
+   */
+  public static int getTypeIndex(Class<?> clazz) {
+    if (clazz == Double.class || clazz == double.class) {
+      return REAL_TYPE_INDEX;
+    } else if (clazz == String.class) {
+      return STRING_TYPE_INDEX;
+    }
+    return -1;
+  }
+
+  /**
+   * Checks if a type index is valid
+   *
+   * @param idx index of type
+   * @return if the index refers to a type
+   */
+  public static boolean isInvalidTypeIndex(int idx) {
+    return idx == -1;
+  }
+
+  /**
+   * Visits the value
+   * <p>
+   *   This should be the preferred method of type-dependant access
+   * </p>
+   * @param visitor visitor
+   */
+  public abstract void visit(ValueVisitor visitor);
 
   /**
    * Checks if the contained value is a string
@@ -83,7 +136,7 @@ public abstract class Value {
    *
    * @author Angus McDougall
    */
-  private static class StringValue extends Value {
+  private static class StringValue extends Value implements Comparable<Value> {
 
     public String value;
 
@@ -92,8 +145,13 @@ public abstract class Value {
     }
 
     @Override
+    public void visit(ValueVisitor visitor) {
+      visitor.visit(value);
+    }
+
+    @Override
     public int getTypeIndex() {
-      return 0;
+      return STRING_TYPE_INDEX;
     }
 
     @Override
@@ -103,6 +161,12 @@ public abstract class Value {
       }
       return false;
     }
+
+    @Override
+    public int compareTo(Value stringValue) {
+      return value.compareTo(((StringValue) stringValue).value);
+    }
+
   }
 
   /**
@@ -110,7 +174,7 @@ public abstract class Value {
    *
    * @author Angus McDougall
    */
-  private static class RealValue extends Value {
+  private static class RealValue extends Value implements Comparable<Value> {
 
     public double value;
 
@@ -120,7 +184,12 @@ public abstract class Value {
 
     @Override
     public int getTypeIndex() {
-      return 1;
+      return REAL_TYPE_INDEX;
+    }
+
+    @Override
+    public void visit(ValueVisitor visitor) {
+      visitor.visit(value);
     }
 
     @Override
@@ -130,6 +199,10 @@ public abstract class Value {
       }
       return false;
     }
-  }
 
+    @Override
+    public int compareTo(Value value2) {
+      return Double.compare(value, ((RealValue) value2).value);
+    }
+  }
 }
