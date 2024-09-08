@@ -14,32 +14,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<HBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.WineScreenController">
+<HBox xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.WineScreenController">
    <children>
-    <VBox minWidth="200.0" HBox.hgrow="ALWAYS">
-      <children>
-        <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="99.0" text="Open Dataset" textFill="#e11111">
-          <VBox.margin>
-            <Insets left="7.0" top="35.0" />
-          </VBox.margin>
-        </Button>
-        <Label alignment="TOP_LEFT" prefHeight="66.0" prefWidth="95.0" text="Datasets - redundant" textFill="RED" wrapText="true">
-          <VBox.margin>
-            <Insets left="20.0" top="5.0" />
-          </VBox.margin>
-          <font>
-            <Font size="21.0" />
-          </font>
-        </Label>
-        <Button mnemonicParsing="false" prefHeight="49.0" prefWidth="178.0" text="Show Data">
-          <VBox.margin>
-            <Insets bottom="5.0" left="15.0" right="5.0" top="5.0" />
-          </VBox.margin>
-        </Button>
-      </children>
-    </VBox>
       <HBox prefHeight="1080.0" prefWidth="1920.0">
          <children>
           <TabPane prefHeight="1080.0" prefWidth="1920.0" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
