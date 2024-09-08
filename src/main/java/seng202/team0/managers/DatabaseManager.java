@@ -1,16 +1,76 @@
 package seng202.team0.managers;
 
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team0.database.Wine;
-import java.util.List;
 
 
 /**
  * Mediates access to the database
  *
  */
-public class DatabaseManager {
+public class DatabaseManager implements AutoCloseable {
+
+  // Connection to the database
+  private Connection connection = null;
+
+  /**
+   * Connects to a db file for management The path to the file is specified by dbpath
+   */
+  public DatabaseManager() {
+
+    // Construct a file path for the database
+    File dir = new File("sqlDatabase");
+    if (!dir.exists()) {
+      boolean created = dir.mkdirs();
+
+      if (!created) {
+        System.err.println("Error creating database directory");
+      }
+
+    }
+
+    try {
+      // Connect to database
+      // This is the path to the db file
+      //String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + "SQLDatabase.db";
+      //this.connection = DriverManager.getConnection(dbPath);
+      this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
+      createWinesTable();
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    }
+  }
+
+  public void createWinesTable() throws SQLException {
+    if (tableExists("WINE")) {
+      return;
+    }
+    String create = "create table WINE (" +
+        // There are a lot of duplicates
+        "ID AUTO_INCREMENT PRIMARY KEY," +
+        "TITLE varchar(64) NOT NULL," +
+        "VARIETY varchar(32)," +
+        "COUNTRY varchar(32)," +
+        "WINERY varchar(64)," +
+        "DESCRIPTION text," +
+        "SCORE_PERCENT int," +
+        "ABV float," +
+        "PRICE float);";
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(create);
+    }
+    assert (tableExists("WINE"));
+  }
 
   /**
    * Gets a subset of the wines in the database
@@ -22,12 +82,30 @@ public class DatabaseManager {
    * @return subset list of wines
    */
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
-    ObservableList<Wine> wines = FXCollections.observableArrayList(
-        new Wine("Plume Pinot Noir", "Pinot Noir", "New Zealand", "Lake Chalice", "", 75, 0.0f,
-            10.0f),
-        new Wine("Clayvin Single Vineyard Chardonnay", "Chardonnay", "New Zealand", "Giesen Group", "", 50, 0.0f,
-            12.0f)
-    );
+
+    ObservableList<Wine> wines = FXCollections.observableArrayList();
+    String query = "select TITLE, VARIETY, COUNTRY, WINERY, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE;";
+    try (Statement statement = connection.createStatement()) {
+      ResultSet set = statement.executeQuery(query);
+      while (set.next()) {
+
+        Wine wine = new Wine(
+            set.getString("TITLE"),
+            set.getString("VARIETY"),
+            set.getString("COUNTRY"),
+            set.getString("WINERY"),
+            set.getString("DESCRIPTION"),
+            set.getInt("SCORE_PERCENT"),
+            set.getFloat("ABV"),
+            set.getFloat("PRICE")
+        );
+        wines.add(wine);
+      }
+
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
     return wines;
   }
 
@@ -36,7 +114,8 @@ public class DatabaseManager {
    * @return total number of wine records
    */
   public int getWinesSize() {
-    return 2;
+    // TODO
+    return getWinesInRange(0,1000000000).size();
   }
 
 
@@ -53,6 +132,73 @@ public class DatabaseManager {
    * @param list list of wines
    */
   public void addWines(List<Wine> list) {
-
+    // null key is auto generated
+    String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?);";
+    try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
+      for (Wine wine : list) {
+        insertStatement.setString(1, wine.getTitle());
+        insertStatement.setString(2, wine.getVariety());
+        insertStatement.setString(3, wine.getCountry());
+        insertStatement.setString(4, wine.getWinery());
+        insertStatement.setString(5, wine.getDescription());
+        insertStatement.setInt(6, wine.getScorePercent());
+        insertStatement.setFloat(7, wine.getAbv());
+        insertStatement.setFloat(8, wine.getPrice());
+        insertStatement.executeUpdate();
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
   }
+
+
+  /**
+   * To disconnect/close database
+   */
+  @Override
+  public void close() {
+    try {
+      this.connection.close();
+
+      // Reset connection
+      connection = null;
+
+    } catch (SQLException e) {
+      System.err.println("Error closing connection");
+      System.err.println(e.getMessage());
+    }
+  }
+
+  /**
+   * Checks if a table exists
+   *
+   * @param tableName name of table
+   * @return if the table exists
+   */
+  private boolean tableExists(String tableName) {
+    try {
+
+      // Get database meta data
+      DatabaseMetaData metaData = connection.getMetaData();
+
+      // Strip tableName whitespace
+      tableName = tableName.replaceAll("\\s+", "");
+
+      // Query for table existence
+      ResultSet tables = metaData.getTables(null, null, tableName, null);
+
+      if (tables.next()) {
+        tables.close();
+        return true;
+      }
+
+      tables.close();
+
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    }
+
+    return false;
+  }
+
 }
