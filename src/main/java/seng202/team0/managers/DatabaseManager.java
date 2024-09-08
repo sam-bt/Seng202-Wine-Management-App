@@ -90,9 +90,13 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
 
     ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query = "select TITLE, VARIETY, COUNTRY, WINERY, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE;";
-    try (Statement statement = connection.createStatement()) {
-      ResultSet set = statement.executeQuery(query);
+    String query = "select TITLE, VARIETY, COUNTRY, WINERY, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ROWID limit ? offset ?;";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+
+      statement.setInt(1, end - begin);
+      statement.setInt(2, begin);
+
+      ResultSet set = statement.executeQuery();
       while (set.next()) {
 
         Wine wine = new Wine(
@@ -119,9 +123,12 @@ public class DatabaseManager implements AutoCloseable {
    * Gets the number of wine records
    * @return total number of wine records
    */
-  public int getWinesSize() {
-    // TODO
-    return getWinesInRange(0,1000000000).size();
+  public int getWinesSize() throws SQLException {
+    try(Statement statement = connection.createStatement()) {
+      ResultSet set = statement.executeQuery("select count(*) from WINE;");
+      set.next();
+      return set.getInt(1);
+    }
   }
 
 
