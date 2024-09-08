@@ -3,6 +3,8 @@ package seng202.team0.managers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team0.database.Wine;
+import java.util.List;
+
 
 /**
  * Mediates access to the database
@@ -37,4 +39,20 @@ public class DatabaseManager {
     return 2;
   }
 
+
+  /**
+   * Replaces all wines in the database with a new list
+   * @param list list of wines
+   */
+  public void replaceAllWines(List<Wine> list) {
+
+  }
+
+  /**
+   * Adds the wines in the list to the database
+   * @param list list of wines
+   */
+  public void addWines(List<Wine> list) {
+
+  }
 }

@@ -40,7 +40,7 @@ public class Wine {
    */
   private final IntegerProperty scorePercent;
   /**
-   * Alcohol by volume as a percentage
+   * Alcohol by volume as a percentage if known, else 0
    */
   private final FloatProperty abv;
   /**
