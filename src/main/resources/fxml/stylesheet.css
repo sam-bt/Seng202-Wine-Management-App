@@ -8,10 +8,22 @@
   -fx-background-color: #F87171;
 }
 
+.primary-button:pressed {
+  -fx-background-color: #DC2626;
+}
+
 .secondary-button {
   -fx-background-color: #F87171;
   -fx-background-radius: 10px;
   -fx-text-fill: white;
+}
+
+.secondary-button:hover {
+  -fx-background-color: #FCA5A5;
+}
+
+.secondary-button:pressed {
+  -fx-background-color: #DC2626;
 }
 
 .primary-background {
@@ -19,5 +31,5 @@
 }
 
 .application-background {
-  -fx-background-color: #FEE2E2
+  -fx-background-color: #FEF0F0
 }
