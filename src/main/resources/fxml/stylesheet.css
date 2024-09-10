@@ -1,0 +1,18 @@
+.red{
+    -fx-background-color: linear-gradient(#eb4034,#eb4034);
+    -fx-background-radius: 10 10 0 0;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+}
+.red:hover{
+    -fx-background-color: linear-gradient(#F87171,#F87171);
+    -fx-background-radius: 10 10 0 0;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+}
+.red:pressed {
+    -fx-background-color: linear-gradient(#be0c00,#be0c00);
+    -fx-background-radius: 10 10 0 0;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+}
