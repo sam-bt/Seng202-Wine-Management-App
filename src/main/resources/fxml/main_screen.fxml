@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.MainController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1080.0" prefWidth="1920.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.MainController">
    <children>
-      <GridPane gridLinesVisible="true" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <GridPane gridLinesVisible="false" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" />
             <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
@@ -44,38 +44,30 @@
             </Label>
             <HBox prefHeight="120.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="homeScreenButton" mnemonicParsing="false" onAction="#openHomeScreen" prefHeight="75.0" prefWidth="200.0" text="Home">
+                  <Button fx:id="homeScreenButton" mnemonicParsing="false" onAction="#openHomeScreen" prefHeight="75.0" prefWidth="200.0" styleClass="red" text="Home">
                      <font>
                         <Font size="25.0" />
                      </font>
                   </Button>
-                  <Button fx:id="wineScreenButton" mnemonicParsing="false" onAction="#openWineScreen" prefHeight="75.0" prefWidth="200.0" text="Wines">
+                  <Button fx:id="wineScreenButton" mnemonicParsing="false" onAction="#openWineScreen" prefHeight="75.0" prefWidth="200.0" styleClass="red" text="Wines">
                      <font>
                         <Font size="25.0" />
                      </font>
                   </Button>
-                  <Button fx:id="listScreenButton" mnemonicParsing="false" onAction="#openListScreen" prefHeight="75.0" prefWidth="200.0" text="My Lists">
+                  <Button fx:id="listScreenButton" mnemonicParsing="false" onAction="#openListScreen" prefHeight="75.0" prefWidth="200.0" styleClass="red" text="My Lists">
                      <font>
                         <Font size="25.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#openVineyardsScreen" prefHeight="75.0" prefWidth="200.0" text="Vineyards">
+                  <Button mnemonicParsing="false" onAction="#openVineyardsScreen" prefHeight="75.0" prefWidth="200.0" styleClass="red" text="Vineyards">
                      <font>
                         <Font size="25.0" />
                      </font>
                   </Button>
-                  <Button fx:id="dataSetsScreenButton" mnemonicParsing="false" onAction="#openDataSetsScreen" prefHeight="75.0" prefWidth="200.0" text="Datasets">
+                  <Button fx:id="dataSetsScreenButton" mnemonicParsing="false" onAction="#openDataSetsScreen" prefHeight="75.0" prefWidth="200.0" styleClass="red" text="Datasets">
                      <font>
                         <Font size="25.0" />
                      </font>
-                  </Button>
-                  <Button fx:id="consumptionCalculatorScreenButton" disable="true" ellipsisString="" mnemonicParsing="false" onAction="#openConsumptionCalculatorScreen" prefHeight="75.0" prefWidth="200.0" text="Consumption Calculator" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
                   </Button>
                </children>
                <GridPane.margin>

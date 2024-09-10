@@ -254,7 +254,7 @@ public class DataTableController extends Controller {
    * Enum for column renaming names
    */
   enum PrettyName {
-    NIL(""),
+    NIL("NOT AVAILABLE"),
     TITLE("Title"),
     VARIETY("Variety"),
     COUNTRY("Country"),
