@@ -112,6 +112,6 @@
             <BorderPane id="borderPane" fx:id="borderPane" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1" GridPane.vgrow="SOMETIMES" />
          </children>
       </GridPane>
-      <AnchorPane fx:id="pageContent" layoutX="21.0" layoutY="101.0" maxWidth="1560.0" minWidth="1560.0" prefHeight="960.0" prefWidth="1560.0" />
+      <AnchorPane fx:id="pageContent" layoutX="21.0" layoutY="101.0" maxWidth="1560.0" minHeight="780.0" minWidth="1560.0" prefHeight="780.0" prefWidth="1560.0" />
    </children>
 </AnchorPane>
