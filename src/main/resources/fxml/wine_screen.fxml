@@ -20,15 +20,15 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1450.0" minHeight="780.0" minWidth="1450.0" prefHeight="780.0" prefWidth="1450.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.WineScreenController">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.WineScreenController">
    <children>
-    <TabPane layoutX="332.0" prefHeight="780.0" prefWidth="1120.0" stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
+    <TabPane layoutX="332.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
       <tabs>
         <Tab text="Raw Data Viewer">
           <content>
           </content>
                <content>
-                  <VBox prefHeight="728.0" prefWidth="1014.0">
+                  <VBox minHeight="720.0" prefHeight="720.0" prefWidth="1014.0">
                      <children>
                 <GridPane prefHeight="729.0" prefWidth="1229.0">
                   <columnConstraints>
@@ -39,7 +39,7 @@
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                   </rowConstraints>
                   <children>
-                    <TableView fx:id="tableView" prefHeight="696.0" prefWidth="1229.0" GridPane.rowIndex="1">
+                    <TableView fx:id="tableView" prefHeight="696.0" prefWidth="1040.0" GridPane.rowIndex="1">
                       <columns>
                         <TableColumn minWidth="-1.0" prefWidth="-1.0" />
                       </columns>

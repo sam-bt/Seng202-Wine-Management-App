@@ -2,6 +2,7 @@
 
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="pane" maxHeight="900.0" maxWidth="1480.0" minHeight="900.0" minWidth="1480.0" prefHeight="900.0" prefWidth="1480.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.FXWrapper">
+
+<AnchorPane fx:id="pane" maxHeight="900.0" maxWidth="1400.0" minHeight="900.0" minWidth="1400.0" prefHeight="900.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.FXWrapper">
 
 </AnchorPane>
