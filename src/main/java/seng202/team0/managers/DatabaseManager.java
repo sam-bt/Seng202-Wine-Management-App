@@ -246,7 +246,7 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  public boolean updatePassword(String username, String password) throws SQLException {
+  public boolean updatePassword(String username, String password) {
     String updateQuery = "UPDATE USER SET PASSWORD = ? WHERE USERNAME = ?";
 
     try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
@@ -258,7 +258,7 @@ public class DatabaseManager implements AutoCloseable {
       return rowsAffected > 0;
     } catch (SQLException e) {
       System.err.println("Error updating password: " + e.getMessage());
-      throw e;
+      return false;
     }
   }
 

@@ -1,17 +1,10 @@
 package seng202.team0.gui;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.apache.logging.log4j.LogManager;
 import seng202.team0.managers.ManagerContext;
-import seng202.team0.util.Login;
-import seng202.team0.util.ProcessCSV;
+import seng202.team0.util.UserService;
 
 /**
  * Login Controller (MORE DETAIL HERE!)
@@ -34,7 +27,7 @@ public class LoginController extends Controller{
   }
 
   private String validateLogin(String username,String password) {
-    String result = Login.validateLogin(username,password, managerContext);
+    String result = UserService.validateLogin(username,password, managerContext);
     return result;
   }
 
@@ -45,11 +38,22 @@ public class LoginController extends Controller{
     String password = passwordField.getText();
     String validateResponse = validateLogin(username,password);
     if (validateResponse.equals("Success")) {
-      System.out.println("successful login");
+      managerContext.authenticationManager.setAuthenticated(true);
+      managerContext.authenticationManager.loginUser(username);
+      managerContext.GUIManager.mainController.openWineScreen();
+      managerContext.GUIManager.mainController.onLogin();
     } else if (validateResponse.equals("Admin Success")) {
-      System.out.println("successful admin login");
+      managerContext.authenticationManager.setAuthenticated(true);
+      managerContext.authenticationManager.setAdmin(true);
+      managerContext.authenticationManager.loginUser(username);
+      managerContext.GUIManager.mainController.openWineScreen();
+      managerContext.GUIManager.mainController.onLogin();
     } else if (validateResponse.equals("Admin First Success")) {
-      System.out.println("successful admin first time login");
+      managerContext.GUIManager.mainController.setDisable(true);
+      managerContext.authenticationManager.loginUser(username);
+      managerContext.GUIManager.mainController.openUpdatePasswordScreen();
+
+      // todo allow user to change admin password
     } else {
       loginMessageLabel.setStyle("-fx-text-fill: red");
       loginMessageLabel.setText(validateResponse);

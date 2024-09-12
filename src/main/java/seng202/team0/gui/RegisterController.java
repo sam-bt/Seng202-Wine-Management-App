@@ -4,8 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import seng202.team0.managers.ManagerContext;
-import seng202.team0.util.Login;
-import seng202.team0.util.Register;
+import seng202.team0.util.UserService;
 
 /**
  * Register Controller
@@ -31,7 +30,7 @@ public class RegisterController extends Controller{
   }
 
   private String validateRegistration(String username,String password, String confirmPassword) {
-    String result = Register.validateRegistration(username,password,confirmPassword, managerContext);
+    String result = UserService.validateRegistration(username,password,confirmPassword, managerContext);
     return result;
   }
 
@@ -43,7 +42,7 @@ public class RegisterController extends Controller{
     String confirmPassword = confirmPasswordField.getText();
     String validateResponse = validateRegistration(username,password,confirmPassword);
     if (validateResponse.equals("Success")) {
-      System.out.println("successfully registered");
+      managerContext.GUIManager.mainController.openLoginScreen();
     } else {
       registerMessageLabel.setStyle("-fx-text-fill: red");
       registerMessageLabel.setText(validateResponse);

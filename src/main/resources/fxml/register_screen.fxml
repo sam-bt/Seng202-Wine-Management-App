@@ -9,7 +9,7 @@
 
 <AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.RegisterController">
    <children>
-      <Label fx:id="registerMessageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="467.0" layoutY="179.0" prefHeight="17.0" prefWidth="456.0" textFill="RED">
+      <Label fx:id="registerMessageLabel" alignment="CENTER" contentDisplay="CENTER" ellipsisString="" layoutX="467.0" layoutY="145.0" prefHeight="64.0" prefWidth="456.0" textAlignment="CENTER" textFill="RED" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>

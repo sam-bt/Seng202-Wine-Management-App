@@ -23,7 +23,7 @@
             <RowConstraints maxHeight="75.0" minHeight="75.0" prefHeight="75.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <HBox alignment="CENTER" prefHeight="75.0" prefWidth="1467.0" GridPane.columnIndex="1">
+            <HBox fx:id="navBarBox" alignment="CENTER" prefHeight="75.0" prefWidth="1467.0" GridPane.columnIndex="1">
                <children>
                   <Button fx:id="wineScreenButton" mnemonicParsing="false" onAction="#openWineScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Wines">
                      <font>
@@ -35,7 +35,7 @@
                         <Font name="System Bold" size="25.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#openVineyardsScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Vineyards">
+                  <Button fx:id="vineyardsScreenButton" mnemonicParsing="false" onAction="#openVineyardsScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Vineyards">
                      <font>
                         <Font name="System Bold" size="25.0" />
                      </font>
@@ -45,16 +45,21 @@
                         <Font name="System Bold" size="25.0" />
                      </font>
                   </Button>
-               </children>
-            </HBox>
-            <AnchorPane maxWidth="300.0" minWidth="233.0" prefHeight="75.0" prefWidth="160.0" GridPane.columnIndex="2">
-               <children>
-                  <Button layoutX="15.0" layoutY="9.0" minWidth="75.0" mnemonicParsing="false" onMouseClicked="#openLoginScreen" prefHeight="58.0" prefWidth="131.0" styleClass="secondary-button" text="Login">
+                  <Button fx:id="adminScreenButton" mnemonicParsing="false" onAction="#openAdminScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Admin">
                      <font>
                         <Font name="System Bold" size="25.0" />
                      </font>
                   </Button>
-                  <Button layoutX="154.0" layoutY="9.0" minWidth="75.0" mnemonicParsing="false" onMouseClicked="#openRegisterScreen" prefHeight="58.0" prefWidth="131.0" styleClass="secondary-button" text="Register">
+               </children>
+            </HBox>
+            <AnchorPane maxWidth="300.0" minWidth="233.0" prefHeight="75.0" prefWidth="160.0" GridPane.columnIndex="2">
+               <children>
+                  <Button fx:id="loginButton" layoutX="15.0" layoutY="9.0" minWidth="75.0" mnemonicParsing="false" onMouseClicked="#openLoginScreen" prefHeight="58.0" prefWidth="131.0" styleClass="secondary-button" text="Login">
+                     <font>
+                        <Font name="System Bold" size="25.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="registerButton" layoutX="154.0" layoutY="9.0" minWidth="75.0" mnemonicParsing="false" onMouseClicked="#openRegisterScreen" prefHeight="58.0" prefWidth="131.0" styleClass="secondary-button" text="Register">
                      <font>
                         <Font name="System Bold" size="25.0" />
                      </font>

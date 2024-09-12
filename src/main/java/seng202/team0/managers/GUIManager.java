@@ -17,7 +17,7 @@ import seng202.team0.gui.WishlistController;
 public class GUIManager {
 
   private final FXWrapper wrapper;
-  private MainController mainController;
+  public MainController mainController;
 
   /**
    * Constructs a GUIManager
