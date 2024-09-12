@@ -83,6 +83,14 @@ public class WineScreenController extends Controller{
     openWineRange(0, 100);
   }
 
+  /**
+   * Creates a range slider element and displays it on the filters pane at the given layout coordinates
+   * @param layoutX The layout X position
+   * @param layoutY The layout Y position
+   * @param min The minimum value displayed on the slider
+   * @param max The maximum value displayed on the slider
+   * @param blockIncrements The gap between tick marks
+   */
   public void createSlider(int layoutX, int layoutY, int min, int max, int blockIncrements) {
     RangeSlider rangeSlider = new RangeSlider(min, max, min, max);
     rangeSlider.setLayoutX(layoutX);
