@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -24,12 +25,12 @@
                 <Font size="16.0" />
               </font>
             </Label>
-            <TextField fx:id="passwordField" layoutX="77.0" layoutY="119.0" prefHeight="33.0" prefWidth="300.0" promptText="Enter your password" />
             <Button layoutX="127.0" layoutY="174.0" mnemonicParsing="false" onAction="#onConfirm" prefHeight="35.0" prefWidth="200.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Login to your Account">
               <font>
                 <Font name="System Bold" size="14.0" />
               </font>
             </Button>
+                  <PasswordField fx:id="passwordField" layoutX="77.0" layoutY="119.0" prefHeight="33.0" prefWidth="300.0" />
           </children>
         </AnchorPane>
       </content>
