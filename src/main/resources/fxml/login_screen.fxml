@@ -2,12 +2,13 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.LoginController">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.LoginController">
   <children>
     <TitledPane animated="false" collapsible="false" layoutX="457.0" layoutY="259.0" maxWidth="456.0" minWidth="456.0" prefHeight="263.0" prefWidth="456.0" stylesheets="@../css/titled_pane.css" text="Login">
       <content>
@@ -24,12 +25,12 @@
                 <Font size="16.0" />
               </font>
             </Label>
-            <TextField fx:id="passwordField" layoutX="77.0" layoutY="119.0" prefHeight="33.0" prefWidth="300.0" promptText="Enter your password" />
             <Button layoutX="127.0" layoutY="174.0" mnemonicParsing="false" onAction="#onConfirm" prefHeight="35.0" prefWidth="200.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Login to your Account">
               <font>
                 <Font name="System Bold" size="16.0" />
               </font>
             </Button>
+                  <PasswordField fx:id="passwordField" layoutX="77.0" layoutY="119.0" prefHeight="33.0" prefWidth="300.0" />
           </children>
         </AnchorPane>
       </content>
