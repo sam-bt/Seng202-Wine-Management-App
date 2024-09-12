@@ -1,0 +1,37 @@
+.tab-pane:top *.tab-header-area {
+    -fx-padding: 0;
+}
+
+.tab-pane {
+  -fx-tab-min-width:120px;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+ 	-fx-background-color: #F87171;
+}
+
+.tab-pane .tab {
+  -fx-background-color: #F87171;
+  -fx-background-insets: 0 0 0 0,0,0;
+}
+
+
+.tab-pane .tab .tab-label {
+  -fx-text-fill: white;
+  -fx-font-size: 14px;
+  -fx-font-weight: bold;
+}
+
+.tab-pane .tab:selected {
+  -fx-background-color: #EB4034;
+}
+
+.tab-pane > .tab-content-area {
+    -fx-background-color: white;
+}
+.tab-pane:focused .tab-header-area .headers-region .tab:selected .focus-indicator {
+ 	-fx-border-width: 0;
+	-fx-border-insets: 0 0 0 0;
+	-fx-border-radius: 0;
+}
+

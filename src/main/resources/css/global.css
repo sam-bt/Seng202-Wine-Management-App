@@ -25,11 +25,3 @@
 .secondary-button:pressed {
   -fx-background-color: #DC2626;
 }
-
-.primary-background {
-  -fx-background-color: #EB4034;
-}
-
-.application-background {
-  -fx-background-color: #FEF0F0
-}

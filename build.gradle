@@ -33,6 +33,10 @@ dependencies {
     // https://mvnrepository.com/artifact/org.openjfx/javafx-web
     implementation "org.openjfx:javafx-web:${javafxVersion}"
 
+    // range slider
+    // https://mvnrepository.com/artifact/org.controlsfx/controlsfx
+    implementation 'org.controlsfx:controlsfx:11.1.2'
+
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
     implementation 'org.xerial:sqlite-jdbc:3.39.2.1'
 
@@ -87,7 +91,7 @@ application {
 
 javafx {
     version = "${javafxVersion}"
-    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.web' ]
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.web']
 }
 
 test {
