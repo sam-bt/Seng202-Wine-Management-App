@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team0.database.Wine;
@@ -16,20 +17,20 @@ import seng202.team0.database.Wine;
 
 /**
  * Mediates access to the database
- *
  */
 public class DatabaseManager implements AutoCloseable {
 
   /**
    * Database connection
    * <p>
-   *   This is ensured to be always valid
+   * This is ensured to be always valid
    * </p>
    */
   private Connection connection;
 
   /**
    * Connects to a db file for management. The path to the file is specified by dbpath
+   *
    * @throws SQLException if failed to initialize
    */
   public DatabaseManager() throws SQLException {
@@ -81,10 +82,11 @@ public class DatabaseManager implements AutoCloseable {
   /**
    * Gets a subset of the wines in the database
    * <p>
-   *   The order of elements should remain stable until a write operation occurs.
+   * The order of elements should remain stable until a write operation occurs.
    * </p>
+   *
    * @param begin beginning element
-   * @param end end element (begin + size)
+   * @param end   end element (begin + size)
    * @return subset list of wines
    */
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
@@ -120,11 +122,129 @@ public class DatabaseManager implements AutoCloseable {
   }
 
   /**
+   * Gets a subset of the wines in the database with a Map for filtering
+   * <p>
+   * The order of elements should remain stable until a write operation occurs.
+   * </p>
+   *
+   * @param begin   beginning element
+   * @param end     end element (begin + size)
+   * @param filters Map of filter values
+   * @return subset list of wines
+   */
+  public ObservableList<Wine> getWinesInRange(int begin, int end, Map<String, Object> filters) {
+
+    ObservableList<Wine> wines = FXCollections.observableArrayList();
+    String query = generateFilteredSelectStatementString(filters);
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      int paramIndex = 1;
+
+      // Order Matters here! Must match statement!
+      if (filters.containsKey("title")) {
+        statement.setString(paramIndex++, (String) filters.get("title"));
+      }
+
+      if (filters.containsKey("country")) {
+        statement.setString(paramIndex++, (String) filters.get("country"));
+      }
+
+      if (filters.containsKey("winery")) {
+        statement.setString(paramIndex++, (String) filters.get("winery"));
+      }
+
+      if (filters.containsKey("score")) {
+        double[] scoreRange = (double[]) filters.get("score");
+        statement.setDouble(paramIndex++, scoreRange[0]);
+        statement.setDouble(paramIndex++, scoreRange[1]);
+      }
+
+      if (filters.containsKey("abv")) {
+        double[] abvRange = (double[]) filters.get("abv");
+        statement.setDouble(paramIndex++, abvRange[0]);
+        statement.setDouble(paramIndex++, abvRange[1]);
+      }
+
+      if (filters.containsKey("price")) {
+        double[] priceRange = (double[]) filters.get("price");
+        statement.setDouble(paramIndex++, priceRange[0]);
+        statement.setDouble(paramIndex++, priceRange[1]);
+      }
+
+      statement.setInt(paramIndex++, end - begin);
+      statement.setInt(paramIndex, begin);
+
+      // Add wines to list
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        Wine wine = new Wine(
+            set.getString("TITLE"),
+            set.getString("VARIETY"),
+            set.getString("COUNTRY"),
+            set.getString("WINERY"),
+            set.getString("DESCRIPTION"),
+            set.getInt("SCORE_PERCENT"),
+            set.getFloat("ABV"),
+            set.getFloat("PRICE")
+        );
+        wines.add(wine);
+      }
+
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
+    return wines;
+  }
+
+
+  /**
+   * Generates a query for a preparedStatement
+   *
+   * @param filters A map of filter values and names
+   * @return A statement formatted for a sql preparedStatement
+   */
+  public String generateFilteredSelectStatementString(Map<String, Object> filters) {
+    StringBuilder query = new StringBuilder();
+    query.append(
+        "select TITLE, VARIETY, COUNTRY, WINERY, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE where 1=1");
+
+    // Go through filter map and append conditions
+    if (filters.containsKey("title")) {
+      query.append(" and TITLE like ?");
+    }
+
+    if (filters.containsKey("country")) {
+      query.append(" and COUNTRY like ?");
+    }
+
+    if (filters.containsKey("winery")) {
+      query.append(" and WINERY like ?");
+    }
+
+    if (filters.containsKey("score")) {
+      query.append(" and SCORE_PERCENT between ? and ?");
+    }
+
+    if (filters.containsKey("abv")) {
+      query.append(" and ABV between ? and ?");
+    }
+
+    if (filters.containsKey("price")) {
+      query.append(" and PRICE between ? and ?");
+    }
+
+    query.append(" order by ROWID limit ? offset ?;");
+
+    return query.toString();
+  }
+
+  /**
    * Gets the number of wine records
+   *
    * @return total number of wine records
    */
   public int getWinesSize() throws SQLException {
-    try(Statement statement = connection.createStatement()) {
+    try (Statement statement = connection.createStatement()) {
       ResultSet set = statement.executeQuery("select count(*) from WINE;");
       set.next();
       return set.getInt(1);
@@ -134,11 +254,12 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Replaces all wines in the database with a new list
+   *
    * @param list list of wines
    */
   public void replaceAllWines(List<Wine> list) throws SQLException {
     String delete = "delete from WINE;";
-    try(Statement statement = connection.createStatement()) {
+    try (Statement statement = connection.createStatement()) {
       statement.executeUpdate(delete);
     }
 
@@ -147,6 +268,7 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Adds the wines in the list to the database
+   *
    * @param list list of wines
    */
   public void addWines(List<Wine> list) throws SQLException {
