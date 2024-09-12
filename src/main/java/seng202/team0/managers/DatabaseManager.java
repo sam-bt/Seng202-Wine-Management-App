@@ -11,6 +11,8 @@ import java.sql.Statement;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.commons.lang3.ObjectUtils.Null;
+import seng202.team0.database.User;
 import seng202.team0.database.Wine;
 
 
@@ -202,32 +204,34 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  private String[] getUser(String username) throws SQLException {
-    String[] result = new String[3];
-    String query = "SELECT PASSWORD FROM USER WHERE USERNAME = ?";
+  public User getUser(String username) {
+    User user;
+    String query = "SELECT * FROM USER WHERE USERNAME = ?";
 
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setString(1, username);
-
       ResultSet set = statement.executeQuery();
 
       if (set.next()) {
-        result[0] = set.getString("USERNAME");
-        result[1] = set.getString("PASSWORD");
-        result[2] = set.getString("ROLE");
+        user = new User(set.getString("USERNAME"),set.getString("PASSWORD"),set.getString("ROLE"));
       } else {
         return null;
       }
+    } catch (SQLException e) {
+      System.err.println("Database error occurred: " + e.getMessage());
+      e.printStackTrace();
+      return null;
     }
-    return result;
+    return user;
   }
 
-  private boolean addUser(String username, String password) throws SQLException {
+
+  public boolean addUser(String username, String password) {
     String insert = "insert into USER values(?, ?, ?);";
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
-      insertStatement.setString(0, username);
-      insertStatement.setString(1, password);
-      insertStatement.setString(2, "user");
+      insertStatement.setString(1, username);
+      insertStatement.setString(2, password);
+      insertStatement.setString(3, "user");
       insertStatement.executeUpdate();
       return true;
     } catch (SQLException e) {
@@ -235,12 +239,14 @@ public class DatabaseManager implements AutoCloseable {
         System.out.println("Duplicate username: " + username);
         return false;
       } else {
-        throw e;
+        System.err.println("Database error occurred: " + e.getMessage());
+        e.printStackTrace();
+        return false;
       }
     }
   }
 
-  private boolean updatePassword(String username, String password) throws SQLException {
+  public boolean updatePassword(String username, String password) throws SQLException {
     String updateQuery = "UPDATE USER SET PASSWORD = ? WHERE USERNAME = ?";
 
     try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {

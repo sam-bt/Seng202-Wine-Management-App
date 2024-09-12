@@ -20,7 +20,6 @@ public class LoginController extends Controller{
 
   @FXML
   private TextField usernameField;
-
   @FXML
   private TextField passwordField;
   @FXML
@@ -35,7 +34,7 @@ public class LoginController extends Controller{
   }
 
   private String validateLogin(String username,String password) {
-    String result = Login.validateLogin(username,password);
+    String result = Login.validateLogin(username,password, managerContext);
     return result;
   }
 
@@ -45,10 +44,12 @@ public class LoginController extends Controller{
     String username = usernameField.getText();
     String password = passwordField.getText();
     String validateResponse = validateLogin(username,password);
-    if (validateResponse == "Success") {
-
-    } else if (validateResponse == "AdminSuccess") {
-
+    if (validateResponse.equals("Success")) {
+      System.out.println("successful login");
+    } else if (validateResponse.equals("Admin Success")) {
+      System.out.println("successful admin login");
+    } else if (validateResponse.equals("Admin First Success")) {
+      System.out.println("successful admin first time login");
     } else {
       loginMessageLabel.setStyle("-fx-text-fill: red");
       loginMessageLabel.setText(validateResponse);

@@ -1,16 +1,12 @@
 package seng202.team0.database;
 
-import javafx.beans.property.FloatProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
  * Wine represents the wine record in the database
  */
-public class Login {
+public class User {
 
   /**
    * username
@@ -32,7 +28,7 @@ public class Login {
    * @param password password
    * @param role     role
    */
-  public Login(
+  public User(
       String username,
       String password,
       String role
@@ -45,7 +41,7 @@ public class Login {
   /**
    * Default constructor
    */
-  public Login() {
+  public User() {
     this.username = new SimpleStringProperty(this, "username");
     this.password = new SimpleStringProperty(this, "password");
     this.role = new SimpleStringProperty(this, "role");
