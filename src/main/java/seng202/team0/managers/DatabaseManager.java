@@ -23,13 +23,14 @@ public class DatabaseManager implements AutoCloseable {
   /**
    * Database connection
    * <p>
-   *   This is ensured to be always valid
+   * This is ensured to be always valid
    * </p>
    */
   private Connection connection;
 
   /**
    * Connects to a db file for management. The path to the file is specified by dbpath
+   *
    * @throws SQLException if failed to initialize
    */
   public DatabaseManager() throws SQLException {
@@ -82,10 +83,11 @@ public class DatabaseManager implements AutoCloseable {
   /**
    * Gets a subset of the wines in the database
    * <p>
-   *   The order of elements should remain stable until a write operation occurs.
+   * The order of elements should remain stable until a write operation occurs.
    * </p>
+   *
    * @param begin beginning element
-   * @param end end element (begin + size)
+   * @param end   end element (begin + size)
    * @return subset list of wines
    */
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
@@ -122,10 +124,11 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Gets the number of wine records
+   *
    * @return total number of wine records
    */
   public int getWinesSize() throws SQLException {
-    try(Statement statement = connection.createStatement()) {
+    try (Statement statement = connection.createStatement()) {
       ResultSet set = statement.executeQuery("select count(*) from WINE;");
       set.next();
       return set.getInt(1);
@@ -135,11 +138,12 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Replaces all wines in the database with a new list
+   *
    * @param list list of wines
    */
   public void replaceAllWines(List<Wine> list) throws SQLException {
     String delete = "delete from WINE;";
-    try(Statement statement = connection.createStatement()) {
+    try (Statement statement = connection.createStatement()) {
       statement.executeUpdate(delete);
     }
 
@@ -148,6 +152,7 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Adds the wines in the list to the database
+   *
    * @param list list of wines
    */
   public void addWines(List<Wine> list) throws SQLException {
@@ -183,13 +188,72 @@ public class DatabaseManager implements AutoCloseable {
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
     }
-    System.out.println("tried to create user table");
     assert (tableExists("USER"));
     createDefaultAdminUser();
   }
 
-  private void createDefaultAdminUser() throws SQLException {
+  private void createDefaultAdminUser() throws SQLException { //TODO remove when db persists
+    String insert = "insert into USER (username, password, role) values(?, ?, ?);";
+    try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
+      insertStatement.setString(1, "admin");
+      insertStatement.setString(2, "admin");
+      insertStatement.setString(3, "admin");
+      insertStatement.executeUpdate();
+    }
+  }
 
+  private String[] getUser(String username) throws SQLException {
+    String[] result = new String[3];
+    String query = "SELECT PASSWORD FROM USER WHERE USERNAME = ?";
+
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setString(1, username);
+
+      ResultSet set = statement.executeQuery();
+
+      if (set.next()) {
+        result[0] = set.getString("USERNAME");
+        result[1] = set.getString("PASSWORD");
+        result[2] = set.getString("ROLE");
+      } else {
+        return null;
+      }
+    }
+    return result;
+  }
+
+  private boolean addUser(String username, String password) throws SQLException {
+    String insert = "insert into USER values(?, ?, ?);";
+    try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
+      insertStatement.setString(0, username);
+      insertStatement.setString(1, password);
+      insertStatement.setString(2, "user");
+      insertStatement.executeUpdate();
+      return true;
+    } catch (SQLException e) {
+      if (e.getMessage().contains("PRIMARY KEY")) {
+        System.out.println("Duplicate username: " + username);
+        return false;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  private boolean updatePassword(String username, String password) throws SQLException {
+    String updateQuery = "UPDATE USER SET PASSWORD = ? WHERE USERNAME = ?";
+
+    try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+      updateStatement.setString(1, password);
+      updateStatement.setString(2, username);
+
+      int rowsAffected = updateStatement.executeUpdate();
+
+      return rowsAffected > 0;
+    } catch (SQLException e) {
+      System.err.println("Error updating password: " + e.getMessage());
+      throw e;
+    }
   }
 
   /**
