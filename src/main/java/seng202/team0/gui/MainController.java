@@ -102,4 +102,8 @@ public class MainController extends Controller {
     switchScene("/fxml/login_screen.fxml", "Login", () -> new LoginController(managerContext));
   }
 
+  @FXML
+  public void openRegisterScreen() {
+    switchScene("/fxml/register_screen.fxml", "Register", () -> new RegisterController(managerContext));
+  }
 }
