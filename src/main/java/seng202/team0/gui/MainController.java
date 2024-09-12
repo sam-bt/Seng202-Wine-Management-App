@@ -89,11 +89,5 @@ public class MainController extends Controller {
   public void openConsumptionCalculatorScreen() {
     switchScene("/fxml/consumption_calculator_screen.fxml", "Consumption Calculator",  () -> new ConsumptionCalculatorController(managerContext));
   }
-  /**
-   * Launches the login screen.
-   */
-  @FXML
-  public void openLoginScreen() {
-    switchScene("/fxml/login_screen.fxml", "Login", () -> new LoginController(managerContext));
-  }
+
 }
