@@ -71,4 +71,5 @@ public class LoginController extends Controller{
       loginMessageLabel.setText(validateResponse);
     }
   }
+
 }
