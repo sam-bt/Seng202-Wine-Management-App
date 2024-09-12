@@ -51,7 +51,7 @@ public class DatabaseManager implements AutoCloseable {
     //this.connection = DriverManager.getConnection(dbPath);
     this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
     createWinesTable();
-    createUsersTable();
+//    createUsersTable();
 
   }
 
@@ -179,7 +179,7 @@ public class DatabaseManager implements AutoCloseable {
     String create = "create table USER (" +
         "USERNAME varchar(64) PRIMARY KEY," +
         "PASSWORD varchar(64) NOT NULL," +
-        "ROLE varchar(8),";
+        "ROLE varchar(8)";
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
     }
