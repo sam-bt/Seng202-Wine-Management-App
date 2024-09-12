@@ -34,34 +34,17 @@ public class LoginController extends Controller{
     super(managerContext);
   }
 
-  private static final String LOGIN_PATH = "login_info.csv";
-  private ArrayList<String[]> loginInfo;
-
-  private String validateLogin(String username,String password,ArrayList<String[]> loginInfo) {
-    String result = Login.validateLogin(username,password,loginInfo);
+  private String validateLogin(String username,String password) {
+    String result = Login.validateLogin(username,password);
     return result;
   }
 
   @FXML
   private void onConfirm() {
-    // should validate that login file exists first, also to update message to prompt admin first time login
-    System.out.println();
-    Path filePath = Paths.get(LOGIN_PATH).toAbsolutePath();
-    try {
-      ArrayList<String[]> rows = ProcessCSV.getCSVRows(new File(String.valueOf(filePath)));
 
-      String[] columnNames = rows.getFirst();
-      loginInfo = rows;
-      for (String[] row: loginInfo) {
-        System.out.println(Arrays.toString(row));
-      }
-    } catch(Exception exception) {
-      LogManager.getLogger(getClass())
-          .error("Failed to read CSV file: {}", LOGIN_PATH, exception);
-    }
     String username = usernameField.getText();
     String password = passwordField.getText();
-    String validateResponse = validateLogin(username,password,loginInfo);
+    String validateResponse = validateLogin(username,password);
     if (validateResponse == "Success") {
 
     } else if (validateResponse == "AdminSuccess") {
