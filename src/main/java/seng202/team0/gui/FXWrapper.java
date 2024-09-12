@@ -31,13 +31,22 @@ public class FXWrapper {
      */
     public void init(Stage stage) {
         this.stage = stage;
-        this.managerContext = new ManagerContext(
-            new DatabaseManager(),
-            new AuthenticationManager(),
-            new MapManager(),
-            new GUIManager(this)
-        );
-        this.managerContext.GUIManager.launchHomeScreen(this.managerContext);
+        try {
+            this.managerContext = new ManagerContext(
+                new DatabaseManager(),
+                new AuthenticationManager(),
+                new MapManager(),
+                new GUIManager(this)
+            );
+        } catch(Exception exception) {
+            // If we fail to initialize the managers we are kinda screwed
+            throw new RuntimeException("Failed to instantiate manager context", exception);
+        }
+        loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
+
+    }
+    public void setWindowTitle(String title){
+        stage.setTitle(title);
     }
 
     /**
@@ -55,6 +64,9 @@ public class FXWrapper {
             Parent parent = loader.load();
             pane.getChildren().clear(); // IMPORTANT
             pane.getChildren().add(parent);
+            if(loader.getController() instanceof Controller controller){
+                controller.init();
+            }
             stage.setTitle(title);
         } catch (IOException e) {
             System.out.println("Failed to load screen: " + fxml);

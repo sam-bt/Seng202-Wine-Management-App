@@ -8,6 +8,8 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -16,67 +18,19 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.WineScreenController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1200.0" minWidth="10.0" prefWidth="1200.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints maxHeight="342.2725830078125" minHeight="4.131998062133789" prefHeight="4.131998062133789" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="651.8680019378662" minHeight="10.0" prefHeight="651.8680019378662" vgrow="SOMETIMES" />
-  </rowConstraints>
-  <children>
-    <Button mnemonicParsing="false" text="Login" GridPane.columnIndex="2" GridPane.valignment="BOTTOM">
-      <GridPane.margin>
-        <Insets left="20.0" />
-      </GridPane.margin>
-    </Button>
-    <HBox prefHeight="119.0" prefWidth="1026.0" GridPane.columnIndex="1">
-      <children>
-        <Button fx:id="homeScreenButton" mnemonicParsing="false" onAction="#openHomeScreen" prefHeight="75.0" prefWidth="200.0" text="Home">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button disable="true" mnemonicParsing="false" prefHeight="75.0" prefWidth="200.0" text="Wines">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button fx:id="listScreenButton" mnemonicParsing="false" onAction="#openListScreen" prefHeight="75.0" prefWidth="200.0" text="My Lists">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button mnemonicParsing="false" onAction="#openVineyardsScreen" prefHeight="75.0" prefWidth="200.0" text="Vineyards">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button fx:id="dataSetsScreenButton" mnemonicParsing="false" onAction="#openDataSetsScreen" prefHeight="75.0" prefWidth="200.0" text="Datasets">
-          <font>
-            <Font size="25.0" />
-          </font>
-        </Button>
-        <Button fx:id="consumptionCalculatorScreenButton" ellipsisString="" mnemonicParsing="false" onAction="#openConsumptionCalculatorScreen" prefHeight="75.0" prefWidth="200.0" text="Consumption Calculator" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
-          <font>
-            <Font size="24.0" />
-          </font>
-        </Button>
-      </children>
-      <GridPane.margin>
-        <Insets top="31.0" />
-      </GridPane.margin>
-    </HBox>
-    <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.WineScreenController">
+   <children>
+    <TabPane layoutX="332.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
       <tabs>
         <Tab text="Raw Data Viewer">
           <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-              <children>
-                <GridPane layoutX="-2.0" prefHeight="622.0" prefWidth="1234.0">
+          </content>
+               <content>
+                  <VBox minHeight="720.0" prefHeight="720.0" prefWidth="1014.0">
+                     <children>
+                <GridPane prefHeight="729.0" prefWidth="1229.0">
                   <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   </columnConstraints>
@@ -85,13 +39,13 @@
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                   </rowConstraints>
                   <children>
-                    <HBox prefHeight="100.0" prefWidth="200.0">
+                    <TableView fx:id="tableView" prefHeight="696.0" prefWidth="1040.0" GridPane.rowIndex="1">
+                      <columns>
+                        <TableColumn minWidth="-1.0" prefWidth="-1.0" />
+                      </columns>
+                    </TableView>
+                    <HBox prefHeight="28.0" prefWidth="914.0">
                       <children>
-                        <Label text="Raw Data Viewer">
-                          <HBox.margin>
-                            <Insets left="25.0" right="150.0" top="7.0" />
-                          </HBox.margin>
-                        </Label>
                         <Label text="Sort by">
                           <HBox.margin>
                             <Insets right="10.0" top="6.0" />
@@ -109,155 +63,156 @@
                         </Button>
                       </children>
                     </HBox>
-                    <TableView prefHeight="408.0" prefWidth="548.0" GridPane.rowIndex="1">
-                      <columns>
-                        <TableColumn prefWidth="75.0" />
-                      </columns>
-                    </TableView>
                   </children>
                 </GridPane>
-              </children>
-            </AnchorPane>
-          </content>
+                     </children>
+                  </VBox>
+               </content>
         </Tab>
         <Tab text="Statistics">
           <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-              <children>
-                <GridPane prefHeight="313.0" prefWidth="676.0">
-                  <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="329.0" minWidth="10.0" prefWidth="160.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="551.0" minWidth="10.0" prefWidth="516.0" />
-                  </columnConstraints>
-                  <rowConstraints>
-                    <RowConstraints maxHeight="150.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="286.0" minHeight="10.0" prefHeight="279.0" vgrow="SOMETIMES" />
-                  </rowConstraints>
-                  <children>
-                    <Label text="Statistics">
-                      <GridPane.margin>
-                        <Insets left="25.0" />
-                      </GridPane.margin>
-                    </Label>
-                    <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Open Filters" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
-                      <GridPane.margin>
-                        <Insets right="70.0" />
-                      </GridPane.margin>
-                    </Button>
-                    <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
-                      <children>
-                        <Label text="Select type of graph">
-                          <VBox.margin>
-                            <Insets bottom="5.0" left="2.0" right="2.0" top="2.0" />
-                          </VBox.margin>
-                        </Label>
-                        <ChoiceBox prefWidth="150.0">
-                          <VBox.margin>
-                            <Insets bottom="10.0" left="2.0" />
-                          </VBox.margin>
-                        </ChoiceBox>
-                        <Label text="Graph option 1">
-                          <VBox.margin>
-                            <Insets bottom="5.0" left="2.0" right="2.0" top="2.0" />
-                          </VBox.margin>
-                        </Label>
-                        <ChoiceBox prefWidth="150.0">
-                          <VBox.margin>
-                            <Insets bottom="10.0" left="2.0" />
-                          </VBox.margin>
-                        </ChoiceBox>
-                        <Label text="Graph option 2">
-                          <VBox.margin>
-                            <Insets bottom="5.0" left="2.0" right="2.0" top="2.0" />
-                          </VBox.margin>
-                        </Label>
-                        <ChoiceBox prefWidth="150.0">
-                          <VBox.margin>
-                            <Insets bottom="10.0" left="2.0" />
-                          </VBox.margin>
-                        </ChoiceBox>
-                        <Label text="Graph option 3">
-                          <VBox.margin>
-                            <Insets bottom="5.0" left="2.0" right="2.0" top="2.0" />
-                          </VBox.margin>
-                        </Label>
-                        <ChoiceBox prefWidth="150.0">
-                          <VBox.margin>
-                            <Insets bottom="10.0" left="2.0" />
-                          </VBox.margin>
-                        </ChoiceBox>
-                      </children>
-                    </VBox>
-                    <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  </children>
-                </GridPane>
-              </children>
-            </AnchorPane>
+          <GridPane prefHeight="313.0" prefWidth="676.0">
+            <columnConstraints>
+              <ColumnConstraints hgrow="SOMETIMES" maxWidth="329.0" minWidth="10.0" prefWidth="160.0" />
+              <ColumnConstraints hgrow="SOMETIMES" maxWidth="551.0" minWidth="10.0" prefWidth="516.0" />
+            </columnConstraints>
+            <rowConstraints>
+              <RowConstraints maxHeight="150.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
+              <RowConstraints maxHeight="286.0" minHeight="10.0" prefHeight="279.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+              <Label text="Statistics">
+                <GridPane.margin>
+                  <Insets left="25.0" />
+                </GridPane.margin>
+              </Label>
+              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Open Filters" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+                <GridPane.margin>
+                  <Insets right="70.0" />
+                </GridPane.margin>
+              </Button>
+              <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
+                <children>
+                  <Label text="Select type of graph">
+                    <VBox.margin>
+                      <Insets bottom="5.0" left="2.0" right="2.0" top="2.0" />
+                    </VBox.margin>
+                  </Label>
+                  <ChoiceBox prefWidth="150.0">
+                    <VBox.margin>
+                      <Insets bottom="10.0" left="2.0" />
+                    </VBox.margin>
+                  </ChoiceBox>
+                  <Label text="Graph option 1">
+                    <VBox.margin>
+                      <Insets bottom="5.0" left="2.0" right="2.0" top="2.0" />
+                    </VBox.margin>
+                  </Label>
+                  <ChoiceBox prefWidth="150.0">
+                    <VBox.margin>
+                      <Insets bottom="10.0" left="2.0" />
+                    </VBox.margin>
+                  </ChoiceBox>
+                  <Label text="Graph option 2">
+                    <VBox.margin>
+                      <Insets bottom="5.0" left="2.0" right="2.0" top="2.0" />
+                    </VBox.margin>
+                  </Label>
+                  <ChoiceBox prefWidth="150.0">
+                    <VBox.margin>
+                      <Insets bottom="10.0" left="2.0" />
+                    </VBox.margin>
+                  </ChoiceBox>
+                  <Label text="Graph option 3">
+                    <VBox.margin>
+                      <Insets bottom="5.0" left="2.0" right="2.0" top="2.0" />
+                    </VBox.margin>
+                  </Label>
+                  <ChoiceBox prefWidth="150.0">
+                    <VBox.margin>
+                      <Insets bottom="10.0" left="2.0" />
+                    </VBox.margin>
+                  </ChoiceBox>
+                </children>
+              </VBox>
+              <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            </children>
+          </GridPane>
           </content>
         </Tab>
         <Tab text="Map View">
-          <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-              <children>
-                <GridPane prefHeight="314.0" prefWidth="676.0">
-                  <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  </columnConstraints>
-                  <rowConstraints>
-                    <RowConstraints maxHeight="150.0" minHeight="10.0" prefHeight="53.0" vgrow="SOMETIMES" />
-                    <RowConstraints maxHeight="280.0" minHeight="10.0" prefHeight="261.0" vgrow="SOMETIMES" />
-                  </rowConstraints>
-                  <children>
-                    <HBox prefHeight="100.0" prefWidth="200.0">
-                      <children>
-                        <Label text="Map View">
-                          <HBox.margin>
-                            <Insets left="25.0" right="420.0" top="7.0" />
-                          </HBox.margin>
-                        </Label>
-                        <Button mnemonicParsing="false" text="Open Filters">
-                          <HBox.margin>
-                            <Insets top="4.0" />
-                          </HBox.margin>
-                        </Button>
-                      </children>
-                    </HBox>
-                    <Pane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
-                  </children>
-                </GridPane>
-              </children>
-            </AnchorPane>
-          </content>
+               <content>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane layoutX="1.0" layoutY="-1.0" prefHeight="729.0" prefWidth="1229.0">
+                           <children>
+                              <WebView fx:id="mapView" layoutX="17.0" layoutY="11.0" prefHeight="708.0" prefWidth="1195.0" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+               </content>
         </Tab>
       </tabs>
     </TabPane>
-    <VBox prefHeight="652.0" prefWidth="106.0" GridPane.rowIndex="1" GridPane.rowSpan="2147483647">
-      <children>
-        <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="99.0" text="Open Dataset" textFill="#e11111">
-          <VBox.margin>
-            <Insets left="7.0" top="35.0" />
-          </VBox.margin>
-        </Button>
-        <Label alignment="TOP_LEFT" prefHeight="66.0" prefWidth="95.0" text="Datasets - redundant" textFill="RED" wrapText="true">
-          <VBox.margin>
-            <Insets left="20.0" top="5.0" />
-          </VBox.margin>
-          <font>
-            <Font size="21.0" />
-          </font>
-        </Label>
-        <Button mnemonicParsing="false" prefHeight="49.0" prefWidth="178.0" text="Show Data">
-          <VBox.margin>
-            <Insets bottom="5.0" left="15.0" right="5.0" top="5.0" />
-          </VBox.margin>
-        </Button>
-      </children>
-    </VBox>
-    <Button mnemonicParsing="false" text="Register" GridPane.columnIndex="2" GridPane.valignment="TOP" />
-    <Label alignment="CENTER" contentDisplay="CENTER" text="WINO">
-      <font>
-        <Font size="27.0" />
-      </font>
-    </Label>
-  </children>
-</GridPane>
+      <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Filters">
+        <content>
+          <AnchorPane fx:id="filtersPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="316.0" styleClass="filters-pane" stylesheets="@../css/titled_pane.css">
+               <children>
+                  <Button layoutX="30.0" layoutY="679.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="120.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Apply">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Button>
+                  <Button layoutX="167.0" layoutY="679.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="120.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Reset">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Button>
+                  <Label layoutX="9.0" layoutY="20.0" text="Title">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TextField layoutX="9.0" layoutY="45.0" prefHeight="33.0" prefWidth="300.0" />
+                  <Label layoutX="9.0" layoutY="100.0" text="Title">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <ChoiceBox layoutX="9.0" layoutY="125.0" prefHeight="33.0" prefWidth="300.0" />
+                  <Label layoutX="9.0" layoutY="180.0" text="Country">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <ChoiceBox layoutX="9.0" layoutY="205.0" prefHeight="33.0" prefWidth="300.0" />
+                  <Label layoutX="11.0" layoutY="260.0" text="Winery">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <ChoiceBox layoutX="11.0" layoutY="285.0" prefHeight="33.0" prefWidth="300.0" />
+                  <Label layoutX="11.0" layoutY="340.0" text="Score Range">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="11.0" layoutY="420.0" text="Alcohol by Volume Range">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="11.0" layoutY="500.0" text="Score Range">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+               </children></AnchorPane>
+        </content>
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </TitledPane>
+   </children>
+</AnchorPane>
