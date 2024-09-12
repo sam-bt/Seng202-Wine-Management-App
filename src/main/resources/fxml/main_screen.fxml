@@ -62,7 +62,7 @@
                         <Font name="System Bold" size="25.0" />
                      </font>
                   </Button>
-                  <Button layoutX="16.0" layoutY="9.0" minWidth="75.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="131.0" styleClass="secondary-button" text="Login">
+                  <Button layoutX="16.0" layoutY="9.0" minWidth="75.0" mnemonicParsing="false" onAction="#openLoginScreen" prefHeight="58.0" prefWidth="131.0" styleClass="secondary-button" text="Login">
                      <font>
                         <Font name="System Bold" size="25.0" />
                      </font>

@@ -51,6 +51,7 @@ public class DatabaseManager implements AutoCloseable {
     //this.connection = DriverManager.getConnection(dbPath);
     this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
     createWinesTable();
+    createUsersTable();
 
   }
 
@@ -168,6 +169,27 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
+  /**
+   * @throws SQLException on sql error
+   */
+  private void createUsersTable() throws SQLException {
+    if (tableExists("USER")) {
+      return;
+    }
+    String create = "create table USER (" +
+        "USERNAME varchar(64) PRIMARY KEY," +
+        "PASSWORD varchar(64) NOT NULL," +
+        "ROLE varchar(8),";
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(create);
+    }
+    assert (tableExists("USER"));
+    createDefaultAdminUser();
+  }
+
+  private void createDefaultAdminUser() throws SQLException {
+
+  }
 
   /**
    * To disconnect/close database
