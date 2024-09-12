@@ -4,6 +4,7 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Builder;
 import seng202.team0.managers.ManagerContext;
@@ -16,6 +17,9 @@ public class MainController extends Controller {
 
   @FXML
   private BorderPane borderPane;
+
+  @FXML
+  private AnchorPane pageContent;
 
   /**
    * Constructor
@@ -34,7 +38,8 @@ public class MainController extends Controller {
       // provide a custom Controller with parameters
       loader.setControllerFactory(param -> builder.build());
       Parent parent = loader.load();
-      borderPane.setCenter(parent);
+      pageContent.getChildren().clear();
+      pageContent.getChildren().add(parent);
       if(loader.getController() instanceof Controller controller){
         controller.init();
       }
