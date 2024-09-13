@@ -63,10 +63,7 @@ public class DatabaseManager implements AutoCloseable {
    * @throws SQLException on sql error
    */
   private void createWinesTable() throws SQLException {
-    if (tableExists("WINE")) {
-      return;
-    }
-    String create = "create table WINE (" +
+    String create = "create table if not exists WINE (" +
         // There are a lot of duplicates
         "ID AUTO_INCREMENT PRIMARY KEY," +
         "TITLE varchar(64) NOT NULL," +
@@ -81,7 +78,6 @@ public class DatabaseManager implements AutoCloseable {
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
     }
-    assert (tableExists("WINE"));
   }
 
   /**
@@ -117,7 +113,6 @@ public class DatabaseManager implements AutoCloseable {
             set.getFloat("ABV"),
             set.getFloat("PRICE")
         );
-        System.out.println(set.getString("REGION"));
         wines.add(wine);
       }
 
@@ -185,10 +180,7 @@ public class DatabaseManager implements AutoCloseable {
    * @throws SQLException on sql error
    */
   private void createUsersTable() throws SQLException {
-    if (tableExists("USER")) {
-      return;
-    }
-    String create = "create table USER (" +
+    String create = "create table if not exists USER (" +
         "USERNAME varchar(64) PRIMARY KEY," +
         "PASSWORD varchar(64) NOT NULL," +
         "ROLE varchar(8) NOT NULL," +
@@ -196,7 +188,6 @@ public class DatabaseManager implements AutoCloseable {
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
     }
-    assert (tableExists("USER"));
     createDefaultAdminUser();
   }
 
@@ -303,37 +294,4 @@ public class DatabaseManager implements AutoCloseable {
       System.err.println(e.getMessage());
     }
   }
-
-  /**
-   * Checks if a table exists
-   *
-   * @param tableName name of table
-   * @return if the table exists
-   */
-  private boolean tableExists(String tableName) {
-    try {
-
-      // Get database meta data
-      DatabaseMetaData metaData = connection.getMetaData();
-
-      // Strip tableName whitespace
-      tableName = tableName.replaceAll("\\s+", "");
-
-      // Query for table existence
-      ResultSet tables = metaData.getTables(null, null, tableName, null);
-
-      if (tables.next()) {
-        tables.close();
-        return true;
-      }
-
-      tables.close();
-
-    } catch (SQLException e) {
-      System.err.println(e.getMessage());
-    }
-
-    return false;
-  }
-
 }
