@@ -12,10 +12,9 @@ import org.controlsfx.control.RangeSlider;
 import seng202.team0.database.Wine;
 import seng202.team0.managers.ManagerContext;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import seng202.team0.util.Filters;
 
 /**
  * Controller for the screen that displays wines
@@ -59,7 +58,7 @@ public class WineScreenController extends Controller {
         super(managerContext);
     }
 
-    private void openWineRange(int begin, int end, Map<String, Object> filters) {
+    private void openWineRange(int begin, int end, Filters filters) {
         // Clear existing data
         tableView.getItems().clear();
 
@@ -134,11 +133,8 @@ public class WineScreenController extends Controller {
      */
     @Override
     public void init() {
-        // score slider
         this.scoreSlider = createSlider(11, 365, 0, 100, 10);
-        // abv slider
         this.abvSlider = createSlider(11, 445, 0, 100, 10);
-        // price slider
         this.priceSlider = createSlider(11, 525, 0, 100, 10);
 
         // Set button functions
@@ -179,41 +175,17 @@ public class WineScreenController extends Controller {
      * Is called when the apply button is pressed<br> Updates table with filtered data
      */
     public void onApplyFiltersButtonPressed() {
-        Map<String, Object> filters = new HashMap<>();
-
-        // Price slider
-        if (priceSlider.getHighValue() != priceSlider.getMax()
-                || priceSlider.getLowValue() != priceSlider.getMin()) {
-            filters.put("price", new double[]{priceSlider.getLowValue(), priceSlider.getHighValue()});
-        }
-
-        // Score slider
-        if (scoreSlider.getHighValue() != scoreSlider.getMax()
-                || scoreSlider.getLowValue() != scoreSlider.getMin()) {
-            filters.put("score", new double[]{scoreSlider.getLowValue(), scoreSlider.getHighValue()});
-        }
-
-        // Abv slider
-        if (abvSlider.getLowValue() != abvSlider.getMin()
-                || abvSlider.getHighValue() != abvSlider.getMax()) {
-            filters.put("abv", new double[]{abvSlider.getLowValue(), abvSlider.getHighValue()});
-        }
-
-        // Winery
-        if (wineryTextField.getText() != null) {
-            filters.put("winery", wineryTextField.getText());
-        }
-
-        // Country
-        if (countryTextField.getText() != null) {
-            filters.put("country", countryTextField.getText());
-        }
-
-        // Title
-        if (!titleTextField.getText().isBlank()) {
-            filters.put("title", titleTextField.getText());
-        }
-
+        Filters filters = new Filters(
+            titleTextField.getText(),
+            countryTextField.getText(),
+            wineryTextField.getText(),
+            scoreSlider.getLowValue(),
+            scoreSlider.getHighValue(),
+            abvSlider.getLowValue(),
+            abvSlider.getHighValue(),
+            priceSlider.getLowValue(),
+            priceSlider.getHighValue()
+        );
         openWineRange(0, 100, filters);
     }
 

@@ -8,6 +8,7 @@ import java.io.File;
 import java.sql.*;
 import java.util.List;
 import java.util.Map;
+import seng202.team0.util.Filters;
 
 
 /**
@@ -54,11 +55,7 @@ public class DatabaseManager implements AutoCloseable {
      * @throws SQLException on sql error
      */
     private void createWinesTable() throws SQLException {
-        if (tableExists("WINE")) {
-            return;
-        }
-        String create = "create table WINE (" +
-                // There are a lot of duplicates
+        String create = "create table if not exists WINE (" +
                 "ID AUTO_INCREMENT PRIMARY KEY," +
                 "TITLE varchar(64) NOT NULL," +
                 "VARIETY varchar(32)," +
@@ -71,7 +68,6 @@ public class DatabaseManager implements AutoCloseable {
         try (Statement statement = connection.createStatement()) {
             statement.execute(create);
         }
-        assert (tableExists("WINE"));
     }
 
     /**
@@ -85,7 +81,6 @@ public class DatabaseManager implements AutoCloseable {
      * @return subset list of wines
      */
     public ObservableList<Wine> getWinesInRange(int begin, int end) {
-
         ObservableList<Wine> wines = FXCollections.observableArrayList();
         String query = "select TITLE, VARIETY, COUNTRY, WINERY, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ROWID limit ? offset ?;";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -108,6 +103,7 @@ public class DatabaseManager implements AutoCloseable {
                 );
                 wines.add(wine);
             }
+            set.close();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -127,48 +123,34 @@ public class DatabaseManager implements AutoCloseable {
      * @param filters Map of filter values
      * @return subset list of wines
      */
-    public ObservableList<Wine> getWinesInRange(int begin, int end, Map<String, Object> filters) {
-
+    public ObservableList<Wine> getWinesInRange(int begin, int end, Filters filters) {
         ObservableList<Wine> wines = FXCollections.observableArrayList();
-        String query = generateFilteredSelectStatementString(filters);
+        String query = "select TITLE, VARIETY, COUNTRY, WINERY, DESCRIPTION, SCORE_PERCENT, ABV, PRICE "
+            + "from WINE "
+            + "where TITLE like ? "
+            + "and COUNTRY like ? "
+            + "and WINERY like ? "
+            + "and SCORE_PERCENT between ? and ? "
+            + "and ABV between ? and ? "
+            + "and PRICE between ? and ? "
+            + "order by ROWID "
+            + "limit ? "
+            + "offset ?;";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             int paramIndex = 1;
-
-            // Order Matters here! Must match statement!
-            if (filters.containsKey("title")) {
-                statement.setString(paramIndex++, "%" + filters.get("title") + "%"); // Percent is wildcard -> makes this a substring search
-            }
-
-            if (filters.containsKey("country")) {
-                statement.setString(paramIndex++, "%" + filters.get("country") + "%");
-            }
-
-            if (filters.containsKey("winery")) {
-                statement.setString(paramIndex++, "%" + filters.get("winery") + "%");
-            }
-
-            if (filters.containsKey("score")) {
-                double[] scoreRange = (double[]) filters.get("score");
-                statement.setDouble(paramIndex++, scoreRange[0]);
-                statement.setDouble(paramIndex++, scoreRange[1]);
-            }
-
-            if (filters.containsKey("abv")) {
-                double[] abvRange = (double[]) filters.get("abv");
-                statement.setDouble(paramIndex++, abvRange[0]);
-                statement.setDouble(paramIndex++, abvRange[1]);
-            }
-
-            if (filters.containsKey("price")) {
-                double[] priceRange = (double[]) filters.get("price");
-                statement.setDouble(paramIndex++, priceRange[0]);
-                statement.setDouble(paramIndex++, priceRange[1]);
-            }
-
+            statement.setString(paramIndex++, filters.getTitle().isEmpty() ? "%" : "%" + filters.getTitle() + "%");
+            statement.setString(paramIndex++, filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry());
+            statement.setString(paramIndex++, filters.getWinery().isEmpty() ? "%" : "%" + filters.getWinery() + "%");
+            statement.setDouble(paramIndex++, filters.getMinScore());
+            statement.setDouble(paramIndex++, filters.getMaxScore());
+            statement.setDouble(paramIndex++, filters.getMinAbv());
+            statement.setDouble(paramIndex++, filters.getMaxAbv());
+            statement.setDouble(paramIndex++, filters.getMinPrice());
+            statement.setDouble(paramIndex++, filters.getMaxPrice());
             statement.setInt(paramIndex++, end - begin);
             statement.setInt(paramIndex, begin);
 
-            // Add wines to list
+            // Add filtered wines to list
             ResultSet set = statement.executeQuery();
             while (set.next()) {
                 Wine wine = new Wine(
@@ -183,54 +165,13 @@ public class DatabaseManager implements AutoCloseable {
                 );
                 wines.add(wine);
             }
+            set.close();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
         return wines;
-    }
-
-
-    /**
-     * Generates a query for a preparedStatement
-     *
-     * @param filters A map of filter values and names
-     * @return A statement formatted for a sql preparedStatement
-     */
-    public String generateFilteredSelectStatementString(Map<String, Object> filters) {
-        StringBuilder query = new StringBuilder();
-        query.append(
-                "select TITLE, VARIETY, COUNTRY, WINERY, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE where 1=1");
-
-        // Go through filter map and append conditions
-        if (filters.containsKey("title")) {
-            query.append(" and TITLE like ?");
-        }
-
-        if (filters.containsKey("country")) {
-            query.append(" and COUNTRY like ?");
-        }
-
-        if (filters.containsKey("winery")) {
-            query.append(" and WINERY like ?");
-        }
-
-        if (filters.containsKey("score")) {
-            query.append(" and SCORE_PERCENT between ? and ?");
-        }
-
-        if (filters.containsKey("abv")) {
-            query.append(" and ABV between ? and ?");
-        }
-
-        if (filters.containsKey("price")) {
-            query.append(" and PRICE between ? and ?");
-        }
-
-        query.append(" order by ROWID limit ? offset ?;");
-
-        return query.toString();
     }
 
     /**
@@ -302,37 +243,4 @@ public class DatabaseManager implements AutoCloseable {
             System.err.println(e.getMessage());
         }
     }
-
-    /**
-     * Checks if a table exists
-     *
-     * @param tableName name of table
-     * @return if the table exists
-     */
-    private boolean tableExists(String tableName) {
-        try {
-
-            // Get database meta data
-            DatabaseMetaData metaData = connection.getMetaData();
-
-            // Strip tableName whitespace
-            tableName = tableName.replaceAll("\\s+", "");
-
-            // Query for table existence
-            ResultSet tables = metaData.getTables(null, null, tableName, null);
-
-            if (tables.next()) {
-                tables.close();
-                return true;
-            }
-
-            tables.close();
-
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        }
-
-        return false;
-    }
-
 }
