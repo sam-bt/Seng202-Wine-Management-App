@@ -136,7 +136,7 @@ public class DatabaseManager implements AutoCloseable {
 
             // Order Matters here! Must match statement!
             if (filters.containsKey("title")) {
-                statement.setString(paramIndex++, "%" + filters.get("title") + "%"); // Percent is wildcard -> makes this a substring search
+                statement.setString(paramIndex++, "%" + filters.get("title") + "%"); // Percent is wildcard → makes this a substring search
             }
 
             if (filters.containsKey("country")) {

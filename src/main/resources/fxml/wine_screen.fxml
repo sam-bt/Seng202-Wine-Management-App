@@ -22,23 +22,6 @@
                                 <GridPane prefHeight="729.0" prefWidth="1229.0">
                                     <children>
                                         <HBox prefHeight="28.0" prefWidth="914.0">
-                                            <children>
-                                                <Button mnemonicParsing="false" text="Open Filters">
-                                                    <HBox.margin>
-                                                        <Insets top="3.0"/>
-                                                    </HBox.margin>
-                                                </Button>
-                                                <ChoiceBox prefWidth="150.0">
-                                                    <HBox.margin>
-                                                        <Insets right="20.0" top="3.0"/>
-                                                    </HBox.margin>
-                                                </ChoiceBox>
-                                                <Label text="Sort by">
-                                                    <HBox.margin>
-                                                        <Insets right="10.0" top="6.0"/>
-                                                    </HBox.margin>
-                                                </Label>
-                                            </children>
                                         </HBox>
                                         <TableView GridPane.rowIndex="1" prefHeight="696.0" prefWidth="1040.0"
                                                    fx:id="tableView">
@@ -172,27 +155,32 @@
                                 <Font name="System Bold" size="16.0"/>
                             </font>
                         </Button>
-                        <ChoiceBox layoutX="9.0" layoutY="125.0" prefHeight="33.0" prefWidth="300.0"/>
-                        <AutoCompletionTextField layoutX="9.0" layoutY="205.0" prefHeight="33.0" prefWidth="300.0"
+                        <AutoCompletionTextField layoutX="9.0" layoutY="105.0" prefHeight="33.0" prefWidth="300.0"
                                                  fx:id="countryTextField"/>
-                        <AutoCompletionTextField layoutX="11.0" layoutY="285.0" prefHeight="33.0" prefWidth="300.0"
+                        <AutoCompletionTextField layoutX="9.0" layoutY="165.0" prefHeight="33.0" prefWidth="300.0"
                                                  fx:id="wineryTextField"/>
+                        <AutoCompletionTextField layoutX="9.0" layoutY="225.0" prefHeight="33.0" prefWidth="300.0" fx:id="varietyTextField"/>
                         <Label layoutX="9.0" layoutY="20.0" text="Title">
                             <font>
                                 <Font size="16.0"/>
                             </font>
                         </Label>
-                        <Label layoutX="9.0" layoutY="100.0" text="Title">
+                        <Label layoutX="9.0" layoutY="80.0" text="Country">
                             <font>
                                 <Font size="16.0"/>
                             </font>
                         </Label>
-                        <Label layoutX="9.0" layoutY="180.0" text="Country">
+                        <Label layoutX="11.0" layoutY="140.0" text="Winery">
                             <font>
                                 <Font size="16.0"/>
                             </font>
                         </Label>
-                        <Label layoutX="11.0" layoutY="260.0" text="Winery">
+                        <Label layoutX="11.0" layoutY="200.0" text="Variety">
+                            <font>
+                                <Font size="16.0"/>
+                            </font>
+                        </Label>
+                        <Label layoutX="11.0" layoutY="265" text="Vintage">
                             <font>
                                 <Font size="16.0"/>
                             </font>

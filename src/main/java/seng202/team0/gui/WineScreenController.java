@@ -42,6 +42,9 @@ public class WineScreenController extends Controller {
     AutoCompletionTextField wineryTextField;
 
     @FXML
+    AutoCompletionTextField varietyTextField;
+
+    @FXML
     TextField titleTextField;
 
     private RangeSlider scoreSlider;
@@ -49,6 +52,8 @@ public class WineScreenController extends Controller {
     private RangeSlider abvSlider;
 
     private RangeSlider priceSlider;
+
+    private RangeSlider vintageSlider;
 
     /**
      * Constructor
@@ -134,12 +139,15 @@ public class WineScreenController extends Controller {
      */
     @Override
     public void init() {
+        // Vintage Slider
+        this.vintageSlider = createSlider(11, 290, 0, 100, 10);
         // score slider
         this.scoreSlider = createSlider(11, 365, 0, 100, 10);
         // abv slider
         this.abvSlider = createSlider(11, 445, 0, 100, 10);
         // price slider
         this.priceSlider = createSlider(11, 525, 0, 100, 10);
+
 
         // Set button functions
         applyFiltersButton.setOnAction(event -> onApplyFiltersButtonPressed());
