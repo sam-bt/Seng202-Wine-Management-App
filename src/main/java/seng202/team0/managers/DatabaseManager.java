@@ -296,15 +296,25 @@ public class DatabaseManager implements AutoCloseable {
       statement.setString(queryIndex++, locationName.toLowerCase());
       statement.setDouble(queryIndex++, geoLocation.getLatitude());
       statement.setDouble(queryIndex++, geoLocation.getLongitude());
+      statement.execute();
     }
   }
 
-  public void getGeolocation(String locationName) throws SQLException {
+  public GeoLocation getGeolocation(String locationName) throws SQLException {
     String query = "select NAME, LATITUDE, LONGITUDE from GEOLOCATION "
         + "WHERE NAME = ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setString(1, locationName.toLowerCase());
+
+      ResultSet set = statement.executeQuery();
+      if (set.next()) {
+        return new GeoLocation(
+            set.getDouble("LATITUDE"),
+            set.getDouble("LONGITUDE")
+        );
+      }
     }
+    return null;
   }
 
   /**
