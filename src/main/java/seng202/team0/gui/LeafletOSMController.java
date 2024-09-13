@@ -16,8 +16,6 @@ import seng202.team0.service.JavaScriptBridge;
 /**
  * Map controller which is responsible for loading the map, JavaScript bridge
  * and controlling interaction
- *
- * @author Corey Hines
  */
 public class LeafletOSMController {
   private static final Logger log = LogManager.getLogger(LeafletOSMController.class);
