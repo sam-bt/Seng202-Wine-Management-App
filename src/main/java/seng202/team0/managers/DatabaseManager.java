@@ -72,6 +72,7 @@ public class DatabaseManager implements AutoCloseable {
         "TITLE varchar(64) NOT NULL," +
         "VARIETY varchar(32)," +
         "COUNTRY varchar(32)," +
+        "REGION varchar(32)," +
         "WINERY varchar(64)," +
         "DESCRIPTION text," +
         "SCORE_PERCENT int," +
@@ -96,7 +97,7 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
 
     ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query = "select TITLE, VARIETY, COUNTRY, WINERY, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ROWID limit ? offset ?;";
+    String query = "select TITLE, VARIETY, COUNTRY, REGION, WINERY, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ROWID limit ? offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
 
       statement.setInt(1, end - begin);
@@ -109,12 +110,14 @@ public class DatabaseManager implements AutoCloseable {
             set.getString("TITLE"),
             set.getString("VARIETY"),
             set.getString("COUNTRY"),
+            set.getString("REGION"),
             set.getString("WINERY"),
             set.getString("DESCRIPTION"),
             set.getInt("SCORE_PERCENT"),
             set.getFloat("ABV"),
             set.getFloat("PRICE")
         );
+        System.out.println(set.getString("REGION"));
         wines.add(wine);
       }
 
@@ -160,17 +163,18 @@ public class DatabaseManager implements AutoCloseable {
    */
   public void addWines(List<Wine> list) throws SQLException {
     // null key is auto generated
-    String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?);";
+    String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
       for (Wine wine : list) {
         insertStatement.setString(1, wine.getTitle());
         insertStatement.setString(2, wine.getVariety());
         insertStatement.setString(3, wine.getCountry());
-        insertStatement.setString(4, wine.getWinery());
-        insertStatement.setString(5, wine.getDescription());
-        insertStatement.setInt(6, wine.getScorePercent());
-        insertStatement.setFloat(7, wine.getAbv());
-        insertStatement.setFloat(8, wine.getPrice());
+        insertStatement.setString(4, wine.getRegion());
+        insertStatement.setString(5, wine.getWinery());
+        insertStatement.setString(6, wine.getDescription());
+        insertStatement.setInt(7, wine.getScorePercent());
+        insertStatement.setFloat(8, wine.getAbv());
+        insertStatement.setFloat(9, wine.getPrice());
         insertStatement.executeUpdate();
       }
 
