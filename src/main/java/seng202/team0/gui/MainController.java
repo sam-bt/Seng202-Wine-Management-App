@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.util.Builder;
 import seng202.team0.managers.ManagerContext;
 
@@ -42,6 +43,9 @@ public class MainController extends Controller {
   @FXML
   private Button registerButton;
 
+  @FXML
+  private HBox navBarBox;
+
   private boolean disabled = false;
 
   /**
@@ -56,12 +60,16 @@ public class MainController extends Controller {
   }
 
   public void initialize() {
-      adminScreenButton.setVisible(false);
+    adminScreenButton.setVisible(false);
+    listScreenButton.setVisible(false);
+    navBarBox.getChildren().remove(listScreenButton);
   }
 
   public void onLogin() {
     if (managerContext.authenticationManager.isAuthenticated()) {
       adminScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
+      listScreenButton.setVisible(true);
+      navBarBox.getChildren().add(1, listScreenButton);
       loginButton.setText("Settings");
       registerButton.setText("Logout");
       loginButton.setOnMouseClicked(event -> openSettingsScreen());
@@ -102,6 +110,11 @@ public class MainController extends Controller {
     registerButton.setText("Register");
     loginButton.setOnMouseClicked(event -> openLoginScreen());
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
+    navBarBox.getChildren().remove(listScreenButton);
+    adminScreenButton.setVisible(false);
+    managerContext.authenticationManager.setAdmin(false);
+    openWineScreen();
+
   }
 
   public boolean isDisabled() {
