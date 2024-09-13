@@ -63,6 +63,7 @@ public class DataTableController extends Controller {
       PrettyName.TITLE,
       PrettyName.VARIETY,
       PrettyName.COUNTRY,
+      PrettyName.REGION,
       PrettyName.WINERY,
       PrettyName.DESCRIPTION,
       PrettyName.SCORE,
@@ -148,6 +149,7 @@ public class DataTableController extends Controller {
     int title = getRenamedColumn(PrettyName.TITLE);
     int variety = getRenamedColumn(PrettyName.VARIETY);
     int country = getRenamedColumn(PrettyName.COUNTRY);
+    int region = getRenamedColumn(PrettyName.REGION);
     int winery = getRenamedColumn(PrettyName.WINERY);
     int description = getRenamedColumn(PrettyName.DESCRIPTION);
     int score = getRenamedColumn(PrettyName.SCORE);
@@ -168,6 +170,7 @@ public class DataTableController extends Controller {
           title != -1 ? tuple[title] : "",
           variety != -1 ? tuple[variety] : "",
           country != -1 ? tuple[country] : "",
+          region != -1 ? tuple[region] : "",
           winery != -1 ? tuple[winery] : "",
           description != -1 ? tuple[description] : "",
           score != -1 ? tuple[score] : "",
@@ -258,6 +261,7 @@ public class DataTableController extends Controller {
     TITLE("Title"),
     VARIETY("Variety"),
     COUNTRY("Country"),
+    REGION("Region"),
     WINERY("Winery"),
     DESCRIPTION("Description"),
     SCORE("Score"),
