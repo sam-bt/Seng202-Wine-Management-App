@@ -12,6 +12,7 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.commons.lang3.ObjectUtils.Null;
+import seng202.team0.database.GeoLocation;
 import seng202.team0.database.User;
 import seng202.team0.database.Wine;
 import seng202.team0.util.Password;
@@ -56,7 +57,7 @@ public class DatabaseManager implements AutoCloseable {
     this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
     createWinesTable();
     createUsersTable();
-
+    createGeolocationTable();
   }
 
   /**
@@ -275,6 +276,34 @@ public class DatabaseManager implements AutoCloseable {
     } catch (SQLException e) {
       System.err.println("Error deleting users: " + e.getMessage());
       return false;
+    }
+  }
+
+  private void createGeolocationTable() throws SQLException {
+    String create = "create table if not exists GEOLOCATION ("
+        + "NAME varchar(64) PRIMARY KEY,"
+        + "LATITUDE decimal NOT NULL,"
+        + "LONGITUDE decimal NOT NULL);";
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(create);
+    }
+  }
+
+  public void addGeolocation(String locationName, GeoLocation geoLocation) throws SQLException {
+    String query = "insert into GEOLOCATION (NAME, LATITUDE, LONGITUDE) values (?, ?, ?);";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      int queryIndex = 1;
+      statement.setString(queryIndex++, locationName.toLowerCase());
+      statement.setDouble(queryIndex++, geoLocation.getLatitude());
+      statement.setDouble(queryIndex++, geoLocation.getLongitude());
+    }
+  }
+
+  public void getGeolocation(String locationName) throws SQLException {
+    String query = "select NAME, LATITUDE, LONGITUDE from GEOLOCATION "
+        + "WHERE NAME = ?;";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setString(1, locationName.toLowerCase());
     }
   }
 
