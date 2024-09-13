@@ -1,13 +1,20 @@
 package seng202.team0.gui;
 
+import com.sun.javafx.webkit.WebConsoleListener;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
 import seng202.team0.database.Wine;
 import seng202.team0.managers.ManagerContext;
@@ -18,11 +25,18 @@ import seng202.team0.managers.ManagerContext;
 
 public class WineScreenController extends Controller{
 
+  private final Logger log = LogManager.getLogger(WineScreenController.class);
+
   @FXML
   TableView<Wine> tableView;
 
   @FXML
   AnchorPane filtersPane;
+
+  @FXML
+  WebView webView;
+
+  WebEngine webEngine;
 
   /**
    * Constructor
@@ -81,6 +95,22 @@ public class WineScreenController extends Controller{
     // price slider
     createSlider(11, 525, 0, 100, 10);
     openWineRange(0, 100);
+
+    webEngine = webView.getEngine();
+    webEngine.setJavaScriptEnabled(true);
+
+    InputStream input = getClass().getResourceAsStream("/map/leaflet_osm_map.html");
+    if (input == null) {
+      log.error("Failed to read contents of \"map/leaflet_osm_map.html\"");
+      return;
+    }
+    String content = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))
+        .lines()
+        .collect(Collectors.joining("\n"));
+    webEngine.loadContent(content);
+
+    WebConsoleListener.setDefaultListener((view, message, lineNumber, sourceId) ->
+        log.info(String.format("Map WebView console log line: %d, message : %s", lineNumber, message)));
   }
 
   /**
