@@ -1,20 +1,40 @@
 package seng202.team0.managers;
 
-import seng202.team0.managers.exceptions.AuthenticationManagerInitializationException;
-import seng202.team0.managers.exceptions.InvalidUserException;
-import seng202.team0.managers.exceptions.NoPermissionException;
-
 /**
  * Authentication Manager (MORE DETAIL HERE!)
  */
 public class AuthenticationManager {
-
-  /* UNCOMMENT IF DATABASE HAS A DEFINITION!
-  public void loginUser(Database database, String username, String password) throws InvalidUserException, AuthenticationManagerInitializationException {
-    // TODO Implement me!
+  private boolean authenticated;
+  private boolean admin;
+  private String username;
+  public AuthenticationManager() {
+    this.authenticated = false;
+    this.admin = false;
+  }
+  public void setAuthenticated(boolean authenticated) {
+    this.authenticated = authenticated;
   }
 
+  public boolean isAuthenticated() {
+    return authenticated;
+  }
+  public void setAdmin(boolean admin) {
+    this.admin = admin;
+  }
 
+  public boolean isAdmin() {
+    return admin;
+  }
+
+  public void getUser(String username) {
+    this.username = username;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  /*
   public createNewUser(Database database, String username, String password) throws AuthenticationManagerInitializationException{
     // TODO Implement me!
   }
@@ -35,5 +55,4 @@ public class AuthenticationManager {
   // Getters and Setters
   public Role getRole(){return null;} // TODO Implement me!
   public String getUserID(){return null;} // TODO Implement me!
-  public String getUsername(){return null;} // TODO Implement me!
 }

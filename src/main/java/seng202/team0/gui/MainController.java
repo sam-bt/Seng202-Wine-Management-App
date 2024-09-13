@@ -4,6 +4,7 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Builder;
@@ -11,7 +12,6 @@ import seng202.team0.managers.ManagerContext;
 
 /**
  * Main controller from where other scenes are embedded
- * @author Angus McDougall
  */
 public class MainController extends Controller {
 
@@ -20,6 +20,29 @@ public class MainController extends Controller {
 
   @FXML
   private AnchorPane pageContent;
+
+  @FXML
+  private Button wineScreenButton;
+
+  @FXML
+  private Button listScreenButton;
+
+  @FXML
+  private Button vineyardsScreenButton;
+
+  @FXML
+  private Button dataSetsScreenButton;
+
+  @FXML
+  private Button adminScreenButton;
+
+  @FXML
+  private Button loginButton;
+
+  @FXML
+  private Button registerButton;
+
+  private boolean disabled = false;
 
   /**
    * Constructor
@@ -30,6 +53,31 @@ public class MainController extends Controller {
     super(managerContext);
     // This is an ugly circular dependency. It is easier to resolve here
     managerContext.GUIManager.setMainController(this);
+  }
+
+  public void initialize() {
+      adminScreenButton.setVisible(false);
+  }
+
+  public void onLogin() {
+    if (managerContext.authenticationManager.isAuthenticated()) {
+      adminScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
+      loginButton.setText("Settings");
+      registerButton.setText("Logout");
+      loginButton.setOnMouseClicked(event -> openSettingsScreen());
+      registerButton.setOnMouseClicked(event -> logout());
+    } else {
+      adminScreenButton.setVisible(false);
+    }
+  }
+
+  public void setDisable(Boolean status) {
+    disabled = status;
+    wineScreenButton.setDisable(status);
+    listScreenButton.setDisable(status);
+    vineyardsScreenButton.setDisable(status);
+    dataSetsScreenButton.setDisable(status);
+    adminScreenButton.setDisable(status);
   }
 
   public void switchScene(String fxml, String title, Builder<?> builder) {
@@ -49,7 +97,18 @@ public class MainController extends Controller {
       e.printStackTrace();
     }
   }
+  public void logout() {
+    loginButton.setText("Login");
+    registerButton.setText("Register");
+    loginButton.setOnMouseClicked(event -> openLoginScreen());
+    registerButton.setOnMouseClicked(event -> openRegisterScreen());
+    adminScreenButton.setVisible(false);
+    openWineScreen();
+  }
 
+  public boolean isDisabled() {
+    return disabled;
+  }
 
   /**
    * Launches the data set screen.
@@ -94,5 +153,33 @@ public class MainController extends Controller {
   public void openConsumptionCalculatorScreen() {
     switchScene("/fxml/consumption_calculator_screen.fxml", "Consumption Calculator",  () -> new ConsumptionCalculatorController(managerContext));
   }
+  /**
+   * Launches the login screen.
+   */
+  @FXML
+  public void openLoginScreen() {
+    switchScene("/fxml/login_screen.fxml", "Login", () -> new LoginController(managerContext));
+  }
 
+  /**
+   * Launches the register screen
+   */
+  @FXML
+  public void openRegisterScreen() {
+    switchScene("/fxml/register_screen.fxml", "Register", () -> new RegisterController(managerContext));
+  }
+
+  @FXML
+  public void openAdminScreen() {
+    switchScene("/fxml/admin_screen.fxml", "Register", () -> new AdminController(managerContext));
+  }
+  @FXML
+  public void openSettingsScreen() {
+    switchScene("/fxml/settings_screen.fxml", "Register", () -> new SettingsController(managerContext));
+  }
+
+  @FXML
+  public void openUpdatePasswordScreen() {
+    switchScene("/fxml/update_password_screen.fxml", "Register", () -> new UpdatePasswordController(managerContext));
+  }
 }

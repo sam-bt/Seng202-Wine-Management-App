@@ -11,7 +11,10 @@ import java.sql.Statement;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.commons.lang3.ObjectUtils.Null;
+import seng202.team0.database.User;
 import seng202.team0.database.Wine;
+import seng202.team0.util.Password;
 
 
 /**
@@ -23,13 +26,14 @@ public class DatabaseManager implements AutoCloseable {
   /**
    * Database connection
    * <p>
-   *   This is ensured to be always valid
+   * This is ensured to be always valid
    * </p>
    */
   private Connection connection;
 
   /**
    * Connects to a db file for management. The path to the file is specified by dbpath
+   *
    * @throws SQLException if failed to initialize
    */
   public DatabaseManager() throws SQLException {
@@ -51,6 +55,7 @@ public class DatabaseManager implements AutoCloseable {
     //this.connection = DriverManager.getConnection(dbPath);
     this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
     createWinesTable();
+    createUsersTable();
 
   }
 
@@ -81,10 +86,11 @@ public class DatabaseManager implements AutoCloseable {
   /**
    * Gets a subset of the wines in the database
    * <p>
-   *   The order of elements should remain stable until a write operation occurs.
+   * The order of elements should remain stable until a write operation occurs.
    * </p>
+   *
    * @param begin beginning element
-   * @param end end element (begin + size)
+   * @param end   end element (begin + size)
    * @return subset list of wines
    */
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
@@ -121,10 +127,11 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Gets the number of wine records
+   *
    * @return total number of wine records
    */
   public int getWinesSize() throws SQLException {
-    try(Statement statement = connection.createStatement()) {
+    try (Statement statement = connection.createStatement()) {
       ResultSet set = statement.executeQuery("select count(*) from WINE;");
       set.next();
       return set.getInt(1);
@@ -134,11 +141,12 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Replaces all wines in the database with a new list
+   *
    * @param list list of wines
    */
   public void replaceAllWines(List<Wine> list) throws SQLException {
     String delete = "delete from WINE;";
-    try(Statement statement = connection.createStatement()) {
+    try (Statement statement = connection.createStatement()) {
       statement.executeUpdate(delete);
     }
 
@@ -147,6 +155,7 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Adds the wines in the list to the database
+   *
    * @param list list of wines
    */
   public void addWines(List<Wine> list) throws SQLException {
@@ -168,6 +177,111 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
+  /**
+   * @throws SQLException on sql error
+   */
+  private void createUsersTable() throws SQLException {
+    if (tableExists("USER")) {
+      return;
+    }
+    String create = "create table USER (" +
+        "USERNAME varchar(64) PRIMARY KEY," +
+        "PASSWORD varchar(64) NOT NULL," +
+        "ROLE varchar(8) NOT NULL," +
+        "SALT varchar(32))";
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(create);
+    }
+    assert (tableExists("USER"));
+    createDefaultAdminUser();
+  }
+
+  private void createDefaultAdminUser() throws SQLException { //TODO remove when db persists
+    String insert = "insert into USER (username, password, role, salt) values(?, ?, ?, ?);";
+    try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
+      String salt = Password.generateSalt();
+      String password = Password.hashPassword("admin", salt);
+      insertStatement.setString(1, "admin");
+      insertStatement.setString(2, password);
+      insertStatement.setString(3, "admin");
+      insertStatement.setString(4, salt);
+      insertStatement.executeUpdate();
+    }
+  }
+
+  public User getUser(String username) {
+    User user;
+    String query = "SELECT * FROM USER WHERE USERNAME = ?";
+
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setString(1, username);
+      ResultSet set = statement.executeQuery();
+
+      if (set.next()) {
+        user = new User(set.getString("USERNAME"),set.getString("PASSWORD"),set.getString("ROLE"),set.getString("SALT"));
+      } else {
+        return null;
+      }
+    } catch (SQLException e) {
+      System.err.println("Database error occurred: " + e.getMessage());
+      e.printStackTrace();
+      return null;
+    }
+    return user;
+  }
+
+
+  public boolean addUser(String username, String password, String salt) {
+    String insert = "insert into USER values(?, ?, ?, ?);";
+    try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
+      insertStatement.setString(1, username);
+      insertStatement.setString(2, password);
+      insertStatement.setString(3, "user");
+      insertStatement.setString(4, salt);
+      insertStatement.executeUpdate();
+      return true;
+    } catch (SQLException e) {
+      if (e.getMessage().contains("PRIMARY KEY")) {
+        System.out.println("Duplicate username: " + username);
+        return false;
+      } else {
+        System.err.println("Database error occurred: " + e.getMessage());
+        e.printStackTrace();
+        return false;
+      }
+    }
+  }
+
+  public boolean updatePassword(String username, String password, String salt) {
+    String updateQuery = "UPDATE USER SET PASSWORD = ?, SALT = ? WHERE USERNAME = ?";
+
+    try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+      updateStatement.setString(1, password);
+      updateStatement.setString(2, salt);
+      updateStatement.setString(3, username);
+
+      int rowsAffected = updateStatement.executeUpdate();
+
+      return rowsAffected > 0;
+    } catch (SQLException e) {
+      System.err.println("Error updating password: " + e.getMessage());
+      return false;
+    }
+  }
+
+  public boolean deleteAllUsers() {
+    String deleteQuery = "delete from USER "
+        + "WHERE USERNAME != ?;";
+    try (PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)) {
+      deleteStatement.setString(1, "admin");
+      deleteStatement.executeUpdate();
+      return true;
+
+    } catch (SQLException e) {
+      System.err.println("Error deleting users: " + e.getMessage());
+      return false;
+    }
+  }
 
   /**
    * To disconnect/close database
