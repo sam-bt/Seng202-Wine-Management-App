@@ -36,7 +36,7 @@ public class WineScreenController extends Controller{
   @FXML
   WebView webView;
 
-  WebEngine webEngine;
+  private LeafletOSMController mapController;
 
   /**
    * Constructor
@@ -96,21 +96,8 @@ public class WineScreenController extends Controller{
     createSlider(11, 525, 0, 100, 10);
     openWineRange(0, 100);
 
-    webEngine = webView.getEngine();
-    webEngine.setJavaScriptEnabled(true);
-
-    InputStream input = getClass().getResourceAsStream("/map/leaflet_osm_map.html");
-    if (input == null) {
-      log.error("Failed to read contents of \"map/leaflet_osm_map.html\"");
-      return;
-    }
-    String content = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))
-        .lines()
-        .collect(Collectors.joining("\n"));
-    webEngine.loadContent(content);
-
-    WebConsoleListener.setDefaultListener((view, message, lineNumber, sourceId) ->
-        log.info(String.format("Map WebView console log line: %d, message : %s", lineNumber, message)));
+    mapController = new LeafletOSMController(webView.getEngine());
+    mapController.initMap();
   }
 
   /**

@@ -1,230 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>WINO Map</title>
-    <link href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" rel="stylesheet"/>
-    <link href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"
-          rel="stylesheet"/>
-    <link href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" rel="stylesheet"/>
-    <link href="marker.css" rel="stylesheet"/>
-    <meta content="initial-scale=1.0" name="viewport">
-    <meta charset="utf-8">
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
+    <head>
+        <title>WINO Map</title>
+        <link
+            href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"
+            rel="stylesheet"
+        />
+        <link href="marker.css" rel="stylesheet" />
+        <meta content="initial-scale=1.0" name="viewport" />
+        <meta charset="utf-8" />
+        <style>
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
 
-        #map {
-            height: 100%;
-        }
-    </style>
-</head>
-<body>
-<div id="map"></div>
+            #map {
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
 
-<!-- axios for api requests -->
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <!-- axios for api requests -->
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-<!-- https://leafletjs.com/ -->
-<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+        <!-- https://leafletjs.com/ -->
+        <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
 
-<!-- https://github.com/Leaflet/Leaflet.markercluster -->
-<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+        <!-- https://github.com/Leaflet/Leaflet.markercluster -->
+        <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
-<!-- https://github.com/pa7/heatmap.js -->
-<script src="https://unpkg.com/heatmap.js@2.0.5/build/heatmap.min.js"></script>
-<script src="https://unpkg.com/heatmap.js@2.0.5/plugins/leaflet-heatmap/leaflet-heatmap.js"></script>
+        <!-- https://github.com/pa7/heatmap.js -->
+        <script src="https://unpkg.com/heatmap.js@2.0.5/build/heatmap.min.js"></script>
+        <script src="https://unpkg.com/heatmap.js@2.0.5/plugins/leaflet-heatmap/leaflet-heatmap.js"></script>
 
-<script>
-    const TILE_SERVER_URL = "https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png";
-    const TILE_SERVER_ATTRIBUTION = "© OpenStreetMap contributors<br>Served by University of Canterbury"
+        <script>
+            const TILE_SERVER_URL =
+                "https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png";
+            const TILE_SERVER_ATTRIBUTION =
+                "© OpenStreetMap contributors<br>Served by University of Canterbury";
 
-    const HEATMAP_CONFIG = {
-        radius: 0.5,
-        scaleRadius: true,
-        maxOpacity: 0.4,
-        latField: 'lat',
-        lngField: 'lon'
-    }
+            const HEATMAP_CONFIG = {
+                radius: 0.5,
+                scaleRadius: true,
+                maxOpacity: 0.4,
+                latField: "lat",
+                lngField: "lon",
+            };
 
-    const MAP_CONFIG = {
-        center: [-44.0, 171.0],
-        zoom: 6
-    }
+            const MAP_CONFIG = {
+                center: [-44.0, 171.0],
+                zoom: 6,
+            };
 
-    const WINE_ICON = L.icon({
-        iconUrl: "wine_glass_small.png",
-        iconSize: [36, 60],
-        iconAnchor: [24, 40],
-        popupAnchor: [0, -40],
-    });
-
-        let map, markersLayer, heatMapLayer;
-        const markers = [];
-        let heatMapData = [];
-
-        const jsConnector = {
-            initMap: initMap,
-        };
-
-    const TEST_DATA = [
-        {name: "Auckland", lat: -36.8406, lon: 174.7400},
-        {name: "Christchurch", lat: -43.5310, lon: 172.6365},
-        {name: "Manukau City", lat: -37.0000, lon: 174.8850},
-        {name: "Wellington", lat: -41.2889, lon: 174.7772},
-        {name: "Northcote", lat: -36.8019, lon: 174.7494},
-        {name: "Hamilton", lat: -37.7833, lon: 175.2833},
-        {name: "Tauranga", lat: -37.6833, lon: 176.1667},
-        {name: "Lower Hutt", lat: -41.2167, lon: 174.9167},
-        {name: "Dunedin", lat: -45.8742, lon: 170.5036},
-        {name: "Palmerston North", lat: -40.3550, lon: 175.6117},
-        {name: "Napier", lat: -39.4903, lon: 176.9178},
-        {name: "New Plymouth", lat: -39.0578, lon: 174.0742},
-        {name: "Porirua", lat: -41.1333, lon: 174.8500},
-        {name: "Rotorua", lat: -38.1378, lon: 176.2514},
-        {name: "Whangarei", lat: -35.7250, lon: 174.3236},
-        {name: "Invercargill", lat: -46.4131, lon: 168.3475},
-        {name: "Nelson", lat: -41.2708, lon: 173.2839},
-        {name: "Upper Hutt", lat: -41.1333, lon: 175.0500},
-        {name: "Gisborne", lat: -38.6625, lon: 178.0178},
-        {name: "Paraparaumu", lat: -40.9144, lon: 175.0056},
-        {name: "Timaru", lat: -44.3931, lon: 171.2508},
-        {name: "Blenheim", lat: -41.5140, lon: 173.9600},
-        {name: "Taupo", lat: -38.6875, lon: 176.0694},
-        {name: "Cambridge", lat: -37.8833, lon: 175.4667},
-        {name: "Feilding", lat: -40.2167, lon: 175.5667},
-        {name: "Levin", lat: -40.6219, lon: 175.2867},
-        {name: "Rolleston", lat: -43.5833, lon: 172.3833},
-        {name: "Whakatane", lat: -37.9600, lon: 176.9800},
-        {name: "Richmond", lat: -41.3333, lon: 173.1833},
-        {name: "Havelock North", lat: -39.6667, lon: 176.8833},
-        {name: "Tokoroa", lat: -38.2167, lon: 175.8667},
-        {name: "Mosgiel", lat: -45.8750, lon: 170.3486},
-        {name: "Te Awamutu", lat: -38.0167, lon: 175.3167},
-        {name: "Waikanae", lat: -40.8750, lon: 175.0639},
-        {name: "Hawera", lat: -39.5933, lon: 174.2783},
-        {name: "Waiuku", lat: -37.2490, lon: 174.7300},
-        {name: "Paraparaumu Beach", lat: -40.8938, lon: 174.9794},
-        {name: "Wanaka", lat: -44.7000, lon: 169.1500},
-        {name: "Te Puke", lat: -37.7667, lon: 176.3167},
-        {name: "Greymouth", lat: -42.4500, lon: 171.2075},
-        {name: "Matamata", lat: -37.8167, lon: 175.7667},
-        {name: "Thames", lat: -37.1383, lon: 175.5375},
-        {name: "Kawerau", lat: -38.1000, lon: 176.7000},
-        {name: "Kerikeri", lat: -35.2244, lon: 173.9514},
-        {name: "Waitara", lat: -38.9958, lon: 174.2331},
-        {name: "Ngaruawahia", lat: -37.6667, lon: 175.1500},
-        {name: "Mount Maunganui", lat: -37.6598, lon: 176.2148},
-        {name: "Lincoln", lat: -43.6500, lon: 172.4833},
-        {name: "Kaitaia", lat: -35.1125, lon: 173.2628},
-        {name: "Stratford", lat: -39.3333, lon: 174.2833},
-        {name: "Alexandra", lat: -45.2492, lon: 169.3797},
-        {name: "Cromwell", lat: -45.0459, lon: 169.1956},
-        {name: "Warkworth", lat: -36.4000, lon: 174.6667},
-        {name: "Waihi", lat: -37.3833, lon: 175.8333},
-        {name: "Raumati Beach", lat: -40.9187, lon: 174.9811},
-        {name: "Marton", lat: -40.0692, lon: 175.3783},
-        {name: "Whitianga", lat: -36.8333, lon: 175.7000},
-        {name: "Tuakau", lat: -37.2667, lon: 174.9500},
-        {name: "Dargaville", lat: -35.9333, lon: 173.8833},
-        {name: "Katikati", lat: -37.5500, lon: 175.9167},
-        {name: "Westport", lat: -41.7581, lon: 171.6022},
-        {name: "Tauwhare", lat: -37.7698, lon: 175.4592},
-        {name: "Te Aroha", lat: -37.5333, lon: 175.7167},
-        {name: "Kaikohe", lat: -35.4075, lon: 173.7997},
-        {name: "Prebbleton", lat: -43.5783, lon: 172.5133},
-        {name: "Paeroa", lat: -37.3750, lon: 175.6667},
-        {name: "Whangamata", lat: -37.2000, lon: 175.8667},
-        {name: "Balclutha", lat: -46.2333, lon: 169.7500},
-        {name: "Snells Beach", lat: -36.4222, lon: 174.7275},
-        {name: "Turangi", lat: -38.9889, lon: 175.8083},
-        {name: "Raglan", lat: -37.8000, lon: 174.8833},
-        {name: "Foxton", lat: -40.4717, lon: 175.2858},
-        {name: "Darfield", lat: -43.4833, lon: 172.1167},
-        {name: "Ashhurst", lat: -40.3000, lon: 175.7500},
-        {name: "Hokitika", lat: -42.7156, lon: 170.9681},
-        {name: "Helensville", lat: -36.6797, lon: 174.4494},
-        {name: "Woodend", lat: -43.3167, lon: 172.6667},
-        {name: "Kihikihi", lat: -38.0333, lon: 175.3500},
-        {name: "Pahiatua", lat: -40.4533, lon: 175.8408},
-        {name: "Wakefield", lat: -41.4000, lon: 173.0500},
-        {name: "Ruakaka", lat: -35.9084, lon: 174.4596},
-        {name: "Winton", lat: -46.1431, lon: 168.3236},
-        {name: "Maraetai", lat: -36.8810, lon: 175.0420},
-        {name: "Te Anau", lat: -45.4167, lon: 167.7167},
-        {name: "Clive", lat: -39.5833, lon: 176.9167},
-        {name: "Oxford", lat: -43.3128, lon: 172.1906},
-        {name: "Pokeno", lat: -37.2333, lon: 175.0167},
-        {name: "Milton", lat: -46.1167, lon: 169.9667},
-        {name: "Waihi Beach", lat: -37.4000, lon: 175.9333},
-        {name: "Brightwater", lat: -41.3790, lon: 173.1140},
-        {name: "Leeston", lat: -43.7667, lon: 172.3000},
-        {name: "West Melton", lat: -43.5167, lon: 172.3667},
-        {name: "Waitangi", lat: -43.9514, lon: -176.5611},
-    ]
-
-        function initMap() {
-            map = new L.map('map', MAP_CONFIG);
-            new L.TileLayer(TILE_SERVER_URL, {
-                attribution: TILE_SERVER_ATTRIBUTION
-            }).addTo(map)
-
-            // Marker Clusters - Combines nearby markers into 1
-            markersLayer = L.markerClusterGroup({
-                //iconCreateFunction: function (cluster) {
-                //    return L.divIcon({
-                //        html: `<div><img src="wine_glass_small.png"><span>${cluster.getChildCount()}</span></div>`,
-                //        className: "custom-cluster-icon",
-                //        iconSize: L.point(36, 60),
-                //    });
-                //},
-                // maxClusterRadius: 100,
+            const WINE_ICON = L.icon({
+                iconUrl: "wine_glass_small.png",
+                iconSize: [36, 60],
+                iconAnchor: [24, 40],
+                popupAnchor: [0, -40],
             });
-            map.addLayer(markersLayer);
 
-            // Heatmap
-            // heatMapLayer = new HeatmapOverlay(HEATMAP_CONFIG);
-            // map.addLayer(heatMapLayer);
+            let map, markersLayer, heatMapLayer;
+            const markers = [];
+            let heatMapData = [];
 
-            initTestData();
+            const jsConnector = {
+                initMap: initMap,
+            };
 
-            heatMapLayer.setData({data: heatMapData}, TEST_DATA);
-        }
+            function initMap() {
+                map = new L.map("map", MAP_CONFIG);
+                new L.TileLayer(TILE_SERVER_URL, {
+                    attribution: TILE_SERVER_ATTRIBUTION,
+                }).addTo(map);
 
-        function addWineMarker(latitude, longitude, locationName = null) {
-            const marker = L.marker([latitude, longitude], {
-                icon: WINE_ICON,
-                riseOnHover: true,
-            });
-            if (locationName) {
-                marker.bindPopup(
-                    `Name: WineName<br>
+                // Marker Clusters - Combines nearby markers into 1
+                markersLayer = L.markerClusterGroup({});
+                map.addLayer(markersLayer);
+
+                // Heatmap
+                // heatMapLayer = new HeatmapOverlay(HEATMAP_CONFIG);
+                // map.addLayer(heatMapLayer);
+                // heatMapLayer.setData({ data: heatMapData }, TEST_DATA);
+            }
+
+            function addWineMarker(latitude, longitude, locationName = null) {
+                const marker = L.marker([latitude, longitude], {
+                    icon: WINE_ICON,
+                    riseOnHover: true,
+                });
+                if (locationName) {
+                    marker.bindPopup(
+                        `Name: WineName<br>
                     Type: WineType<br>
                     Location: ${locationName}`
-                );
+                    );
+                }
+                markers.push(marker);
+                markersLayer.addLayer(marker);
+                heatMapData.push({ lat: latitude, lon: longitude });
             }
-            markers.push(marker);
-            markersLayer.addLayer(marker);
-            heatMapData.push({ lat: latitude, lon: longitude });
-        }
+        </script>
 
-        function initTestData() {
-            TEST_DATA.forEach((point) => {
-                addWineMarker(point.lat, point.lon, point.name);
-            });
-        }
-
-</script>
-
-<!--<script src="geolocation_resolver.js"></script>-->
-<!--<script src="test_data.js"></script>-->
-<!--<script src="settings.js"></script>-->
-<!--<script src="leaflet_osm_map.js"></script>-->
-
-<script>
-    initMap();
-</script>
-</body>
+        <!--<script src="geolocation_resolver.js"></script>-->
+        <!--<script src="test_data.js"></script>-->
+        <!--<script src="settings.js"></script>-->
+        <!--<script src="leaflet_osm_map.js"></script>-->
+    </body>
 </html>
