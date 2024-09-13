@@ -15,7 +15,7 @@ public class UserService {
     System.out.println(userInfo.getSalt());
     System.out.println(userInfo.getPassword());
     if (isNull(userInfo)) {
-      return "User does not exist";
+      return "Username or Password is Incorrect";
       } else if (Objects.equals(password, userInfo.getPassword()) && username.equals("admin") && Objects.equals(password, "admin")) {
         return "Admin First Success";
       } else if (Password.verifyPassword(password,userInfo.getPassword(), userInfo.getSalt()) && username.equals("admin")) {
@@ -23,7 +23,7 @@ public class UserService {
       } else if (Password.verifyPassword(password,userInfo.getPassword(), userInfo.getSalt())) {
         return "Success";
       } else {
-        return "Password incorrect";
+        return "Username or Password is Incorrect";
     }
   }
   public static String validateRegistration(String username,String password,String confirmPassword, ManagerContext manager) {
