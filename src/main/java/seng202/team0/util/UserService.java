@@ -13,7 +13,7 @@ public class UserService {
     }
     seng202.team0.database.User userInfo = manager.databaseManager.getUser(username);
     if (isNull(userInfo)) {
-      return "User does not exist";
+      return "Username or Password is Incorrect";
       } else if (Objects.equals(password, userInfo.getPassword()) && username.equals("admin") && Objects.equals(password, "admin")) {
         return "Admin First Success";
       } else if (Objects.equals(password, userInfo.getPassword()) && username.equals("admin")) {
@@ -21,7 +21,7 @@ public class UserService {
       } else if (Objects.equals(password, userInfo.getPassword())) {
         return "Success";
       } else {
-        return "Password incorrect";
+        return "Username or Password is Incorrect";
     }
   }
   public static String validateRegistration(String username,String password,String confirmPassword, ManagerContext manager) {

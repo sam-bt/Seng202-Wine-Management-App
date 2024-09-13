@@ -30,7 +30,7 @@
                 <Font name="System Bold" size="14.0" />
               </font>
             </Button>
-                  <PasswordField fx:id="passwordField" layoutX="77.0" layoutY="119.0" prefHeight="33.0" prefWidth="300.0" />
+                  <PasswordField fx:id="passwordField" layoutX="77.0" layoutY="119.0" prefHeight="33.0" prefWidth="300.0" promptText="Enter your password" />
           </children>
         </AnchorPane>
       </content>
