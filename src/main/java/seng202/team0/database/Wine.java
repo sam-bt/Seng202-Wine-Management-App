@@ -25,10 +25,6 @@ public class Wine {
    */
   private final StringProperty country;
   /**
-   * Region
-   */
-  private final StringProperty region;
-  /**
    * Winery
    * <p>
    * Represented as a name to ease binding
@@ -69,7 +65,6 @@ public class Wine {
       String title,
       String variety,
       String country,
-      String region,
       String winery,
       String description,
       Integer scorePercent,
@@ -79,7 +74,6 @@ public class Wine {
     this.title = new SimpleStringProperty(this, "title", title);
     this.variety = new SimpleStringProperty(this, "variety", variety);
     this.country = new SimpleStringProperty(this, "country", country);
-    this.region = new SimpleStringProperty(this, "region", region);
     this.winery = new SimpleStringProperty(this, "winery", winery);
     this.description = new SimpleStringProperty(this, "description", description);
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent", scorePercent);
@@ -94,7 +88,6 @@ public class Wine {
     this.title = new SimpleStringProperty(this, "title");
     this.variety = new SimpleStringProperty(this, "variety");
     this.country = new SimpleStringProperty(this, "country");
-    this.region = new SimpleStringProperty(this, "region");
     this.winery = new SimpleStringProperty(this, "winery");
     this.description = new SimpleStringProperty(this, "description");
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent");
@@ -182,31 +175,6 @@ public class Wine {
    */
   public StringProperty countryProperty() {
     return country;
-  }
-
-  /**
-   * Gets the Region
-   *
-   * @return region
-   */
-  public String getRegion() {
-    return region.get();
-  }
-
-  /**
-   * Sets the region
-   * @param region region
-   */
-  public void setRegion(String region) {
-    this.region.set(region);
-  }
-
-  /**
-   * Gets the region property
-   * @return region property
-   */
-  public StringProperty regionProperty() {
-    return region;
   }
 
   /**
