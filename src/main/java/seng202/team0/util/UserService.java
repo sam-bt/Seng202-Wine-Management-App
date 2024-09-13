@@ -12,13 +12,15 @@ public class UserService {
       return "All fields must be filled!";
     }
     seng202.team0.database.User userInfo = manager.databaseManager.getUser(username);
+    System.out.println(userInfo.getSalt());
+    System.out.println(userInfo.getPassword());
     if (isNull(userInfo)) {
       return "User does not exist";
       } else if (Objects.equals(password, userInfo.getPassword()) && username.equals("admin") && Objects.equals(password, "admin")) {
         return "Admin First Success";
-      } else if (Objects.equals(password, userInfo.getPassword()) && username.equals("admin")) {
+      } else if (Password.verifyPassword(password,userInfo.getPassword(), userInfo.getSalt()) && username.equals("admin")) {
         return "Admin Success";
-      } else if (Objects.equals(password, userInfo.getPassword())) {
+      } else if (Password.verifyPassword(password,userInfo.getPassword(), userInfo.getSalt())) {
         return "Success";
       } else {
         return "Password incorrect";
@@ -36,7 +38,9 @@ public class UserService {
     } else if (password.length() < 3 || password.length() > 15 || !password.matches("[a-zA-Z0-9]+")) {
       return "Invalid password, Please make sure that your password is between 3 and 15 characters long and only contains letters or numbers!";
     } else {
-      boolean userAdded = manager.databaseManager.addUser(username,password);
+      String salt = Password.generateSalt();
+      String hashedPassword = Password.hashPassword(password,salt);
+      boolean userAdded = manager.databaseManager.addUser(username,hashedPassword, salt);
       if (userAdded) {
         return "Success";
       } else {
@@ -53,13 +57,16 @@ public class UserService {
     if (Objects.equals(oldPassword, newPassword)) {
       return "New password cannot be same as old password";
     }
-    if (!Objects.equals(user.getPassword(), oldPassword)) {
+    if (!Password.verifyPassword(oldPassword, user.getPassword(), user.getSalt())) {
       return "Password incorrect";
     }
     else if (newPassword.length() < 3 || newPassword.length() > 15 || !newPassword.matches("[a-zA-Z0-9]+")) {
       return "Invalid password, Please make sure that your password is between 3 and 15 characters long and only contains letters or numbers!";
     }
-    boolean passwordUpdated = manager.databaseManager.updatePassword(username,newPassword);
+
+    String salt = Password.generateSalt();
+    String hashedPassword = Password.hashPassword(newPassword,salt);
+    boolean passwordUpdated = manager.databaseManager.updatePassword(username,hashedPassword, salt);
     if (passwordUpdated) {
       return "Success";
     } else {

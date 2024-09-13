@@ -53,7 +53,6 @@ public class LoginController extends Controller{
       managerContext.authenticationManager.loginUser(username);
       managerContext.GUIManager.mainController.openUpdatePasswordScreen();
 
-      // todo allow user to change admin password
     } else {
       loginMessageLabel.setStyle("-fx-text-fill: red");
       loginMessageLabel.setText(validateResponse);

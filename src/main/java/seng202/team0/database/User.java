@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * Wine represents the wine record in the database
+ * User represents the users in the database
  */
 public class User {
 
@@ -22,20 +22,28 @@ public class User {
   private final StringProperty role;
 
   /**
+   * salt
+   */
+  private final StringProperty salt;
+
+  /**
    * Constructor
    *
    * @param username username
    * @param password password
    * @param role     role
+   * @param salt     salt
    */
   public User(
       String username,
       String password,
-      String role
+      String role,
+      String salt
   ) {
     this.username = new SimpleStringProperty(this, "username", username);
     this.password = new SimpleStringProperty(this, "password", password);
     this.role = new SimpleStringProperty(this, "role", role);
+    this.salt = new SimpleStringProperty(this, "salt", salt);
   }
 
   /**
@@ -45,9 +53,8 @@ public class User {
     this.username = new SimpleStringProperty(this, "username");
     this.password = new SimpleStringProperty(this, "password");
     this.role = new SimpleStringProperty(this, "role");
-
+    this.salt = new SimpleStringProperty(this, "salt");
   }
-
 
   /**
    * Gets the username
@@ -129,5 +136,32 @@ public class User {
   public StringProperty roleProperty() {
     return role;
   }
+
+/**
+ * Gets the salt
+ *
+ * @return salt
+ */
+public String getSalt() {
+  return salt.get();
+}
+
+/**
+ * Sets the salt
+ *
+ * @param salt salt
+ */
+public void setSalt(String salt) {
+  this.salt.set(salt);
+}
+
+/**
+ * Gets the salt property
+ *
+ * @return salt property
+ */
+public StringProperty saltProperty() {
+  return salt;
+}
 
 }

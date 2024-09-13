@@ -186,7 +186,8 @@ public class DatabaseManager implements AutoCloseable {
     String create = "create table USER (" +
         "USERNAME varchar(64) PRIMARY KEY," +
         "PASSWORD varchar(64) NOT NULL," +
-        "ROLE varchar(8))";
+        "ROLE varchar(8) NOT NULL," +
+        "SALT varchar(32))";
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
     }
@@ -200,6 +201,7 @@ public class DatabaseManager implements AutoCloseable {
       insertStatement.setString(1, "admin");
       insertStatement.setString(2, "admin");
       insertStatement.setString(3, "admin");
+      insertStatement.setString(3, "dGVzdFNhbHRWYWx1ZTEyMzQ=");
       insertStatement.executeUpdate();
     }
   }
@@ -213,7 +215,7 @@ public class DatabaseManager implements AutoCloseable {
       ResultSet set = statement.executeQuery();
 
       if (set.next()) {
-        user = new User(set.getString("USERNAME"),set.getString("PASSWORD"),set.getString("ROLE"));
+        user = new User(set.getString("USERNAME"),set.getString("PASSWORD"),set.getString("ROLE"),set.getString("SALT"));
       } else {
         return null;
       }
@@ -226,12 +228,13 @@ public class DatabaseManager implements AutoCloseable {
   }
 
 
-  public boolean addUser(String username, String password) {
-    String insert = "insert into USER values(?, ?, ?);";
+  public boolean addUser(String username, String password, String salt) {
+    String insert = "insert into USER values(?, ?, ?, ?);";
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
       insertStatement.setString(1, username);
       insertStatement.setString(2, password);
       insertStatement.setString(3, "user");
+      insertStatement.setString(4, salt);
       insertStatement.executeUpdate();
       return true;
     } catch (SQLException e) {
@@ -246,18 +249,33 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  public boolean updatePassword(String username, String password) {
-    String updateQuery = "UPDATE USER SET PASSWORD = ? WHERE USERNAME = ?";
+  public boolean updatePassword(String username, String password, String salt) {
+    String updateQuery = "UPDATE USER SET PASSWORD = ?, SALT = ? WHERE USERNAME = ?";
 
     try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
       updateStatement.setString(1, password);
-      updateStatement.setString(2, username);
+      updateStatement.setString(2, salt);
+      updateStatement.setString(3, username);
 
       int rowsAffected = updateStatement.executeUpdate();
 
       return rowsAffected > 0;
     } catch (SQLException e) {
       System.err.println("Error updating password: " + e.getMessage());
+      return false;
+    }
+  }
+
+  public boolean deleteAllUsers() {
+    String deleteQuery = "delete from USER "
+        + "WHERE USERNAME != ?;";
+    try (PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)) {
+      deleteStatement.setString(1, "admin");
+      deleteStatement.executeUpdate();
+      return true;
+
+    } catch (SQLException e) {
+      System.err.println("Error deleting users: " + e.getMessage());
       return false;
     }
   }

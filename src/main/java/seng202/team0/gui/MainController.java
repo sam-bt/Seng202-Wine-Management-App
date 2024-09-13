@@ -102,6 +102,8 @@ public class MainController extends Controller {
     registerButton.setText("Register");
     loginButton.setOnMouseClicked(event -> openLoginScreen());
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
+    adminScreenButton.setVisible(false);
+    openWineScreen();
   }
 
   public boolean isDisabled() {
@@ -169,8 +171,7 @@ public class MainController extends Controller {
 
   @FXML
   public void openAdminScreen() {
-    System.out.println("opening admin screen");
-//    switchScene("/fxml/register_screen.fxml", "Register", () -> new RegisterController(managerContext));
+    switchScene("/fxml/admin_screen.fxml", "Register", () -> new AdminController(managerContext));
   }
   @FXML
   public void openSettingsScreen() {
