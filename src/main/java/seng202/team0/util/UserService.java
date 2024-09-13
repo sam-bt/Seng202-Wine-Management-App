@@ -12,11 +12,9 @@ public class UserService {
       return "All fields must be filled!";
     }
     seng202.team0.database.User userInfo = manager.databaseManager.getUser(username);
-    System.out.println(userInfo.getSalt());
-    System.out.println(userInfo.getPassword());
     if (isNull(userInfo)) {
       return "Username or Password is Incorrect";
-      } else if (Objects.equals(password, userInfo.getPassword()) && username.equals("admin") && Objects.equals(password, "admin")) {
+      } else if (Password.verifyPassword(password,userInfo.getPassword(), userInfo.getSalt()) && username.equals("admin") && Objects.equals(password, "admin")) {
         return "Admin First Success";
       } else if (Password.verifyPassword(password,userInfo.getPassword(), userInfo.getSalt()) && username.equals("admin")) {
         return "Admin Success";

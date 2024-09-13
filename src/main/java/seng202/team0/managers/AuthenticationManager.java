@@ -1,9 +1,5 @@
 package seng202.team0.managers;
 
-import seng202.team0.managers.exceptions.AuthenticationManagerInitializationException;
-import seng202.team0.managers.exceptions.InvalidUserException;
-import seng202.team0.managers.exceptions.NoPermissionException;
-
 /**
  * Authentication Manager (MORE DETAIL HERE!)
  */
@@ -30,7 +26,7 @@ public class AuthenticationManager {
     return admin;
   }
 
-  public void loginUser(String username) {
+  public void getUser(String username) {
     this.username = username;
   }
 

@@ -14,6 +14,7 @@ import javafx.collections.ObservableList;
 import org.apache.commons.lang3.ObjectUtils.Null;
 import seng202.team0.database.User;
 import seng202.team0.database.Wine;
+import seng202.team0.util.Password;
 
 
 /**
@@ -196,12 +197,14 @@ public class DatabaseManager implements AutoCloseable {
   }
 
   private void createDefaultAdminUser() throws SQLException { //TODO remove when db persists
-    String insert = "insert into USER (username, password, role) values(?, ?, ?);";
+    String insert = "insert into USER (username, password, role, salt) values(?, ?, ?, ?);";
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
+      String salt = Password.generateSalt();
+      String password = Password.hashPassword("admin", salt);
       insertStatement.setString(1, "admin");
-      insertStatement.setString(2, "admin");
+      insertStatement.setString(2, password);
       insertStatement.setString(3, "admin");
-      insertStatement.setString(3, "dGVzdFNhbHRWYWx1ZTEyMzQ=");
+      insertStatement.setString(4, salt);
       insertStatement.executeUpdate();
     }
   }
