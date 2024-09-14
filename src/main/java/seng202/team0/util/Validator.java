@@ -1,6 +1,7 @@
 package seng202.team0.util;
 
 import java.util.Objects;
+import seng202.team0.database.GeoLocation;
 import seng202.team0.database.Wine;
 import seng202.team0.util.Exceptions.ValidationException;
 
@@ -35,7 +36,8 @@ public class Validator {
       String description,
       String scorePercent,
       String abv,
-      String price
+      String price,
+      GeoLocation geoLocation
       ) throws ValidationException {
       try {
 
@@ -48,7 +50,8 @@ public class Validator {
             description,
             Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
             Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
-            Objects.equals(price, "") ? 0 : Float.parseFloat(price)
+            Objects.equals(price, "") ? 0 : Float.parseFloat(price),
+            geoLocation
         );
       }  catch (Exception e) {
         throw new ValidationException("Failed to parse wine", e);

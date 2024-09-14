@@ -1,21 +1,25 @@
 package seng202.team0.managers;
 
+import com.opencsv.exceptions.CsvValidationException;
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.apache.commons.lang3.ObjectUtils.Null;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import seng202.team0.database.GeoLocation;
 import seng202.team0.database.User;
 import seng202.team0.database.Wine;
 import seng202.team0.util.Password;
+import seng202.team0.util.ProcessCSV;
 
 
 /**
@@ -24,6 +28,7 @@ import seng202.team0.util.Password;
  */
 public class DatabaseManager implements AutoCloseable {
 
+  private static final Log log = LogFactory.getLog(DatabaseManager.class);
   /**
    * Database connection
    * <p>
@@ -58,6 +63,7 @@ public class DatabaseManager implements AutoCloseable {
     createWinesTable();
     createUsersTable();
     createGeolocationTable();
+    addGeolocations();
   }
 
   /**
@@ -94,15 +100,18 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
 
     ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query = "select TITLE, VARIETY, COUNTRY, REGION, WINERY, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ROWID limit ? offset ?;";
+    String query = "select TITLE, VARIETY, COUNTRY, REGION, WINERY, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE from WINE "
+        + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
+        + "order by WINE.ROWID "
+        + "limit ? "
+        + "offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
-
       statement.setInt(1, end - begin);
       statement.setInt(2, begin);
 
       ResultSet set = statement.executeQuery();
       while (set.next()) {
-
+        GeoLocation geoLocation = createGeoLocation(set);
         Wine wine = new Wine(
             set.getString("TITLE"),
             set.getString("VARIETY"),
@@ -112,7 +121,8 @@ public class DatabaseManager implements AutoCloseable {
             set.getString("DESCRIPTION"),
             set.getInt("SCORE_PERCENT"),
             set.getFloat("ABV"),
-            set.getFloat("PRICE")
+            set.getFloat("PRICE"),
+            geoLocation
         );
         wines.add(wine);
       }
@@ -122,6 +132,18 @@ public class DatabaseManager implements AutoCloseable {
     }
 
     return wines;
+  }
+
+  private GeoLocation createGeoLocation(ResultSet set) throws SQLException {
+    double latitude = set.getDouble("LATITUDE");
+    if (set.wasNull())
+      return null;
+
+    double longitude = set.getDouble("LONGITUDE");
+    if (set.wasNull())
+      return null;
+
+    return new GeoLocation(latitude, longitude);
   }
 
   /**
@@ -289,32 +311,31 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  public void addGeolocation(String locationName, GeoLocation geoLocation) throws SQLException {
-    String query = "insert into GEOLOCATION (NAME, LATITUDE, LONGITUDE) values (?, ?, ?);";
-    try (PreparedStatement statement = connection.prepareStatement(query)) {
-      int queryIndex = 1;
-      statement.setString(queryIndex++, locationName.toLowerCase());
-      statement.setDouble(queryIndex++, geoLocation.getLatitude());
-      statement.setDouble(queryIndex++, geoLocation.getLongitude());
-      statement.execute();
-    }
-  }
+  public void addGeolocations() {
+    try {
+      String query = "insert into GEOLOCATION (NAME, LATITUDE, LONGITUDE) values (?, ?, ?);";
+      ArrayList<String[]> rows = ProcessCSV.getCSVRows(
+          getClass().getResourceAsStream("/nz_geolocations.csv"));
 
-  public GeoLocation getGeolocation(String locationName) throws SQLException {
-    String query = "select NAME, LATITUDE, LONGITUDE from GEOLOCATION "
-        + "WHERE NAME = ?;";
-    try (PreparedStatement statement = connection.prepareStatement(query)) {
-      statement.setString(1, locationName.toLowerCase());
-
-      ResultSet set = statement.executeQuery();
-      if (set.next()) {
-        return new GeoLocation(
-            set.getDouble("LATITUDE"),
-            set.getDouble("LONGITUDE")
-        );
+      try (PreparedStatement statement = connection.prepareStatement(query)) {
+        for (int i = 1; i < rows.size(); i++) {
+          String[] row = rows.get(i);
+          String name = row[0];
+          double latitude = Double.parseDouble(row[1]);
+          double longitude = Double.parseDouble(row[2]);
+          int queryIndex = 1;
+          statement.setString(queryIndex++, name);
+          statement.setDouble(queryIndex++, latitude);
+          statement.setDouble(queryIndex++, longitude);
+          statement.addBatch();
+        }
+        statement.executeBatch();
+      } catch (SQLException error) {
+        log.error("Could not add geolocations to the database", error);
       }
+    } catch (CsvValidationException | IOException e) {
+      throw new RuntimeException(e);
     }
-    return null;
   }
 
   /**

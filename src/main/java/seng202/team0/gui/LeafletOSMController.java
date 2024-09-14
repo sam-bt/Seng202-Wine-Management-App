@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import netscape.javascript.JSObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import seng202.team0.database.GeoLocation;
 import seng202.team0.database.Wine;
 import seng202.team0.service.JavaScriptBridge;
 
@@ -34,6 +35,8 @@ public class LeafletOSMController {
    * Holds the JavaScript program which is created during the Java run time
    */
   private JSObject javaScriptConnector;
+
+  private Runnable onReadyAction;
 
   LeafletOSMController( WebEngine webEngine) {
     this.webEngine = webEngine;
@@ -68,7 +71,27 @@ public class LeafletOSMController {
             JSObject window = (JSObject) webEngine.executeScript("window");
             javaScriptConnector = (JSObject) webEngine.executeScript("jsConnector");
             javaScriptConnector.call("initMap");
+
+            if (onReadyAction != null) {
+              onReadyAction.run();
+              onReadyAction = null;
+            }
           }
         });
+  }
+
+  public void clearWineMarkers() {
+    javaScriptConnector.call("clearMarkers");
+  }
+  public void addWineMarker(GeoLocation geoLocation) {
+    javaScriptConnector.call("addWineMarker", geoLocation.getLatitude(), geoLocation.getLongitude());
+  }
+
+  public void setOnReadyAction(Runnable runnable) {
+    if (javaScriptConnector != null) {
+      runnable.run();
+      return;
+    }
+    onReadyAction = runnable;
   }
 }

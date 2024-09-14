@@ -68,11 +68,13 @@
             });
 
             let map, markersLayer, heatMapLayer;
-            const markers = [];
+            let markers = [];
             let heatMapData = [];
 
             const jsConnector = {
                 initMap: initMap,
+                addWineMarker: addWineMarker,
+                clearMarkers: clearMarkers,
             };
 
             function initMap() {
@@ -91,18 +93,21 @@
                 // heatMapLayer.setData({ data: heatMapData }, TEST_DATA);
             }
 
+            function clearMarkers() {
+                map.removeLayer(markersLayer);
+                markersLayer = L.markerClusterGroup({});
+                markers = [];
+                map.addLayer(markersLayer);
+            }
+
             function addWineMarker(latitude, longitude, locationName = null) {
                 const marker = L.marker([latitude, longitude], {
                     icon: WINE_ICON,
                     riseOnHover: true,
                 });
-                if (locationName) {
-                    marker.bindPopup(
-                        `Name: WineName<br>
-                    Type: WineType<br>
-                    Location: ${locationName}`
-                    );
-                }
+                marker.bindPopup(
+                    `Name: WineName<br>`
+                );
                 markers.push(marker);
                 markersLayer.addLayer(marker);
                 heatMapData.push({ lat: latitude, lon: longitude });

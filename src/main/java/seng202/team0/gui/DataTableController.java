@@ -175,11 +175,9 @@ public class DataTableController extends Controller {
           description != -1 ? tuple[description] : "",
           score != -1 ? tuple[score] : "",
           abv != -1 ? tuple[abv] : "",
-          nzd != -1 ? tuple[nzd] : ""
+          nzd != -1 ? tuple[nzd] : "",
+          null
       ));
-
-      // this will cause delay but not sure where to put it
-
     }
     return wines;
 

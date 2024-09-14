@@ -5,7 +5,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -48,8 +50,16 @@ public class WineScreenController extends Controller{
   }
 
   private void openWineRange(int begin, int end) {
+    ObservableList<Wine> wines = managerContext.databaseManager.getWinesInRange(begin, end);
+    mapController.setOnReadyAction(() -> {
+      mapController.clearWineMarkers();
+      wines.stream()
+          .map(Wine::getGeoLocation)
+          .filter(Objects::nonNull)
+          .forEach(mapController::addWineMarker);
+    });
 
-    tableView.setItems(managerContext.databaseManager.getWinesInRange(begin, end));
+    tableView.setItems(wines);
     tableView.setEditable(false);
     TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
     titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
@@ -98,10 +108,11 @@ public class WineScreenController extends Controller{
     createSlider(11, 445, 0, 100, 10);
     // price slider
     createSlider(11, 525, 0, 100, 10);
-    openWineRange(0, 100);
 
     mapController = new LeafletOSMController(webView.getEngine());
     mapController.initMap();
+
+    openWineRange(0, 100);
   }
 
   /**

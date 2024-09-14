@@ -51,7 +51,13 @@ public class Wine {
    * Price of the wine in NZD if known, else 0
    */
   private final FloatProperty price;
-
+  /**
+   * GeoLocation which holds the coordinates of the region name
+   * <p>
+   *   If the region is invalid, not present, or not found from the geolocation dataset, this will be null
+   * </p>
+   */
+  private final GeoLocation geoLocation;
 
   /**
    * Constructor
@@ -75,7 +81,8 @@ public class Wine {
       String description,
       Integer scorePercent,
       Float abv,
-      Float price
+      Float price,
+      GeoLocation geoLocation
   ) {
     this.title = new SimpleStringProperty(this, "title", title);
     this.variety = new SimpleStringProperty(this, "variety", variety);
@@ -86,12 +93,13 @@ public class Wine {
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent", scorePercent);
     this.abv = new SimpleFloatProperty(this, "abv", abv);
     this.price = new SimpleFloatProperty(this, "price", price);
+    this.geoLocation = geoLocation;
   }
 
   /**
    * Default constructor
    */
-  public Wine() {
+  public Wine(GeoLocation geoLocation) {
     this.title = new SimpleStringProperty(this, "title");
     this.variety = new SimpleStringProperty(this, "variety");
     this.country = new SimpleStringProperty(this, "country");
@@ -101,6 +109,7 @@ public class Wine {
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent");
     this.abv = new SimpleFloatProperty(this, "abv");
     this.price = new SimpleFloatProperty(this, "price");
+    this.geoLocation = geoLocation;
   }
 
 
@@ -344,5 +353,9 @@ public class Wine {
    */
   public FloatProperty priceProperty() {
     return price;
+  }
+
+  public GeoLocation getGeoLocation() {
+    return geoLocation;
   }
 }
