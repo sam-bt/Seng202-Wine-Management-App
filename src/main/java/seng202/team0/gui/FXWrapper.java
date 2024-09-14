@@ -33,7 +33,7 @@ public class FXWrapper {
         this.stage = stage;
         try {
             this.managerContext = new ManagerContext(
-                new DatabaseManager(),
+                new DatabaseManager("database.db"),
                 new AuthenticationManager(),
                 new MapManager(),
                 new GUIManager(this)

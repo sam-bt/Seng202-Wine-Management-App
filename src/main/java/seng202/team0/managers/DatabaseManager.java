@@ -2,7 +2,6 @@ package seng202.team0.managers;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +10,6 @@ import java.sql.Statement;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.apache.commons.lang3.ObjectUtils.Null;
 import seng202.team0.database.User;
 import seng202.team0.database.Wine;
 import seng202.team0.util.Password;
@@ -36,7 +34,7 @@ public class DatabaseManager implements AutoCloseable {
    *
    * @throws SQLException if failed to initialize
    */
-  public DatabaseManager() throws SQLException {
+  public DatabaseManager(String databaseFileName) throws SQLException {
 
     // Construct a file path for the database
     File dir = new File("sqlDatabase");
@@ -51,7 +49,7 @@ public class DatabaseManager implements AutoCloseable {
 
     // Connect to database
     // This is the path to the db file
-    String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + "SQLDatabase.db";
+    String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + databaseFileName;
     this.connection = DriverManager.getConnection(dbPath);
     createWinesTable();
     createUsersTable();
@@ -142,12 +140,15 @@ public class DatabaseManager implements AutoCloseable {
    * @param list list of wines
    */
   public void replaceAllWines(List<Wine> list) throws SQLException {
+    removeWines();
+    addWines(list);
+  }
+
+  public void removeWines() throws SQLException {
     String delete = "delete from WINE;";
     try (Statement statement = connection.createStatement()) {
       statement.executeUpdate(delete);
     }
-
-    addWines(list);
   }
 
   /**
