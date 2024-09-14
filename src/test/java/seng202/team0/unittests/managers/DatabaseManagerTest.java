@@ -62,7 +62,7 @@ class DatabaseManagerTest {
 
     ArrayList<Wine> wines = new ArrayList<>();
     for(int i=0; i < 3; i++) {
-      wines.add(new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "na", 99, 25.0f, 50f));
+      wines.add(new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "na", 99, 25.0f, 50f, null));
     }
     manager.replaceAllWines(wines);
     assertEquals(3, manager.getWinesSize());
@@ -75,7 +75,7 @@ class DatabaseManagerTest {
   void addWines(int num) throws SQLException {
     ArrayList<Wine> wines = new ArrayList<>();
     for(int i=0; i < num; i++) {
-      wines.add(new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "na", 99, 25f, (float)i));
+      wines.add(new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "na", 99, 25f, (float)i, null));
     }
     manager.addWines(wines);
 
