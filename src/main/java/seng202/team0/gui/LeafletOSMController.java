@@ -3,22 +3,16 @@ package seng202.team0.gui;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 
 import com.sun.javafx.webkit.WebConsoleListener;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 import javafx.concurrent.Worker;
-import javafx.fxml.FXML;
 import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 import netscape.javascript.JSObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team0.database.GeoLocation;
-import seng202.team0.database.Wine;
-import seng202.team0.service.JavaScriptBridge;
 
 /**
  * Map controller which is responsible for loading the map, JavaScript bridge
