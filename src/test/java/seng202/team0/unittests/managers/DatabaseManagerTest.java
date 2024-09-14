@@ -20,7 +20,8 @@ class DatabaseManagerTest {
   @BeforeEach
   void setup(){
     assertDoesNotThrow(() -> {
-      manager = new DatabaseManager();
+      manager = new DatabaseManager("testing.db");
+      manager.removeWines();
     });
   }
 
