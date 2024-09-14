@@ -1,16 +1,23 @@
 package seng202.team0.gui;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import org.controlsfx.control.RangeSlider;
 import seng202.team0.database.Wine;
 import seng202.team0.managers.ManagerContext;
+
+import java.io.IOException;
 
 /**
  * Controller for the screen that displays wines
@@ -107,6 +114,37 @@ public class WineScreenController extends Controller{
     // by default the font size matches the parent font size which is the filters title
     rangeSlider.setStyle("-fx-font-size: 15px;");
     filtersPane.getChildren().add(rangeSlider);
+  }
+
+  @FXML
+  public void openWineOnClick(MouseEvent event) {
+    if (event.getClickCount() == 2) {
+      System.out.println("Selected: " + tableView.getSelectionModel().getSelectedItem().getTitle());
+      try {
+        createWineDialog(tableView.getSelectionModel().getSelectedItem());
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  private void createWineDialog(Wine wine) throws IOException {
+
+    FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/detailed_view.fxml"));
+    DetailedViewController detailedViewController = new DetailedViewController();
+    baseLoader.setController(detailedViewController);
+    Parent root = baseLoader.load();
+    Stage stage = new Stage();
+    stage.setTitle(wine.getTitle());
+    Scene scene = new Scene(root, 500, 700);
+    //scene.getStylesheets().add(getClass().getResource("/css/detailed_view.css").toExternalForm());
+    stage.setScene(scene);
+    stage.setResizable(false);
+    stage.show();
+
+
+    detailedViewController.setWine(wine);
+
   }
 
 }
