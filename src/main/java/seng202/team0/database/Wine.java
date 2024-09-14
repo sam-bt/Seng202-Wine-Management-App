@@ -32,6 +32,14 @@ public class Wine {
    */
   private final StringProperty winery;
   /**
+   * Color of the wine
+   */
+  private final StringProperty color;
+  /**
+   * Age of the wine as a year
+   */
+  private final IntegerProperty vintage;
+  /**
    * Description of the wine
    */
   private final StringProperty description;
@@ -66,6 +74,8 @@ public class Wine {
       String variety,
       String country,
       String winery,
+      String color,
+      Integer vintage,
       String description,
       Integer scorePercent,
       Float abv,
@@ -75,6 +85,8 @@ public class Wine {
     this.variety = new SimpleStringProperty(this, "variety", variety);
     this.country = new SimpleStringProperty(this, "country", country);
     this.winery = new SimpleStringProperty(this, "winery", winery);
+    this.color = new SimpleStringProperty(this, "color", color);
+    this.vintage = new SimpleIntegerProperty(this, "vintage", vintage);
     this.description = new SimpleStringProperty(this, "description", description);
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent", scorePercent);
     this.abv = new SimpleFloatProperty(this, "abv", abv);
@@ -89,6 +101,8 @@ public class Wine {
     this.variety = new SimpleStringProperty(this, "variety");
     this.country = new SimpleStringProperty(this, "country");
     this.winery = new SimpleStringProperty(this, "winery");
+    this.color = new SimpleStringProperty(this, "color");
+    this.vintage = new SimpleIntegerProperty(this, "vintage");
     this.description = new SimpleStringProperty(this, "description");
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent");
     this.abv = new SimpleFloatProperty(this, "abv");
@@ -202,6 +216,60 @@ public class Wine {
    */
   public StringProperty wineryProperty() {
     return winery;
+  }
+
+  /**
+   * Gets the color of the wine
+   *
+   * @return color
+   */
+  public String getColor() {
+    return color.get();
+  }
+
+  /**
+   * Sets the color of the wine
+   *
+   * @param color color
+   */
+  public void setColor(String color) {
+    this.color.set(color);
+  }
+
+  /**
+   * Returns the color property
+   *
+   * @return color property
+   */
+  public StringProperty colorProperty() {
+    return color;
+  }
+
+  /**
+   * Returns the vintage
+   *
+   * @return vintage
+   */
+  public int getVintage() {
+    return vintage.get();
+  }
+
+  /**
+   * Sets the vintage
+   *
+   * @param vintage vintage
+   */
+  public void setVintage(int vintage) {
+    this.vintage.set(vintage);
+  }
+
+  /**
+   * Gets the vintage property
+   *
+   * @return vintage property
+   */
+  public IntegerProperty vintageProperty() {
+    return vintage;
   }
 
   /**

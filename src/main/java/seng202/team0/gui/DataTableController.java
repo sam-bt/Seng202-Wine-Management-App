@@ -30,11 +30,30 @@ import seng202.team0.util.Validator;
 public class DataTableController extends Controller {
 
   /**
+   * Names of columns
+   */
+  private final PrettyName[] prettyNames = new PrettyName[]{
+      PrettyName.NIL,
+      PrettyName.TITLE,
+      PrettyName.VARIETY,
+      PrettyName.COUNTRY,
+      PrettyName.WINERY,
+      PrettyName.COLOR,
+      PrettyName.VINTAGE,
+      PrettyName.DESCRIPTION,
+      PrettyName.SCORE,
+      PrettyName.ABV,
+      PrettyName.NZD,
+  };
+  /**
+   * List of column name buttons
+   */
+  ArrayList<ChoiceBox<PrettyName>> columnNames = new ArrayList<>();
+  /**
    * HBox that lists columns for mapping
    */
   @FXML
   private HBox columnRemapList;
-
   /**
    * Import button
    */
@@ -50,62 +69,10 @@ public class DataTableController extends Controller {
    */
   @FXML
   private Button replaceButton;
-
-  /**
-   * List of column name buttons
-   */
-  ArrayList<ChoiceBox<PrettyName>> columnNames = new ArrayList<>();
-  /**
-   * Names of columns
-   */
-  private final PrettyName[] prettyNames = new PrettyName[]{
-      PrettyName.NIL,
-      PrettyName.TITLE,
-      PrettyName.VARIETY,
-      PrettyName.COUNTRY,
-      PrettyName.WINERY,
-      PrettyName.DESCRIPTION,
-      PrettyName.SCORE,
-      PrettyName.ABV,
-      PrettyName.NZD,
-  };
-
-  /**
-   * Checks that all remap columns are in a valid state
-   * <p>
-   *   A state is valid if:
-   *   - Only one column of each type is selected
-   *   - The title is selected
-   * </p>
-   * @return if state is valid
-   */
-  boolean isValidRemapping() {
-
-    // Check for each box if there are any others with same value
-    for(int i=0; i < columnNames.size(); i++) {
-      PrettyName name = columnNames.get(i).getValue();
-      if (name == null || name == PrettyName.NIL)
-        continue;
-
-      for(int j=0; j < columnNames.size(); j++) {
-        if(i != j) {
-          if (columnNames.get(j).getValue() == name)
-            return false;
-        }
-      }
-    }
-    // Check there is a title box
-    boolean containsTitle = columnNames.stream()
-        .anyMatch(stringChoiceBox -> stringChoiceBox.getValue() == PrettyName.TITLE);
-
-    return containsTitle;
-
-  }
-
   /**
    * Array of rows of current csv
    * <p>
-   *   Might be null
+   * Might be null
    * </p>
    */
   private ArrayList<String[]> selectedTable;
@@ -117,6 +84,39 @@ public class DataTableController extends Controller {
    */
   public DataTableController(ManagerContext managerContext) {
     super(managerContext);
+  }
+
+  /**
+   * Checks that all remap columns are in a valid state
+   * <p>
+   * A state is valid if: - Only one column of each type is selected - The title is selected
+   * </p>
+   *
+   * @return if state is valid
+   */
+  boolean isValidRemapping() {
+
+    // Check for each box if there are any others with same value
+    for (int i = 0; i < columnNames.size(); i++) {
+      PrettyName name = columnNames.get(i).getValue();
+      if (name == null || name == PrettyName.NIL) {
+        continue;
+      }
+
+      for (int j = 0; j < columnNames.size(); j++) {
+        if (i != j) {
+          if (columnNames.get(j).getValue() == name) {
+            return false;
+          }
+        }
+      }
+    }
+    // Check there is a title box
+    boolean containsTitle = columnNames.stream()
+        .anyMatch(stringChoiceBox -> stringChoiceBox.getValue() == PrettyName.TITLE);
+
+    return containsTitle;
+
   }
 
   /**
@@ -139,6 +139,7 @@ public class DataTableController extends Controller {
 
   /**
    * Gets a list of wines from the currently selected table
+   *
    * @return list of wines
    * @throws ValidationException if validation error
    */
@@ -149,6 +150,8 @@ public class DataTableController extends Controller {
     int variety = getRenamedColumn(PrettyName.VARIETY);
     int country = getRenamedColumn(PrettyName.COUNTRY);
     int winery = getRenamedColumn(PrettyName.WINERY);
+    int color = getRenamedColumn(PrettyName.COLOR);
+    int vintage = getRenamedColumn(PrettyName.VINTAGE);
     int description = getRenamedColumn(PrettyName.DESCRIPTION);
     int score = getRenamedColumn(PrettyName.SCORE);
     int abv = getRenamedColumn(PrettyName.ABV);
@@ -160,7 +163,7 @@ public class DataTableController extends Controller {
       String[] tuple = selectedTable.get(row);
 
       // Ignore countries other than NZ
-      if(country != -1 && tuple[country].compareToIgnoreCase("New Zealand") != 0) {
+      if (country != -1 && tuple[country].compareToIgnoreCase("New Zealand") != 0) {
         continue;
       }
 
@@ -169,6 +172,8 @@ public class DataTableController extends Controller {
           variety != -1 ? tuple[variety] : "",
           country != -1 ? tuple[country] : "",
           winery != -1 ? tuple[winery] : "",
+          color != -1 ? tuple[color] : "",
+          vintage != -1 ? tuple[vintage] : "",
           description != -1 ? tuple[description] : "",
           score != -1 ? tuple[score] : "",
           abv != -1 ? tuple[abv] : "",
@@ -185,8 +190,9 @@ public class DataTableController extends Controller {
    * @return if all rows are valid
    */
   boolean validateColumnValues() {
-    if(selectedTable == null)
+    if (selectedTable == null) {
       return false;
+    }
 
     try {
       getWinesFromTable();
@@ -213,6 +219,7 @@ public class DataTableController extends Controller {
 
   /**
    * Makes the option box
+   *
    * @param name name to maybe preselect
    * @return option box
    */
@@ -251,44 +258,19 @@ public class DataTableController extends Controller {
   }
 
   /**
-   * Enum for column renaming names
-   */
-  enum PrettyName {
-    NIL("NOT AVAILABLE"),
-    TITLE("Title"),
-    VARIETY("Variety"),
-    COUNTRY("Country"),
-    WINERY("Winery"),
-    DESCRIPTION("Description"),
-    SCORE("Score"),
-    ABV("ABV"),
-    NZD("NZD");
-
-    private final String name;
-
-    PrettyName(String prettyName) {
-      this.name = prettyName;
-    }
-
-    public String getName() {
-      return name;
-    }
-  }
-
-
-  /**
    * Makes a column for previewing and remapping
-   * @param name column name
+   *
+   * @param name   column name
    * @param values preview values
    * @return column
    */
-  public Node makeRemapColumn(String name, String[] values){
+  public Node makeRemapColumn(String name, String[] values) {
     VBox vbox = new VBox();
 
     vbox.setAlignment(Pos.CENTER_LEFT);
     vbox.getChildren().add(new Label(name));
     vbox.getChildren().add(makeOptionBox(name));
-    for(String value : values) {
+    for (String value : values) {
       vbox.getChildren().add(new Label(value));
     }
     vbox.getChildren().add(new Label("..."));
@@ -296,20 +278,20 @@ public class DataTableController extends Controller {
     return vbox;
   }
 
-
   /**
    * Makes a list of columns for remapping
+   *
    * @param columnNames names of columns
-   * @param rows list of rows
+   * @param rows        list of rows
    */
-  private void makeColumnRemapList(String[] columnNames, List<String[]> rows){
+  private void makeColumnRemapList(String[] columnNames, List<String[]> rows) {
 
     columnRemapList.getChildren().clear();
     this.columnNames.clear();
-    for(int i=0; i < columnNames.length; i++) {
+    for (int i = 0; i < columnNames.length; i++) {
       // First row
       String[] column = new String[rows.size()];
-      for(int j=0; j < rows.size(); j++){
+      for (int j = 0; j < rows.size(); j++) {
         column[j] = rows.get(j)[i];
       }
 
@@ -324,6 +306,7 @@ public class DataTableController extends Controller {
 
     updateValidation();
   }
+
   /**
    * Triggers the extension to import a file when the upload csv button is pressed
    */
@@ -334,8 +317,9 @@ public class DataTableController extends Controller {
 
     Stage stage = (Stage) importCSVButton.getScene().getWindow();
     File selectedFile = fileChooser.showOpenDialog(stage);
-    if (selectedFile == null)
+    if (selectedFile == null) {
       return;
+    }
     try {
       // Should be first row on pretty much all files
       ArrayList<String[]> rows = ProcessCSV.getCSVRows(selectedFile);
@@ -343,7 +327,7 @@ public class DataTableController extends Controller {
       String[] columnNames = rows.getFirst();
       makeColumnRemapList(columnNames, rows.subList(1, Math.min(10, rows.size())));
       selectedTable = rows;
-    } catch(Exception exception) {
+    } catch (Exception exception) {
       LogManager.getLogger(getClass())
           .error("Failed to read CSV file: {}", selectedFile.getAbsolutePath(), exception);
     }
@@ -375,5 +359,32 @@ public class DataTableController extends Controller {
       LogManager.getLogger(getClass()).error("Expected wines to be valid", e);
     }
     clearMainScreen();
+  }
+
+  /**
+   * Enum for column renaming names
+   */
+  enum PrettyName {
+    NIL("NOT AVAILABLE"),
+    TITLE("Title"),
+    VARIETY("Variety"),
+    COUNTRY("Country"),
+    WINERY("Winery"),
+    COLOR("Color"),
+    VINTAGE("Vintage"),
+    DESCRIPTION("Description"),
+    SCORE("Score"),
+    ABV("ABV"),
+    NZD("NZD");
+
+    private final String name;
+
+    PrettyName(String prettyName) {
+      this.name = prettyName;
+    }
+
+    public String getName() {
+      return name;
+    }
   }
 }
