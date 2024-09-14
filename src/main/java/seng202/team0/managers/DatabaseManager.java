@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 import seng202.team0.database.User;
 import seng202.team0.database.Wine;
 import seng202.team0.util.Password;
+import org.apache.logging.log4j.LogManager;
 
 
 /**
@@ -31,7 +32,9 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Connects to a db file for management. The path to the file is specified by dbpath
-   *
+   * <p>
+   *   This method will fail if application is opened from a directory without appropriate file perms
+   * </p>
    * @throws SQLException if failed to initialize
    */
   public DatabaseManager(String databaseFileName) throws SQLException {
@@ -42,9 +45,9 @@ public class DatabaseManager implements AutoCloseable {
       boolean created = dir.mkdirs();
 
       if (!created) {
-        System.err.println("Error creating database directory");
+        LogManager.getLogger(getClass()).error("Error creating database directory");
+        throw new RuntimeException("Failed to create database");
       }
-
     }
 
     // Connect to database
@@ -53,7 +56,18 @@ public class DatabaseManager implements AutoCloseable {
     this.connection = DriverManager.getConnection(dbPath);
     createWinesTable();
     createUsersTable();
+  }
 
+
+  /**
+   * Creates an in-memory database for testing
+   *
+   * @throws SQLException if failed to initialize
+   */
+  public DatabaseManager() throws SQLException {
+    this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
+    createWinesTable();
+    createUsersTable();
   }
 
   /**
@@ -221,8 +235,7 @@ public class DatabaseManager implements AutoCloseable {
         return null;
       }
     } catch (SQLException e) {
-      System.err.println("Database error occurred: " + e.getMessage());
-      e.printStackTrace();
+      LogManager.getLogger(getClass()).error("Database error occurred: {}", e.getMessage(), e);
       return null;
     }
     return user;
@@ -240,11 +253,10 @@ public class DatabaseManager implements AutoCloseable {
       return true;
     } catch (SQLException e) {
       if (e.getMessage().contains("PRIMARY KEY")) {
-        System.out.println("Duplicate username: " + username);
+        LogManager.getLogger(getClass()).error("Duplicate username: {}", username, e);
         return false;
       } else {
-        System.err.println("Database error occurred: " + e.getMessage());
-        e.printStackTrace();
+        LogManager.getLogger(getClass()).error("Database error occurred: {}", e.getMessage(), e);
         return false;
       }
     }
@@ -262,7 +274,7 @@ public class DatabaseManager implements AutoCloseable {
 
       return rowsAffected > 0;
     } catch (SQLException e) {
-      System.err.println("Error updating password: " + e.getMessage());
+      LogManager.getLogger(getClass()).error("Error updating password: {}", e.getMessage(), e);
       return false;
     }
   }
@@ -276,7 +288,7 @@ public class DatabaseManager implements AutoCloseable {
       return true;
 
     } catch (SQLException e) {
-      System.err.println("Error deleting users: " + e.getMessage());
+      LogManager.getLogger(getClass()).error("Error deleting users: {}", e.getMessage(), e);
       return false;
     }
   }
@@ -293,8 +305,7 @@ public class DatabaseManager implements AutoCloseable {
       connection = null;
 
     } catch (SQLException e) {
-      System.err.println("Error closing connection");
-      System.err.println(e.getMessage());
+      LogManager.getLogger(getClass()).error("Error closing connection", e);
     }
   }
 }
