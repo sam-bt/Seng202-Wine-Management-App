@@ -42,7 +42,7 @@ public class DatabaseManager implements AutoCloseable {
    *
    * @throws SQLException if failed to initialize
    */
-  public DatabaseManager() throws SQLException {
+  public DatabaseManager(String databaseFileName) throws SQLException {
 
     // Construct a file path for the database
     File dir = new File("sqlDatabase");
@@ -57,9 +57,8 @@ public class DatabaseManager implements AutoCloseable {
 
     // Connect to database
     // This is the path to the db file
-    //String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + "SQLDatabase.db";
-    //this.connection = DriverManager.getConnection(dbPath);
-    this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
+    String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + databaseFileName;
+    this.connection = DriverManager.getConnection(dbPath);
     createWinesTable();
     createUsersTable();
     createGeolocationTable();
@@ -166,12 +165,15 @@ public class DatabaseManager implements AutoCloseable {
    * @param list list of wines
    */
   public void replaceAllWines(List<Wine> list) throws SQLException {
+    removeWines();
+    addWines(list);
+  }
+
+  public void removeWines() throws SQLException {
     String delete = "delete from WINE;";
     try (Statement statement = connection.createStatement()) {
       statement.executeUpdate(delete);
     }
-
-    addWines(list);
   }
 
   /**
@@ -214,16 +216,19 @@ public class DatabaseManager implements AutoCloseable {
     createDefaultAdminUser();
   }
 
-  private void createDefaultAdminUser() throws SQLException { //TODO remove when db persists
-    String insert = "insert into USER (username, password, role, salt) values(?, ?, ?, ?);";
-    try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
+  private void createDefaultAdminUser() throws SQLException {
+    String checkAndInsert = "INSERT INTO USER (username, password, role, salt) " +
+        "SELECT ?, ?, ?, ? " +
+        "WHERE NOT EXISTS (SELECT 1 FROM USER WHERE username = ?)";
+    try (PreparedStatement statement = connection.prepareStatement(checkAndInsert)) {
       String salt = Password.generateSalt();
       String password = Password.hashPassword("admin", salt);
-      insertStatement.setString(1, "admin");
-      insertStatement.setString(2, password);
-      insertStatement.setString(3, "admin");
-      insertStatement.setString(4, salt);
-      insertStatement.executeUpdate();
+      statement.setString(1, "admin");
+      statement.setString(2, password);
+      statement.setString(3, "admin");
+      statement.setString(4, salt);
+      statement.setString(5, "admin");
+      statement.executeUpdate();
     }
   }
 
