@@ -194,8 +194,9 @@ public class DatabaseManager implements AutoCloseable {
         insertStatement.setInt(7, wine.getScorePercent());
         insertStatement.setFloat(8, wine.getAbv());
         insertStatement.setFloat(9, wine.getPrice());
-        insertStatement.executeUpdate();
+        insertStatement.addBatch();
       }
+      insertStatement.executeBatch();
     }
   }
 
