@@ -370,10 +370,11 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  public void deleteList(String username) {
-    String delete = "delete from LIST_NAME where USERNAME = ?";
+  public void deleteList(String username, String listName) {
+    String delete = "delete from LIST_NAME where USERNAME = ? and NAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(delete)) {
       statement.setString(1, username);
+      statement.setString(2, listName);
       statement.executeUpdate();
     } catch (SQLException error ) {
       log.error("Could not delete a list from the database", error);
