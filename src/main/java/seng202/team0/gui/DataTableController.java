@@ -98,7 +98,7 @@ public class DataTableController extends Controller {
    * @return if state is valid
    */
   boolean isValidRemapping() {
-
+    System.out.println("called isValidRemapping");
     // Check for each box if there are any others with same value
     for (int i = 0; i < columnNames.size(); i++) {
       PrettyName name = columnNames.get(i).getValue();
@@ -117,7 +117,7 @@ public class DataTableController extends Controller {
     // Check there is a title box
     boolean containsTitle = columnNames.stream()
         .anyMatch(stringChoiceBox -> stringChoiceBox.getValue() == PrettyName.TITLE);
-
+    System.out.println("finished isValidRemapping containsTitle=" + containsTitle);
     return containsTitle;
 
   }
@@ -203,7 +203,7 @@ public class DataTableController extends Controller {
     try {
       getWinesFromTable();
     } catch (Exception ignored) {
-      return false;
+      LogManager.getLogger(getClass()).error("", ignored);
     }
 
     return true;

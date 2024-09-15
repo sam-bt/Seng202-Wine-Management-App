@@ -1,6 +1,5 @@
 package seng202.team0.util;
 
-import java.util.Objects;
 import seng202.team0.database.GeoLocation;
 import seng202.team0.database.Wine;
 import seng202.team0.util.Exceptions.ValidationException;
@@ -52,15 +51,31 @@ public class Validator {
             region,
             winery,
             color,
-            Objects.equals(vintage, "") ? 0 : Integer.parseInt(vintage),
+            parseIntegerOrDefault(vintage),
             description,
-            Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
-            Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
-            Objects.equals(price, "") ? 0 : Float.parseFloat(price),
+            parseIntegerOrDefault(scorePercent),
+            parseFloatOrDefault(abv),
+            parseFloatOrDefault(price),
             geoLocation
         );
       }  catch (Exception e) {
         throw new ValidationException("Failed to parse wine", e);
       }
+  }
+
+  private static int parseIntegerOrDefault(String string) {
+    try {
+      return Integer.parseInt(string);
+    } catch (NumberFormatException ignored) {
+      return 0;
+    }
+  }
+
+  private static float parseFloatOrDefault(String string) {
+    try {
+      return Float.parseFloat(string);
+    } catch (NumberFormatException ignored) {
+      return 0.0f;
+    }
   }
 }

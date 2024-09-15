@@ -121,7 +121,7 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
 
     ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query = "select TITLE, VARIETY, COUNTRY, REGION, WINERY,COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE from WINE "
+    String query = "select TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE from WINE "
         + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
         + "order by WINE.ROWID "
         + "limit ? "
@@ -454,8 +454,19 @@ public class DatabaseManager implements AutoCloseable {
   }
 
   public void addGeolocations() {
+    String query = "SELECT 1 FROM GEOLOCATION";
+    try (Statement statement = connection.createStatement()) {
+      ResultSet set = statement.executeQuery(query);
+      if (set.next()) {
+        return;
+      }
+    } catch (SQLException error) {
+      log.error("Could not add geolocations to the database", error);
+    }
+
     try {
-      String query = "insert into GEOLOCATION (NAME, LATITUDE, LONGITUDE) values (?, ?, ?);";
+      query = "INSERT INTO GEOLOCATION values (?, ?, ?);";
+
       ArrayList<String[]> rows = ProcessCSV.getCSVRows(
           getClass().getResourceAsStream("/nz_geolocations.csv"));
 
@@ -471,7 +482,7 @@ public class DatabaseManager implements AutoCloseable {
           statement.setDouble(queryIndex++, longitude);
           statement.addBatch();
         }
-        statement.executeBatch();
+        System.out.println(statement.executeBatch());
       } catch (SQLException error) {
         log.error("Could not add geolocations to the database", error);
       }
