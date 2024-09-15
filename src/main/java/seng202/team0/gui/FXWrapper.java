@@ -31,9 +31,9 @@ public class FXWrapper {
      */
     public void init(Stage stage) {
         this.stage = stage;
-        try {
+        try (DatabaseManager databaseManager = new DatabaseManager("database.db")) {
             this.managerContext = new ManagerContext(
-                new DatabaseManager("database.db"),
+                databaseManager,
                 new AuthenticationManager(),
                 new MapManager(),
                 new GUIManager(this)
