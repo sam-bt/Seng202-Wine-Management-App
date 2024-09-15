@@ -8,7 +8,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import org.apache.logging.log4j.LogManager;
-import org.controlsfx.control.action.ActionUtils;
 import seng202.team0.managers.DatabaseManager;
 
 /**
@@ -367,6 +366,9 @@ public class Wine {
    */
   public void setColor(String color) {
     this.color.set(color);
+    setAttribute("COLOR", update -> {
+      update.setString(1, color);
+    });
   }
 
   /**
@@ -394,6 +396,9 @@ public class Wine {
    */
   public void setVintage(int vintage) {
     this.vintage.set(vintage);
+    setAttribute("VINTAGE", update -> {
+      update.setInt(1, vintage);
+    });
   }
 
   /**

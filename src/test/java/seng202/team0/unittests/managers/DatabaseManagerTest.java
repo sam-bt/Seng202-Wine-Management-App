@@ -49,13 +49,14 @@ class DatabaseManagerTest {
 
   /**
    * Tests setting the wine attribute
+   *
    * @throws SQLException if error
    */
   @Test
   void setWineAttribute() throws SQLException {
     addWines(2);
     assertEquals(2, manager.getWinesSize());
-    long id = manager.getWinesInRange(1 , 2).getFirst().getKey();
+    long id = manager.getWinesInRange(1, 2).getFirst().getKey();
     assertNotEquals(id, -1);
     manager.setWineAttribute(id, "TITLE", statement -> {
       statement.setString(1, "TEST_TITLE");
@@ -88,8 +89,10 @@ class DatabaseManagerTest {
     addWines(10);
 
     ArrayList<Wine> wines = new ArrayList<>();
-    for(int i=0; i < 3; i++) {
-      wines.add(new Wine(-1, manager, "wine", "blue", "nz", "christchurch", "bob's wine", "na", 99, 25.0f, 50f));
+    for (int i = 0; i < 3; i++) {
+      wines.add(
+          new Wine(-1, manager, "wine", "blue", "nz", "christchurch", "", "", 1024, "na", 99, 25.0f,
+              50f));
     }
     manager.replaceAllWines(wines);
     assertEquals(3, manager.getWinesSize());
@@ -266,23 +269,23 @@ class DatabaseManagerTest {
   private void addFilterableWines() throws SQLException {
     ArrayList<Wine> wines = new ArrayList<>();
     wines.add(
-        new Wine("wine", "blue", "nz", "christchurch",
+        new Wine(-1, manager, "wine", "blue", "nz", "christchurch",
             "bob's wine", "red", 2011, "na", 99, 25f,
             10f));
     wines.add(
-        new Wine("Big wine", "green", "us", "christchurch",
+        new Wine(-1, manager, "Big wine", "green", "us", "christchurch",
             "joes's wine", "white", 2020, "na", 65,
             20f, 20f));
     wines.add(
-        new Wine("Funny wine", "blue", "us", "christchurch",
+        new Wine(-1, manager, "Funny wine", "blue", "us", "christchurch",
             "joes's wine", "red", 2019, "na", 85,
             24f, 50f));
     wines.add(
-        new Wine("Small wine", "red", "nz", "christchurch",
+        new Wine(-1, manager, "Small wine", "red", "nz", "christchurch",
             "jill's wine", "white", 2012, "na", 88,
             18f, 25f));
     wines.add(
-        new Wine("Cool wine", "green", "nz", "christchurch",
+        new Wine(-1, manager, "Cool wine", "green", "nz", "christchurch",
             "jill's wine", "red", 2018, "na", 90,
             23f, 40f));
     manager.addWines(wines);
@@ -297,7 +300,8 @@ class DatabaseManagerTest {
     ArrayList<Wine> wines = new ArrayList<>();
     for (int i = 0; i < num; i++) {
       wines.add(
-          new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011, "na", 99, 25f,
+          new Wine(-1, manager, "wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011,
+              "na", 99, 25f,
               (float) i));
     }
     manager.addWines(wines);

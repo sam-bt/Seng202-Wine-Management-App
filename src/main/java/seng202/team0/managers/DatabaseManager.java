@@ -16,7 +16,6 @@ import seng202.team0.database.User;
 import seng202.team0.database.Wine;
 import seng202.team0.util.Filters;
 import seng202.team0.util.Password;
-import org.apache.logging.log4j.LogManager;
 
 
 /**
@@ -110,7 +109,7 @@ public class DatabaseManager implements AutoCloseable {
     /**
      * Updates the prepared statement with the value to set
      * <p>
-     *  Attribute must be index 1 in prepared statement
+     * Attribute must be index 1 in prepared statement
      * </p>
      */
     void setAttribute(PreparedStatement statement) throws SQLException;
@@ -119,19 +118,22 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Sets a given wines attribute
-   * @param id id
+   *
+   * @param id        id
    * @param attribute attribute name
-   * @param callback callback to set attribute
+   * @param callback  callback to set attribute
    * @throws SQLException if error
    */
-  public void setWineAttribute(long id, String attribute, AttributeSetterCallBack callback) throws SQLException {
+  public void setWineAttribute(long id, String attribute, AttributeSetterCallBack callback)
+      throws SQLException {
     String updateString = "update WINE set " + attribute + " = ? where ID = ?";
     try (PreparedStatement update = connection.prepareStatement(updateString)) {
-      update.setInt(2, (int)id);
+      update.setInt(2, (int) id);
       callback.setAttribute(update);
       update.executeUpdate();
     }
   }
+
   /**
    * Gets a subset of the wines in the database
    * <p>
@@ -145,7 +147,7 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
 
     ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query = "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ROWID limit ? offset ?;";
+    String query = "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ID limit ? offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
 
       statement.setInt(1, end - begin);
@@ -155,7 +157,8 @@ public class DatabaseManager implements AutoCloseable {
       while (set.next()) {
 
         Wine wine = new Wine(
-            set.getInt("ID")
+            set.getInt("ID"),
+            this,
             set.getString("TITLE"),
             set.getString("VARIETY"),
             set.getString("COUNTRY"),
@@ -193,7 +196,7 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end, Filters filters) {
     ObservableList<Wine> wines = FXCollections.observableArrayList();
     String query =
-        "select TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE "
+        "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE "
             + "from WINE "
             + "where TITLE like ? "
             + "and COUNTRY like ? "

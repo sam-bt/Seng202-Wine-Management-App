@@ -1,7 +1,6 @@
 package seng202.team0.util;
 
 import java.util.Objects;
-import org.apache.logging.log4j.LogManager;
 import seng202.team0.database.Wine;
 import seng202.team0.managers.DatabaseManager;
 import seng202.team0.util.Exceptions.ValidationException;
@@ -14,6 +13,24 @@ import seng202.team0.util.Exceptions.ValidationException;
  * </p>
  */
 public class Validator {
+
+
+  /**
+   * Parses a vintage
+   * <p>
+   * Decanter sometimes does not have a number for the vintage
+   * </p>
+   *
+   * @param vintage vintage
+   * @return vintage or null if invalid
+   */
+  private static int parseVintage(String vintage) {
+    try {
+      return Integer.parseInt(vintage);
+    } catch (Exception exception) {
+      return 0;
+    }
+  }
 
   /**
    * Creates a wine from a list of attributes
@@ -54,13 +71,14 @@ public class Validator {
           region,
           winery,
           color,
-          Objects.equals(vintage, "") ? 0 : (int)Float.parseFloat(vintage),
+          parseVintage(vintage),
           description,
           Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
           Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
           Objects.equals(price, "") ? 0 : Float.parseFloat(price)
       );
     } catch (Exception e) {
+      System.out.println(vintage);
       throw new ValidationException("Failed to parse wine", e);
     }
   }
