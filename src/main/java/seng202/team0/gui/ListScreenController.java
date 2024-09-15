@@ -6,12 +6,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import seng202.team0.managers.ManagerContext;
 
-// TODO change the name to listScreenController rather than wishlist to fit other conventions?
-
 /**
- * Wishlist Controller (MORE DETAIL HERE!)
+ * List Screen Controller (MORE DETAIL HERE!)
  */
-public class WishlistController extends Controller {
+public class ListScreenController extends Controller {
 
   @FXML
   public Button pressButton;
@@ -24,7 +22,7 @@ public class WishlistController extends Controller {
    *
    * @param managerContext manager context
    */
-  public WishlistController(ManagerContext managerContext) {
+  public ListScreenController(ManagerContext managerContext) {
     super(managerContext);
   }
 

@@ -155,7 +155,7 @@ public class MainController extends Controller {
    */
   @FXML
   public void openListScreen() {
-    switchScene("/fxml/list_screen.fxml", "My Lists", () -> new WishlistController(managerContext));
+    switchScene("/fxml/list_screen.fxml", "My Lists", () -> new ListScreenController(managerContext));
   }
   /**
    * Launches the vineyard screen.
