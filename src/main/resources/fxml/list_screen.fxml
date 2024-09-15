@@ -67,17 +67,18 @@
                                           <Font size="16.0" />
                                        </font>
                                     </Label>
-                                    <TextField layoutX="65.0" layoutY="157.0" prefHeight="33.0" prefWidth="300.0" promptText="Enter list name" />
+                                    <TextField fx:id="listName" layoutX="65.0" layoutY="157.0" prefHeight="33.0" prefWidth="300.0" promptText="Enter list name" />
                                     <Button fx:id="backButton" layoutX="50.0" layoutY="254.0" mnemonicParsing="false" onAction="#onBackButton" prefHeight="35.0" prefWidth="165.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Back">
                                        <font>
                                           <Font name="System Bold" size="16.0" />
                                        </font>
                                     </Button>
-                                    <Button layoutX="234.0" layoutY="254.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="165.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Create List">
+                                    <Button layoutX="234.0" layoutY="254.0" mnemonicParsing="false" onAction="#onCreateListConfirmButton" prefHeight="35.0" prefWidth="165.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Create List">
                                        <font>
                                           <Font name="System Bold" size="16.0" />
                                        </font>
                                     </Button>
+                                    <Label fx:id="errorText" layoutX="65.0" layoutY="208.0" prefHeight="16.0" prefWidth="159.0" text="List already exists!" visible="false" />
                                  </children>
                               </AnchorPane>
                            </content>
@@ -100,11 +101,11 @@
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Button>
-                  <Label fx:id="changeThisPlease" layoutX="9.0" layoutY="20.0" text="Test">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
+                  <Button fx:id="listOneButton" disable="true" layoutX="98.0" layoutY="143.0" mnemonicParsing="false" text="Button" />
+                  <Button fx:id="listTwoButton" disable="true" layoutX="98.0" layoutY="215.0" mnemonicParsing="false" text="Button" />
+                  <Button fx:id="listThreeButton" disable="true" layoutX="98.0" layoutY="286.0" mnemonicParsing="false" text="Button" />
+                  <Button fx:id="listFourButton" disable="true" layoutX="98.0" layoutY="367.0" mnemonicParsing="false" text="Button" />
+                  <Button fx:id="listFiveButton" disable="true" layoutX="98.0" layoutY="436.0" mnemonicParsing="false" text="Button" />
                </children>
             </AnchorPane>
          </content>
