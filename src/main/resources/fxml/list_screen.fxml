@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.ListScreenController">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.ListScreenController">
    <children>
       <TabPane fx:id="listScreenTabs" layoutX="332.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../../../../build/resources/main/css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
          <tabs>
@@ -96,17 +96,32 @@
          <content>
             <AnchorPane fx:id="filtersPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="316.0" styleClass="filters-pane" stylesheets="@../../../../build/resources/main/css/titled_pane.css">
                <children>
-                  <Button fx:id="createListRequestButton" layoutX="75.0" layoutY="582.0" mnemonicParsing="false" onAction="#onCreateListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Create List">
+                  <Button fx:id="createListRequestButton" layoutX="75.0" layoutY="598.0" mnemonicParsing="false" onAction="#onCreateListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Create List">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Button>
-                  <Button fx:id="listOneButton" disable="true" layoutX="98.0" layoutY="143.0" mnemonicParsing="false" onAction="#onListOneButton" text="Button" />
-                  <Button fx:id="listTwoButton" disable="true" layoutX="98.0" layoutY="215.0" mnemonicParsing="false" onAction="#onListTwoButton" text="Button" />
-                  <Button fx:id="listThreeButton" disable="true" layoutX="98.0" layoutY="286.0" mnemonicParsing="false" onAction="#onListThreeButton" text="Button" />
-                  <Button fx:id="listFourButton" disable="true" layoutX="98.0" layoutY="367.0" mnemonicParsing="false" onAction="#onListFourButton" text="Button" />
-                  <Button fx:id="listFiveButton" disable="true" layoutX="98.0" layoutY="436.0" mnemonicParsing="false" onAction="#onListFiveButton" text="Button" />
-                  <Button fx:id="deleteListRequestButton" layoutX="75.0" layoutY="634.0" mnemonicParsing="false" onAction="#onDeleteListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Delete List">
+                  <Button fx:id="listOneButton" disable="true" layoutX="48.0" layoutY="84.0" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListOneButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font></Button>
+                  <Button fx:id="listTwoButton" disable="true" layoutX="48.0" layoutY="184.0" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListTwoButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font></Button>
+                  <Button fx:id="listThreeButton" disable="true" layoutX="48.0" layoutY="284.0" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListThreeButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font></Button>
+                  <Button fx:id="listFourButton" disable="true" layoutX="48.0" layoutY="384.0" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListFourButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font></Button>
+                  <Button fx:id="listFiveButton" disable="true" layoutX="48.0" layoutY="484.0" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListFiveButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font></Button>
+                  <Button fx:id="deleteListRequestButton" layoutX="75.0" layoutY="644.0" mnemonicParsing="false" onAction="#onDeleteListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Delete List">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>

@@ -24,21 +24,16 @@ public class ListScreenController extends Controller {
   public Tab tabViewing;
   @FXML
   public Tab tabCreating;
-
   @FXML
   public TextField listName;
   @FXML
   public Label errorText;
-
   @FXML
   public Button listOneButton, listTwoButton, listThreeButton, listFourButton, listFiveButton;
-
   @FXML
   public Button deleteListRequestButton;
 
   public ArrayList<String> wineLists = new ArrayList<String>();
-
-  private boolean deleting;
   private int selected = 1;
 
   /**
@@ -86,6 +81,8 @@ public class ListScreenController extends Controller {
     deleteListRequestButton.setDisable(false);
     if (wineLists.size() == 5) {
       createListRequestButton.setDisable(true);
+    } else if (wineLists.size() == 1) {
+      deleteListRequestButton.setDisable(true);
     }
     listName.setText("");
     errorText.setVisible(false);
@@ -100,17 +97,25 @@ public class ListScreenController extends Controller {
   public void onCreateListConfirmButton(ActionEvent actionEvent) {
     String name = listName.getText();
     if (wineLists.contains(name)) {
+      errorText.setText("User Already Exists");
       errorText.setVisible(true);
     } else {
-      errorText.setVisible(false);
-      wineLists.add(name);
 
-      listName.setText("");
-      updateListOptions();
-      deleteListRequestButton.setDisable(false);
-      onBackButton(actionEvent);
-      selected = wineLists.size();
-      changeSelected();
+      if (name.length() < 3 || name.length() > 10 || !name.matches("[a-zA-Z0-9_]+")) {
+        errorText.setText("Invalid List Name");
+        errorText.setVisible(true);
+      } else {
+        errorText.setVisible(false);
+        wineLists.add(name);
+
+        listName.setText("");
+        updateListOptions();
+        deleteListRequestButton.setDisable(false);
+        onBackButton(actionEvent);
+        selected = wineLists.size();
+        changeSelected();
+      }
+
 
     }
   }
@@ -161,7 +166,7 @@ public class ListScreenController extends Controller {
 
   /**
    * Selects List Two.
-   * @param actionEvent
+   * @param actionEvent triggers this function when on action.
    */
   public void onListTwoButton(ActionEvent actionEvent) {
     selected = 2;
