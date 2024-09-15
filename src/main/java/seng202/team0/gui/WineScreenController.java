@@ -88,8 +88,6 @@ public class WineScreenController extends Controller {
       int maxVintage = 0;
       double maxScore = 0;
       double minScore = 100;
-      double minAbv = 100;
-      double maxAbv = 0;
       double minPrice = 10000;
       double maxPrice = 0;
       for (Wine w : wines) {
@@ -112,14 +110,6 @@ public class WineScreenController extends Controller {
 
         if (w.getVintage() < minVintage) {
           minVintage = w.getVintage();
-        }
-
-        if (w.getAbv() > maxAbv) {
-          maxAbv = w.getAbv();
-        }
-
-        if (w.getAbv() < minAbv) {
-          minAbv = w.getAbv();
         }
 
         if (w.getPrice() > maxPrice) {
@@ -147,8 +137,6 @@ public class WineScreenController extends Controller {
       scoreSlider.setMax(maxScore);
       vintageSlider.setMin(minVintage);
       vintageSlider.setMax(maxVintage);
-      //abvSlider.setMin(minAbv);
-      //abvSlider.setMax(maxAbv);
       //priceSlider.setMin(minPrice);
       //priceSlider.setMax(maxPrice);
 
@@ -158,10 +146,12 @@ public class WineScreenController extends Controller {
       scoreSlider.setLowValue(scoreSlider.getMin());
       vintageSlider.setHighValue(vintageSlider.getMax());
       vintageSlider.setLowValue(vintageSlider.getMin());
-      //abvSlider.setHighValue(abvSlider.getMax());
-      //abvSlider.setLowValue(abvSlider.getMin());
       //priceSlider.setHighValue(priceSlider.getMax());
       //priceSlider.setLowValue(priceSlider.getMin());
+
+      // Ensure the sliders display properly
+      scoreSlider.setMajorTickUnit(1);
+      vintageSlider.setMajorTickUnit(1);
     }
 
   }
@@ -221,6 +211,12 @@ public class WineScreenController extends Controller {
     this.scoreSlider = createSlider(11, 365, 0, 100, 10);
     this.abvSlider = createSlider(11, 445, 0, 100, 10);
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
+
+    // Set snap to ticks
+    vintageSlider.setSnapToTicks(true);
+    scoreSlider.setSnapToTicks(true);
+    abvSlider.setSnapToTicks(true);
+    priceSlider.setSnapToTicks(true);
 
     // Set button functions
     applyFiltersButton.setOnAction(event -> onApplyFiltersButtonPressed());

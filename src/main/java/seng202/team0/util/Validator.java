@@ -47,7 +47,10 @@ public class Validator {
         try {
           parsedVintage = Integer.parseInt(vintage);
         } catch (NumberFormatException e) { // failed parse so default to 0
-          System.err.println("Invalid vintage year: " + vintage + ". Defaulting to 0.");
+
+          // Log manager wasn't working for me here
+          // Logmanager.getLogger(Validator.class.getName()) kept returning null
+          System.err.println("Invalid vintage value: " + vintage + ", defaulting to 0");
         }
       }
 

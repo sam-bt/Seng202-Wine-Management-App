@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team0.database.Wine;
@@ -260,8 +262,9 @@ public class DatabaseManager implements AutoCloseable {
       connection = null;
 
     } catch (SQLException e) {
-      System.err.println("Error closing connection");
-      System.err.println(e.getMessage());
+      LogManager.getLogManager()
+          .getLogger(getClass().getName())
+          .log(Level.WARNING, "Error closing DatabaseManager", e);
     }
   }
 }
