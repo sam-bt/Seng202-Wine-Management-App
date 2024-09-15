@@ -1,6 +1,9 @@
 package seng202.team0.gui;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import seng202.team0.managers.ManagerContext;
 
 // TODO change the name to listScreenController rather than wishlist to fit other conventions?
@@ -8,7 +11,13 @@ import seng202.team0.managers.ManagerContext;
 /**
  * Wishlist Controller (MORE DETAIL HERE!)
  */
-public class WishlistController extends Controller{
+public class WishlistController extends Controller {
+
+  @FXML
+  public Button pressButton;
+
+  @FXML
+  public Label changeThisPlease;
 
   /**
    * Constructor
@@ -19,4 +28,8 @@ public class WishlistController extends Controller{
     super(managerContext);
   }
 
+
+  public void onButtonPressed(ActionEvent actionEvent) {
+    changeThisPlease.setText("Wooo it worked!");
+  }
 }
