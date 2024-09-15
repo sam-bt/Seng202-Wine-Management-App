@@ -8,6 +8,7 @@ import seng202.team0.managers.ManagerContext;
 import javax.swing.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * List Screen Controller (MORE DETAIL HERE!)
@@ -33,7 +34,7 @@ public class ListScreenController extends Controller {
   @FXML
   public Button deleteListRequestButton;
 
-  public ArrayList<String> wineLists = new ArrayList<String>();
+  public List<String> wineLists;
   private int selected = 1;
 
   /**
@@ -50,7 +51,8 @@ public class ListScreenController extends Controller {
    */
   public void initialize() {
     listScreenTabs.getTabs().remove(tabCreating);
-    wineLists.add("Favourites");
+    String user = managerContext.authenticationManager.getUsername();
+    wineLists = managerContext.databaseManager.getUserLists(user);
     updateListOptions();
     tabViewing.setText("VIEWING: " + wineLists.getFirst());
     selected = 1;

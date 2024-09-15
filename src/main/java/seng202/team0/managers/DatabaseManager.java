@@ -382,7 +382,7 @@ public class DatabaseManager implements AutoCloseable {
 
   public List<String> getUserLists(String username) {
     List<String> listNames = new ArrayList<>();
-    String query = "select ID, NAME from WINE_LISTS where USERNAME = ?;";
+    String query = "select ID, NAME from LIST_NAME where USERNAME = ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setString(1, username);
 
