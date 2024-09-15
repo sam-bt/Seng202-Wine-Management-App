@@ -8,7 +8,7 @@ import seng202.team0.gui.HomeScreenController;
 import seng202.team0.gui.MainController;
 import seng202.team0.gui.VineyardScreenController;
 import seng202.team0.gui.WineScreenController;
-import seng202.team0.gui.WishlistController;
+import seng202.team0.gui.ListScreenController;
 
 /**
  * Manager for interacting with the GUI

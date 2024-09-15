@@ -7,12 +7,16 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team0.database.Wine;
 import seng202.team0.managers.DatabaseManager;
 import seng202.team0.util.Filters;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class DatabaseManagerTest {
 
@@ -306,4 +310,10 @@ class DatabaseManagerTest {
     }
     manager.addWines(wines);
   }
+
+  @BeforeEach
+  void adminHasFavourite() {
+    assertTrue(manager.getUserLists("admin").contains("Favourites"));
+  }
+
 }
