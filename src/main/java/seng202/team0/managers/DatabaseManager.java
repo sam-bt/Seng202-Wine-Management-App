@@ -83,7 +83,7 @@ public class DatabaseManager implements AutoCloseable {
   private void createWinesTable() throws SQLException {
     String create = "create table if not exists WINE (" +
         // There are a lot of duplicates
-        "ID AUTO_INCREMENT PRIMARY KEY," +
+        "ID integer PRIMARY KEY," +
         "TITLE varchar(64) NOT NULL," +
         "VARIETY varchar(32)," +
         "COUNTRY varchar(32)," +
@@ -100,6 +100,40 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
+
+  /**
+   * Callback to set the attribute to update
+   */
+  public interface AttributeSetterCallBack {
+
+    /**
+     * Updates the prepared statement with the value to set
+     * <p>
+     * Attribute must be index 1 in prepared statement
+     * </p>
+     */
+    void setAttribute(PreparedStatement statement) throws SQLException;
+  }
+
+
+  /**
+   * Sets a given wines attribute
+   *
+   * @param id        id
+   * @param attribute attribute name
+   * @param callback  callback to set attribute
+   * @throws SQLException if error
+   */
+  public void setWineAttribute(long id, String attribute, AttributeSetterCallBack callback)
+      throws SQLException {
+    String updateString = "update WINE set " + attribute + " = ? where ID = ?";
+    try (PreparedStatement update = connection.prepareStatement(updateString)) {
+      update.setInt(2, (int) id);
+      callback.setAttribute(update);
+      update.executeUpdate();
+    }
+  }
+
   /**
    * Gets a subset of the wines in the database
    * <p>
@@ -113,7 +147,7 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
 
     ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query = "select TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ROWID limit ? offset ?;";
+    String query = "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ID limit ? offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
 
       statement.setInt(1, end - begin);
@@ -123,6 +157,8 @@ public class DatabaseManager implements AutoCloseable {
       while (set.next()) {
 
         Wine wine = new Wine(
+            set.getInt("ID"),
+            this,
             set.getString("TITLE"),
             set.getString("VARIETY"),
             set.getString("COUNTRY"),
@@ -160,7 +196,7 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end, Filters filters) {
     ObservableList<Wine> wines = FXCollections.observableArrayList();
     String query =
-        "select TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE "
+        "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE "
             + "from WINE "
             + "where TITLE like ? "
             + "and COUNTRY like ? "
@@ -198,6 +234,8 @@ public class DatabaseManager implements AutoCloseable {
       ResultSet set = statement.executeQuery();
       while (set.next()) {
         Wine wine = new Wine(
+            set.getLong("ID"),
+            this,
             set.getString("TITLE"),
             set.getString("VARIETY"),
             set.getString("COUNTRY"),
@@ -212,7 +250,6 @@ public class DatabaseManager implements AutoCloseable {
         );
         wines.add(wine);
       }
-      set.close();
 
     } catch (SQLException e) {
       throw new RuntimeException(e);

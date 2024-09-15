@@ -1,17 +1,34 @@
 package seng202.team0.database;
 
+import java.sql.SQLException;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import org.apache.logging.log4j.LogManager;
+import seng202.team0.managers.DatabaseManager;
 
 /**
  * Wine represents the wine record in the database
  */
 public class Wine {
 
+  /**
+   * ID of wine record
+   * <p>
+   * -1 represents no database record attached. Setters will fail in this case.
+   * </p>
+   */
+  private long key;
+  /**
+   * Reference to database
+   * <p>
+   * We need to maintain this for JavaBean compliance with the setters and getters
+   * </p>
+   */
+  private DatabaseManager databaseManager;
   /**
    * Title
    */
@@ -64,6 +81,7 @@ public class Wine {
   /**
    * Constructor
    *
+   * @param key          database key, -1 if no record attached
    * @param title        title
    * @param variety      variety
    * @param country      country
@@ -75,6 +93,8 @@ public class Wine {
    * @param price        NZD price
    */
   public Wine(
+      long key,
+      DatabaseManager databaseManager,
       String title,
       String variety,
       String country,
@@ -87,6 +107,8 @@ public class Wine {
       Float abv,
       Float price
   ) {
+    this.key = key;
+    this.databaseManager = databaseManager;
     this.title = new SimpleStringProperty(this, "title", title);
     this.variety = new SimpleStringProperty(this, "variety", variety);
     this.country = new SimpleStringProperty(this, "country", country);
@@ -104,6 +126,7 @@ public class Wine {
    * Default constructor
    */
   public Wine() {
+    this.key = -1;
     this.title = new SimpleStringProperty(this, "title");
     this.variety = new SimpleStringProperty(this, "variety");
     this.country = new SimpleStringProperty(this, "country");
@@ -117,6 +140,64 @@ public class Wine {
     this.price = new SimpleFloatProperty(this, "price");
   }
 
+  /**
+   * Helper to set an attribute
+   *
+   * @param attributeName name of attribute
+   * @param callback      callback to set attribute
+   */
+  private void setAttribute(String attributeName,
+      DatabaseManager.AttributeSetterCallBack callback) {
+    if (key == -1) {
+      return;
+    }
+    try {
+      databaseManager.setWineAttribute(key, attributeName, callback);
+    } catch (SQLException exception) {
+      LogManager.getLogger(getClass())
+          .error("Failed to set attribute when updating database: {}", attributeName, exception);
+    }
+
+  }
+
+  /**
+   * Gets the key
+   *
+   * @return key
+   */
+  public long getKey() {
+    return key;
+  }
+
+  /**
+   * Sets the key
+   *
+   * @param key key
+   */
+  public void setKey(long key) {
+    this.key = key;
+  }
+
+  /**
+   * Gets the database
+   * <p>
+   * Please don't use this. This is only here for the sake of being a bean.
+   * </p>
+   *
+   * @return database
+   */
+  public DatabaseManager getDatabaseManager() {
+    return databaseManager;
+  }
+
+  /**
+   * Sets the database
+   *
+   * @param databaseManager database
+   */
+  public void setDatabaseManager(DatabaseManager databaseManager) {
+    this.databaseManager = databaseManager;
+  }
 
   /**
    * Gets the title
@@ -134,6 +215,9 @@ public class Wine {
    */
   public void setTitle(String title) {
     this.title.set(title);
+    setAttribute("TITLE", update -> {
+      update.setString(1, title);
+    });
   }
 
   /**
@@ -161,6 +245,9 @@ public class Wine {
    */
   public void setVariety(String variety) {
     this.variety.set(variety);
+    setAttribute("VARIETY", update -> {
+      update.setString(1, variety);
+    });
   }
 
   /**
@@ -188,6 +275,9 @@ public class Wine {
    */
   public void setCountry(String country) {
     this.country.set(country);
+    setAttribute("COUNTRY", update -> {
+      update.setString(1, country);
+    });
   }
 
   /**
@@ -210,14 +300,19 @@ public class Wine {
 
   /**
    * Sets the region
+   *
    * @param region region
    */
   public void setRegion(String region) {
     this.region.set(region);
+    setAttribute("REGION", update -> {
+      update.setString(1, region);
+    });
   }
 
   /**
    * Gets the region property
+   *
    * @return region property
    */
   public StringProperty regionProperty() {
@@ -241,6 +336,9 @@ public class Wine {
    */
   public void setWinery(String winery) {
     this.winery.set(winery);
+    setAttribute("WINERY", update -> {
+      update.setString(1, winery);
+    });
   }
 
   /**
@@ -268,6 +366,9 @@ public class Wine {
    */
   public void setColor(String color) {
     this.color.set(color);
+    setAttribute("COLOR", update -> {
+      update.setString(1, color);
+    });
   }
 
   /**
@@ -295,6 +396,9 @@ public class Wine {
    */
   public void setVintage(int vintage) {
     this.vintage.set(vintage);
+    setAttribute("VINTAGE", update -> {
+      update.setInt(1, vintage);
+    });
   }
 
   /**
@@ -322,6 +426,9 @@ public class Wine {
    */
   public void setDescription(String description) {
     this.description.set(description);
+    setAttribute("DESCRIPTION", update -> {
+      update.setString(1, description);
+    });
   }
 
   /**
@@ -349,6 +456,9 @@ public class Wine {
    */
   public void setScorePercent(int scorePercent) {
     this.scorePercent.set(scorePercent);
+    setAttribute("SCORE_PERCENT", update -> {
+      update.setInt(1, scorePercent);
+    });
   }
 
   /**
@@ -358,6 +468,7 @@ public class Wine {
    */
   public IntegerProperty scorePercentProperty() {
     return scorePercent;
+
   }
 
   /**
@@ -376,6 +487,9 @@ public class Wine {
    */
   public void setAbv(float abv) {
     this.abv.set(abv);
+    setAttribute("ABV", update -> {
+      update.setFloat(1, abv);
+    });
   }
 
   /**
@@ -403,6 +517,9 @@ public class Wine {
    */
   public void setPrice(float price) {
     this.price.set(price);
+    setAttribute("PRICE", update -> {
+      update.setFloat(1, price);
+    });
   }
 
   /**
