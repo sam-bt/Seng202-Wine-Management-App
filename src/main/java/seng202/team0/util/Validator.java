@@ -1,6 +1,7 @@
 package seng202.team0.util;
 
 import java.util.Objects;
+import org.apache.logging.log4j.LogManager;
 import seng202.team0.database.Wine;
 import seng202.team0.managers.DatabaseManager;
 import seng202.team0.util.Exceptions.ValidationException;
@@ -17,14 +18,16 @@ public class Validator {
   /**
    * Creates a wine from a list of attributes
    *
-   * @param title title
-   * @param variety variety
-   * @param country country
-   * @param winery winery
-   * @param description description
+   * @param title        title
+   * @param variety      variety
+   * @param country      country
+   * @param winery       winery
+   * @param color        color
+   * @param description  description
+   * @param vintage      vintage
    * @param scorePercent percent score
-   * @param abv abv
-   * @param price price
+   * @param abv          abv
+   * @param price        price
    * @return wine
    */
   public static Wine parseWine(
@@ -34,28 +37,31 @@ public class Validator {
       String country,
       String region,
       String winery,
+      String color,
+      String vintage,
       String description,
       String scorePercent,
       String abv,
       String price
-      ) throws ValidationException {
-      try {
-
-        return new Wine(
-            -1,
-            databaseManager,
-            title,
-            variety,
-            country,
-            region,
-            winery,
-            description,
-            Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
-            Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
-            Objects.equals(price, "") ? 0 : Float.parseFloat(price)
-        );
-      }  catch (Exception e) {
-        throw new ValidationException("Failed to parse wine", e);
-      }
+  ) throws ValidationException {
+    try {
+      return new Wine(
+          -1,
+          databaseManager,
+          title,
+          variety,
+          country,
+          region,
+          winery,
+          color,
+          Objects.equals(vintage, "") ? 0 : (int)Float.parseFloat(vintage),
+          description,
+          Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
+          Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
+          Objects.equals(price, "") ? 0 : Float.parseFloat(price)
+      );
+    } catch (Exception e) {
+      throw new ValidationException("Failed to parse wine", e);
+    }
   }
 }
