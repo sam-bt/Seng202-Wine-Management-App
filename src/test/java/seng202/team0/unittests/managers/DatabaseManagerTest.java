@@ -1,15 +1,16 @@
 package seng202.team0.unittests.managers;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team0.database.Wine;
 import seng202.team0.managers.DatabaseManager;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class DatabaseManagerTest {
   DatabaseManager manager;
@@ -81,4 +82,10 @@ class DatabaseManagerTest {
 
 
   }
+
+  @BeforeEach
+  void adminHasFavourite() {
+    assertTrue(manager.getUserLists("admin").contains("Favourites"));
+  }
+
 }
