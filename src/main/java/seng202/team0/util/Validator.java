@@ -17,14 +17,16 @@ public class Validator {
   /**
    * Creates a wine from a list of attributes
    *
-   * @param title title
-   * @param variety variety
-   * @param country country
-   * @param winery winery
-   * @param description description
+   * @param title        title
+   * @param variety      variety
+   * @param country      country
+   * @param winery       winery
+   * @param color        color
+   * @param vintage      vintage
+   * @param description  description
    * @param scorePercent percent score
-   * @param abv abv
-   * @param price price
+   * @param abv          abv
+   * @param price        price
    * @return wine
    */
   public static Wine parseWine(
@@ -33,6 +35,8 @@ public class Validator {
       String country,
       String region,
       String winery,
+      String color,
+      String vintage,
       String description,
       String scorePercent,
       String abv,
@@ -47,6 +51,8 @@ public class Validator {
             country,
             region,
             winery,
+            color,
+            Objects.equals(vintage, "") ? 0 : Integer.parseInt(vintage),
             description,
             Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
             Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
