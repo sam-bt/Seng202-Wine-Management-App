@@ -80,6 +80,7 @@ public class DatabaseManager implements AutoCloseable {
     this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
     createWinesTable();
     createUsersTable();
+    createGeolocationTable();
   }
 
   /**
@@ -170,17 +171,18 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end, Filters filters) {
     ObservableList<Wine> wines = FXCollections.observableArrayList();
     String query =
-        "select TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE "
+        "select TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE "
             + "from WINE "
-            + "where TITLE like ? "
-            + "and COUNTRY like ? "
-            + "and WINERY like ? "
-            + "and COLOR like ? "
-            + "and VINTAGE between ? and ?"
-            + "and SCORE_PERCENT between ? and ? "
-            + "and ABV between ? and ? "
-            + "and PRICE between ? and ? "
-            + "order by ROWID "
+            + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
+            + "where WINE.TITLE like ? "
+            + "and WINE.COUNTRY like ? "
+            + "and WINE.WINERY like ? "
+            + "and WINE.COLOR like ? "
+            + "and WINE.VINTAGE between ? and ?"
+            + "and WINE.SCORE_PERCENT between ? and ? "
+            + "and WINE.ABV between ? and ? "
+            + "and WINE.PRICE between ? and ? "
+            + "order by WINE.ROWID "
             + "limit ? "
             + "offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
