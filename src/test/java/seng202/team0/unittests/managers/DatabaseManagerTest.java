@@ -1,5 +1,10 @@
 package seng202.team0.unittests.managers;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -9,17 +14,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team0.database.Wine;
 import seng202.team0.managers.DatabaseManager;
+import seng202.team0.util.Filters;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class DatabaseManagerTest {
-  DatabaseManager manager;
+
+  private DatabaseManager manager;
 
   /**
    * Initializes the database
    */
   @BeforeEach
-  void setup(){
+  void setup() {
     assertDoesNotThrow(() -> {
       manager = new DatabaseManager();
     });
@@ -29,22 +36,45 @@ class DatabaseManagerTest {
    * Closes the database
    */
   @AfterEach
-  void close(){
+  void close() {
     manager.close();
   }
 
   /**
    * Tests getting wines in a certain range
+   *
    * @throws SQLException if error
    */
   @Test
   void getWinesInRange() throws SQLException {
     addWines(10);
-    assertEquals(3, manager.getWinesInRange(1, 4).size());
+    assertEquals(3, manager.getWinesInRange(0, 3).size());
   }
 
   /**
+   * Tests setting the wine attribute
+   *
+   * @throws SQLException if error
+   */
+  @Test
+  void setWineAttribute() throws SQLException {
+    addWines(2);
+    assertEquals(2, manager.getWinesSize());
+    long id = manager.getWinesInRange(1, 2).getFirst().getKey();
+    assertNotEquals(id, -1);
+    manager.setWineAttribute(id, "TITLE", statement -> {
+      statement.setString(1, "TEST_TITLE");
+    });
+    // ordering dependant
+    assertEquals("TEST_TITLE", manager.getWinesInRange(1, 2).getFirst().getTitle());
+
+
+  }
+
+
+  /**
    * Tests getting wine size
+   *
    * @throws SQLException if error
    */
   @Test
@@ -55,6 +85,7 @@ class DatabaseManagerTest {
 
   /**
    * Tests replacing wine
+   *
    * @throws SQLException if error
    */
   @Test
@@ -62,25 +93,222 @@ class DatabaseManagerTest {
     addWines(10);
 
     ArrayList<Wine> wines = new ArrayList<>();
-    for(int i=0; i < 3; i++) {
-      wines.add(new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "na", 99, 25.0f, 50f));
+    for (int i = 0; i < 3; i++) {
+      wines.add(
+          new Wine(-1, manager, "wine", "blue", "nz", "christchurch", "", "", 1024, "na", 99, 25.0f,
+              50f));
     }
     manager.replaceAllWines(wines);
     assertEquals(3, manager.getWinesSize());
   }
 
+  @Test
+  void testNameFilter() throws SQLException {
+    Filters filter = new Filters("wine",
+        "",
+        "",
+        "",
+        0,
+        10000,
+        0,
+        100,
+        0,
+        100,
+        0,
+        100);
+    assertDoesNotThrow(this::addFilterableWines);
+    assertEquals(5, manager.getWinesInRange(0, 5, filter).size());
+    for (Wine wine : manager.getWinesInRange(0, 4, filter)) {
+      assertTrue(wine.getTitle().toLowerCase().contains("wine"));
+    }
+  }
+
+  @Test
+  void testCountryFilter() throws SQLException {
+    Filters filter = new Filters("",
+        "us",
+        "",
+        "",
+        0,
+        10000,
+        0,
+        100,
+        0,
+        100,
+        0,
+        100);
+    assertDoesNotThrow(this::addFilterableWines);
+    assertEquals(2, manager.getWinesInRange(0, 5, filter).size());
+    for (Wine wine : manager.getWinesInRange(0, 5, filter)) {
+      assertEquals("us", wine.getCountry());
+    }
+  }
+
+  @Test
+  void testWineryFilter() throws SQLException {
+    Filters filter = new Filters("",
+        "",
+        "bob's wine",
+        "",
+        0,
+        10000,
+        0,
+        100,
+        0,
+        100,
+        0,
+        100);
+    assertDoesNotThrow(this::addFilterableWines);
+    assertEquals(1, manager.getWinesInRange(0, 5, filter).size());
+    for (Wine wine : manager.getWinesInRange(0, 5, filter)) {
+      assertEquals("bob's wine", wine.getWinery());
+    }
+  }
+
+  @Test
+  void testScoreFilter() throws SQLException {
+    Filters filter = new Filters("",
+        "",
+        "",
+        "",
+        0,
+        10000,
+        0,
+        90,
+        0,
+        100,
+        0,
+        100);
+    assertDoesNotThrow(this::addFilterableWines);
+    assertEquals(4, manager.getWinesInRange(0, 5, filter).size());
+    for (Wine wine : manager.getWinesInRange(0, 5, filter)) {
+      assertTrue(wine.getScorePercent() >= 0 && wine.getScorePercent() <= 90);
+    }
+  }
+
+  @Test
+  void testAbvFilter() throws SQLException {
+    Filters filter = new Filters("",
+        "",
+        "",
+        "",
+        0,
+        10000,
+        0,
+        100,
+        21,
+        100,
+        0,
+        100);
+    assertDoesNotThrow(this::addFilterableWines);
+    assertEquals(3, manager.getWinesInRange(0, 5, filter).size());
+    for (Wine wine : manager.getWinesInRange(0, 5, filter)) {
+      assertTrue(wine.getAbv() >= 21 && wine.getAbv() <= 100);
+    }
+  }
+
+  @Test
+  void testPriceFilter() throws SQLException {
+    Filters filter = new Filters("",
+        "",
+        "",
+        "",
+        0,
+        10000,
+        0,
+        100,
+        0,
+        100,
+        40,
+        100);
+    assertDoesNotThrow(this::addFilterableWines);
+    assertEquals(2, manager.getWinesInRange(0, 5, filter).size());
+    for (Wine wine : manager.getWinesInRange(0, 5, filter)) {
+      assertTrue(wine.getPrice() >= 40 && wine.getPrice() <= 100);
+    }
+  }
+
+  @Test
+  void testColorFilter() throws SQLException {
+    Filters filter = new Filters("",
+        "",
+        "",
+        "red",
+        0,
+        10000,
+        0,
+        100,
+        0,
+        100,
+        0,
+        100);
+    assertDoesNotThrow(this::addFilterableWines);
+    assertEquals(3, manager.getWinesInRange(0, 5, filter).size());
+    for (Wine wine : manager.getWinesInRange(0, 5, filter)) {
+      assertEquals("red", wine.getColor());
+    }
+  }
+
+  @Test
+  void testVintageFilter() throws SQLException {
+    Filters filter = new Filters("",
+        "",
+        "",
+        "",
+        2018,
+        10000,
+        0,
+        100,
+        0,
+        100,
+        0,
+        100);
+    assertDoesNotThrow(this::addFilterableWines);
+    assertEquals(3, manager.getWinesInRange(0, 5, filter).size());
+    for (Wine wine : manager.getWinesInRange(0, 5, filter)) {
+      assertTrue(wine.getVintage() >= 2018 && wine.getVintage() <= 10000);
+    }
+  }
+
+  private void addFilterableWines() throws SQLException {
+    ArrayList<Wine> wines = new ArrayList<>();
+    wines.add(
+        new Wine(-1, manager, "wine", "blue", "nz", "christchurch",
+            "bob's wine", "red", 2011, "na", 99, 25f,
+            10f));
+    wines.add(
+        new Wine(-1, manager, "Big wine", "green", "us", "christchurch",
+            "joes's wine", "white", 2020, "na", 65,
+            20f, 20f));
+    wines.add(
+        new Wine(-1, manager, "Funny wine", "blue", "us", "christchurch",
+            "joes's wine", "red", 2019, "na", 85,
+            24f, 50f));
+    wines.add(
+        new Wine(-1, manager, "Small wine", "red", "nz", "christchurch",
+            "jill's wine", "white", 2012, "na", 88,
+            18f, 25f));
+    wines.add(
+        new Wine(-1, manager, "Cool wine", "green", "nz", "christchurch",
+            "jill's wine", "red", 2018, "na", 90,
+            23f, 40f));
+    manager.addWines(wines);
+  }
+
   /**
    * Adds wine
+   *
    * @throws SQLException if error
    */
-  void addWines(int num) throws SQLException {
+  private void addWines(int num) throws SQLException {
     ArrayList<Wine> wines = new ArrayList<>();
-    for(int i=0; i < num; i++) {
-      wines.add(new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "na", 99, 25f, (float)i));
+    for (int i = 0; i < num; i++) {
+      wines.add(
+          new Wine(-1, manager, "wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011,
+              "na", 99, 25f,
+              (float) i));
     }
     manager.addWines(wines);
-
-
   }
 
   @BeforeEach
