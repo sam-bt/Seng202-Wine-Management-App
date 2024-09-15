@@ -331,11 +331,11 @@ public class DatabaseManager implements AutoCloseable {
 
   private void createWineListsTable() throws SQLException {
     String listNameTable = "create table if not exists LIST_NAME (" +
-            "ID int primary key not null," +
+            "ID integer primary key," +
             "USERNAME varchar(32) not null," +
             "NAME varchar(10) not null);";
     String listItemsTable = "create table if not exists LIST_ITEMS (" +
-            "ID int primary key not null," +
+            "ID integer primary key," +
             "LIST_ID int not null," +
             "WINE_ID int not null);";
     try (Statement statement = connection.createStatement()) {
@@ -347,8 +347,19 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
+  private void createAdminFavouritesList() {
+    String checkAndInsert = "INSERT INTO LIST_NAME (ID, USERNAME, NAME) values (null, admin, Favourites) " +
+            "SELECT 1" +
+            "WHERE NOT EXISTS (SELECT 1 FROM LIST_NAME WHERE username = admin)";
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(checkAndInsert);
+    } catch (SQLException error) {
+      log.error("Could not add list to the database", error);
+    }
+  }
+
   public void createList(String username, String listName) {
-    String create = "insert into LIST_NAME (USERNAME, NAME) values (?, ?)";
+    String create = "insert into LIST_NAME (ID, USERNAME, NAME) values (null, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(create)) {
       statement.setString(1, username);
       statement.setString(2, listName);
