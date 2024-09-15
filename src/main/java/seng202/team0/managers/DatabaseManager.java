@@ -269,6 +269,8 @@ public class DatabaseManager implements AutoCloseable {
     // null key is auto generated
     String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
+      long milliseconds = System.currentTimeMillis();
+
       for (Wine wine : list) {
         insertStatement.setString(1, wine.getTitle());
         insertStatement.setString(2, wine.getVariety());
@@ -281,8 +283,9 @@ public class DatabaseManager implements AutoCloseable {
         insertStatement.setInt(9, wine.getScorePercent());
         insertStatement.setFloat(10, wine.getAbv());
         insertStatement.setFloat(11, wine.getPrice());
-        insertStatement.executeUpdate();
+        insertStatement.addBatch();
       }
+      insertStatement.executeBatch();
     }
   }
 
