@@ -120,6 +120,7 @@ public class Wine {
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent", scorePercent);
     this.abv = new SimpleFloatProperty(this, "abv", abv);
     this.price = new SimpleFloatProperty(this, "price", price);
+    setupSetters();
   }
 
   /**
@@ -138,7 +139,86 @@ public class Wine {
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent");
     this.abv = new SimpleFloatProperty(this, "abv");
     this.price = new SimpleFloatProperty(this, "price");
+    setupSetters();
   }
+
+  /**
+   * Setup listeners
+   * <p>
+   *   JavaFX uses properties to change stuff. This means we need to listen to changes rather than just intercept through setters.
+   * </p>
+   */
+  public void setupSetters() {
+    // This might be mem leaky but that is too hard to think about
+    titleProperty().addListener((observableValue, before, after) -> {
+      setAttribute("TITLE", update -> {
+        update.setString(1, after);
+      });
+    });
+
+    varietyProperty().addListener((observableValue, before, after) -> {
+      setAttribute("VARIETY", update -> {
+        update.setString(1, after);
+      });
+    });
+
+    countryProperty().addListener((observableValue, before, after) -> {
+      setAttribute("COUNTRY", update -> {
+        update.setString(1, after);
+      });
+    });
+
+    regionProperty().addListener((observableValue, before, after) -> {
+      setAttribute("REGION", update -> {
+        update.setString(1, after);
+      });
+    });
+
+    wineryProperty().addListener((observableValue, before, after) -> {
+      setAttribute("WINERY", update -> {
+        update.setString(1, after);
+      });
+    });
+
+    colorProperty().addListener((observableValue, before, after) -> {
+      setAttribute("COLOR", update -> {
+        update.setString(1, after);
+      });
+    });
+
+    vintageProperty().addListener((observableValue, before, after) -> {
+      setAttribute("VINTAGE", update -> {
+        update.setInt(1, (Integer) after);
+      });
+    });
+
+    descriptionProperty().addListener((observableValue, before, after) -> {
+      setAttribute("DESCRIPTION", update -> {
+        update.setString(1, after);
+      });
+    });
+
+    scorePercentProperty().addListener((observableValue, before, after) -> {
+      setAttribute("SCORE_PERCENT", update -> {
+        update.setInt(1, (Integer) after);
+      });
+    });
+
+    abvProperty().addListener((observableValue, before, after) -> {
+      setAttribute("ABV", update -> {
+        update.setFloat(1, (Float) after);
+      });
+    });
+
+    priceProperty().addListener((observableValue, before, after) -> {
+      setAttribute("PRICE", update -> {
+        update.setFloat(1, (Float) after);
+      });
+    });
+
+  }
+
+
 
   /**
    * Helper to set an attribute
@@ -215,9 +295,6 @@ public class Wine {
    */
   public void setTitle(String title) {
     this.title.set(title);
-    setAttribute("TITLE", update -> {
-      update.setString(1, title);
-    });
   }
 
   /**
@@ -245,9 +322,6 @@ public class Wine {
    */
   public void setVariety(String variety) {
     this.variety.set(variety);
-    setAttribute("VARIETY", update -> {
-      update.setString(1, variety);
-    });
   }
 
   /**
@@ -275,9 +349,6 @@ public class Wine {
    */
   public void setCountry(String country) {
     this.country.set(country);
-    setAttribute("COUNTRY", update -> {
-      update.setString(1, country);
-    });
   }
 
   /**
@@ -305,9 +376,6 @@ public class Wine {
    */
   public void setRegion(String region) {
     this.region.set(region);
-    setAttribute("REGION", update -> {
-      update.setString(1, region);
-    });
   }
 
   /**
@@ -336,9 +404,6 @@ public class Wine {
    */
   public void setWinery(String winery) {
     this.winery.set(winery);
-    setAttribute("WINERY", update -> {
-      update.setString(1, winery);
-    });
   }
 
   /**
@@ -366,9 +431,6 @@ public class Wine {
    */
   public void setColor(String color) {
     this.color.set(color);
-    setAttribute("COLOR", update -> {
-      update.setString(1, color);
-    });
   }
 
   /**
@@ -396,9 +458,6 @@ public class Wine {
    */
   public void setVintage(int vintage) {
     this.vintage.set(vintage);
-    setAttribute("VINTAGE", update -> {
-      update.setInt(1, vintage);
-    });
   }
 
   /**
@@ -426,9 +485,6 @@ public class Wine {
    */
   public void setDescription(String description) {
     this.description.set(description);
-    setAttribute("DESCRIPTION", update -> {
-      update.setString(1, description);
-    });
   }
 
   /**
@@ -456,9 +512,6 @@ public class Wine {
    */
   public void setScorePercent(int scorePercent) {
     this.scorePercent.set(scorePercent);
-    setAttribute("SCORE_PERCENT", update -> {
-      update.setInt(1, scorePercent);
-    });
   }
 
   /**
@@ -487,9 +540,6 @@ public class Wine {
    */
   public void setAbv(float abv) {
     this.abv.set(abv);
-    setAttribute("ABV", update -> {
-      update.setFloat(1, abv);
-    });
   }
 
   /**
@@ -517,9 +567,6 @@ public class Wine {
    */
   public void setPrice(float price) {
     this.price.set(price);
-    setAttribute("PRICE", update -> {
-      update.setFloat(1, price);
-    });
   }
 
   /**

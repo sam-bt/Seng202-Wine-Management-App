@@ -9,7 +9,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.StringConverter;
 import org.controlsfx.control.RangeSlider;
 import seng202.team0.database.Wine;
 import seng202.team0.managers.ManagerContext;
@@ -158,9 +160,21 @@ public class WineScreenController extends Controller {
     tableView.getColumns().clear();
 
     // Create and config cols
-    tableView.setEditable(false);
+    tableView.setEditable(true);
     TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
-    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title") );
+    titleColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(
+        new StringConverter<String>() {
+          @Override
+          public String toString(String s) {
+            return s;
+          }
+
+          @Override
+          public String fromString(String s) {
+            return s;
+          }
+        }));
     tableView.getColumns().add(titleColumn);
 
     TableColumn<Wine, String> varietyColumn = new TableColumn<>("Variety");
