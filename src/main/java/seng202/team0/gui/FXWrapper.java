@@ -31,19 +31,20 @@ public class FXWrapper {
      */
     public void init(Stage stage) {
         this.stage = stage;
-        try (DatabaseManager databaseManager = new DatabaseManager("database.db")) {
+        try {
             this.managerContext = new ManagerContext(
-                databaseManager,
+                new DatabaseManager("database.db"),
                 new AuthenticationManager(),
                 new MapManager(),
                 new GUIManager(this)
             );
+
+            stage.setOnCloseRequest((event) -> managerContext.databaseManager.close());
         } catch(Exception exception) {
             // If we fail to initialize the managers we are kinda screwed
             throw new RuntimeException("Failed to instantiate manager context", exception);
         }
         loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
-
     }
     public void setWindowTitle(String title){
         stage.setTitle(title);
