@@ -174,6 +174,10 @@ public class WineScreenController extends Controller {
     wineryColumn.setCellValueFactory(new PropertyValueFactory<>("winery"));
     tableView.getColumns().add(wineryColumn);
 
+    TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
+    regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));
+    tableView.getColumns().add(regionColumn);
+
     TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
     colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
     tableView.getColumns().add(colorColumn);

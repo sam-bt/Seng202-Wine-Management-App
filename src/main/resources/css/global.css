@@ -1,3 +1,11 @@
+.application-background {
+  -fx-background-color: #FEF0F0
+}
+
+.primary-background {
+  -fx-background-color: #EB4034;
+}
+
 .primary-button {
   -fx-background-color: #eb4034;
   -fx-background-radius: 10px;

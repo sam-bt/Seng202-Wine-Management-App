@@ -38,6 +38,7 @@ public class DataTableController extends Controller {
       PrettyName.VARIETY,
       PrettyName.COUNTRY,
       PrettyName.WINERY,
+      PrettyName.REGION,
       PrettyName.COLOR,
       PrettyName.VINTAGE,
       PrettyName.DESCRIPTION,
@@ -89,7 +90,9 @@ public class DataTableController extends Controller {
   /**
    * Checks that all remap columns are in a valid state
    * <p>
-   * A state is valid if: - Only one column of each type is selected - The title is selected
+   *   A state is valid if:
+   *   - Only one column of each type is selected
+   *   - The title is selected
    * </p>
    *
    * @return if state is valid
@@ -149,6 +152,7 @@ public class DataTableController extends Controller {
     int title = getRenamedColumn(PrettyName.TITLE);
     int variety = getRenamedColumn(PrettyName.VARIETY);
     int country = getRenamedColumn(PrettyName.COUNTRY);
+    int region = getRenamedColumn(PrettyName.REGION);
     int winery = getRenamedColumn(PrettyName.WINERY);
     int color = getRenamedColumn(PrettyName.COLOR);
     int vintage = getRenamedColumn(PrettyName.VINTAGE);
@@ -171,6 +175,7 @@ public class DataTableController extends Controller {
           title != -1 ? tuple[title] : "",
           variety != -1 ? tuple[variety] : "",
           country != -1 ? tuple[country] : "",
+          region != -1 ? tuple[region] : "",
           winery != -1 ? tuple[winery] : "",
           color != -1 ? tuple[color] : "",
           vintage != -1 ? tuple[vintage] : "",
@@ -282,7 +287,7 @@ public class DataTableController extends Controller {
    * Makes a list of columns for remapping
    *
    * @param columnNames names of columns
-   * @param rows        list of rows
+   * @param rows list of rows
    */
   private void makeColumnRemapList(String[] columnNames, List<String[]> rows) {
 
@@ -369,6 +374,7 @@ public class DataTableController extends Controller {
     TITLE("Title"),
     VARIETY("Variety"),
     COUNTRY("Country"),
+    REGION("Region"),
     WINERY("Winery"),
     COLOR("Color"),
     VINTAGE("Vintage"),

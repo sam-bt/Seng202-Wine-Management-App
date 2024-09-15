@@ -25,6 +25,10 @@ public class Wine {
    */
   private final StringProperty country;
   /**
+   * Region
+   */
+  private final StringProperty region;
+  /**
    * Winery
    * <p>
    * Represented as a name to ease binding
@@ -63,6 +67,7 @@ public class Wine {
    * @param title        title
    * @param variety      variety
    * @param country      country
+   * @param region       region
    * @param winery       winery
    * @param description  description of wine
    * @param scorePercent score from 0-100
@@ -73,6 +78,7 @@ public class Wine {
       String title,
       String variety,
       String country,
+      String region,
       String winery,
       String color,
       Integer vintage,
@@ -84,6 +90,7 @@ public class Wine {
     this.title = new SimpleStringProperty(this, "title", title);
     this.variety = new SimpleStringProperty(this, "variety", variety);
     this.country = new SimpleStringProperty(this, "country", country);
+    this.region = new SimpleStringProperty(this, "region", region);
     this.winery = new SimpleStringProperty(this, "winery", winery);
     this.color = new SimpleStringProperty(this, "color", color);
     this.vintage = new SimpleIntegerProperty(this, "vintage", vintage);
@@ -100,6 +107,7 @@ public class Wine {
     this.title = new SimpleStringProperty(this, "title");
     this.variety = new SimpleStringProperty(this, "variety");
     this.country = new SimpleStringProperty(this, "country");
+    this.region = new SimpleStringProperty(this, "region");
     this.winery = new SimpleStringProperty(this, "winery");
     this.color = new SimpleStringProperty(this, "color");
     this.vintage = new SimpleIntegerProperty(this, "vintage");
@@ -190,6 +198,32 @@ public class Wine {
   public StringProperty countryProperty() {
     return country;
   }
+
+  /**
+   * Gets the Region
+   *
+   * @return region
+   */
+  public String getRegion() {
+    return region.get();
+  }
+
+  /**
+   * Sets the region
+   * @param region region
+   */
+  public void setRegion(String region) {
+    this.region.set(region);
+  }
+
+  /**
+   * Gets the region property
+   * @return region property
+   */
+  public StringProperty regionProperty() {
+    return region;
+  }
+
 
   /**
    * Gets the winery

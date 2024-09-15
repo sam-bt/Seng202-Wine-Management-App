@@ -12,29 +12,38 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.logging.log4j.Logger;
+import seng202.team0.database.User;
 import seng202.team0.database.Wine;
 import seng202.team0.util.Filters;
+import seng202.team0.util.Password;
+import org.apache.logging.log4j.LogManager;
 
 
 /**
  * Mediates access to the database
+ *
  */
 public class DatabaseManager implements AutoCloseable {
+  /** Logger for the DatabaseManager class */
+  private final Logger log = LogManager.getLogger(getClass());
 
   /**
    * Database connection
    * <p>
-   * This is ensured to be always valid
+   *   This is ensured to be always valid
    * </p>
    */
   private Connection connection;
 
   /**
    * Connects to a db file for management. The path to the file is specified by dbpath
-   *
+   * <p>
+   *   This method will fail if application is opened from a directory without appropriate file perms
+   * </p>
    * @throws SQLException if failed to initialize
    */
-  public DatabaseManager() throws SQLException {
+  public DatabaseManager(String databaseFileName) throws SQLException {
 
     // Construct a file path for the database
     File dir = new File("sqlDatabase");
@@ -42,29 +51,42 @@ public class DatabaseManager implements AutoCloseable {
       boolean created = dir.mkdirs();
 
       if (!created) {
-        System.err.println("Error creating database directory");
+        log.error("Error creating database directory");
+        throw new RuntimeException("Failed to create database");
       }
-
     }
 
-    // Connect to database
-    // This is the path to the db file
-    //String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + "SQLDatabase.db";
-    //this.connection = DriverManager.getConnection(dbPath);
+    String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + databaseFileName;
+    this.connection = DriverManager.getConnection(dbPath);
+    createWinesTable();
+    createUsersTable();
+  }
+
+
+  /**
+   * Creates an in-memory database for testing
+   *
+   * @throws SQLException if failed to initialize
+   */
+  public DatabaseManager() throws SQLException {
     this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
     createWinesTable();
-
+    createUsersTable();
   }
 
   /**
+   * Creates the WINE table if it does not exist
+   *
    * @throws SQLException on sql error
    */
   private void createWinesTable() throws SQLException {
     String create = "create table if not exists WINE (" +
+        // There are a lot of duplicates
         "ID AUTO_INCREMENT PRIMARY KEY," +
         "TITLE varchar(64) NOT NULL," +
         "VARIETY varchar(32)," +
         "COUNTRY varchar(32)," +
+        "REGION varchar(32)," +
         "WINERY varchar(64)," +
         "COLOR varchar(32)," +
         "VINTAGE int," +
@@ -88,8 +110,9 @@ public class DatabaseManager implements AutoCloseable {
    * @return subset list of wines
    */
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
+
     ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query = "select TITLE, VARIETY, COUNTRY, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ROWID limit ? offset ?;";
+    String query = "select TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ROWID limit ? offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
 
       statement.setInt(1, end - begin);
@@ -102,6 +125,7 @@ public class DatabaseManager implements AutoCloseable {
             set.getString("TITLE"),
             set.getString("VARIETY"),
             set.getString("COUNTRY"),
+            set.getString("REGION"),
             set.getString("WINERY"),
             set.getString("COLOR"),
             set.getInt("VINTAGE"),
@@ -199,6 +223,7 @@ public class DatabaseManager implements AutoCloseable {
    * Gets the number of wine records
    *
    * @return total number of wine records
+   * @throws SQLException if a database error occurs
    */
   public int getWinesSize() throws SQLException {
     try (Statement statement = connection.createStatement()) {
@@ -213,58 +238,193 @@ public class DatabaseManager implements AutoCloseable {
    * Replaces all wines in the database with a new list
    *
    * @param list list of wines
+   * @throws SQLException if a database error occurs
    */
   public void replaceAllWines(List<Wine> list) throws SQLException {
+    removeWines();
+    addWines(list);
+  }
+
+  /**
+   * Removes all wines from the database
+   *
+   * @throws SQLException if a database error occurs
+   */
+  public void removeWines() throws SQLException {
     String delete = "delete from WINE;";
     try (Statement statement = connection.createStatement()) {
       statement.executeUpdate(delete);
     }
-
-    addWines(list);
   }
 
   /**
    * Adds the wines in the list to the database
    *
    * @param list list of wines
+   * @throws SQLException if a database error occurs
    */
   public void addWines(List<Wine> list) throws SQLException {
     // null key is auto generated
-    String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
       for (Wine wine : list) {
         insertStatement.setString(1, wine.getTitle());
         insertStatement.setString(2, wine.getVariety());
         insertStatement.setString(3, wine.getCountry());
-        insertStatement.setString(4, wine.getWinery());
-        insertStatement.setString(5, wine.getColor());
-        insertStatement.setInt(6, wine.getVintage());
-        insertStatement.setString(7, wine.getDescription());
-        insertStatement.setInt(8, wine.getScorePercent());
-        insertStatement.setFloat(9, wine.getAbv());
-        insertStatement.setFloat(10, wine.getPrice());
+        insertStatement.setString(4, wine.getRegion());
+        insertStatement.setString(5, wine.getWinery());
+        insertStatement.setString(6, wine.getColor());
+        insertStatement.setString(7, wine.getVintage());
+        insertStatement.setString(8, wine.getDescription());
+        insertStatement.setInt(9, wine.getScorePercent());
+        insertStatement.setFloat(10, wine.getAbv());
+        insertStatement.setFloat(11, wine.getPrice());
         insertStatement.executeUpdate();
       }
-
     }
   }
 
+  /**
+   * Creates the USER table if it does not exist
+   * @throws SQLException on sql error
+   */
+  private void createUsersTable() throws SQLException {
+    String create = "create table if not exists USER (" +
+        "USERNAME varchar(64) PRIMARY KEY," +
+        "PASSWORD varchar(64) NOT NULL," +
+        "ROLE varchar(8) NOT NULL," +
+        "SALT varchar(32))";
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(create);
+    }
+    createDefaultAdminUser();
+  }
 
   /**
-   * To disconnect/close database
+   * Creates a default admin user if it does not exist
+   * @throws SQLException if a database error occurs
+   */
+  private void createDefaultAdminUser() throws SQLException {
+    String checkAndInsert = "INSERT INTO USER (username, password, role, salt) " +
+        "SELECT ?, ?, ?, ? " +
+        "WHERE NOT EXISTS (SELECT 1 FROM USER WHERE username = ?)";
+    try (PreparedStatement statement = connection.prepareStatement(checkAndInsert)) {
+      String salt = Password.generateSalt();
+      String password = Password.hashPassword("admin", salt);
+      statement.setString(1, "admin");
+      statement.setString(2, password);
+      statement.setString(3, "admin");
+      statement.setString(4, salt);
+      statement.setString(5, "admin");
+      statement.executeUpdate();
+    }
+  }
+
+  /**
+   * Retrieves a user from the database by username
+   *
+   * @param username the username of the user
+   * @return the User object if found, null otherwise
+   */
+  public User getUser(String username) {
+    String query = "SELECT * FROM USER WHERE USERNAME = ?";
+
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setString(1, username);
+      ResultSet set = statement.executeQuery();
+
+      if (set.next()) {
+        return new User(set.getString("USERNAME"),set.getString("PASSWORD"),set.getString("ROLE"),set.getString("SALT"));
+      }
+    } catch (SQLException e) {
+      log.error("Database error occurred: {}", e.getMessage(), e);
+    }
+    return null;
+  }
+
+  /**
+   * Adds a new user to the database
+   *
+   * @param username the username of the new user
+   * @param password the password of the new user
+   * @param salt the salt used for password hashing
+   * @return true if the user was successfully added, false otherwise
+   */
+  public boolean addUser(String username, String password, String salt) {
+    String insert = "insert into USER values(?, ?, ?, ?);";
+    try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
+      insertStatement.setString(1, username);
+      insertStatement.setString(2, password);
+      insertStatement.setString(3, "user");
+      insertStatement.setString(4, salt);
+      insertStatement.executeUpdate();
+      return true;
+    } catch (SQLException e) {
+      if (e.getMessage().contains("PRIMARY KEY")) {
+        log.error("Duplicate username: {}", username, e);
+      } else {
+        log.error("Database error occurred: {}", e.getMessage(), e);
+      }
+      return false;
+    }
+  }
+
+  /**
+   * Updates the password for an existing user
+   *
+   * @param username the username of the user
+   * @param password the new hashed password
+   * @param salt the salt used for password hashing
+   * @return true if the user was successfully added, false otherwise
+   */
+  public boolean updatePassword(String username, String password, String salt) {
+    String updateQuery = "UPDATE USER SET PASSWORD = ?, SALT = ? WHERE USERNAME = ?";
+
+    try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+      updateStatement.setString(1, password);
+      updateStatement.setString(2, salt);
+      updateStatement.setString(3, username);
+
+      int rowsAffected = updateStatement.executeUpdate();
+      return rowsAffected > 0;
+    } catch (SQLException e) {
+      log.error("Error updating password: {}", e.getMessage(), e);
+      return false;
+    }
+  }
+
+  /**
+   * Deletes all users from the database except the admin user.
+   *
+   * @return true if all non-admin users were successfully deleted, false otherwise.
+   */
+  public boolean deleteAllUsers() {
+    String deleteQuery = "delete from USER "
+        + "WHERE USERNAME != ?;";
+    try (PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)) {
+      deleteStatement.setString(1, "admin");
+      deleteStatement.executeUpdate();
+      return true;
+    } catch (SQLException e) {
+      log.error("Error deleting users: {}", e.getMessage(), e);
+      return false;
+    }
+  }
+
+  /**
+   * Closes the database connection
+   * <p>
+   *   This method is called automatically when the DatabaseManager is used in a try-with-resources statement
+   * </p>
    */
   @Override
   public void close() {
     try {
-      this.connection.close();
-
-      // Reset connection
+      connection.close();
       connection = null;
 
     } catch (SQLException e) {
-      LogManager.getLogManager()
-          .getLogger(getClass().getName())
-          .log(Level.WARNING, "Error closing DatabaseManager", e);
+      log.error("Error closing connection", e);
     }
   }
 }
