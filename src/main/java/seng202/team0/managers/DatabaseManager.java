@@ -10,18 +10,22 @@ import java.sql.Statement;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team0.database.User;
 import seng202.team0.database.Wine;
+import seng202.team0.util.Filters;
 import seng202.team0.util.Password;
-import org.apache.logging.log4j.LogManager;
 
 
 /**
  * Mediates access to the database
  */
 public class DatabaseManager implements AutoCloseable {
-  /** Logger for the DatabaseManager class */
+
+  /**
+   * Logger for the DatabaseManager class
+   */
   private final Logger log = LogManager.getLogger(getClass());
 
   /**
@@ -35,8 +39,9 @@ public class DatabaseManager implements AutoCloseable {
   /**
    * Connects to a db file for management. The path to the file is specified by dbpath
    * <p>
-   *   This method will fail if application is opened from a directory without appropriate file perms
+   * This method will fail if application is opened from a directory without appropriate file perms
    * </p>
+   *
    * @throws SQLException if failed to initialize
    */
   public DatabaseManager(String databaseFileName) throws SQLException {
@@ -84,6 +89,8 @@ public class DatabaseManager implements AutoCloseable {
         "COUNTRY varchar(32)," +
         "REGION varchar(32)," +
         "WINERY varchar(64)," +
+        "COLOR varchar(32)," +
+        "VINTAGE int," +
         "DESCRIPTION text," +
         "SCORE_PERCENT int," +
         "ABV float," +
@@ -106,7 +113,7 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
 
     ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query = "select TITLE, VARIETY, COUNTRY, REGION, WINERY, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ROWID limit ? offset ?;";
+    String query = "select TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ROWID limit ? offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
 
       statement.setInt(1, end - begin);
@@ -121,6 +128,8 @@ public class DatabaseManager implements AutoCloseable {
             set.getString("COUNTRY"),
             set.getString("REGION"),
             set.getString("WINERY"),
+            set.getString("COLOR"),
+            set.getInt("VINTAGE"),
             set.getString("DESCRIPTION"),
             set.getInt("SCORE_PERCENT"),
             set.getFloat("ABV"),
@@ -128,6 +137,82 @@ public class DatabaseManager implements AutoCloseable {
         );
         wines.add(wine);
       }
+      set.close();
+
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+
+    return wines;
+  }
+
+  /**
+   * Gets a subset of the wines in the database with a Map for filtering
+   * <p>
+   * The order of elements should remain stable until a write operation occurs.
+   * </p>
+   *
+   * @param begin   beginning element
+   * @param end     end element (begin + size)
+   * @param filters Map of filter values
+   * @return subset list of wines
+   */
+  public ObservableList<Wine> getWinesInRange(int begin, int end, Filters filters) {
+    ObservableList<Wine> wines = FXCollections.observableArrayList();
+    String query =
+        "select TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE "
+            + "from WINE "
+            + "where TITLE like ? "
+            + "and COUNTRY like ? "
+            + "and WINERY like ? "
+            + "and COLOR like ? "
+            + "and VINTAGE between ? and ?"
+            + "and SCORE_PERCENT between ? and ? "
+            + "and ABV between ? and ? "
+            + "and PRICE between ? and ? "
+            + "order by ROWID "
+            + "limit ? "
+            + "offset ?;";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      int paramIndex = 1;
+      statement.setString(paramIndex++,
+          filters.getTitle().isEmpty() ? "%" : "%" + filters.getTitle() + "%");
+      statement.setString(paramIndex++,
+          filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry());
+      statement.setString(paramIndex++,
+          filters.getWinery().isEmpty() ? "%" : "%" + filters.getWinery() + "%");
+      statement.setString(paramIndex++,
+          filters.getColor().isEmpty() ? "%" : "%" + filters.getColor() + "%");
+      statement.setInt(paramIndex++, filters.getMinVintage());
+      statement.setInt(paramIndex++, filters.getMaxVintage());
+      statement.setDouble(paramIndex++, filters.getMinScore());
+      statement.setDouble(paramIndex++, filters.getMaxScore());
+      statement.setDouble(paramIndex++, filters.getMinAbv());
+      statement.setDouble(paramIndex++, filters.getMaxAbv());
+      statement.setDouble(paramIndex++, filters.getMinPrice());
+      statement.setDouble(paramIndex++, filters.getMaxPrice());
+      statement.setInt(paramIndex++, end - begin);
+      statement.setInt(paramIndex, begin);
+
+      // Add filtered wines to list
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        Wine wine = new Wine(
+            set.getString("TITLE"),
+            set.getString("VARIETY"),
+            set.getString("COUNTRY"),
+            set.getString("REGION"),
+            set.getString("WINERY"),
+            set.getString("COLOR"),
+            set.getInt("VINTAGE"),
+            set.getString("DESCRIPTION"),
+            set.getInt("SCORE_PERCENT"),
+            set.getFloat("ABV"),
+            set.getFloat("PRICE")
+        );
+        wines.add(wine);
+      }
+      set.close();
 
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -182,7 +267,7 @@ public class DatabaseManager implements AutoCloseable {
    */
   public void addWines(List<Wine> list) throws SQLException {
     // null key is auto generated
-    String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
       for (Wine wine : list) {
         insertStatement.setString(1, wine.getTitle());
@@ -190,10 +275,12 @@ public class DatabaseManager implements AutoCloseable {
         insertStatement.setString(3, wine.getCountry());
         insertStatement.setString(4, wine.getRegion());
         insertStatement.setString(5, wine.getWinery());
-        insertStatement.setString(6, wine.getDescription());
-        insertStatement.setInt(7, wine.getScorePercent());
-        insertStatement.setFloat(8, wine.getAbv());
-        insertStatement.setFloat(9, wine.getPrice());
+        insertStatement.setString(6, wine.getColor());
+        insertStatement.setInt(7, wine.getVintage());
+        insertStatement.setString(8, wine.getDescription());
+        insertStatement.setInt(9, wine.getScorePercent());
+        insertStatement.setFloat(10, wine.getAbv());
+        insertStatement.setFloat(11, wine.getPrice());
         insertStatement.executeUpdate();
       }
     }
@@ -201,6 +288,7 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Creates the USER table if it does not exist
+   *
    * @throws SQLException on sql error
    */
   private void createUsersTable() throws SQLException {
@@ -217,6 +305,7 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Creates a default admin user if it does not exist
+   *
    * @throws SQLException if a database error occurs
    */
   private void createDefaultAdminUser() throws SQLException {
@@ -249,7 +338,8 @@ public class DatabaseManager implements AutoCloseable {
       ResultSet set = statement.executeQuery();
 
       if (set.next()) {
-        return new User(set.getString("USERNAME"),set.getString("PASSWORD"),set.getString("ROLE"),set.getString("SALT"));
+        return new User(set.getString("USERNAME"), set.getString("PASSWORD"), set.getString("ROLE"),
+            set.getString("SALT"));
       }
     } catch (SQLException e) {
       log.error("Database error occurred: {}", e.getMessage(), e);
@@ -262,7 +352,7 @@ public class DatabaseManager implements AutoCloseable {
    *
    * @param username the username of the new user
    * @param password the password of the new user
-   * @param salt the salt used for password hashing
+   * @param salt     the salt used for password hashing
    * @return true if the user was successfully added, false otherwise
    */
   public boolean addUser(String username, String password, String salt) {
@@ -289,7 +379,7 @@ public class DatabaseManager implements AutoCloseable {
    *
    * @param username the username of the user
    * @param password the new hashed password
-   * @param salt the salt used for password hashing
+   * @param salt     the salt used for password hashing
    * @return true if the user was successfully added, false otherwise
    */
   public boolean updatePassword(String username, String password, String salt) {
@@ -329,7 +419,8 @@ public class DatabaseManager implements AutoCloseable {
   /**
    * Closes the database connection
    * <p>
-   *   This method is called automatically when the DatabaseManager is used in a try-with-resources statement
+   * This method is called automatically when the DatabaseManager is used in a try-with-resources
+   * statement
    * </p>
    */
   @Override

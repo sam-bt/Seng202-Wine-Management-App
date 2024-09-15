@@ -16,14 +16,14 @@ public class Validator {
   /**
    * Creates a wine from a list of attributes
    *
-   * @param title title
-   * @param variety variety
-   * @param country country
-   * @param winery winery
-   * @param description description
+   * @param title        title
+   * @param variety      variety
+   * @param country      country
+   * @param winery       winery
+   * @param description  description
    * @param scorePercent percent score
-   * @param abv abv
-   * @param price price
+   * @param abv          abv
+   * @param price        price
    * @return wine
    */
   public static Wine parseWine(
@@ -32,26 +32,44 @@ public class Validator {
       String country,
       String region,
       String winery,
+      String color,
+      String vintage,
       String description,
       String scorePercent,
       String abv,
       String price
-      ) throws ValidationException {
-      try {
+  ) throws ValidationException {
+    try {
 
-        return new Wine(
-            title,
-            variety,
-            country,
-            region,
-            winery,
-            description,
-            Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
-            Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
-            Objects.equals(price, "") ? 0 : Float.parseFloat(price)
-        );
-      }  catch (Exception e) {
-        throw new ValidationException("Failed to parse wine", e);
+      // Decanter has invalid values for year :'(
+      // This handles those values by setting them to zero
+      int parsedVintage = 0;
+      if (!Objects.equals(vintage, "")) {
+        try {
+          parsedVintage = Integer.parseInt(vintage);
+        } catch (NumberFormatException e) { // failed parse so default to 0
+
+          // Log manager wasn't working for me here
+          // Logmanager.getLogger(Validator.class.getName()) kept returning null
+          System.err.println("Invalid vintage value: " + vintage + ", defaulting to 0");
+        }
       }
+
+      return new Wine(
+          title,
+          variety,
+          country,
+          region,
+          winery,
+          color,
+          parsedVintage,
+          description,
+          Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
+          Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
+          Objects.equals(price, "") ? 0 : Float.parseFloat(price)
+      );
+    } catch (Exception e) {
+      throw new ValidationException("Failed to parse wine", e);
+    }
   }
 }
