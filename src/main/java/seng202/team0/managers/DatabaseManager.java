@@ -39,12 +39,14 @@ public class DatabaseManager implements AutoCloseable {
   /**
    * Connects to a db file for management. The path to the file is specified by dbpath
    * <p>
-   * This method will fail if application is opened from a directory without appropriate file perms
+   * This method will fail if application is opened from a directory without appropriate file perms.
+   * Check <a href="https://www.sqlite.org/wal.html">...</a> for details on WAL. It is much faster in testing
    * </p>
-   *
+   * @param databaseFileName name of database file to open
+   * @param useWal whether to use WAL
    * @throws SQLException if failed to initialize
    */
-  public DatabaseManager(String databaseFileName) throws SQLException {
+  public DatabaseManager(String databaseFileName, boolean useWal) throws SQLException {
 
     // Construct a file path for the database
     File dir = new File("sqlDatabase");
@@ -61,6 +63,13 @@ public class DatabaseManager implements AutoCloseable {
     this.connection = DriverManager.getConnection(dbPath);
     createWinesTable();
     createUsersTable();
+    try (Statement statement = connection.createStatement()) {
+
+      if(useWal) {
+        statement.execute("pragma journal_mode=wal");
+      }
+    }
+
   }
 
 
@@ -145,7 +154,7 @@ public class DatabaseManager implements AutoCloseable {
    * @return subset list of wines
    */
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
-
+    long milliseconds = System.currentTimeMillis();
     ObservableList<Wine> wines = FXCollections.observableArrayList();
     String query = "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE from WINE order by ID limit ? offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -178,7 +187,7 @@ public class DatabaseManager implements AutoCloseable {
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
-
+    LogManager.getLogger(getClass()).info("Time to process getWinesInRange: {}", System.currentTimeMillis() - milliseconds);
     return wines;
   }
 
@@ -194,6 +203,7 @@ public class DatabaseManager implements AutoCloseable {
    * @return subset list of wines
    */
   public ObservableList<Wine> getWinesInRange(int begin, int end, Filters filters) {
+    long milliseconds = System.currentTimeMillis();
     ObservableList<Wine> wines = FXCollections.observableArrayList();
     String query =
         "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE "
@@ -255,6 +265,7 @@ public class DatabaseManager implements AutoCloseable {
       throw new RuntimeException(e);
     }
 
+    LogManager.getLogger(getClass()).info("Time to process getWinesInRange with filter: {}", System.currentTimeMillis() - milliseconds);
     return wines;
   }
 
@@ -303,6 +314,7 @@ public class DatabaseManager implements AutoCloseable {
    * @throws SQLException if a database error occurs
    */
   public void addWines(List<Wine> list) throws SQLException {
+    long milliseconds = System.currentTimeMillis();
     // null key is auto generated
     String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
@@ -322,6 +334,7 @@ public class DatabaseManager implements AutoCloseable {
       }
       insertStatement.executeBatch();
     }
+    LogManager.getLogger(getClass()).info("Time to process addWines: {}", System.currentTimeMillis() - milliseconds);
   }
 
   /**
