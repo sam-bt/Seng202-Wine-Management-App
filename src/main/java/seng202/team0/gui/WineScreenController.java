@@ -12,6 +12,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
+import javafx.util.converter.DefaultStringConverter;
+import javafx.util.converter.FloatStringConverter;
+import javafx.util.converter.IntegerStringConverter;
 import org.controlsfx.control.RangeSlider;
 import seng202.team0.database.Wine;
 import seng202.team0.managers.ManagerContext;
@@ -61,6 +64,12 @@ public class WineScreenController extends Controller {
     super(managerContext);
   }
 
+  /**
+   * Opens a page of wines from the database according to filters
+   * @param begin first element
+   * @param end last element + 1
+   * @param filters list of filters
+   */
   private void openWineRange(int begin, int end, Filters filters) {
     // Clear existing data
     tableView.getItems().clear();
@@ -155,62 +164,78 @@ public class WineScreenController extends Controller {
 
   }
 
+  /**
+   * Sets up the table columns
+   */
   public void setupTableColumns() {
     // Clear any existing cols
     tableView.getColumns().clear();
 
+    StringConverter<String> stringConverter = new DefaultStringConverter();
+    StringConverter<Integer> intConverter = new IntegerStringConverter();
+    StringConverter<Float> floatConverter = new FloatStringConverter();
+
+
+
     // Create and config cols
     tableView.setEditable(true);
-    TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
-    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title") );
-    titleColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(
-        new StringConverter<String>() {
-          @Override
-          public String toString(String s) {
-            return s;
-          }
 
-          @Override
-          public String fromString(String s) {
-            return s;
-          }
-        }));
-    tableView.getColumns().add(titleColumn);
+    TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
 
     TableColumn<Wine, String> varietyColumn = new TableColumn<>("Variety");
-    varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));
-    tableView.getColumns().add(varietyColumn);
 
     TableColumn<Wine, String> wineryColumn = new TableColumn<>("Winery");
-    wineryColumn.setCellValueFactory(new PropertyValueFactory<>("winery"));
-    tableView.getColumns().add(wineryColumn);
 
     TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
-    regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));
-    tableView.getColumns().add(regionColumn);
 
     TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
-    colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
-    tableView.getColumns().add(colorColumn);
 
-    TableColumn<Wine, String> vintageColumn = new TableColumn<>("Vintage");
-    vintageColumn.setCellValueFactory(new PropertyValueFactory<>("vintage"));
-    tableView.getColumns().add(vintageColumn);
+    TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
 
     TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
-    descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-    tableView.getColumns().add(descriptionColumn);
 
-    TableColumn<Wine, String> scoreColumn = new TableColumn<>("Score");
-    scoreColumn.setCellValueFactory(new PropertyValueFactory<>("scorePercent"));
-    tableView.getColumns().add(scoreColumn);
+    TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
 
     TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
-    abvColumn.setCellValueFactory(new PropertyValueFactory<>("abv"));
-    tableView.getColumns().add(abvColumn);
 
     TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
+
+
+    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title") );
+    varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));
+    wineryColumn.setCellValueFactory(new PropertyValueFactory<>("winery"));
+    regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));
+    colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
+    vintageColumn.setCellValueFactory(new PropertyValueFactory<>("vintage"));
+    descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+    scoreColumn.setCellValueFactory(new PropertyValueFactory<>("scorePercent"));
+    abvColumn.setCellValueFactory(new PropertyValueFactory<>("abv"));
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+    // Enable editing if admin
+    if(managerContext.authenticationManager.isAdmin()) {
+
+      titleColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      varietyColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      wineryColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      regionColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      colorColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      vintageColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
+      descriptionColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      scoreColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
+      abvColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
+      priceColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
+    }
+
+    tableView.getColumns().add(titleColumn);
+    tableView.getColumns().add(varietyColumn);
+    tableView.getColumns().add(wineryColumn);
+    tableView.getColumns().add(regionColumn);
+    tableView.getColumns().add(colorColumn);
+    tableView.getColumns().add(vintageColumn);
+    tableView.getColumns().add(descriptionColumn);
+    tableView.getColumns().add(scoreColumn);
+    tableView.getColumns().add(abvColumn);
     tableView.getColumns().add(priceColumn);
   }
 

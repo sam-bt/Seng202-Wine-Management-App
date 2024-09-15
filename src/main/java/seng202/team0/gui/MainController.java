@@ -103,6 +103,7 @@ public class MainController extends Controller {
     loginButton.setOnMouseClicked(event -> openLoginScreen());
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
     adminScreenButton.setVisible(false);
+    managerContext.authenticationManager.logout();
     openWineScreen();
   }
 

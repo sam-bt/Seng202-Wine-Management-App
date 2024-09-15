@@ -26,31 +26,18 @@ public class AuthenticationManager {
     return admin;
   }
 
-  public void getUser(String username) {
+  public void setUsername(String username) {
     this.username = username;
   }
 
   public String getUsername() {
     return username;
   }
-
-  /*
-  public createNewUser(Database database, String username, String password) throws AuthenticationManagerInitializationException{
-    // TODO Implement me!
+  public void logout() {
+    authenticated = false;
+    admin = false;
+    username = "";
   }
-
-
-
-  // Pretty sure the "new" variables are somewhat optional, so we need a way to deal with all the possible cases
-  public void editUser(Database database, String username, String newUsername, String newPassword, Role newRole){
-    // TODO Implement me!
-  }
-
-
-  public removeUser(Database database, String username) throws InvalidUserException, NoPermissionException {
-    // TODO Implement me!
-  }
-  */
 
   // Getters and Setters
   public Role getRole(){return null;} // TODO Implement me!
