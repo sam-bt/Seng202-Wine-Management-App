@@ -33,13 +33,10 @@ public class WineScreenController extends Controller {
   @FXML
   Button resetFiltersButton;
 
-  @FXML
   AutoCompletionTextField countryTextField;
 
-  @FXML
   AutoCompletionTextField wineryTextField;
 
-  @FXML
   AutoCompletionTextField colorTextField;
 
   @FXML
@@ -211,10 +208,16 @@ public class WineScreenController extends Controller {
    */
   @Override
   public void init() {
+    // Create sliders
     this.vintageSlider = createSlider(11, 290, 0, 100, 10);
     this.scoreSlider = createSlider(11, 365, 0, 100, 10);
     this.abvSlider = createSlider(11, 445, 0, 100, 10);
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
+
+    // Create AutoCompleteBoxes
+    this.countryTextField = createAutoCompleteTextField(9.0, 105.0);
+    this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
+    this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
 
     // Set snap to ticks
     vintageSlider.setSnapToTicks(true);
@@ -253,6 +256,17 @@ public class WineScreenController extends Controller {
     rangeSlider.setStyle("-fx-font-size: 15px;");
     filtersPane.getChildren().add(rangeSlider);
     return rangeSlider;
+  }
+
+  public AutoCompletionTextField createAutoCompleteTextField(double layoutX, double layoutY) {
+    AutoCompletionTextField autoCompleteTextField = new AutoCompletionTextField();
+    autoCompleteTextField.setLayoutX(layoutX);
+    autoCompleteTextField.setLayoutY(layoutY);
+    autoCompleteTextField.prefHeight(33.0);
+    autoCompleteTextField.setPrefWidth(300);
+    autoCompleteTextField.setStyle("-fx-font-size: 15px;");
+    filtersPane.getChildren().add(autoCompleteTextField);
+    return autoCompleteTextField;
   }
 
 
