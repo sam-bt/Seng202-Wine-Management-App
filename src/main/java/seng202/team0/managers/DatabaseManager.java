@@ -482,7 +482,7 @@ public class DatabaseManager implements AutoCloseable {
           statement.setDouble(queryIndex++, longitude);
           statement.addBatch();
         }
-        System.out.println(statement.executeBatch());
+        statement.executeBatch();
       } catch (SQLException error) {
         log.error("Could not add geolocations to the database", error);
       }
