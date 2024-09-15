@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -56,6 +57,7 @@ public class DatabaseManager implements AutoCloseable {
     this.connection = DriverManager.getConnection(dbPath);
     createWinesTable();
     createUsersTable();
+    createWineListsTable();
   }
 
 
@@ -68,6 +70,7 @@ public class DatabaseManager implements AutoCloseable {
     this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
     createWinesTable();
     createUsersTable();
+    createWineListsTable();
   }
 
   /**
@@ -324,6 +327,61 @@ public class DatabaseManager implements AutoCloseable {
       log.error("Error deleting users: {}", e.getMessage(), e);
       return false;
     }
+  }
+
+  private void createWineListsTable() throws SQLException {
+    String listNameTable = "create table if not exists LIST_NAME (" +
+            "ID int primary key not null," +
+            "USERNAME varchar(32) not null," +
+            "NAME varchar(10) not null);";
+    String listItemsTable = "create table if not exists LIST_ITEMS (" +
+            "ID int primary key not null," +
+            "LIST_ID int not null," +
+            "WINE_ID int not null);";
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(listNameTable);
+    }
+
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(listItemsTable);
+    }
+  }
+
+  public void createList(String username, String listName) {
+    String create = "insert into LIST_NAME (USERNAME, NAME) values (?, ?)";
+    try (PreparedStatement statement = connection.prepareStatement(create)) {
+      statement.setString(1, username);
+      statement.setString(2, listName);
+      statement.execute();
+    } catch (SQLException error ) {
+      log.error("Could not add list to the database", error);
+    }
+  }
+
+  public void deleteList(String username) {
+    String delete = "delete from LIST_NAME where USERNAME = ?";
+    try (PreparedStatement statement = connection.prepareStatement(delete)) {
+      statement.setString(1, username);
+      statement.executeUpdate();
+    } catch (SQLException error ) {
+      log.error("Could not delete a list from the database", error);
+    }
+  }
+
+  public List<String> getUserLists(String username) {
+    List<String> listNames = new ArrayList<>();
+    String query = "select ID, NAME from WINE_LISTS where USERNAME = ?;";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setString(1, username);
+
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        listNames.add(set.getString("NAME"));
+      }
+    } catch (SQLException error) {
+      log.error("Could not read user lists from the database", error);
+    }
+    return listNames;
   }
 
   /**
