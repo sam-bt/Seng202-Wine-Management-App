@@ -51,12 +51,12 @@ public class ListScreenController extends Controller {
    */
   public void initialize() {
     listScreenTabs.getTabs().remove(tabCreating);
-    String user = managerContext.authenticationManager.getUsername();
-    wineLists = managerContext.databaseManager.getUserLists(user);
     updateListOptions();
     tabViewing.setText("VIEWING: " + wineLists.getFirst());
     selected = 1;
-    deleteListRequestButton.setDisable(true);
+    if (wineLists.size() == 1) {
+      deleteListRequestButton.setDisable(true);
+    }
   }
 
   /**
@@ -108,7 +108,10 @@ public class ListScreenController extends Controller {
         errorText.setVisible(true);
       } else {
         errorText.setVisible(false);
-        wineLists.add(name);
+
+        String user = managerContext.authenticationManager.getUsername();
+
+        managerContext.databaseManager.createList(user, name);
 
         listName.setText("");
         updateListOptions();
@@ -128,7 +131,10 @@ public class ListScreenController extends Controller {
    */
   public void onDeleteListRequestButton(ActionEvent actionEvent) {
     if (selected != 1) {
-      wineLists.remove(selected - 1);
+
+      String user = managerContext.authenticationManager.getUsername();
+      String selectedName = wineLists.get(selected - 1);
+      managerContext.databaseManager.deleteList(user, selectedName);
       updateListOptions();
       selected -= 1;
       changeSelected();
@@ -146,6 +152,8 @@ public class ListScreenController extends Controller {
   @FXML
   public void updateListOptions() {
     Button[] buttons = {listOneButton, listTwoButton, listThreeButton, listFourButton, listFiveButton};
+    String user = managerContext.authenticationManager.getUsername();
+    wineLists = managerContext.databaseManager.getUserLists(user);
     for (int i = 0; i < buttons.length; i++) {
       if (i < wineLists.size()) {
         buttons[i].setText(wineLists.get(i));
