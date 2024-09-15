@@ -345,12 +345,13 @@ public class DatabaseManager implements AutoCloseable {
     try (Statement statement = connection.createStatement()) {
       statement.execute(listItemsTable);
     }
+    createAdminFavouritesList();
   }
 
   private void createAdminFavouritesList() {
-    String checkAndInsert = "INSERT INTO LIST_NAME (ID, USERNAME, NAME) values (null, admin, Favourites) " +
-            "SELECT 1" +
-            "WHERE NOT EXISTS (SELECT 1 FROM LIST_NAME WHERE username = admin)";
+    String checkAndInsert = "INSERT INTO LIST_NAME (ID, USERNAME, NAME) " +
+            "SELECT null, 'admin', 'Favourites'" +
+            "WHERE NOT EXISTS (SELECT 1 FROM LIST_NAME WHERE username = 'admin')";
     try (Statement statement = connection.createStatement()) {
       statement.execute(checkAndInsert);
     } catch (SQLException error) {
