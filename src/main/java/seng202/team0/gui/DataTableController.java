@@ -167,6 +167,7 @@ public class DataTableController extends Controller {
       }
 
       wines.add(Validator.parseWine(
+          managerContext.databaseManager,
           title != -1 ? tuple[title] : "",
           variety != -1 ? tuple[variety] : "",
           country != -1 ? tuple[country] : "",

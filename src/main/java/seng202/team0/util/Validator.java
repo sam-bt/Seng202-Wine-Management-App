@@ -2,6 +2,7 @@ package seng202.team0.util;
 
 import java.util.Objects;
 import seng202.team0.database.Wine;
+import seng202.team0.managers.DatabaseManager;
 import seng202.team0.util.Exceptions.ValidationException;
 
 /**
@@ -27,6 +28,7 @@ public class Validator {
    * @return wine
    */
   public static Wine parseWine(
+      DatabaseManager databaseManager,
       String title,
       String variety,
       String country,
@@ -40,6 +42,8 @@ public class Validator {
       try {
 
         return new Wine(
+            -1,
+            databaseManager,
             title,
             variety,
             country,

@@ -2,6 +2,7 @@ package seng202.team0.unittests.managers;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,8 +40,28 @@ class DatabaseManagerTest {
   @Test
   void getWinesInRange() throws SQLException {
     addWines(10);
-    assertEquals(3, manager.getWinesInRange(1, 4).size());
+    assertEquals(3, manager.getWinesInRange(0, 3).size());
   }
+
+  /**
+   * Tests setting the wine attribute
+   * @throws SQLException if error
+   */
+  @Test
+  void setWineAttribute() throws SQLException {
+    addWines(2);
+    assertEquals(2, manager.getWinesSize());
+    long id = manager.getWinesInRange(1 , 2).getFirst().getKey();
+    assertNotEquals(id, -1);
+    manager.setWineAttribute(id, "TITLE", statement -> {
+      statement.setString(1, "TEST_TITLE");
+    });
+    // ordering dependant
+    assertEquals("TEST_TITLE", manager.getWinesInRange(1, 2).getFirst().getTitle());
+
+
+  }
+
 
   /**
    * Tests getting wine size
@@ -62,7 +83,7 @@ class DatabaseManagerTest {
 
     ArrayList<Wine> wines = new ArrayList<>();
     for(int i=0; i < 3; i++) {
-      wines.add(new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "na", 99, 25.0f, 50f));
+      wines.add(new Wine(-1, manager, "wine", "blue", "nz", "christchurch", "bob's wine", "na", 99, 25.0f, 50f));
     }
     manager.replaceAllWines(wines);
     assertEquals(3, manager.getWinesSize());
@@ -75,7 +96,7 @@ class DatabaseManagerTest {
   void addWines(int num) throws SQLException {
     ArrayList<Wine> wines = new ArrayList<>();
     for(int i=0; i < num; i++) {
-      wines.add(new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "na", 99, 25f, (float)i));
+      wines.add(new Wine(-1, manager, "wine", "blue", "nz", "christchurch", "bob's wine", "na", 99, 25f, (float)i));
     }
     manager.addWines(wines);
 

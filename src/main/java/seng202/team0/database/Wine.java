@@ -6,12 +6,27 @@ import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import seng202.team0.managers.DatabaseManager;
 
 /**
  * Wine represents the wine record in the database
  */
 public class Wine {
 
+  /**
+   * ID of wine record
+   * <p>
+   *   -1 represents no database record attached. Setters will fail in this case.
+   * </p>
+   */
+  private long key;
+  /**
+   * Reference to database
+   * <p>
+   * We need to maintain this for JavaBean compliance with the setters and getters
+   * </p>
+   */
+  private DatabaseManager databaseManager;
   /**
    * Title
    */
@@ -56,6 +71,7 @@ public class Wine {
   /**
    * Constructor
    *
+   * @param key          database key, -1 if no record attached
    * @param title        title
    * @param variety      variety
    * @param country      country
@@ -67,6 +83,8 @@ public class Wine {
    * @param price        NZD price
    */
   public Wine(
+      long key,
+      DatabaseManager databaseManager,
       String title,
       String variety,
       String country,
@@ -77,6 +95,8 @@ public class Wine {
       Float abv,
       Float price
   ) {
+    this.key = key;
+    this.databaseManager = databaseManager;
     this.title = new SimpleStringProperty(this, "title", title);
     this.variety = new SimpleStringProperty(this, "variety", variety);
     this.country = new SimpleStringProperty(this, "country", country);
@@ -92,6 +112,7 @@ public class Wine {
    * Default constructor
    */
   public Wine() {
+    this.key = -1;
     this.title = new SimpleStringProperty(this, "title");
     this.variety = new SimpleStringProperty(this, "variety");
     this.country = new SimpleStringProperty(this, "country");
@@ -103,6 +124,41 @@ public class Wine {
     this.price = new SimpleFloatProperty(this, "price");
   }
 
+
+  /**
+   * Gets the key
+   * @return key
+   */
+  public long getKey() {
+    return key;
+  }
+
+  /**
+   * Sets the key
+   * @param key key
+   */
+  public void setKey(long key) {
+    this.key = key;
+  }
+
+  /**
+   * Gets the database
+   * <p>
+   *   Please don't use this. This is only here for the sake of being a bean.
+   * </p>
+   * @return database
+   */
+  public DatabaseManager getDatabaseManager() {
+    return databaseManager;
+  }
+
+  /**
+   * Sets the database
+   * @param databaseManager database
+   */
+  public void setDatabaseManager(DatabaseManager databaseManager) {
+    this.databaseManager = databaseManager;
+  }
 
   /**
    * Gets the title
@@ -196,6 +252,7 @@ public class Wine {
 
   /**
    * Sets the region
+   *
    * @param region region
    */
   public void setRegion(String region) {
@@ -204,6 +261,7 @@ public class Wine {
 
   /**
    * Gets the region property
+   *
    * @return region property
    */
   public StringProperty regionProperty() {
