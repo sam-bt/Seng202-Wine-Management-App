@@ -8,30 +8,30 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team0.database.User;
 import seng202.team0.database.Wine;
 import seng202.team0.util.Filters;
 import seng202.team0.util.Password;
-import org.apache.logging.log4j.LogManager;
 
 
 /**
  * Mediates access to the database
- *
  */
 public class DatabaseManager implements AutoCloseable {
-  /** Logger for the DatabaseManager class */
+
+  /**
+   * Logger for the DatabaseManager class
+   */
   private final Logger log = LogManager.getLogger(getClass());
 
   /**
    * Database connection
    * <p>
-   *   This is ensured to be always valid
+   * This is ensured to be always valid
    * </p>
    */
   private Connection connection;
@@ -39,8 +39,9 @@ public class DatabaseManager implements AutoCloseable {
   /**
    * Connects to a db file for management. The path to the file is specified by dbpath
    * <p>
-   *   This method will fail if application is opened from a directory without appropriate file perms
+   * This method will fail if application is opened from a directory without appropriate file perms
    * </p>
+   *
    * @throws SQLException if failed to initialize
    */
   public DatabaseManager(String databaseFileName) throws SQLException {
@@ -159,7 +160,7 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end, Filters filters) {
     ObservableList<Wine> wines = FXCollections.observableArrayList();
     String query =
-        "select TITLE, VARIETY, COUNTRY, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE "
+        "select TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE "
             + "from WINE "
             + "where TITLE like ? "
             + "and COUNTRY like ? "
@@ -200,6 +201,7 @@ public class DatabaseManager implements AutoCloseable {
             set.getString("TITLE"),
             set.getString("VARIETY"),
             set.getString("COUNTRY"),
+            set.getString("REGION"),
             set.getString("WINERY"),
             set.getString("COLOR"),
             set.getInt("VINTAGE"),
@@ -274,7 +276,7 @@ public class DatabaseManager implements AutoCloseable {
         insertStatement.setString(4, wine.getRegion());
         insertStatement.setString(5, wine.getWinery());
         insertStatement.setString(6, wine.getColor());
-        insertStatement.setString(7, wine.getVintage());
+        insertStatement.setInt(7, wine.getVintage());
         insertStatement.setString(8, wine.getDescription());
         insertStatement.setInt(9, wine.getScorePercent());
         insertStatement.setFloat(10, wine.getAbv());
@@ -286,6 +288,7 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Creates the USER table if it does not exist
+   *
    * @throws SQLException on sql error
    */
   private void createUsersTable() throws SQLException {
@@ -302,6 +305,7 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Creates a default admin user if it does not exist
+   *
    * @throws SQLException if a database error occurs
    */
   private void createDefaultAdminUser() throws SQLException {
@@ -334,7 +338,8 @@ public class DatabaseManager implements AutoCloseable {
       ResultSet set = statement.executeQuery();
 
       if (set.next()) {
-        return new User(set.getString("USERNAME"),set.getString("PASSWORD"),set.getString("ROLE"),set.getString("SALT"));
+        return new User(set.getString("USERNAME"), set.getString("PASSWORD"), set.getString("ROLE"),
+            set.getString("SALT"));
       }
     } catch (SQLException e) {
       log.error("Database error occurred: {}", e.getMessage(), e);
@@ -347,7 +352,7 @@ public class DatabaseManager implements AutoCloseable {
    *
    * @param username the username of the new user
    * @param password the password of the new user
-   * @param salt the salt used for password hashing
+   * @param salt     the salt used for password hashing
    * @return true if the user was successfully added, false otherwise
    */
   public boolean addUser(String username, String password, String salt) {
@@ -374,7 +379,7 @@ public class DatabaseManager implements AutoCloseable {
    *
    * @param username the username of the user
    * @param password the new hashed password
-   * @param salt the salt used for password hashing
+   * @param salt     the salt used for password hashing
    * @return true if the user was successfully added, false otherwise
    */
   public boolean updatePassword(String username, String password, String salt) {
@@ -414,7 +419,8 @@ public class DatabaseManager implements AutoCloseable {
   /**
    * Closes the database connection
    * <p>
-   *   This method is called automatically when the DatabaseManager is used in a try-with-resources statement
+   * This method is called automatically when the DatabaseManager is used in a try-with-resources
+   * statement
    * </p>
    */
   @Override

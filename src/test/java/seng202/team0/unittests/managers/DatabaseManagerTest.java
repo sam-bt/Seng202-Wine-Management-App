@@ -3,8 +3,13 @@ package seng202.team0.unittests.managers;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -266,7 +271,9 @@ class DatabaseManagerTest {
 
     ArrayList<Wine> wines = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      wines.add(new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011, "na", 99, 25.0f, 50f));
+      wines.add(
+          new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011, "na", 99, 25.0f,
+              50f));
     }
     manager.replaceAllWines(wines);
     assertEquals(3, manager.getWinesSize());
@@ -280,7 +287,9 @@ class DatabaseManagerTest {
   void addWines(int num) throws SQLException {
     ArrayList<Wine> wines = new ArrayList<>();
     for (int i = 0; i < num; i++) {
-      wines.add(new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011, "na", 99, 25f, (float) i));
+      wines.add(
+          new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011, "na", 99, 25f,
+              (float) i));
     }
     manager.addWines(wines);
 
@@ -294,13 +303,21 @@ class DatabaseManagerTest {
    */
   void addFilterableWines() throws SQLException {
     ArrayList<Wine> wines = new ArrayList<>();
-    wines.add(new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011, "na", 99, 25f, 10f));
     wines.add(
-        new Wine("Big wine", "green", "us", "christchurch", "joes's wine", "white", 2020, "na", 65, 20f, 20f));
-    wines.add(new Wine("Funny wine", "blue", "us", "christchurch", "joes's wine", "red", 2019, "na", 85, 24f, 50f));
+        new Wine("wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011, "na", 99, 25f,
+            10f));
     wines.add(
-        new Wine("Small wine", "red", "nz", "christchurch", "jill's wine", "white", 2012, "na", 88, 18f, 25f));
-    wines.add(new Wine("Cool wine", "green", "nz", "christchurch", "jill's wine", "red", 2018, "na", 90, 23f, 40f));
+        new Wine("Big wine", "green", "us", "christchurch", "joes's wine", "white", 2020, "na", 65,
+            20f, 20f));
+    wines.add(
+        new Wine("Funny wine", "blue", "us", "christchurch", "joes's wine", "red", 2019, "na", 85,
+            24f, 50f));
+    wines.add(
+        new Wine("Small wine", "red", "nz", "christchurch", "jill's wine", "white", 2012, "na", 88,
+            18f, 25f));
+    wines.add(
+        new Wine("Cool wine", "green", "nz", "christchurch", "jill's wine", "red", 2018, "na", 90,
+            23f, 40f));
     manager.addWines(wines);
   }
 }
