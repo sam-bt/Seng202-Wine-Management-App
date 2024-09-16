@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.ListScreenController">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.ListScreenController">
    <children>
       <TabPane fx:id="listScreenTabs" layoutX="332.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../../../../build/resources/main/css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
          <tabs>

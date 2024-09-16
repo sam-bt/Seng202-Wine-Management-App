@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.DataTableController">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.DataTableController">
    <children>
       <Button fx:id="importCSVButton" minHeight="50.0" minWidth="200.0" mnemonicParsing="false" onAction="#importCSVFile" prefHeight="50.0" prefWidth="200.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Import CSV">
          <font>
