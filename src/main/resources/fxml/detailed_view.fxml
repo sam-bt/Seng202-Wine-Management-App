@@ -106,7 +106,7 @@
             <ChoiceBox fx:id="choiceBoxListSelector" prefHeight="30.0" prefWidth="150.0" styleClass="primary-button" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="205.0" />
          </children>
       </AnchorPane>
-      <Label text="Notes" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="TOP">
+      <Label text="Notes" fx:id="errorText" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="TOP">
          <font>
             <Font size="20.0" />
          </font>

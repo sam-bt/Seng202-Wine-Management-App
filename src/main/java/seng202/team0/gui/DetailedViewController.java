@@ -41,6 +41,9 @@ public class DetailedViewController extends Controller {
     @FXML
     private Button addToListButton;
 
+    @FXML
+    private Label errorText;
+
     private Wine wine;
 
 
@@ -63,11 +66,18 @@ public class DetailedViewController extends Controller {
             addToListButton.setVisible(false);
             choiceBoxListSelector.setVisible(false);
         }
+        errorText.setVisible(false);
     }
 
     @FXML
     public void onAddToListButtonClick() {
         WineList selectedWineList = (WineList) choiceBoxListSelector.getValue();
+        if (managerContext.databaseManager.isWineInList(selectedWineList, wine)) {
+            errorText.setVisible(true);
+        } else {
+            errorText.setVisible(false);
+            managerContext.databaseManager.addWineToList(selectedWineList, wine);
+        }
 
     }
 
