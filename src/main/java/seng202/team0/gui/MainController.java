@@ -29,9 +29,6 @@ public class MainController extends Controller {
   private Button listScreenButton;
 
   @FXML
-  private Button vineyardsScreenButton;
-
-  @FXML
   private Button dataSetsScreenButton;
 
   @FXML
@@ -88,7 +85,6 @@ public class MainController extends Controller {
     disabled = status;
     wineScreenButton.setDisable(status);
     listScreenButton.setDisable(status);
-    vineyardsScreenButton.setDisable(status);
     dataSetsScreenButton.setDisable(status);
     adminScreenButton.setDisable(status);
   }
@@ -150,13 +146,6 @@ public class MainController extends Controller {
   @FXML
   public void openListScreen() {
     switchScene("/fxml/list_screen.fxml", "My Lists", () -> new ListScreenController(managerContext));
-  }
-  /**
-   * Launches the vineyard screen.
-   */
-  @FXML
-  public void openVineyardsScreen() {
-    switchScene("/fxml/vineyard_screen.fxml", "Vineyards",  () -> new VineyardScreenController(managerContext));
   }
 
   /**

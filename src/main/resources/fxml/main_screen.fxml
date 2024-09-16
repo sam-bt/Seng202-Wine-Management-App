@@ -35,11 +35,6 @@
                         <Font name="System Bold" size="20.0" />
                      </font>
                   </Button>
-                  <Button fx:id="vineyardsScreenButton" mnemonicParsing="false" onAction="#openVineyardsScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Vineyards">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </Button>
                   <Button fx:id="dataSetsScreenButton" mnemonicParsing="false" onAction="#openDataSetsScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Datasets">
                      <font>
                         <Font name="System Bold" size="20.0" />
