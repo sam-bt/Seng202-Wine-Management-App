@@ -381,7 +381,9 @@ public class WineScreenController extends Controller {
     //scene.getStylesheets().add(getClass().getResource("/css/detailed_view.css").toExternalForm());
     stage.setScene(scene);
     stage.setResizable(false);
+    detailedViewController.init();
     stage.show();
+
 
 
     detailedViewController.setWine(wine);
