@@ -52,11 +52,14 @@ public class UserService {
     if (Objects.equals(oldPassword, "") || Objects.equals(newPassword, "")) {
       return "All fields must be filled!";
     }
-    if (Objects.equals(oldPassword, newPassword)) {
-      return "New password cannot be same as old password";
-    }
     if (!Password.verifyPassword(oldPassword, user.getPassword(), user.getSalt())) {
       return "Password incorrect";
+    }
+    if (Objects.equals(username, "admin") && Objects.equals(newPassword, "admin")) {
+      return "Admin password cannot be 'admin'";
+    }
+    if (Objects.equals(oldPassword, newPassword)) {
+      return "New password cannot be same as old password";
     }
     else if (newPassword.length() < 3 || newPassword.length() > 15 || !newPassword.matches("[a-zA-Z0-9]+")) {
       return "Invalid password, Please make sure that your password is between 3 and 15 characters long and only contains letters or numbers!";
