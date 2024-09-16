@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>WINO Map</title>
+        <!-- load the leaflet stylesheets -->
         <link
             href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
             rel="stylesheet"
@@ -16,6 +16,8 @@
         />
         <meta content="initial-scale=1.0" name="viewport" />
         <meta charset="utf-8" />
+
+        <!-- styling-->
         <style>
             html,
             body {
@@ -32,11 +34,10 @@
                 gap: 8px;
                 padding: 8px;
             }
+            .toggle-button:hover {
+                background-color: #fca5a5;
+            }
             .toggle-button {
-                /* remove default button styles */
-                outline: none;
-                border: none;
-
                 background-color: #f87171;
                 border-radius: 10px;
                 color: white;
@@ -44,23 +45,29 @@
                 font-weight: bold;
                 pointer-events: auto;
                 font-family: Arial, Helvetica, sans-serif;
-            }
-            .toggle-button:hover {
-                background-color: #fca5a5;
+
+                /* remove default button styles */
+                outline: none;
+                border: none;
             }
         </style>
     </head>
     <body>
+        <!-- the container which holds the map -->
         <div id="map"></div>
 
+        <!-- container which holds the buttons -->
         <div class="leaflet-top leaflet-right">
             <div class="toggle-buttons-container">
+                <!-- responsible for toggling the heatmap view-->
                 <button
                     class="toggle-button"
                     onclick="onToggleHeatMapClick()"
                 >
                     Toggle Heatmap
                 </button>
+
+                <!-- responsible for toggling the markers view-->
                 <button
                     class="toggle-button"
                     onclick="onToggleMarkersClick()"
@@ -80,12 +87,15 @@
         <script src="https://unpkg.com/heatmap.js@2.0.5/build/heatmap.min.js"></script>
         <script src="https://unpkg.com/heatmap.js@2.0.5/plugins/leaflet-heatmap/leaflet-heatmap.js"></script>
 
+        <!-- script which handles the WINO additions to the leaflet map-->
         <script>
+            // define constants which hold the tile server URL and the attribution
             const TILE_SERVER_URL =
                 "https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png";
             const TILE_SERVER_ATTRIBUTION =
                 "© OpenStreetMap contributors<br>Served by University of Canterbury";
 
+            // the config for the heat map
             const HEATMAP_CONFIG = {
                 // radius: 0.5,
                 scaleRadius: true,
@@ -94,6 +104,7 @@
                 lngField: "lon",
             };
 
+            // the config the map
             const MAP_CONFIG = {
                 center: [-44.0, 171.0],
                 zoom: 6,
@@ -106,25 +117,28 @@
             let heatMapEnabled;
             let markersEnabled;
 
+            // a map of names to functions which allows JavaScript functions to be called through Java
             const jsConnector = {
                 initMap: initMap,
                 addWineMarker: addWineMarker,
                 clearMarkers: clearMarkers,
             };
 
+            // creates the leaflet map and adds the tile layer to it
             function initMap() {
                 map = new L.map("map", MAP_CONFIG);
                 new L.TileLayer(TILE_SERVER_URL, {
                     attribution: TILE_SERVER_ATTRIBUTION,
                 }).addTo(map);
 
-                // Heatmap
+                // setting up the heatmap
                 heatMapLayer = new HeatmapOverlay(HEATMAP_CONFIG);
                 heatMapLayer.setData({ data: heatMapData });
                 heatMapEnabled = false;
                 markersEnabled = true;
             }
 
+            // returns a full wine glass image in the specified color
             function getFullColoredWineSVG(color) {
                 const svgTemplate = `
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"	 width="100%" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
@@ -134,6 +148,7 @@
                 return `data:image/svg+xml;base64,${btoa(svgTemplate)}`;
             }
 
+            // returns a wine glass image in the specified color
             function getColoredWineSVG(color) {
                 const svgTemplate = `
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100%" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
@@ -143,11 +158,13 @@
                 return `data:image/svg+xml;base64,${btoa(svgTemplate)}`;
             }
 
+            // clears the markers off of the map
             function clearMarkers() {
                 if (markersLayer) {
                     map.removeLayer(markersLayer);
                 }
 
+                // sets up the icon for a cluster marker
                 markersLayer = L.markerClusterGroup({
                     iconCreateFunction: function (cluster) {
                         const totalCount = markers.length;
@@ -191,7 +208,10 @@
                 }
             }
 
+            // adds a new wine marker and displays it on the map
             function addWineMarker(wineTitle, region, colour, latitude, longitude) {
+                // set the colour of the marker depending on if the colour of the wine is white or red
+                // if not white or red, it will default to be black
                 hexColour = null;
                 switch(colour.toLowerCase()) {
                     case "white":
@@ -218,6 +238,7 @@
                     }),
                     riseOnHover: true,
                 });
+                // the popup which will be showed when the marker is clicked
                 marker.bindPopup(`<b>Name:</b> ${wineTitle}<br><b>Region:</b> ${region}`);
                 markers.push(marker);
                 markersLayer.addLayer(marker);
@@ -225,6 +246,8 @@
                 heatMapLayer.setData({ data: heatMapData });
             }
 
+            // if the heat map is disabled, the heat map will be enabled and shown on the map
+            // if the heat map is enabled, it will be removed from the map
             function onToggleHeatMapClick() {
                 if ((heatMapEnabled = !heatMapEnabled)) {
                     map.addLayer(heatMapLayer);
@@ -233,6 +256,8 @@
                 map.removeLayer(heatMapLayer);
             }
 
+            // if the markers are disabled, the markers will be enabled and shown on the map
+            // if the markers are enabled, the markers will be enabled and shown on the map
             function onToggleMarkersClick() {
                 if ((markersEnabled = !markersEnabled)) {
                     map.addLayer(markersLayer);
