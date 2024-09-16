@@ -83,7 +83,7 @@ public class DetailedViewController extends Controller {
     }
 
     public void setWine(Wine wine) {
-        this.wine = new Wine(wine.getKey(), managerContext.databaseManager, wine.getTitle(), wine.getVariety(), "", "", wine.getWinery(), wine.getColor(), 1000, wine.getDescription(), 0, 0.0f, 0.0f);
+        this.wine = new Wine(wine.getKey(), managerContext.databaseManager, wine.getTitle(), wine.getVariety(), "", "", wine.getWinery(), wine.getColor(), 1000, wine.getDescription(), 0, 0.0f, 0.0f, null);
         wineNameLabel.setText(wine.getTitle());
         yearLabel.setText("0000");
         countryLabel.setText(wine.getCountry());

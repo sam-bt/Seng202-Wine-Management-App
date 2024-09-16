@@ -281,11 +281,6 @@ class DatabaseManagerTest {
     }
   }
 
-  @Test
-  void adminHasFavourite() {
-    assertTrue(manager.getUserLists("admin").contains("Favourites"));
-  }
-
   private void addFilterableWines() throws SQLException {
     ArrayList<Wine> wines = new ArrayList<>();
     wines.add(
@@ -326,13 +321,9 @@ class DatabaseManagerTest {
     }
     manager.addWines(wines);
   }
-<<<<<<< HEAD
 
   @Test
   void adminHasFavourite() {
     assertTrue(manager.getUserLists("admin").stream().anyMatch(wineList -> wineList.name().equals("Favourites")));
   }
-
-=======
->>>>>>> Development
 }
