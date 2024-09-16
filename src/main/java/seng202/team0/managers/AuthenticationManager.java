@@ -1,5 +1,7 @@
 package seng202.team0.managers;
 
+import seng202.team0.model.Role;
+
 /**
  * Authentication Manager (MORE DETAIL HERE!)
  */
