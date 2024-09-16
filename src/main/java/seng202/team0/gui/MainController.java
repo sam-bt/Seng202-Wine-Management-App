@@ -138,13 +138,6 @@ public class MainController extends Controller {
   }
 
   /**
-   * Launches the home screen.
-   */
-  @FXML
-  public void openHomeScreen() {
-    switchScene("/fxml/home_screen.fxml", "Home", () -> new HomeScreenController(managerContext));
-  }
-  /**
    * Launches the wine screen.
    */
   @FXML
@@ -165,13 +158,7 @@ public class MainController extends Controller {
   public void openVineyardsScreen() {
     switchScene("/fxml/vineyard_screen.fxml", "Vineyards",  () -> new VineyardScreenController(managerContext));
   }
-  /**
-   * Launches the consumption calculator screen.
-   */
-  @FXML
-  public void openConsumptionCalculatorScreen() {
-    switchScene("/fxml/consumption_calculator_screen.fxml", "Consumption Calculator",  () -> new ConsumptionCalculatorController(managerContext));
-  }
+
   /**
    * Launches the login screen.
    */
