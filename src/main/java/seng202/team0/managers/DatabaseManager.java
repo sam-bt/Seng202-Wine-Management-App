@@ -546,14 +546,14 @@ public class DatabaseManager implements AutoCloseable {
   }
 
   private void createWineListsTable() throws SQLException {
-    String listNameTable = "create table if not exists LIST_NAME (" +
-            "ID integer primary key," +
-            "USERNAME varchar(32) not null," +
-            "NAME varchar(10) not null);";
-    String listItemsTable = "create table if not exists LIST_ITEMS (" +
-            "ID integer primary key," +
-            "LIST_ID int not null," +
-            "WINE_ID int not null);";
+    String listNameTable = "CREATE TABLE IF NOT EXISTS LIST_NAME (" +
+            "ID INTEGER PRIMARY KEY," +
+            "USERNAME VARCHAR(32) NOT NULL," +
+            "NAME VARCHAR(10) NOT NULL);";
+    String listItemsTable = "CREATE TABLE IF NOT EXISTS LIST_ITEMS (" +
+            "ID INTEGER PRIMARY KEY," +
+            "LIST_ID INT NOT NULL," +
+            "WINE_ID INT NOT NULL);";
     try (Statement statement = connection.createStatement()) {
       statement.execute(listNameTable);
     }

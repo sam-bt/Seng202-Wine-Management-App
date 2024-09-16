@@ -13,6 +13,7 @@ import netscape.javascript.JSObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team0.database.GeoLocation;
+import seng202.team0.database.Wine;
 
 /**
  * Map controller which is responsible for loading the map, JavaScript bridge
@@ -77,8 +78,9 @@ public class LeafletOSMController {
   public void clearWineMarkers() {
     javaScriptConnector.call("clearMarkers");
   }
-  public void addWineMarker(GeoLocation geoLocation) {
-    javaScriptConnector.call("addWineMarker", geoLocation.getLatitude(), geoLocation.getLongitude());
+  public void addWineMarker(Wine wine) {
+    GeoLocation geoLocation = wine.getGeoLocation();
+    javaScriptConnector.call("addWineMarker", wine.getTitle(), wine.getRegion(), wine.getColor(), geoLocation.getLatitude(), geoLocation.getLongitude());
   }
 
   public void setOnReadyAction(Runnable runnable) {

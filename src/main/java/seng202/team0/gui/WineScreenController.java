@@ -97,8 +97,7 @@ public class WineScreenController extends Controller {
     mapController.setOnReadyAction(() -> {
       mapController.clearWineMarkers();
       wines.stream()
-          .map(Wine::getGeoLocation)
-          .filter(Objects::nonNull)
+          .filter(wine -> wine.getGeoLocation() != null)
           .forEach(mapController::addWineMarker);
     });
 
