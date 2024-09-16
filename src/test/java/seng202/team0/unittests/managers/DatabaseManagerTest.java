@@ -107,7 +107,7 @@ class DatabaseManagerTest {
     for (int i = 0; i < 3; i++) {
       wines.add(
           new Wine(-1, manager, "wine", "blue", "nz", "christchurch", "", "", 1024, "na", 99, 25.0f,
-              50f));
+              50f, null));
     }
     manager.replaceAllWines(wines);
     assertEquals(3, manager.getWinesSize());
@@ -281,28 +281,33 @@ class DatabaseManagerTest {
     }
   }
 
+  @Test
+  void adminHasFavourite() {
+    assertTrue(manager.getUserLists("admin").contains("Favourites"));
+  }
+
   private void addFilterableWines() throws SQLException {
     ArrayList<Wine> wines = new ArrayList<>();
     wines.add(
         new Wine(-1, manager, "wine", "blue", "nz", "christchurch",
             "bob's wine", "red", 2011, "na", 99, 25f,
-            10f));
+            10f, null));
     wines.add(
         new Wine(-1, manager, "Big wine", "green", "us", "christchurch",
             "joes's wine", "white", 2020, "na", 65,
-            20f, 20f));
+            20f, 20f, null));
     wines.add(
         new Wine(-1, manager, "Funny wine", "blue", "us", "christchurch",
             "joes's wine", "red", 2019, "na", 85,
-            24f, 50f));
+            24f, 50f, null));
     wines.add(
         new Wine(-1, manager, "Small wine", "red", "nz", "christchurch",
             "jill's wine", "white", 2012, "na", 88,
-            18f, 25f));
+            18f, 25f, null));
     wines.add(
         new Wine(-1, manager, "Cool wine", "green", "nz", "christchurch",
             "jill's wine", "red", 2018, "na", 90,
-            23f, 40f));
+            23f, 40f, null));
     manager.addWines(wines);
   }
 
@@ -317,14 +322,8 @@ class DatabaseManagerTest {
       wines.add(
           new Wine(-1, manager, "wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011,
               "na", 99, 25f,
-              (float) i));
+              (float) i, null));
     }
     manager.addWines(wines);
   }
-
-  @BeforeEach
-  void adminHasFavourite() {
-    assertTrue(manager.getUserLists("admin").contains("Favourites"));
-  }
-
 }

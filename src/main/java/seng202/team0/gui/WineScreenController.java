@@ -2,6 +2,7 @@ package seng202.team0.gui;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Objects;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -15,6 +16,9 @@ import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.FloatStringConverter;
 import javafx.util.converter.IntegerStringConverter;
+import javafx.scene.web.WebView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
 import seng202.team0.database.Wine;
 import seng202.team0.managers.ManagerContext;
@@ -26,11 +30,16 @@ import seng202.team0.util.Filters;
 
 public class WineScreenController extends Controller {
 
+  private final Logger log = LogManager.getLogger(WineScreenController.class);
+
   @FXML
   TableView<Wine> tableView;
 
   @FXML
   AnchorPane filtersPane;
+
+  @FXML
+  WebView webView;
 
   @FXML
   Button applyFiltersButton;
@@ -54,6 +63,8 @@ public class WineScreenController extends Controller {
   private RangeSlider priceSlider;
 
   private RangeSlider vintageSlider;
+
+  private LeafletOSMController mapController;
 
   /**
    * Constructor
@@ -82,7 +93,16 @@ public class WineScreenController extends Controller {
       wines = managerContext.databaseManager.getWinesInRange(begin, end);
     }
 
-    // Set fetched data
+    // send the wines to the map if they have a geo location
+    mapController.setOnReadyAction(() -> {
+      mapController.clearWineMarkers();
+      mapController.clearHeatmap();
+      wines.stream()
+          .filter(wine -> wine.getGeoLocation() != null)
+          .forEach(mapController::addWineMarker);
+    });
+
+    // Set fetched data to the table
     tableView.setItems(wines);
 
     // Only update autocomplete if NOT filtering
@@ -175,31 +195,19 @@ public class WineScreenController extends Controller {
     StringConverter<Integer> intConverter = new IntegerStringConverter();
     StringConverter<Float> floatConverter = new FloatStringConverter();
 
-
-
     // Create and config cols
     tableView.setEditable(true);
 
     TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
-
     TableColumn<Wine, String> varietyColumn = new TableColumn<>("Variety");
-
     TableColumn<Wine, String> wineryColumn = new TableColumn<>("Winery");
-
     TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
-
     TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
-
     TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
-
     TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
-
     TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
-
     TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
-
     TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
-
 
     titleColumn.setCellValueFactory(new PropertyValueFactory<>("title") );
     varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));
@@ -214,7 +222,6 @@ public class WineScreenController extends Controller {
 
     // Enable editing if admin
     if(managerContext.authenticationManager.isAdmin()) {
-
       titleColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       varietyColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       wineryColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
@@ -242,7 +249,7 @@ public class WineScreenController extends Controller {
   /**
    * Called after the constructor for when fxml is loaded
    * <p>
-   * Gets, loads, and displays a table from a list of wines from the controller layer
+   *   Gets, loads, and displays a table from a list of wines from the controller layer
    * </p>
    */
   @Override
@@ -267,6 +274,9 @@ public class WineScreenController extends Controller {
     // Set button functions
     applyFiltersButton.setOnAction(event -> onApplyFiltersButtonPressed());
     resetFiltersButton.setOnAction(event -> onResetFiltersButtonPressed());
+
+    mapController = new LeafletOSMController(webView.getEngine());
+    mapController.initMap();
 
     setupTableColumns();
     openWineRange(0, 100, null);

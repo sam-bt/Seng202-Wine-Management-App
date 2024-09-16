@@ -139,6 +139,13 @@ jar {
     }
 }
 
+run {
+    // Add the internal JavaFX API to the module path
+    jvmArgs = ['--module-path', classpath.asPath, '--add-exports', 'javafx.web/com.sun.javafx.webkit=ALL-UNNAMED']
+}
+
+
+
 // Jacoco test coverage config
 jacoco {
     toolVersion = "0.8.9"

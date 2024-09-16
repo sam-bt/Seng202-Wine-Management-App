@@ -33,7 +33,7 @@ class WineTest {
    */
   void addWine() throws SQLException {
     ArrayList<Wine> list = new ArrayList<>();
-    list.add(new Wine(-1, database, "", "", "", "", "", "", 0, "", 0, 0f, 0f));
+    list.add(new Wine(-1, database, "", "", "", "", "", "", 0, "", 0, 0f, 0f, null));
     database.addWines(list);
   }
 

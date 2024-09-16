@@ -98,7 +98,6 @@ public class DataTableController extends Controller {
    * @return if state is valid
    */
   boolean isValidRemapping() {
-
     // Check for each box if there are any others with same value
     for (int i = 0; i < columnNames.size(); i++) {
       PrettyName name = columnNames.get(i).getValue();
@@ -117,7 +116,6 @@ public class DataTableController extends Controller {
     // Check there is a title box
     boolean containsTitle = columnNames.stream()
         .anyMatch(stringChoiceBox -> stringChoiceBox.getValue() == PrettyName.TITLE);
-
     return containsTitle;
 
   }
@@ -183,7 +181,8 @@ public class DataTableController extends Controller {
           description != -1 ? tuple[description] : "",
           score != -1 ? tuple[score] : "",
           abv != -1 ? tuple[abv] : "",
-          nzd != -1 ? tuple[nzd] : ""
+          nzd != -1 ? tuple[nzd] : "",
+          null
       ));
     }
     return wines;
