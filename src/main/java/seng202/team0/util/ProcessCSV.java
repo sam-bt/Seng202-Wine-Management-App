@@ -5,6 +5,8 @@ import java.io.File;
 import com.opencsv.CSVReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 
@@ -34,5 +36,26 @@ public class ProcessCSV {
     return rows;
   }
 
+  // todo confine this class to reuse code
 
+  /**
+   * Gets a CSV input stream as a list of rows
+   * @param input input stream to read
+   * @return rows if successful
+   */
+  public static ArrayList<String[]> getCSVRows(InputStream input) throws IOException, CsvValidationException{
+    ArrayList<String[]> rows = new ArrayList<>();
+    String[] nextLine;
+    try (CSVReader fileReader = new CSVReader(new InputStreamReader((input)))) {
+
+      while ((nextLine = fileReader.readNext()) != null) {
+        rows.add(nextLine);
+      }
+
+    } catch (IOException | CsvValidationException e) {
+      LogManager.getLogger(ProcessCSV.class).error("Failed to open csv input stream", e);
+      throw e;
+    }
+    return rows;
+  }
 }

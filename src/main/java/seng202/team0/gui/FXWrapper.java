@@ -11,7 +11,6 @@ import seng202.team0.managers.AuthenticationManager;
 import seng202.team0.managers.DatabaseManager;
 import seng202.team0.managers.GUIManager;
 import seng202.team0.managers.ManagerContext;
-import seng202.team0.managers.MapManager;
 
 /**
  * FXWrapper manages a pane in which the different GUIs are loaded.
@@ -35,7 +34,6 @@ public class FXWrapper {
             this.managerContext = new ManagerContext(
                 new DatabaseManager("database.db", true),
                 new AuthenticationManager(),
-                new MapManager(),
                 new GUIManager(this)
             );
 

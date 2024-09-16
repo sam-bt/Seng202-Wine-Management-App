@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- load the leaflet stylesheets -->
+        <link
+            href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"
+            rel="stylesheet"
+        />
+        <meta content="initial-scale=1.0" name="viewport" />
+        <meta charset="utf-8" />
+
+        <!-- styling-->
+        <style>
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            #map {
+                height: 100%;
+            }
+            .toggle-buttons-container {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding: 8px;
+            }
+            .toggle-button:hover {
+                background-color: #fca5a5;
+            }
+            .toggle-button {
+                background-color: #f87171;
+                border-radius: 10px;
+                color: white;
+                padding: 8px;
+                font-weight: bold;
+                pointer-events: auto;
+                font-family: Arial, Helvetica, sans-serif;
+
+                /* remove default button styles */
+                outline: none;
+                border: none;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- the container which holds the map -->
+        <div id="map"></div>
+
+        <!-- container which holds the buttons -->
+        <div class="leaflet-top leaflet-right">
+            <div class="toggle-buttons-container">
+                <!-- responsible for toggling the heatmap view-->
+                <button
+                    class="toggle-button"
+                    onclick="onToggleHeatMapClick()"
+                >
+                    Toggle Heatmap
+                </button>
+
+                <!-- responsible for toggling the markers view-->
+                <button
+                    class="toggle-button"
+                    onclick="onToggleMarkersClick()"
+                >
+                    Toggle Markers
+                </button>
+            </div>
+        </div>
+
+        <!-- https://leafletjs.com/ -->
+        <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+
+        <!-- https://github.com/Leaflet/Leaflet.markercluster -->
+        <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
+        <!-- https://github.com/pa7/heatmap.js -->
+        <script src="https://unpkg.com/heatmap.js@2.0.5/build/heatmap.min.js"></script>
+        <script src="https://unpkg.com/heatmap.js@2.0.5/plugins/leaflet-heatmap/leaflet-heatmap.js"></script>
+
+        <!-- script which handles the WINO additions to the leaflet map-->
+        <script>
+            // define constants which hold the tile server URL and the attribution
+            const TILE_SERVER_URL =
+                "https://tile.csse.canterbury.ac.nz/hot/{z}/{x}/{y}.png";
+            const TILE_SERVER_ATTRIBUTION =
+                "© OpenStreetMap contributors<br>Served by University of Canterbury";
+
+            // the config for the heat map
+            const HEATMAP_CONFIG = {
+                // radius: 0.5,
+                scaleRadius: true,
+                maxOpacity: 0.3,
+                latField: "lat",
+                lngField: "lon",
+            };
+
+            // the config the map
+            const MAP_CONFIG = {
+                center: [-44.0, 171.0],
+                zoom: 6,
+            };
+
+            let map, markersLayer, heatMapLayer;
+            let markers = [];
+            let heatMapData = [];
+
+            let heatMapEnabled;
+            let markersEnabled;
+
+            // a map of names to functions which allows JavaScript functions to be called through Java
+            const jsConnector = {
+                initMap: initMap,
+                addWineMarker: addWineMarker,
+                clearMarkers: clearMarkers,
+                clearHeatMap: clearHeatMap,
+            };
+
+            // creates the leaflet map and adds the tile layer to it
+            function initMap() {
+                map = new L.map("map", MAP_CONFIG);
+                new L.TileLayer(TILE_SERVER_URL, {
+                    attribution: TILE_SERVER_ATTRIBUTION,
+                }).addTo(map);
+
+                // setting up the heatmap
+                heatMapLayer = new HeatmapOverlay(HEATMAP_CONFIG);
+                heatMapLayer.setData({ data: heatMapData });
+                heatMapEnabled = false;
+                markersEnabled = true;
+            }
+
+            // returns a full wine glass image in the specified color
+            function getFullColoredWineSVG(color) {
+                const svgTemplate = `
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"	 width="100%" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
+                    <path fill="${color}" opacity="1.000000" stroke="none" 	d="M349.000000,513.000000 	C287.979095,513.000000 226.958206,513.000000 165.353745,512.632446 	C162.137405,511.172546 159.260651,510.454468 156.913223,508.924377 	C145.491852,501.479614 142.517410,485.014526 149.729874,473.588470 	C155.523071,464.410767 164.079605,461.222351 174.082016,461.072876 	C191.572815,460.811493 209.070358,461.005524 226.565048,460.989746 	C227.995178,460.988464 229.425156,460.841888 230.999924,460.754822 	C230.999924,418.238861 230.979691,376.100433 231.047668,333.962189 	C231.051987,331.289551 230.090164,330.415192 227.544846,329.706940 	C223.092117,328.467926 218.702042,326.796539 214.526962,324.801453 	C192.166962,314.116730 171.600891,300.997437 154.720901,282.406311 	C143.800339,270.378693 135.012009,257.046356 129.197464,242.102524 	C120.663139,220.168777 118.324097,197.070953 120.080269,173.676559 	C121.327095,157.067078 122.570145,140.391983 125.211075,123.970711 	C127.890083,107.312698 131.252335,90.613693 136.197617,74.510704 	C141.872726,56.031326 149.653870,38.201225 156.443893,20.060537 	C159.281494,12.479415 162.570862,5.285016 170.000000,1.000000 	C227.354233,1.000000 284.708466,1.000000 342.632904,1.355599 	C348.921936,2.882904 351.672455,7.223495 353.983185,11.946438 	C363.721893,31.851477 371.987640,52.396442 377.831940,73.735748 	C382.374756,90.322845 385.927216,107.241951 388.824097,124.200653 	C391.345764,138.962769 393.251617,153.956635 393.743378,168.903549 	C394.240753,184.020905 393.192352,199.252701 391.860992,214.349686 	C390.367371,231.285660 383.726166,246.727554 375.164459,261.228333 	C366.389832,276.089722 354.605957,288.409271 341.247284,299.279236 	C324.972961,312.521667 306.722290,322.334961 287.198883,329.656494 	C283.702637,330.967621 282.951477,331.998505 282.956635,335.194641 	C283.022461,375.837799 282.997314,416.481049 283.012512,457.124298 	C283.012970,458.383606 283.198578,459.642822 283.305573,461.000000 	C288.317627,461.000000 292.973358,460.927399 297.626160,461.013153 	C313.861816,461.312317 330.112854,461.323547 346.326538,462.101379 	C360.824188,462.796844 371.505890,478.539581 367.296387,494.271759 	C364.673462,504.074371 357.902191,509.498291 349.000000,513.000000 z"/>
+                </svg>
+                `;
+                return `data:image/svg+xml;base64,${btoa(svgTemplate)}`;
+            }
+
+            // returns a wine glass image in the specified color
+            function getColoredWineSVG(color) {
+                const svgTemplate = `
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100%" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
+                    <path fill="${color}" opacity="1.000000" stroke="none" 	d="M162.468658,513.000000 	C156.627014,509.132263 151.041992,505.604401 148.037643,499.200562 	C140.394897,482.909790 149.967865,463.887665 166.721085,461.714355 	C185.609329,459.264099 204.630722,461.163239 223.586594,460.685760 	C230.629730,460.508301 230.652405,460.641327 230.654053,453.423035 	C230.662918,414.595062 230.590012,375.766754 230.761627,336.939514 	C230.781143,332.521362 229.322281,330.685852 225.186310,329.177368 	C203.141113,321.137207 183.120071,309.582916 165.664551,293.740570 	C153.547989,282.743805 142.873901,270.525909 135.271667,256.010773 	C128.560303,243.196625 123.935493,229.584290 121.559837,215.186615 	C118.940147,199.309937 118.980644,183.313080 119.860237,167.437759 	C121.456886,138.620346 125.546745,110.104073 133.212784,82.153351 	C139.557709,59.019512 148.081802,36.737522 157.977219,14.939724 	C160.393906,9.616204 163.285416,4.609818 168.757690,1.229928 	C227.020889,1.000000 285.041779,1.000000 343.531342,1.000000 	C349.415955,3.505044 352.684692,7.882885 355.197540,13.160143 	C371.416687,47.222019 382.691589,82.881592 389.075562,120.010277 	C391.427185,133.687103 392.564270,147.577225 393.587708,161.471039 	C394.372986,172.132446 394.436951,182.751877 394.260071,193.367966 	C393.665924,229.034042 381.529816,259.938751 356.420776,285.810822 	C336.560974,306.274109 312.926086,320.391571 286.481750,330.192383 	C283.076965,331.454254 283.363800,333.553619 283.360779,335.993561 	C283.339417,353.158600 283.348114,370.323639 283.348022,387.488678 	C283.347931,409.819885 283.469696,432.152313 283.251068,454.481384 	C283.204956,459.190460 284.417847,460.850098 289.354553,460.766296 	C306.014862,460.483643 322.684113,460.537354 339.347534,460.704346 	C349.804108,460.809113 358.803467,463.923157 364.797821,473.462463 	C371.972717,484.880463 368.551819,502.032227 357.201843,509.256500 	C355.119232,510.582123 352.817993,511.564301 350.308838,512.852539 	C287.645782,513.000000 225.291550,513.000000 162.468658,513.000000 M313.500000,19.376701 	C270.012512,19.369732 226.524811,19.421501 183.037872,19.263268 	C178.775421,19.247759 176.251419,20.439865 174.636780,24.446768 	C172.529068,29.677237 169.658203,34.604652 167.621918,39.858658 	C157.911621,64.913177 149.604767,90.355034 144.865875,116.929688 	C141.192032,137.531708 138.854736,158.218307 138.407532,179.104385 	C138.099686,193.481339 138.296799,193.630280 151.716202,198.620087 	C167.711990,204.567871 184.115295,207.251877 201.342667,205.834518 	C216.144867,204.616684 229.959488,200.942688 243.258591,194.419250 	C252.201355,190.032669 260.355408,184.294846 269.700928,180.549149 	C296.930603,169.635391 324.670013,167.983490 353.092224,174.437073 	C360.492432,176.117386 367.611206,178.722534 374.713959,181.369019 	C375.953430,179.687927 375.644409,178.142792 375.625214,176.706467 	C375.509979,168.084351 374.451813,159.530350 373.786713,150.946182 	C372.465881,133.899277 369.501251,117.158104 365.699768,100.522652 	C359.768219,74.565498 350.924652,49.641064 339.819641,25.458117 	C337.709106,20.862093 335.149139,18.796406 329.986145,19.268538 	C324.863586,19.736977 319.665070,19.375076 313.500000,19.376701 M279.924438,312.361115 	C291.317566,308.508057 301.900909,302.935638 312.212402,296.859467 	C327.199036,288.028412 340.644714,277.306366 351.278503,263.397552 	C363.286804,247.690903 371.155273,230.197189 373.905334,210.474335 	C374.849701,203.701294 374.518677,202.397903 368.890137,199.948074 	C350.023651,191.736374 330.572540,188.077728 309.820557,190.145676 	C291.704254,191.950943 275.386505,197.903412 259.929138,207.089798 	C231.142700,224.197708 200.123199,228.412994 167.442703,222.776306 	C158.470566,221.228821 149.861618,218.436279 140.915649,214.885208 	C144.636612,237.178955 154.982086,255.471024 169.598099,271.292755 	C184.059631,286.947296 201.823502,298.106415 221.073578,307.217346 	C239.930038,316.141998 259.124908,317.947906 279.924438,312.361115 M169.229828,480.483734 	C167.032700,481.758301 165.009338,483.233124 164.436661,485.895935 	C163.355942,490.920898 166.995087,494.639252 173.069473,494.642212 	C215.379410,494.662872 257.689362,494.656952 299.999298,494.657928 	C313.991577,494.658264 327.984283,494.588898 341.975830,494.690491 	C346.242065,494.721436 348.497345,492.367462 349.480713,488.754974 	C350.533173,484.888611 348.035828,482.391022 345.018341,480.696167 	C342.855835,479.481537 340.310852,479.321655 337.758728,479.323700 	C283.955170,479.366638 230.151596,479.357300 176.348007,479.344604 	C174.174866,479.344116 172.020584,479.335236 169.229828,480.483734 M264.663269,452.354675 	C264.664093,416.402344 264.714020,380.449951 264.636353,344.497772 	C264.612457,333.440918 266.637421,334.469910 254.045380,334.333618 	C250.694000,334.297363 249.292435,335.414581 249.299896,338.950348 	C249.382599,378.064941 249.351273,417.179810 249.361954,456.294586 	C249.362320,457.607147 249.056030,459.406342 250.417313,459.918793 	C254.405045,461.420135 258.744904,461.170959 262.681000,460.269073 	C266.109497,459.483459 264.166656,455.730438 264.663269,452.354675 z"/>
+                </svg>
+                `;
+                return `data:image/svg+xml;base64,${btoa(svgTemplate)}`;
+            }
+
+            // clears the heatmap off of the map
+            function clearHeatMap() {
+                heatMapData = []
+                heatMapLayer.setData({ data: heatMapData });
+            }
+
+            // clears the markers off of the map
+            function clearMarkers() {
+                if (markersLayer) {
+                    map.removeLayer(markersLayer);
+                }
+
+                // sets up the icon for a cluster marker
+                markersLayer = L.markerClusterGroup({
+                    iconCreateFunction: function (cluster) {
+                        const totalCount = markers.length;
+                        const count = cluster.getChildCount();
+
+                        const green = "#22c55e";
+                        const orange = "#f97316";
+                        const yellow = "#eab308";
+                        const red = "#ef4444";
+
+                        // Calculate a weight factor to map the cluster count to the color range
+                        const countRatio = count / totalCount;
+                        if (countRatio <= 0.25) {
+                            color = green;
+                        } else if (countRatio <= 0.5) {
+                            color = orange;
+                        } else if (countRatio <= 0.75) {
+                            color = yellow;
+                        } else {
+                            color = red;
+                        }
+
+                        return L.divIcon({
+                            html: `
+                                <div style="position: relative; text-align: center;">
+                                    <img src="${getFullColoredWineSVG(
+                                        color
+                                    )}" style="width: 50px; height: 50px;" />
+                                    <b style="position: absolute; top: 10px; left: 0; right: 0; color: white;">${count}</b>
+                                </div>
+                            `,
+                            className: "", // overwrites the default
+                            iconSize: [50, 50],
+                        });
+                    },
+                });
+
+                markers = [];
+                if (markersEnabled) {
+                    map.addLayer(markersLayer);
+                }
+            }
+
+            // adds a new wine marker and displays it on the map
+            function addWineMarker(wineTitle, region, colour, latitude, longitude) {
+                // set the colour of the marker depending on if the colour of the wine is white or red
+                // if not white or red, it will default to be black
+                hexColour = null;
+                switch(colour.toLowerCase()) {
+                    case "white":
+                        hexColour = "#FFFFFF";
+                        break;
+                    case "red":
+                        hexColour = "#7B0323"
+                        break;
+                    default:
+                        hexColour = "#000000";
+                        break;
+                }
+
+                const marker = L.marker([latitude, longitude], {
+                    icon: L.divIcon({
+                        html: `
+                                <div style="position: relative; text-align: center;">
+                                    <img src="${getColoredWineSVG(hexColour)}" style="width: 50px; height: 50px;" />
+
+                                </div>
+                            `,
+                        className: "", // overwrites the default
+                        iconSize: [45, 45],
+                    }),
+                    riseOnHover: true,
+                });
+                // the popup which will be showed when the marker is clicked
+                marker.bindPopup(`<b>Name:</b> ${wineTitle}<br><b>Region:</b> ${region}`);
+                markers.push(marker);
+                markersLayer.addLayer(marker);
+                heatMapData.push({ lat: latitude, lon: longitude });
+                heatMapLayer.setData({ data: heatMapData });
+            }
+
+            // if the heat map is disabled, the heat map will be enabled and shown on the map
+            // if the heat map is enabled, it will be removed from the map
+            function onToggleHeatMapClick() {
+                if ((heatMapEnabled = !heatMapEnabled)) {
+                    map.addLayer(heatMapLayer);
+                    return;
+                }
+                map.removeLayer(heatMapLayer);
+            }
+
+            // if the markers are disabled, the markers will be enabled and shown on the map
+            // if the markers are enabled, the markers will be enabled and shown on the map
+            function onToggleMarkersClick() {
+                if ((markersEnabled = !markersEnabled)) {
+                    map.addLayer(markersLayer);
+                    return;
+                }
+                map.removeLayer(markersLayer);
+            }
+        </script>
+    </body>
+</html>

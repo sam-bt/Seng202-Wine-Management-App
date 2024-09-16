@@ -1,6 +1,7 @@
 package seng202.team0.util;
 
 import java.util.Objects;
+import seng202.team0.database.GeoLocation;
 import seng202.team0.database.Wine;
 import seng202.team0.managers.DatabaseManager;
 import seng202.team0.util.Exceptions.ValidationException;
@@ -40,8 +41,8 @@ public class Validator {
    * @param country      country
    * @param winery       winery
    * @param color        color
-   * @param description  description
    * @param vintage      vintage
+   * @param description  description
    * @param scorePercent percent score
    * @param abv          abv
    * @param price        price
@@ -59,27 +60,37 @@ public class Validator {
       String description,
       String scorePercent,
       String abv,
-      String price
-  ) throws ValidationException {
+      String price,
+      GeoLocation geoLocation
+      ) throws ValidationException {
+      try {
+
+        return new Wine(
+            -1,
+            databaseManager,
+            title,
+            variety,
+            country,
+            region,
+            winery,
+            color,
+            parseVintage(vintage),
+            description,
+            Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
+            Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
+            Objects.equals(price, "") ? 0 : Float.parseFloat(price),
+            geoLocation
+        );
+      }  catch (Exception e) {
+        throw new ValidationException("Failed to parse wine", e);
+      }
+  }
+
+  private static int parseIntegerOrDefault(String string) {
     try {
-      return new Wine(
-          -1,
-          databaseManager,
-          title,
-          variety,
-          country,
-          region,
-          winery,
-          color,
-          parseVintage(vintage),
-          description,
-          Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
-          Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
-          Objects.equals(price, "") ? 0 : Float.parseFloat(price)
-      );
-    } catch (Exception e) {
-      System.out.println(vintage);
-      throw new ValidationException("Failed to parse wine", e);
+      return Integer.parseInt(string);
+    } catch (NumberFormatException ignored) {
+      return 0;
     }
   }
 }

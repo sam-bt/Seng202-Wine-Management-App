@@ -76,10 +76,16 @@ public class Wine {
    * Price of the wine in NZD if known, else 0
    */
   private final FloatProperty price;
-
+  /**
+   * GeoLocation which holds the coordinates of the region name
+   * <p>
+   *   If the region is invalid, not present, or not found from the geolocation dataset, this will be null
+   * </p>
+   */
+  private GeoLocation geoLocation;
 
   /**
-   * Constructor
+   * Constructs a new Wine with the given attributes
    *
    * @param key          database key, -1 if no record attached
    * @param title        title
@@ -91,6 +97,7 @@ public class Wine {
    * @param scorePercent score from 0-100
    * @param abv          alcohol by volume
    * @param price        NZD price
+   * @param geoLocation  geographical location
    */
   public Wine(
       long key,
@@ -105,7 +112,8 @@ public class Wine {
       String description,
       Integer scorePercent,
       Float abv,
-      Float price
+      Float price,
+      GeoLocation geoLocation
   ) {
     this.key = key;
     this.databaseManager = databaseManager;
@@ -120,11 +128,12 @@ public class Wine {
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent", scorePercent);
     this.abv = new SimpleFloatProperty(this, "abv", abv);
     this.price = new SimpleFloatProperty(this, "price", price);
+    this.geoLocation = geoLocation;
     setupSetters();
   }
 
   /**
-   * Default constructor
+   * Default constructor for a Wine with default attributes
    */
   public Wine() {
     this.key = -1;
@@ -521,7 +530,6 @@ public class Wine {
    */
   public IntegerProperty scorePercentProperty() {
     return scorePercent;
-
   }
 
   /**
@@ -576,5 +584,23 @@ public class Wine {
    */
   public FloatProperty priceProperty() {
     return price;
+  }
+
+  /**
+   * Gets the geolocation
+   *
+   * @return geolocation the geolocation
+   */
+  public GeoLocation getGeoLocation() {
+    return geoLocation;
+  }
+
+  /**
+   * Sets the geolocation
+   *
+   * @param geoLocation the geolocation
+   */
+  public void setGeoLocation(GeoLocation geoLocation) {
+    this.geoLocation = geoLocation;
   }
 }
