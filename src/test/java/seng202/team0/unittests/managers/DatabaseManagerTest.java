@@ -322,9 +322,9 @@ class DatabaseManagerTest {
     manager.addWines(wines);
   }
 
-  @BeforeEach
+  @Test
   void adminHasFavourite() {
-    assertTrue(manager.getUserLists("admin").contains("Favourites"));
+    assertTrue(manager.getUserLists("admin").stream().anyMatch(wineList -> wineList.name().equals("Favourites")));
   }
 
 }
