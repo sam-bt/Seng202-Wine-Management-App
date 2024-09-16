@@ -5,8 +5,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import seng202.team0.database.Wine;
+import seng202.team0.managers.ManagerContext;
 
-public class DetailedViewController {
+public class DetailedViewController extends Controller {
 
 
     @FXML
@@ -33,8 +34,9 @@ public class DetailedViewController {
     private Wine wine;
 
 
-    public DetailedViewController() {
-        this.wine = new Wine("{title}", "{variety}", "{country}", "{region}", "{winery}", "{description}", 0, 0.0f, 0.0f);
+    public DetailedViewController(ManagerContext context) {
+        super(context);
+        this.wine = new Wine(-1, managerContext.databaseManager, "{title}", "{variety}", "", "", "{winery}", "{color}", 1000, "{description}", 0, 0.0f, 0.0f);
     }
 
     public void setWine(Wine wine) {

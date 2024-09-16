@@ -4,13 +4,18 @@ import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.FloatStringConverter;
@@ -271,6 +276,8 @@ public class WineScreenController extends Controller {
 
     setupTableColumns();
     openWineRange(0, 100, null);
+
+    tableView.setOnMouseClicked(this::openWineOnClick);
   }
 
   /**
@@ -365,7 +372,7 @@ public class WineScreenController extends Controller {
   private void createWineDialog(Wine wine) throws IOException {
 
     FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/detailed_view.fxml"));
-    DetailedViewController detailedViewController = new DetailedViewController();
+    DetailedViewController detailedViewController = new DetailedViewController(managerContext);
     baseLoader.setController(detailedViewController);
     Parent root = baseLoader.load();
     Stage stage = new Stage();
