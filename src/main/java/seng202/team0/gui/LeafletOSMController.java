@@ -57,7 +57,7 @@ public class LeafletOSMController {
    */
   public void initMap() {
     // read the content from the HTML file
-    InputStream input = getClass().getResourceAsStream("/map/leaflet_osm_map.html");
+    InputStream input = getClass().getResourceAsStream("/html/leaflet_osm_map.html");
     if (input == null) {
       log.error("Failed to read contents of \"map/leaflet_osm_map.html\"");
       return;
