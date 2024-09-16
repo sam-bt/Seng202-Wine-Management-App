@@ -34,7 +34,6 @@ public class FXWrapper {
             this.managerContext = new ManagerContext(
                 new DatabaseManager("database.db", true),
                 new AuthenticationManager(),
-                new MapManager(),
                 new GUIManager(this)
             );
 
