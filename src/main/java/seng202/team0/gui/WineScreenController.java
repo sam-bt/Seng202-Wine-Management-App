@@ -388,6 +388,7 @@ public class WineScreenController extends Controller {
 
     detailedViewController.setWine(wine);
 
+
   }
 
 }

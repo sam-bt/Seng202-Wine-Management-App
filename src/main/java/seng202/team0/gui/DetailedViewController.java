@@ -49,7 +49,6 @@ public class DetailedViewController extends Controller {
 
     public DetailedViewController(ManagerContext context) {
         super(context);
-        this.wine = new Wine(-1, managerContext.databaseManager, "{title}", "{variety}", "", "", "{winery}", "{color}", 1000, "{description}", 0, 0.0f, 0.0f);
     }
 
     @FXML
@@ -58,7 +57,6 @@ public class DetailedViewController extends Controller {
             addToListButton.setVisible(true);
             choiceBoxListSelector.setVisible(true);
             String user = managerContext.authenticationManager.getUsername();
-//            ObservableList<String> list = FXCollections.observableList(managerContext.databaseManager.getUserLists(user).stream().map(WineList::name).collect(Collectors.toList()));
             ObservableList<WineList> list = FXCollections.observableList(managerContext.databaseManager.getUserLists(user));
             choiceBoxListSelector.setItems(list);
             choiceBoxListSelector.setValue(list.getFirst());
@@ -70,18 +68,22 @@ public class DetailedViewController extends Controller {
     }
 
     @FXML
-    public void onAddToListButtonClick() {
+    public void onAddToListButton() {
         WineList selectedWineList = (WineList) choiceBoxListSelector.getValue();
         if (managerContext.databaseManager.isWineInList(selectedWineList, wine)) {
             errorText.setVisible(true);
+            errorText.setText("Wine Already in list " + selectedWineList);
+            System.out.println("Error AAdding to list");
         } else {
             errorText.setVisible(false);
             managerContext.databaseManager.addWineToList(selectedWineList, wine);
+            System.out.println("AAAAdding to list");
         }
 
     }
 
     public void setWine(Wine wine) {
+        this.wine = new Wine(wine.getKey(), managerContext.databaseManager, wine.getTitle(), wine.getVariety(), "", "", wine.getWinery(), wine.getColor(), 1000, wine.getDescription(), 0, 0.0f, 0.0f);
         wineNameLabel.setText(wine.getTitle());
         yearLabel.setText("0000");
         countryLabel.setText(wine.getCountry());
