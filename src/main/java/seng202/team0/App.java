@@ -1,9 +1,8 @@
 package seng202.team0;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import seng202.team0.gui.FXWindow;
+import seng202.team0.gui.wrapper.FXWindow;
 
 /**
  * Default entry point class

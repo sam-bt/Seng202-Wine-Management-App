@@ -1,4 +1,4 @@
-package seng202.team0.gui;
+package seng202.team0.gui.controls;
 
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;

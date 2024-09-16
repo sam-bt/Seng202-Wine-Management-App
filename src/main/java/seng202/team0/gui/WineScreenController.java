@@ -19,6 +19,7 @@ import javafx.scene.web.WebView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
+import seng202.team0.gui.controls.AutoCompletionTextField;
 import seng202.team0.model.Wine;
 import seng202.team0.managers.ManagerContext;
 import seng202.team0.model.Filters;

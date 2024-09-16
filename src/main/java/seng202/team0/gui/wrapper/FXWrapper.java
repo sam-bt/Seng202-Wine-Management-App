@@ -1,4 +1,4 @@
-package seng202.team0.gui;
+package seng202.team0.gui.wrapper;
 
 import java.io.IOException;
 import javafx.fxml.FXML;
@@ -7,6 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Builder;
+import seng202.team0.gui.Controller;
+import seng202.team0.gui.MainController;
 import seng202.team0.managers.AuthenticationManager;
 import seng202.team0.managers.DatabaseManager;
 import seng202.team0.managers.GUIManager;

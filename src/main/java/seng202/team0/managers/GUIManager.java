@@ -1,7 +1,7 @@
 package seng202.team0.managers;
 
 import javafx.util.Builder;
-import seng202.team0.gui.FXWrapper;
+import seng202.team0.gui.wrapper.FXWrapper;
 import seng202.team0.gui.MainController;
 
 /**
