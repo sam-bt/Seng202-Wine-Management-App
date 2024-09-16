@@ -3,11 +3,9 @@ package seng202.team0.gui;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import seng202.team0.database.WineList;
 import seng202.team0.managers.ManagerContext;
 
-import javax.swing.*;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +32,7 @@ public class ListScreenController extends Controller {
   @FXML
   public Button deleteListRequestButton;
 
-  public List<String> wineLists;
+  public List<WineList> wineLists;
   private int selected = 1;
 
   /**
@@ -52,7 +50,7 @@ public class ListScreenController extends Controller {
   public void initialize() {
     listScreenTabs.getTabs().remove(tabCreating);
     updateListOptions();
-    tabViewing.setText("VIEWING: " + wineLists.getFirst());
+    tabViewing.setText("VIEWING: " + wineLists.getFirst().name());
     selected = 1;
     if (wineLists.size() == 1) {
       deleteListRequestButton.setDisable(true);
@@ -133,8 +131,8 @@ public class ListScreenController extends Controller {
     if (selected != 1) {
 
       String user = managerContext.authenticationManager.getUsername();
-      String selectedName = wineLists.get(selected - 1);
-      managerContext.databaseManager.deleteList(user, selectedName);
+      WineList wineList = wineLists.get(selected - 1);
+      managerContext.databaseManager.deleteList(wineList);
       updateListOptions();
       selected -= 1;
       changeSelected();
@@ -156,7 +154,7 @@ public class ListScreenController extends Controller {
     wineLists = managerContext.databaseManager.getUserLists(user);
     for (int i = 0; i < buttons.length; i++) {
       if (i < wineLists.size()) {
-        buttons[i].setText(wineLists.get(i));
+        buttons[i].setText(wineLists.get(i).name());
         buttons[i].setDisable(false);
       } else {
         buttons[i].setText("Empty List");
@@ -218,6 +216,6 @@ public class ListScreenController extends Controller {
    * Changes the selected list.
    */
   public void changeSelected() {
-    tabViewing.setText("VIEWING: " + wineLists.get(selected - 1));
+    tabViewing.setText("VIEWING: " + wineLists.get(selected - 1).name());
   }
 }

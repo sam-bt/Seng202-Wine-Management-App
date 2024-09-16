@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team0.database.User;
 import seng202.team0.database.Wine;
+import seng202.team0.database.WineList;
 import seng202.team0.util.Filters;
 import seng202.team0.util.Password;
 
@@ -471,11 +472,11 @@ public class DatabaseManager implements AutoCloseable {
 
   private void createWineListsTable() throws SQLException {
     String listNameTable = "create table if not exists LIST_NAME (" +
-            "ID integer primary key," +
+            "ID INTEGER PRIMARY KEY," +
             "USERNAME varchar(32) not null," +
             "NAME varchar(10) not null);";
     String listItemsTable = "create table if not exists LIST_ITEMS (" +
-            "ID integer primary key," +
+            "ID INTEGER PRIMARY KEY," +
             "LIST_ID int not null," +
             "WINE_ID int not null);";
     try (Statement statement = connection.createStatement()) {
@@ -499,42 +500,91 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  public void createList(String username, String listName) {
+  public WineList createList(String username, String listName) {
     String create = "insert into LIST_NAME (ID, USERNAME, NAME) values (null, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(create)) {
       statement.setString(1, username);
       statement.setString(2, listName);
-      statement.execute();
+
+      int rowsAffected = statement.executeUpdate();
+      if (rowsAffected > 0) {
+        ResultSet generatedKeys = statement.getGeneratedKeys();
+        if (generatedKeys.next()) {
+          long id = generatedKeys.getLong(1);
+          return new WineList(id, listName);
+        }
+      }
+      log.error("Could not add list to the database");
+      return null;
     } catch (SQLException error ) {
       log.error("Could not add list to the database", error);
+      return null;
     }
   }
 
-  public void deleteList(String username, String listName) {
-    String delete = "delete from LIST_NAME where USERNAME = ? and NAME = ?";
+  public void deleteList(WineList wineList) {
+    String delete = "delete from LIST_NAME where ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(delete)) {
-      statement.setString(1, username);
-      statement.setString(2, listName);
+      statement.setLong(1, wineList.id());
       statement.executeUpdate();
     } catch (SQLException error ) {
       log.error("Could not delete a list from the database", error);
     }
   }
 
-  public List<String> getUserLists(String username) {
-    List<String> listNames = new ArrayList<>();
+  public List<WineList> getUserLists(String username) {
+    List<WineList> listNames = new ArrayList<>();
     String query = "select ID, NAME from LIST_NAME where USERNAME = ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setString(1, username);
 
       ResultSet set = statement.executeQuery();
       while (set.next()) {
-        listNames.add(set.getString("NAME"));
+        listNames.add(new WineList(
+                set.getLong("ID"),
+                set.getString("NAME")
+        ));
       }
     } catch (SQLException error) {
       log.error("Could not read user lists from the database", error);
     }
     return listNames;
+  }
+
+  public boolean isWineInList(WineList wineList, Wine wine) {
+    String query = "SELECT * FROM LIST_ITEMS WHERE ID = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setLong(1, wineList.id());
+      statement.setLong(2, wine.getKey());
+
+      ResultSet set = statement.executeQuery();
+      return set.next();
+    } catch (SQLException error) {
+      log.error("Could check if a wine is apart of a list in the database", error);
+    }
+    return false;
+  }
+
+  public void addWineToList(WineList wineList, Wine wine) {
+    String insert = "INSERT INTO LIST_ITEMS VALUES (null, ?, ?)";
+    try (PreparedStatement statement = connection.prepareStatement(insert)) {
+      statement.setLong(1, wineList.id());
+      statement.setLong(2, wine.getKey());
+      statement.execute();
+    } catch (SQLException error) {
+      log.error("Could not add a wine to a list", error);
+    }
+  }
+
+  public void deleteWineToList(WineList wineList, Wine wine) {
+    String delete = "DELETE FROM LIST_ITEMS WHERE LIST_ID = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(delete)) {
+      statement.setLong(1, wineList.id());
+      statement.setLong(2, wine.getKey());
+      statement.execute();
+    } catch (SQLException error) {
+      log.error("Could not add a wine to a list", error);
+    }
   }
 
   /**
