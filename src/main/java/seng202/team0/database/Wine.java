@@ -82,10 +82,10 @@ public class Wine {
    *   If the region is invalid, not present, or not found from the geolocation dataset, this will be null
    * </p>
    */
-  private final GeoLocation geoLocation;
+  private GeoLocation geoLocation;
 
   /**
-   * Constructor
+   * Constructs a new Wine with the given attributes
    *
    * @param key          database key, -1 if no record attached
    * @param title        title
@@ -97,6 +97,7 @@ public class Wine {
    * @param scorePercent score from 0-100
    * @param abv          alcohol by volume
    * @param price        NZD price
+   * @param geoLocation  geographical location
    */
   public Wine(
       long key,
@@ -132,9 +133,9 @@ public class Wine {
   }
 
   /**
-   * Default constructor
+   * Default constructor for a Wine with default attributes
    */
-  public Wine(GeoLocation geoLocation) {
+  public Wine() {
     this.key = -1;
     this.title = new SimpleStringProperty(this, "title");
     this.variety = new SimpleStringProperty(this, "variety");
@@ -147,7 +148,6 @@ public class Wine {
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent");
     this.abv = new SimpleFloatProperty(this, "abv");
     this.price = new SimpleFloatProperty(this, "price");
-    this.geoLocation = geoLocation;
     setupSetters();
   }
 
@@ -586,7 +586,21 @@ public class Wine {
     return price;
   }
 
+  /**
+   * Gets the geolocation
+   *
+   * @return geolocation the geolocation
+   */
   public GeoLocation getGeoLocation() {
     return geoLocation;
+  }
+
+  /**
+   * Sets the geolocation
+   *
+   * @param geoLocation the geolocation
+   */
+  public void setGeoLocation(GeoLocation geoLocation) {
+    this.geoLocation = geoLocation;
   }
 }
