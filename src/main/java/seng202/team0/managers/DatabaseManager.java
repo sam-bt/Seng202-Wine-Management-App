@@ -673,7 +673,7 @@ public class DatabaseManager implements AutoCloseable {
     try (PreparedStatement statement = connection.prepareStatement(insert)) {
       statement.setLong(1, wineList.id());
       statement.setLong(2, wine.getKey());
-      statement.execute();
+      statement.executeUpdate();
     } catch (SQLException error) {
       log.error("Could not add a wine to a list", error);
     }
