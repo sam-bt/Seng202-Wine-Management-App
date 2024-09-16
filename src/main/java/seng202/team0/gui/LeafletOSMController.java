@@ -102,6 +102,16 @@ public class LeafletOSMController {
   }
 
   /**
+   * Calls the clearHeatmap function in JavaScript
+   * <p>
+   *   The JavaScript function will clear the heatmap
+   * </p>
+   */
+  public void clearHeatmap() {
+    javaScriptConnector.call("clearHeatMap");
+  }
+
+  /**
    * Calls the addWineMarker function in JavaScript
    * <p>
    *   The JavaScript function will create a new marker of the wine and display it at the wines

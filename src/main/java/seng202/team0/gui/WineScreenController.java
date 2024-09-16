@@ -96,6 +96,7 @@ public class WineScreenController extends Controller {
     // send the wines to the map if they have a geo location
     mapController.setOnReadyAction(() -> {
       mapController.clearWineMarkers();
+      mapController.clearHeatmap();
       wines.stream()
           .filter(wine -> wine.getGeoLocation() != null)
           .forEach(mapController::addWineMarker);

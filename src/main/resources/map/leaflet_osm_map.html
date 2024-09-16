@@ -122,6 +122,7 @@
                 initMap: initMap,
                 addWineMarker: addWineMarker,
                 clearMarkers: clearMarkers,
+                clearHeatMap: clearHeatMap,
             };
 
             // creates the leaflet map and adds the tile layer to it
@@ -156,6 +157,12 @@
                 </svg>
                 `;
                 return `data:image/svg+xml;base64,${btoa(svgTemplate)}`;
+            }
+
+            // clears the heatmap off of the map
+            function clearHeatMap() {
+                heatMapData = []
+                heatMapLayer.setData({ data: heatMapData });
             }
 
             // clears the markers off of the map
