@@ -234,8 +234,12 @@ public class ListScreenController extends Controller {
     tableView.getItems().clear();
 
     String user = managerContext.authenticationManager.getUsername();
-    ObservableList<WineList> list = FXCollections.observableList(managerContext.databaseManager.getUserLists(user));
-    tableView.setItems(list);
+    List<WineList> userLists = managerContext.databaseManager.getUserLists(user);
+    WineList fromUserLists = userLists.get(selected-1);
+    List<Wine> list = managerContext.databaseManager.getWinesInList(fromUserLists);
+    ObservableList<Wine> observableList = FXCollections.observableList(list);
+    tableView.setItems(observableList);
+
 
   }
 
