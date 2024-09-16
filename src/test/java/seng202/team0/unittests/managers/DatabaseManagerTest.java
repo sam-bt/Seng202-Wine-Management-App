@@ -84,6 +84,17 @@ class DatabaseManagerTest {
   }
 
   /**
+   * Sometimes all the primary keys are 0
+   */
+  @Test
+  void testBrokenIDs() throws SQLException {
+    addWines(2);
+    manager.getWinesInRange(0, 1);
+    assertNotEquals(manager.getWinesInRange(0,1).getFirst().getKey(), manager.getWinesInRange(1,2).getFirst().getKey());
+  }
+
+
+  /**
    * Tests replacing wine
    *
    * @throws SQLException if error

@@ -94,7 +94,8 @@ public class DatabaseManager implements AutoCloseable {
   private void createWinesTable() throws SQLException {
     String create = "create table if not exists WINE (" +
         // There are a lot of duplicates
-        "ID integer PRIMARY KEY," +
+        // This definition of ID is intended to alias to ROWID.
+        "ID INTEGER PRIMARY KEY," +
         "TITLE varchar(64) NOT NULL," +
         "VARIETY varchar(32)," +
         "COUNTRY varchar(32)," +
@@ -166,9 +167,8 @@ public class DatabaseManager implements AutoCloseable {
 
       ResultSet set = statement.executeQuery();
       while (set.next()) {
-
         Wine wine = new Wine(
-            set.getInt("ID"),
+            set.getLong("ID"),
             this,
             set.getString("TITLE"),
             set.getString("VARIETY"),
@@ -218,7 +218,7 @@ public class DatabaseManager implements AutoCloseable {
             + "and SCORE_PERCENT between ? and ? "
             + "and ABV between ? and ? "
             + "and PRICE between ? and ? "
-            + "order by ROWID "
+            + "order by ID "
             + "limit ? "
             + "offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {

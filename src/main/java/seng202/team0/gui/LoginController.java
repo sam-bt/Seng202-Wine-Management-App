@@ -40,18 +40,18 @@ public class LoginController extends Controller{
     if (validateResponse.equals("Success")) {
       managerContext.authenticationManager.setAuthenticated(true);
       managerContext.authenticationManager.setAdmin(false);
-      managerContext.authenticationManager.getUser(username);
+      managerContext.authenticationManager.setUsername(username);
       managerContext.GUIManager.mainController.openWineScreen();
       managerContext.GUIManager.mainController.onLogin();
     } else if (validateResponse.equals("Admin Success")) {
       managerContext.authenticationManager.setAuthenticated(true);
       managerContext.authenticationManager.setAdmin(true);
-      managerContext.authenticationManager.getUser(username);
+      managerContext.authenticationManager.setUsername(username);
       managerContext.GUIManager.mainController.openWineScreen();
       managerContext.GUIManager.mainController.onLogin();
     } else if (validateResponse.equals("Admin First Success")) {
       managerContext.GUIManager.mainController.setDisable(true);
-      managerContext.authenticationManager.getUser(username);
+      managerContext.authenticationManager.setUsername(username);
       managerContext.GUIManager.mainController.openUpdatePasswordScreen();
 
     } else {

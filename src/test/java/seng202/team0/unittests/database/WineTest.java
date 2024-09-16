@@ -33,7 +33,7 @@ class WineTest {
    */
   void addWine() throws SQLException {
     ArrayList<Wine> list = new ArrayList<>();
-    list.add(new Wine(-1, database, "", "", "", "", "", "", 1024, "", 0, 0f, 0f));
+    list.add(new Wine(-1, database, "", "", "", "", "", "", 0, "", 0, 0f, 0f));
     database.addWines(list);
   }
 
@@ -84,6 +84,25 @@ class WineTest {
     assertEquals("test", getTestWine().getCountry());
   }
 
+  /**
+   * Tests setting the color
+   */
+  @Test
+  void setColor() {
+    assertEquals("", getTestWine().getColor());
+    getTestWine().setColor("test");
+    assertEquals("test", getTestWine().getColor());
+  }
+
+  /**
+   * Tests setting the region
+   */
+  @Test
+  void setVintage() {
+    assertEquals(0, getTestWine().getVintage());
+    getTestWine().setVintage(25);
+    assertEquals(25, getTestWine().getVintage());
+  }
   /**
    * Tests setting the region
    */
