@@ -1,4 +1,4 @@
-package seng202.team0.util;
+package seng202.team0.model;
 
 public class Filters {
 

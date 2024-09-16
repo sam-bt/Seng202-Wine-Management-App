@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import seng202.team0.managers.ManagerContext;
-import seng202.team0.util.UserService;
+import seng202.team0.service.UserService;
 
 public class UpdatePasswordController extends Controller{
   @FXML

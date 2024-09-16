@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
 import seng202.team0.model.Wine;
 import seng202.team0.managers.ManagerContext;
-import seng202.team0.util.Filters;
+import seng202.team0.model.Filters;
 
 /**
  * Controller for the screen that displays wines

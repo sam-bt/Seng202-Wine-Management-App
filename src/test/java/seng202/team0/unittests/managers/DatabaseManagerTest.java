@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team0.model.Wine;
 import seng202.team0.managers.DatabaseManager;
-import seng202.team0.util.Filters;
+import seng202.team0.model.Filters;
 
 class DatabaseManagerTest {
 

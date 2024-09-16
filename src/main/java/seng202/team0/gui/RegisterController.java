@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import seng202.team0.managers.ManagerContext;
-import seng202.team0.util.UserService;
+import seng202.team0.service.UserService;
 
 /**
  * Register Controller

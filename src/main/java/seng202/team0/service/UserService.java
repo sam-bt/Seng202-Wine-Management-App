@@ -1,4 +1,4 @@
-package seng202.team0.util;
+package seng202.team0.service;
 
 import seng202.team0.model.User;
 import seng202.team0.managers.ManagerContext;
@@ -28,7 +28,7 @@ public class UserService {
       return "Username or Password is Incorrect";
     }
 
-    boolean validPassword = Password.verifyPassword(password, userInfo.getPassword(),
+    boolean validPassword = EncryptionService.verifyPassword(password, userInfo.getPassword(),
         userInfo.getSalt());
     if (!validPassword) {
       return "Username or Password is Incorrect";
@@ -73,8 +73,8 @@ public class UserService {
         "[a-zA-Z0-9]+")) {
       return "Invalid password, Please make sure that your password is between 3 and 15 characters long and only contains letters or numbers!";
     }
-    String salt = Password.generateSalt();
-    String hashedPassword = Password.hashPassword(password, salt);
+    String salt = EncryptionService.generateSalt();
+    String hashedPassword = EncryptionService.hashPassword(password, salt);
     boolean userAdded = manager.databaseManager.addUser(username, hashedPassword, salt);
     if (userAdded) {
       return "Success";
@@ -105,7 +105,7 @@ public class UserService {
       return "All fields must be filled!";
     }
 
-    boolean validPassword = Password.verifyPassword(oldPassword, user.getPassword(),
+    boolean validPassword = EncryptionService.verifyPassword(oldPassword, user.getPassword(),
         user.getSalt());
     if (!validPassword) {
       return "Password is Incorrect";
@@ -121,8 +121,8 @@ public class UserService {
       return "Invalid password, Please make sure that your password is between 3 and 15 characters long and only contains letters or numbers!";
     }
 
-    String salt = Password.generateSalt();
-    String hashedPassword = Password.hashPassword(newPassword, salt);
+    String salt = EncryptionService.generateSalt();
+    String hashedPassword = EncryptionService.hashPassword(newPassword, salt);
     boolean passwordUpdated = manager.databaseManager.updatePassword(username, hashedPassword,
         salt);
     if (passwordUpdated) {
