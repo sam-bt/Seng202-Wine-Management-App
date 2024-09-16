@@ -6,9 +6,9 @@ plugins {
 }
 
 archivesBaseName = 'wino'
-group = 'seng202.team0'
+group = 'seng202.team6'
 version = '0.2-snapshot'
-mainClassName = 'seng202.team0.App'
+mainClassName = 'seng202.team6.App'
 
 def javaVersion = '21'
 def javafxVersion = '20.0.1'
