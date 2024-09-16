@@ -1,14 +1,8 @@
 package seng202.team0.managers;
 
 import javafx.util.Builder;
-import seng202.team0.gui.ConsumptionCalculatorController;
-import seng202.team0.gui.DataTableController;
 import seng202.team0.gui.FXWrapper;
-import seng202.team0.gui.HomeScreenController;
 import seng202.team0.gui.MainController;
-import seng202.team0.gui.VineyardScreenController;
-import seng202.team0.gui.WineScreenController;
-import seng202.team0.gui.ListScreenController;
 
 /**
  * Manager for interacting with the GUI

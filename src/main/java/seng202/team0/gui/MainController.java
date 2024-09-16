@@ -29,9 +29,6 @@ public class MainController extends Controller {
   private Button listScreenButton;
 
   @FXML
-  private Button vineyardsScreenButton;
-
-  @FXML
   private Button dataSetsScreenButton;
 
   @FXML
@@ -88,7 +85,6 @@ public class MainController extends Controller {
     disabled = status;
     wineScreenButton.setDisable(status);
     listScreenButton.setDisable(status);
-    vineyardsScreenButton.setDisable(status);
     dataSetsScreenButton.setDisable(status);
     adminScreenButton.setDisable(status);
   }
@@ -138,13 +134,6 @@ public class MainController extends Controller {
   }
 
   /**
-   * Launches the home screen.
-   */
-  @FXML
-  public void openHomeScreen() {
-    switchScene("/fxml/home_screen.fxml", "Home", () -> new HomeScreenController(managerContext));
-  }
-  /**
    * Launches the wine screen.
    */
   @FXML
@@ -158,20 +147,7 @@ public class MainController extends Controller {
   public void openListScreen() {
     switchScene("/fxml/list_screen.fxml", "My Lists", () -> new ListScreenController(managerContext));
   }
-  /**
-   * Launches the vineyard screen.
-   */
-  @FXML
-  public void openVineyardsScreen() {
-    switchScene("/fxml/vineyard_screen.fxml", "Vineyards",  () -> new VineyardScreenController(managerContext));
-  }
-  /**
-   * Launches the consumption calculator screen.
-   */
-  @FXML
-  public void openConsumptionCalculatorScreen() {
-    switchScene("/fxml/consumption_calculator_screen.fxml", "Consumption Calculator",  () -> new ConsumptionCalculatorController(managerContext));
-  }
+
   /**
    * Launches the login screen.
    */
