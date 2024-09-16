@@ -1,8 +1,8 @@
 package seng202.team0.util;
 
 import java.util.Objects;
-import seng202.team0.database.GeoLocation;
-import seng202.team0.database.Wine;
+import seng202.team0.model.GeoLocation;
+import seng202.team0.model.Wine;
 import seng202.team0.managers.DatabaseManager;
 import seng202.team0.util.Exceptions.ValidationException;
 

@@ -15,7 +15,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.apache.logging.log4j.LogManager;
-import seng202.team0.database.Wine;
+import seng202.team0.model.Wine;
 import seng202.team0.managers.ManagerContext;
 import seng202.team0.util.Exceptions.ValidationException;
 import seng202.team0.util.ProcessCSV;

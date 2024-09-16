@@ -2,7 +2,6 @@ package seng202.team0.gui;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Objects;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -20,7 +19,7 @@ import javafx.scene.web.WebView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
-import seng202.team0.database.Wine;
+import seng202.team0.model.Wine;
 import seng202.team0.managers.ManagerContext;
 import seng202.team0.util.Filters;
 

@@ -1,6 +1,6 @@
 package seng202.team0.util;
 
-import seng202.team0.database.User;
+import seng202.team0.model.User;
 import seng202.team0.managers.ManagerContext;
 
 public class UserService {

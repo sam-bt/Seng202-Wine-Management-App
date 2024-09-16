@@ -12,8 +12,8 @@ import javafx.scene.web.WebEngine;
 import netscape.javascript.JSObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import seng202.team0.database.GeoLocation;
-import seng202.team0.database.Wine;
+import seng202.team0.model.GeoLocation;
+import seng202.team0.model.Wine;
 
 /**
  * Map controller which is responsible for loading the map and calling JavaScript functions

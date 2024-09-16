@@ -1,4 +1,4 @@
-package seng202.team0.database;
+package seng202.team0.model;
 
 /**
  * Represents a geographical location with latitude and longitude coordinates

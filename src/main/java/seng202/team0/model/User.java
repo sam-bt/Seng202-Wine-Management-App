@@ -1,4 +1,4 @@
-package seng202.team0.database;
+package seng202.team0.model;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
