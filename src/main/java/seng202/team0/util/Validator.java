@@ -1,7 +1,9 @@
 package seng202.team0.util;
 
+import java.util.Objects;
 import seng202.team0.database.GeoLocation;
 import seng202.team0.database.Wine;
+import seng202.team0.managers.DatabaseManager;
 import seng202.team0.util.Exceptions.ValidationException;
 
 /**
@@ -12,6 +14,24 @@ import seng202.team0.util.Exceptions.ValidationException;
  * </p>
  */
 public class Validator {
+
+
+  /**
+   * Parses a vintage
+   * <p>
+   * Decanter sometimes does not have a number for the vintage
+   * </p>
+   *
+   * @param vintage vintage
+   * @return vintage or null if invalid
+   */
+  private static int parseVintage(String vintage) {
+    try {
+      return Integer.parseInt(vintage);
+    } catch (Exception exception) {
+      return 0;
+    }
+  }
 
   /**
    * Creates a wine from a list of attributes
@@ -29,6 +49,7 @@ public class Validator {
    * @return wine
    */
   public static Wine parseWine(
+      DatabaseManager databaseManager,
       String title,
       String variety,
       String country,
@@ -45,17 +66,19 @@ public class Validator {
       try {
 
         return new Wine(
+            -1,
+            databaseManager,
             title,
             variety,
             country,
             region,
             winery,
             color,
-            parseIntegerOrDefault(vintage),
+            parseVintage(vintage),
             description,
-            parseIntegerOrDefault(scorePercent),
-            parseFloatOrDefault(abv),
-            parseFloatOrDefault(price),
+            Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
+            Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
+            Objects.equals(price, "") ? 0 : Float.parseFloat(price),
             geoLocation
         );
       }  catch (Exception e) {
@@ -68,14 +91,6 @@ public class Validator {
       return Integer.parseInt(string);
     } catch (NumberFormatException ignored) {
       return 0;
-    }
-  }
-
-  private static float parseFloatOrDefault(String string) {
-    try {
-      return Float.parseFloat(string);
-    } catch (NumberFormatException ignored) {
-      return 0.0f;
     }
   }
 }

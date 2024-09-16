@@ -43,6 +43,9 @@ public class RegisterController extends Controller{
     String validateResponse = validateRegistration(username,password,confirmPassword);
     if (validateResponse.equals("Success")) {
       managerContext.GUIManager.mainController.openLoginScreen();
+
+      // todo - move this somewhere better
+      managerContext.databaseManager.createList(username, "Favourites");
     } else {
       registerMessageLabel.setStyle("-fx-text-fill: red");
       registerMessageLabel.setText(validateResponse);

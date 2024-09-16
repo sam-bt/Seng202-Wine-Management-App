@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.util.Builder;
 import seng202.team0.managers.ManagerContext;
 
@@ -41,6 +42,8 @@ public class MainController extends Controller {
 
   @FXML
   private Button registerButton;
+  @FXML
+  private HBox navBarBox;
 
   private boolean disabled = false;
 
@@ -57,6 +60,11 @@ public class MainController extends Controller {
 
   public void initialize() {
       adminScreenButton.setVisible(false);
+      navBarBox.getChildren().remove(listScreenButton);
+      navBarBox.getChildren().add(3, listScreenButton);
+      listScreenButton.setVisible(false);
+      openWineScreen();
+
   }
 
   public void onLogin() {
@@ -64,6 +72,11 @@ public class MainController extends Controller {
       adminScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
       loginButton.setText("Settings");
       registerButton.setText("Logout");
+
+      navBarBox.getChildren().remove(listScreenButton);
+      navBarBox.getChildren().add(1, listScreenButton);
+      listScreenButton.setVisible(true);
+
       loginButton.setOnMouseClicked(event -> openSettingsScreen());
       registerButton.setOnMouseClicked(event -> logout());
     } else {
@@ -103,6 +116,12 @@ public class MainController extends Controller {
     loginButton.setOnMouseClicked(event -> openLoginScreen());
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
     adminScreenButton.setVisible(false);
+
+    navBarBox.getChildren().remove(listScreenButton);
+    navBarBox.getChildren().add(3, listScreenButton);
+    listScreenButton.setVisible(false);
+
+    managerContext.authenticationManager.logout();
     openWineScreen();
   }
 
@@ -137,7 +156,7 @@ public class MainController extends Controller {
    */
   @FXML
   public void openListScreen() {
-    switchScene("/fxml/list_screen.fxml", "My Lists", () -> new WishlistController(managerContext));
+    switchScene("/fxml/list_screen.fxml", "My Lists", () -> new ListScreenController(managerContext));
   }
   /**
    * Launches the vineyard screen.
