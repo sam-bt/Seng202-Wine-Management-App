@@ -96,6 +96,23 @@ public class AuthenticateServiceTest {
   }
 
   /**
+   * Tests registration attempts with empty fields.
+   * Verifies that the service correctly identifies missing username, password, or confirmed password.
+   */
+  @Test
+  public void testLoginEmptyFields() {
+    String username = "";
+    String password = "MyPassword";
+    AuthenticationResponse response = authenticationService.validateLogin(username, password);
+    assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
+
+    username = "MyAccount";
+    password = "";
+    response = authenticationService.validateLogin(username, password);
+    assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
+  }
+
+  /**
    * Tests registration with an invalid username (containing special characters).
    */
   @Test

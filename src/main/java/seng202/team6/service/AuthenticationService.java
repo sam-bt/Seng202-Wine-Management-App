@@ -7,6 +7,7 @@ import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.model.User;
+import seng202.team6.util.EncryptionUtil;
 
 /**
  * Service class responsible for handling authentication-related operations.
@@ -50,8 +51,8 @@ public class AuthenticationService {
         "[a-zA-Z0-9]+")) {
       return AuthenticationResponse.INVALID_PASSWORD;
     }
-    String salt = EncryptionService.generateSalt();
-    String hashedPassword = EncryptionService.hashPassword(password, salt);
+    String salt = EncryptionUtil.generateSalt();
+    String hashedPassword = EncryptionUtil.hashPassword(password, salt);
     boolean userAdded = databaseManager.addUser(username, hashedPassword, salt);
     if (userAdded) {
       authenticationManager.setAuthenticated(true);
@@ -77,7 +78,7 @@ public class AuthenticationService {
       return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
     }
 
-    boolean validPassword = EncryptionService.verifyPassword(password, userInfo.getPassword(),
+    boolean validPassword = EncryptionUtil.verifyPassword(password, userInfo.getPassword(),
         userInfo.getSalt());
     if (validPassword) {
       authenticationManager.setAuthenticated(true);
@@ -104,7 +105,7 @@ public class AuthenticationService {
 
     User user = databaseManager.getUser(username);
     if (user != null) {
-      boolean validPassword = EncryptionService.verifyPassword(oldPassword, user.getPassword(),
+      boolean validPassword = EncryptionUtil.verifyPassword(oldPassword, user.getPassword(),
           user.getSalt());
       if (!validPassword) {
         return AuthenticationResponse.INCORRECT_OLD_PASSWORD;
@@ -120,8 +121,8 @@ public class AuthenticationService {
         return AuthenticationResponse.INVALID_PASSWORD;
       }
 
-      String salt = EncryptionService.generateSalt();
-      String hashedPassword = EncryptionService.hashPassword(newPassword, salt);
+      String salt = EncryptionUtil.generateSalt();
+      String hashedPassword = EncryptionUtil.hashPassword(newPassword, salt);
       boolean passwordUpdated = databaseManager.updatePassword(username, hashedPassword,
           salt);
       if (passwordUpdated) {

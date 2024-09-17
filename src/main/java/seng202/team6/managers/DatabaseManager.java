@@ -19,7 +19,7 @@ import seng202.team6.model.Filters;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
-import seng202.team6.service.EncryptionService;
+import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.ProcessCSV;
 
 
@@ -384,8 +384,8 @@ public class DatabaseManager implements AutoCloseable {
         "SELECT ?, ?, ?, ? " +
         "WHERE NOT EXISTS (SELECT 1 FROM USER WHERE username = ?)";
     try (PreparedStatement statement = connection.prepareStatement(checkAndInsert)) {
-      String salt = EncryptionService.generateSalt();
-      String password = EncryptionService.hashPassword("admin", salt);
+      String salt = EncryptionUtil.generateSalt();
+      String password = EncryptionUtil.hashPassword("admin", salt);
       statement.setString(1, "admin");
       statement.setString(2, password);
       statement.setString(3, "admin");

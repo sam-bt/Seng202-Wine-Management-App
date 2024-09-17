@@ -16,7 +16,7 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.model.User;
 import seng202.team6.service.AuthenticationService;
-import seng202.team6.service.EncryptionService;
+import seng202.team6.util.EncryptionUtil;
 
 public class UserChangePasswordStepDefinitions {
   private DatabaseManager databaseManager;
@@ -74,8 +74,8 @@ public class UserChangePasswordStepDefinitions {
 
     User user = databaseManager.getUser(username);
     String storedHash = user.getPassword();
-    assertFalse(EncryptionService.verifyPassword(newPassword, storedHash, user.getSalt()));
-    assertTrue(EncryptionService.verifyPassword(password, storedHash, user.getSalt()));
+    assertFalse(EncryptionUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
+    assertTrue(EncryptionUtil.verifyPassword(password, storedHash, user.getSalt()));
   }
 
   @Then("the accounts password is changed")
@@ -86,7 +86,7 @@ public class UserChangePasswordStepDefinitions {
 
     User user = databaseManager.getUser(username);
     String storedHash = user.getPassword();
-    assertTrue(EncryptionService.verifyPassword(newPassword, storedHash, user.getSalt()));
-    assertFalse(EncryptionService.verifyPassword(password, storedHash, user.getSalt()));
+    assertTrue(EncryptionUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
+    assertFalse(EncryptionUtil.verifyPassword(password, storedHash, user.getSalt()));
   }
 }

@@ -1,4 +1,4 @@
-package seng202.team6.service;
+package seng202.team6.util;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -6,12 +6,14 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Service class providing encryption and password hashing functionality.
  * This class uses PBKDF2WithHmacSHA1 for secure password hashing and verification.
  */
-public class EncryptionService {
+public class EncryptionUtil {
 
   /** The number of iterations for the PBKDF2WithHmacSHA1 algorithm. */
   private static final int ITERATIONS = 10000;
@@ -49,8 +51,8 @@ public class EncryptionService {
       SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(ALGORITHM);
       byte[] hash = keyFactory.generateSecret(spec).getEncoded();
       return Base64.getEncoder().encodeToString(hash);
-    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-      System.err.println("Error updating password: " + e.getMessage());
+    } catch (NoSuchAlgorithmException | InvalidKeySpecException error) {
+      LogManager.getLogger(EncryptionUtil.class).error("Error updating password", error);
       return null;
     }
   }
