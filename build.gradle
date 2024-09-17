@@ -111,7 +111,7 @@ tasks.register("cucumber", Test) {
     useJUnitPlatform()
 
     filter {
-        includeTestsMatching "seng202.team0.cucumber.*"
+        includeTestsMatching "seng202.team6.cucumber.*"
     }
 
     testLogging {
