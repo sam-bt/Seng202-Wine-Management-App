@@ -9,25 +9,27 @@ import javafx.beans.property.StringProperty;
 public class User {
 
   /**
-   * username
+   * The username of the user
    */
   private final StringProperty username;
+
   /**
-   * password
+   * The password of the user
    */
   private final StringProperty password;
+
   /**
-   * role
+   * The role of the user
    */
   private final StringProperty role;
 
   /**
-   * salt
+   * The salt used for password hashing for the user
    */
   private final StringProperty salt;
 
   /**
-   * Constructor
+   * Constructs a new User with the specified details
    *
    * @param username username
    * @param password password
@@ -47,7 +49,7 @@ public class User {
   }
 
   /**
-   * Default constructor
+   * Constructs a new User with default empty values
    */
   public User() {
     this.username = new SimpleStringProperty(this, "username");

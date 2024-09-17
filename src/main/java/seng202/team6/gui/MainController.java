@@ -10,6 +10,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Builder;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.service.AuthenticationService;
 
 /**
  * Main controller from where other scenes are embedded
@@ -42,6 +43,8 @@ public class MainController extends Controller {
   @FXML
   private HBox navBarBox;
 
+  private final AuthenticationService authenticationService;
+
   private boolean disabled = false;
 
   /**
@@ -51,6 +54,8 @@ public class MainController extends Controller {
    */
   public MainController(ManagerContext managerContext) {
     super(managerContext);
+    authenticationService = new AuthenticationService(managerContext.databaseManager);
+
     // This is an ugly circular dependency. It is easier to resolve here
     managerContext.GUIManager.setMainController(this);
   }
@@ -66,9 +71,9 @@ public class MainController extends Controller {
   }
 
   public void onLogin() {
-    if (managerContext.authenticationManager.isAuthenticated()) {
-      adminScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
-      dataSetsScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
+    if (authenticationService.isAuthenticated()) {
+      adminScreenButton.setVisible(authenticationService.isAdmin());
+      dataSetsScreenButton.setVisible(authenticationService.isAdmin());
       loginButton.setText("Settings");
       registerButton.setText("Logout");
 
@@ -111,6 +116,7 @@ public class MainController extends Controller {
   }
 
   public void logout() {
+    authenticationService.logout();
     loginButton.setText("Login");
     registerButton.setText("Register");
     loginButton.setOnMouseClicked(event -> openLoginScreen());
@@ -122,7 +128,6 @@ public class MainController extends Controller {
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
 
-    managerContext.authenticationManager.logout();
     openWineScreen();
   }
 
@@ -145,7 +150,7 @@ public class MainController extends Controller {
   @FXML
   public void openWineScreen() {
     switchScene("/fxml/wine_screen.fxml", "Wine Information",
-        () -> new WineScreenController(managerContext));
+        () -> new WineScreenController(managerContext, authenticationService));
   }
 
   /**
@@ -154,7 +159,7 @@ public class MainController extends Controller {
   @FXML
   public void openListScreen() {
     switchScene("/fxml/list_screen.fxml", "My Lists",
-        () -> new ListScreenController(managerContext));
+        () -> new ListScreenController(managerContext, authenticationService));
   }
 
   /**
@@ -162,7 +167,7 @@ public class MainController extends Controller {
    */
   @FXML
   public void openLoginScreen() {
-    switchScene("/fxml/login_screen.fxml", "Login", () -> new LoginController(managerContext));
+    switchScene("/fxml/login_screen.fxml", "Login", () -> new LoginController(managerContext, authenticationService));
   }
 
   /**
@@ -171,7 +176,7 @@ public class MainController extends Controller {
   @FXML
   public void openRegisterScreen() {
     switchScene("/fxml/register_screen.fxml", "Register",
-        () -> new RegisterController(managerContext));
+        () -> new RegisterController(managerContext, authenticationService));
   }
 
   @FXML
@@ -188,6 +193,6 @@ public class MainController extends Controller {
   @FXML
   public void openUpdatePasswordScreen() {
     switchScene("/fxml/update_password_screen.fxml", "Register",
-        () -> new UpdatePasswordController(managerContext));
+        () -> new UpdatePasswordController(managerContext, authenticationService));
   }
 }

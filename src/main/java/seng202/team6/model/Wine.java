@@ -19,10 +19,12 @@ public class Wine {
    * Title
    */
   private final StringProperty title;
+
   /**
    * Variety
    */
   private final StringProperty variety;
+
   /**
    * Country
    */
