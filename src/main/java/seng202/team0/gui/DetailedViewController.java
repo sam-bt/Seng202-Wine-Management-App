@@ -46,6 +46,10 @@ public class DetailedViewController extends Controller {
     @FXML
     private Label errorText;
 
+    @FXML
+    private Button saveNoteButton;
+
+
     private Wine wine;
 
     private RegexProcessor extractor = new RegexProcessor();
@@ -60,6 +64,8 @@ public class DetailedViewController extends Controller {
         if(managerContext.authenticationManager.isAuthenticated()) {
             addToListButton.setVisible(true);
             choiceBoxListSelector.setVisible(true);
+            notesArea.setVisible(true);
+            saveNoteButton.setVisible(true);
             String user = managerContext.authenticationManager.getUsername();
             ObservableList<WineList> list = FXCollections.observableList(managerContext.databaseManager.getUserLists(user));
             choiceBoxListSelector.setItems(list);
@@ -67,6 +73,8 @@ public class DetailedViewController extends Controller {
         } else {
             addToListButton.setVisible(false);
             choiceBoxListSelector.setVisible(false);
+            notesArea.setVisible(false);
+            saveNoteButton.setVisible(false);
         }
         errorText.setVisible(false);
     }

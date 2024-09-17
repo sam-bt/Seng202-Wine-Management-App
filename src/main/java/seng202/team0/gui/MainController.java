@@ -62,6 +62,7 @@ public class MainController extends Controller {
       adminScreenButton.setVisible(false);
       navBarBox.getChildren().remove(listScreenButton);
       navBarBox.getChildren().add(3, listScreenButton);
+      dataSetsScreenButton.setVisible(false);
       listScreenButton.setVisible(false);
       openWineScreen();
 
@@ -76,11 +77,13 @@ public class MainController extends Controller {
       navBarBox.getChildren().remove(listScreenButton);
       navBarBox.getChildren().add(1, listScreenButton);
       listScreenButton.setVisible(true);
+      dataSetsScreenButton.setVisible(true);
 
       loginButton.setOnMouseClicked(event -> openSettingsScreen());
       registerButton.setOnMouseClicked(event -> logout());
     } else {
       adminScreenButton.setVisible(false);
+      dataSetsScreenButton.setVisible(false);
     }
   }
 
@@ -116,6 +119,8 @@ public class MainController extends Controller {
     loginButton.setOnMouseClicked(event -> openLoginScreen());
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
     adminScreenButton.setVisible(false);
+    dataSetsScreenButton.setVisible(false);
+
 
     navBarBox.getChildren().remove(listScreenButton);
     navBarBox.getChildren().add(3, listScreenButton);
