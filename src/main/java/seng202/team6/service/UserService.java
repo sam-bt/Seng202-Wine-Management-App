@@ -75,7 +75,7 @@ public class UserService {
     if (userAdded) {
       return "Success";
     }
-    return "Unexpected Error occured";
+    return "Username Already in use";
   }
 
   /**

@@ -57,6 +57,7 @@ public class MainController extends Controller {
 
   public void initialize() {
     adminScreenButton.setVisible(false);
+    dataSetsScreenButton.setVisible(false);
     navBarBox.getChildren().remove(listScreenButton);
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
@@ -67,6 +68,7 @@ public class MainController extends Controller {
   public void onLogin() {
     if (managerContext.authenticationManager.isAuthenticated()) {
       adminScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
+      dataSetsScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
       loginButton.setText("Settings");
       registerButton.setText("Logout");
 
@@ -78,6 +80,7 @@ public class MainController extends Controller {
       registerButton.setOnMouseClicked(event -> logout());
     } else {
       adminScreenButton.setVisible(false);
+      dataSetsScreenButton.setVisible(false);
     }
   }
 
@@ -113,6 +116,7 @@ public class MainController extends Controller {
     loginButton.setOnMouseClicked(event -> openLoginScreen());
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
     adminScreenButton.setVisible(false);
+    dataSetsScreenButton.setVisible(false);
 
     navBarBox.getChildren().remove(listScreenButton);
     navBarBox.getChildren().add(3, listScreenButton);
