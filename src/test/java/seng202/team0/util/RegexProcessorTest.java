@@ -25,10 +25,10 @@ public class RegexProcessorTest {
         assertEquals(output, "1896");
 
         output = regexProcessor.extractYearFromString(noYear);
-        assertEquals(output, "No match!");
+        assertEquals(output, "-1");
 
         output = regexProcessor.extractYearFromString(nonYearNUmber);
-        assertEquals(output, "No match!");
+        assertEquals(output, "-1");
 
     }
 }
