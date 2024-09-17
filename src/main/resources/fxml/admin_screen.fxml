@@ -5,44 +5,57 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team0.gui.AdminController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0"
+  minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
+  xmlns="http://javafx.com/javafx/21" fx:controller="seng202.team6.gui.AdminController">
   <children>
-    <TitledPane animated="false" collapsible="false" layoutX="457.0" layoutY="259.0" maxWidth="456.0" minWidth="456.0" prefHeight="263.0" prefWidth="456.0" stylesheets="@../css/titled_pane.css" text="Admin Settings">
+    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="457.0" layoutY="218.0"
+      prefHeight="17.0" prefWidth="456.0" textFill="RED" fx:id="loginMessageLabel">
+      <font>
+        <Font size="16.0"/>
+      </font>
+    </Label>
+    <Label alignment="CENTER" contentDisplay="CENTER" ellipsisString="" layoutX="457.0"
+      layoutY="186.0" prefHeight="64.0" prefWidth="456.0" textAlignment="CENTER" textFill="RED"
+      wrapText="true" fx:id="adminMessageLabel">
+      <font>
+        <Font size="16.0"/>
+      </font>
+    </Label>
+    <TitledPane animated="false" collapsible="false" layoutX="457.0" layoutY="259.0"
+      maxWidth="456.0" minWidth="456.0" prefHeight="263.0" prefWidth="456.0"
+      stylesheets="@../css/titled_pane.css" text="Admin Settings">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="236.0" prefWidth="454.0">
           <children>
-            <Button fx:id="deleteButton" layoutX="127.0" layoutY="174.0" mnemonicParsing="false" onAction="#onDeleteMembers" prefHeight="35.0" prefWidth="200.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Delete all Users" AnchorPane.bottomAnchor="90.0">
+            <Button AnchorPane.bottomAnchor="90.0" layoutX="127.0" layoutY="174.0" mnemonicParsing="false"
+              onAction="#onDeleteMembers" prefHeight="35.0" prefWidth="200.0"
+              styleClass="secondary-button" stylesheets="@../css/global.css" text="Delete all Users"
+              fx:id="deleteButton">
               <font>
-                <Font name="System Bold" size="16.0" />
+                <Font name="System Bold" size="16.0"/>
               </font>
             </Button>
-                  <Button fx:id="yesButton" layoutX="127.0" layoutY="137.0" mnemonicParsing="false" onAction="#onYes" prefHeight="35.0" prefWidth="97.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Yes">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Button>
-                  <Button fx:id="noButton" layoutX="230.0" layoutY="137.0" mnemonicParsing="false" onAction="#onNo" prefHeight="35.0" prefWidth="97.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="No">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Button>
+            <Button layoutX="127.0" layoutY="137.0" mnemonicParsing="false" onAction="#onYes"
+              prefHeight="35.0" prefWidth="97.0" styleClass="secondary-button" stylesheets="@../css/global.css"
+              text="Yes" fx:id="yesButton">
+              <font>
+                <Font name="System Bold" size="16.0"/>
+              </font>
+            </Button>
+            <Button layoutX="230.0" layoutY="137.0" mnemonicParsing="false" onAction="#onNo"
+              prefHeight="35.0" prefWidth="97.0" styleClass="secondary-button" stylesheets="@../css/global.css"
+              text="No" fx:id="noButton">
+              <font>
+                <Font name="System Bold" size="16.0"/>
+              </font>
+            </Button>
           </children>
         </AnchorPane>
       </content>
       <font>
-        <Font name="System Bold" size="16.0" />
+        <Font name="System Bold" size="16.0"/>
       </font>
     </TitledPane>
-    <Label fx:id="loginMessageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="457.0" layoutY="218.0" prefHeight="17.0" prefWidth="456.0" textFill="RED">
-      <font>
-        <Font size="16.0" />
-      </font>
-    </Label>
-      <Label fx:id="adminMessageLabel" alignment="CENTER" contentDisplay="CENTER" ellipsisString="" layoutX="457.0" layoutY="186.0" prefHeight="64.0" prefWidth="456.0" textAlignment="CENTER" textFill="RED" wrapText="true">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
   </children>
 </AnchorPane>
