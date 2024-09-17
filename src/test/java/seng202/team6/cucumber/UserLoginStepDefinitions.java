@@ -2,6 +2,7 @@ package seng202.team6.cucumber;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import io.cucumber.java.After;
@@ -57,6 +58,7 @@ public class UserLoginStepDefinitions {
     AuthenticationResponse response = authenticationService.validateLogin(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, response);
     assertTrue(authenticationManager.isAuthenticated());
+    assertEquals(username, authenticationManager.getUsername());
   }
 
   @Then("the account is not logged in")
@@ -64,5 +66,6 @@ public class UserLoginStepDefinitions {
     AuthenticationResponse response = authenticationService.validateLogin(username, password);
     assertEquals(AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION, response);
     assertFalse(authenticationManager.isAuthenticated());
+    assertNotEquals(username, authenticationManager.getUsername());
   }
 }
