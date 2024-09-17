@@ -85,12 +85,4 @@ public class WineValidator {
       throw new ValidationException("Failed to parse wine", e);
     }
   }
-
-  private static int parseIntegerOrDefault(String string) {
-    try {
-      return Integer.parseInt(string);
-    } catch (NumberFormatException ignored) {
-      return 0;
-    }
-  }
 }
