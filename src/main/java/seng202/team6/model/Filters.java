@@ -2,18 +2,18 @@ package seng202.team6.model;
 
 public class Filters {
 
-  private final String title;
-  private final String country;
-  private final String winery;
-  private final String color;
-  private final int minVintage;
-  private final int maxVintage;
-  private final double minScore;
-  private final double maxScore;
-  private final double minAbv;
-  private final double maxAbv;
-  private final double minPrice;
-  private final double maxPrice;
+  private String title;
+  private String country;
+  private String winery;
+  private String color;
+  private int minVintage;
+  private int maxVintage;
+  private double minScore;
+  private double maxScore;
+  private double minAbv;
+  private double maxAbv;
+  private double minPrice;
+  private double maxPrice;
 
   public Filters(
       String title,
@@ -43,51 +43,115 @@ public class Filters {
     this.maxPrice = maxPrice;
   }
 
+  public Filters() {
+    this(
+        "",
+        "",
+        "",
+        "",
+        Integer.MIN_VALUE,
+        Integer.MAX_VALUE,
+        Double.MIN_VALUE,
+        Double.MAX_VALUE,
+        Double.MIN_VALUE,
+        Double.MAX_VALUE,
+        Double.MIN_VALUE,
+        Double.MAX_VALUE);
+  }
+
   public String getTitle() {
     return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
   }
 
   public String getCountry() {
     return country;
   }
 
+  public void setCountry(String country) {
+    this.country = country;
+  }
+
   public String getWinery() {
     return winery;
+  }
+
+  public void setWinery(String winery) {
+    this.winery = winery;
   }
 
   public String getColor() {
     return color;
   }
 
+  public void setColor(String color) {
+    this.color = color;
+  }
+
   public int getMinVintage() {
     return minVintage;
+  }
+
+  public void setMinVintage(int minVintage) {
+    this.minVintage = minVintage;
   }
 
   public int getMaxVintage() {
     return maxVintage;
   }
 
+  public void setMaxVintage(int maxVintage) {
+    this.maxVintage = maxVintage;
+  }
+
   public double getMinScore() {
     return minScore;
+  }
+
+  public void setMinScore(double minScore) {
+    this.minScore = minScore;
   }
 
   public double getMaxScore() {
     return maxScore;
   }
 
+  public void setMaxScore(double maxScore) {
+    this.maxScore = maxScore;
+  }
+
   public double getMinAbv() {
     return minAbv;
+  }
+
+  public void setMinAbv(double minAbv) {
+    this.minAbv = minAbv;
   }
 
   public double getMaxAbv() {
     return maxAbv;
   }
 
+  public void setMaxAbv(double maxAbv) {
+    this.maxAbv = maxAbv;
+  }
+
   public double getMinPrice() {
     return minPrice;
   }
 
+  public void setMinPrice(double minPrice) {
+    this.minPrice = minPrice;
+  }
+
   public double getMaxPrice() {
     return maxPrice;
+  }
+
+  public void setMaxPrice(double maxPrice) {
+    this.maxPrice = maxPrice;
   }
 }
