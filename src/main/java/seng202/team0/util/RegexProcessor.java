@@ -8,7 +8,7 @@ public class RegexProcessor {
     /**
      * Extracts a year from 1800-2099 from the given string.
      * @param inputString <- The string which contains the year.
-     * @return The extracted year, or 'No match!' if there is none.
+     * @return The extracted year, or -1 if there is none.
      */
     public String extractYearFromString(String inputString) {
         Pattern yearPattern = Pattern.compile("(18|19|20)(\\d\\d)", Pattern.CASE_INSENSITIVE);
@@ -16,7 +16,7 @@ public class RegexProcessor {
         if (yearMatcher.find()) {
             return yearMatcher.group();
         } else {
-            return "No match!";
+            return "-1";
         }
     }
 }
