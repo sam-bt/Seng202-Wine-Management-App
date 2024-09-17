@@ -1,7 +1,16 @@
+stages:
+  - test
+  - deploy
+
 junit:
   stage: test
   script:
     - ./gradlew test
+
+cucumber:
+  stage: test
+  script:
+    - ./gradlew cucumber
 
 generate_artifacts:
   stage: deploy
