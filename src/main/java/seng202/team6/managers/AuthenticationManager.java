@@ -9,10 +9,12 @@ public class AuthenticationManager {
 
   private boolean authenticated;
   private boolean admin;
+  private boolean adminFirstLogin;
   private String username;
 
   public AuthenticationManager() {
     this.authenticated = false;
+    this.adminFirstLogin = false;
     this.admin = false;
   }
 
@@ -30,6 +32,14 @@ public class AuthenticationManager {
 
   public void setAdmin(boolean admin) {
     this.admin = admin;
+  }
+
+  public boolean isAdminFirstLogin() {
+    return adminFirstLogin;
+  }
+
+  public void setAdminFirstLogin(boolean adminFirstLogin) {
+    this.adminFirstLogin = adminFirstLogin;
   }
 
   public String getUsername() {

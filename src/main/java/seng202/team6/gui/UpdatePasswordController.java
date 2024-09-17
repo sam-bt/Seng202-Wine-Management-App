@@ -5,7 +5,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.service.UserService;
+import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.service.AuthenticationService;
 
 public class UpdatePasswordController extends Controller {
 
@@ -18,6 +19,8 @@ public class UpdatePasswordController extends Controller {
   @FXML
   private TitledPane titlePane;
 
+  private final AuthenticationService authenticationService;
+
   private boolean disabled;
 
   /**
@@ -25,18 +28,14 @@ public class UpdatePasswordController extends Controller {
    *
    * @param managerContext manager context
    */
-  public UpdatePasswordController(ManagerContext managerContext) {
+  public UpdatePasswordController(ManagerContext managerContext,
+      AuthenticationService authenticationService) {
     super(managerContext);
-  }
-
-  private String validateUpdate(String username, String oldPassword, String newPassword) {
-    String result = UserService.validateUpdate(username, oldPassword, newPassword, managerContext);
-    return result;
+    this.authenticationService = authenticationService;
   }
 
   public void initialize() {
     disabled = managerContext.GUIManager.mainController.isDisabled();
-    System.out.println(disabled);
     if (disabled) {
       titlePane.setText("First time admin login, please change password");
     }
@@ -47,8 +46,8 @@ public class UpdatePasswordController extends Controller {
     String username = managerContext.authenticationManager.getUsername();
     String oldPassword = oldPasswordField.getText();
     String newPassword = newPasswordField.getText();
-    String validateResponse = validateUpdate(username, oldPassword, newPassword);
-    if (validateResponse.equals("Success")) {
+    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword);
+    if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
       // todo signify success somehow
       if (disabled) {
         managerContext.authenticationManager.setAuthenticated(true);
@@ -59,7 +58,7 @@ public class UpdatePasswordController extends Controller {
       managerContext.GUIManager.mainController.openWineScreen();
     } else {
       loginMessageLabel.setStyle("-fx-text-fill: red");
-      loginMessageLabel.setText(validateResponse);
+      loginMessageLabel.setText(response.getMessage());
     }
   }
 }

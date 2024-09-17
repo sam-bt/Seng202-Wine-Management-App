@@ -9,8 +9,15 @@ public enum AuthenticationResponse {
   USERNAME_ALREADY_REGISTERED("The given username is already registered to an account."),
   REGISTER_SUCCESS(null),
 
-  INVALID_USERNAME_PASSWORD_COMBINATION("Username or Password is Incorrect"),
+  INVALID_USERNAME_PASSWORD_COMBINATION("Username or Password is Incorrect."),
   LOGIN_SUCCESS(null),
+
+  INCORRECT_OLD_PASSWORD("The old password is incorrect."),
+  ADMIN_PASSWORD_CANNOT_BE_ADMIN("The admin password cannot be admin."),
+  OLD_PASSWORD_SAME_AS_NEW("New password cannot be same as old password."),
+  PASSWORD_CHANGED_SUCCESS(null),
+
+  UNEXPECTED_ERROR("An unexpected error occurred. Please try again.")
   ;
 
   private final String message;

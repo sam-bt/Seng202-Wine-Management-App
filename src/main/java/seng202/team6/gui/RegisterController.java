@@ -4,7 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.service.UserService;
+import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.service.AuthenticationService;
 
 /**
  * Register Controller
@@ -20,19 +21,17 @@ public class RegisterController extends Controller {
   @FXML
   private Label registerMessageLabel;
 
+  private final AuthenticationService authenticationService;
+
   /**
    * Constructor
    *
    * @param managerContext manager context
    */
-  public RegisterController(ManagerContext managerContext) {
+  public RegisterController(ManagerContext managerContext,
+      AuthenticationService authenticationService) {
     super(managerContext);
-  }
-
-  private String validateRegistration(String username, String password, String confirmPassword) {
-    String result = UserService.validateRegistration(username, password, confirmPassword,
-        managerContext);
-    return result;
+    this.authenticationService = authenticationService;
   }
 
   @FXML
@@ -41,15 +40,13 @@ public class RegisterController extends Controller {
     String username = usernameField.getText();
     String password = passwordField.getText();
     String confirmPassword = confirmPasswordField.getText();
-    String validateResponse = validateRegistration(username, password, confirmPassword);
-    if (validateResponse.equals("Success")) {
+    AuthenticationResponse response = authenticationService.validateRegistration(username, password, confirmPassword);
+    if (response == AuthenticationResponse.REGISTER_SUCCESS) {
       managerContext.GUIManager.mainController.openLoginScreen();
-
-      // todo - move this somewhere better
       managerContext.databaseManager.createList(username, "Favourites");
     } else {
       registerMessageLabel.setStyle("-fx-text-fill: red");
-      registerMessageLabel.setText(validateResponse);
+      registerMessageLabel.setText(response.getMessage());
     }
   }
 

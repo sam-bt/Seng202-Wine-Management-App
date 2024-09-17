@@ -10,6 +10,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Builder;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.service.AuthenticationService;
 
 /**
  * Main controller from where other scenes are embedded
@@ -42,6 +43,8 @@ public class MainController extends Controller {
   @FXML
   private HBox navBarBox;
 
+  private final AuthenticationService authenticationService;
+
   private boolean disabled = false;
 
   /**
@@ -51,6 +54,11 @@ public class MainController extends Controller {
    */
   public MainController(ManagerContext managerContext) {
     super(managerContext);
+    authenticationService = new AuthenticationService(
+        managerContext.authenticationManager,
+        managerContext.databaseManager
+    );
+
     // This is an ugly circular dependency. It is easier to resolve here
     managerContext.GUIManager.setMainController(this);
   }
@@ -162,7 +170,7 @@ public class MainController extends Controller {
    */
   @FXML
   public void openLoginScreen() {
-    switchScene("/fxml/login_screen.fxml", "Login", () -> new LoginController(managerContext));
+    switchScene("/fxml/login_screen.fxml", "Login", () -> new LoginController(managerContext, authenticationService));
   }
 
   /**
@@ -171,7 +179,7 @@ public class MainController extends Controller {
   @FXML
   public void openRegisterScreen() {
     switchScene("/fxml/register_screen.fxml", "Register",
-        () -> new RegisterController(managerContext));
+        () -> new RegisterController(managerContext, authenticationService));
   }
 
   @FXML
@@ -188,6 +196,6 @@ public class MainController extends Controller {
   @FXML
   public void openUpdatePasswordScreen() {
     switchScene("/fxml/update_password_screen.fxml", "Register",
-        () -> new UpdatePasswordController(managerContext));
+        () -> new UpdatePasswordController(managerContext, authenticationService));
   }
 }
