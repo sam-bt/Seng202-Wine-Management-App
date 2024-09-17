@@ -157,4 +157,10 @@ jacocoTestReport {
     reports {
         html.destination file("${buildDir}/reports/tests/coverage/")
     }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: 'seng202/team6/gui/**')
+        }))
+    }
 }
