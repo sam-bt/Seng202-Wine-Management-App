@@ -17,8 +17,8 @@ public class GeoLocation {
   /**
    * Constructs a new GeoLocation object with the specified latitude and longitude
    *
-   * @param latitude
-   * @param longitude
+   * @param latitude the latitude of the geolocation
+   * @param longitude the longitude of the geolocation
    */
   public GeoLocation(double latitude, double longitude) {
     this.latitude = latitude;

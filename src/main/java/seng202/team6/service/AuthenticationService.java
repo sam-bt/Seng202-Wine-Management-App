@@ -8,16 +8,34 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.model.User;
 
+/**
+ * Service class responsible for handling authentication-related operations.
+ * This class provides methods for user registration, login, password update, and logout.
+ */
 public class AuthenticationService {
   private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
 
+  /**
+   * Constructs an AuthenticationService with the specified managers.
+   *
+   * @param authenticationManager The AuthenticationManager to handle authentication state.
+   * @param databaseManager The DatabaseManager to interact with the user database.
+   */
   public AuthenticationService(AuthenticationManager authenticationManager,
       DatabaseManager databaseManager) {
     this.authenticationManager = authenticationManager;
     this.databaseManager = databaseManager;
   }
 
+  /**
+   * Validates and processes a user registration request.
+   *
+   * @param username The username for the new account.
+   * @param password The password for the new account.
+   * @param confirmedPassword The confirmed password for verification.
+   * @return An AuthenticationResponse indicating the result of the registration attempt.
+   */
   public AuthenticationResponse validateRegistration(String username, String password, String confirmedPassword) {
     if (username.isEmpty() || password.isEmpty() || confirmedPassword.isEmpty()) {
       return AuthenticationResponse.MISSING_FIELDS;
@@ -42,6 +60,13 @@ public class AuthenticationService {
     return AuthenticationResponse.USERNAME_ALREADY_REGISTERED;
   }
 
+  /**
+   * Validates and processes a user login request.
+   *
+   * @param username The username of the account to log in.
+   * @param password The password of the account to log in.
+   * @return An AuthenticationResponse indicating the result of the login attempt.
+   */
   public AuthenticationResponse validateLogin(String username, String password) {
     if (username.isEmpty() || password.isEmpty()) {
       return AuthenticationResponse.MISSING_FIELDS;
@@ -64,6 +89,14 @@ public class AuthenticationService {
     return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
   }
 
+  /**
+   * Validates and processes a password update request.
+   *
+   * @param username The username of the account to update.
+   * @param oldPassword The current password of the account.
+   * @param newPassword The new password to set.
+   * @return An AuthenticationResponse indicating the result of the password update attempt.
+   */
   public AuthenticationResponse validateUpdate(String username, String oldPassword, String newPassword) {
     User user = databaseManager.getUser(username);
     if (oldPassword.isEmpty() || newPassword.isEmpty()) {
@@ -96,6 +129,11 @@ public class AuthenticationService {
     return AuthenticationResponse.UNEXPECTED_ERROR;
   }
 
+  /**
+   * Processes a user logout request.
+   *
+   * @return An AuthenticationResponse indicating the result of the logout attempt.
+   */
   public AuthenticationResponse logout() {
     if (authenticationManager.isAuthenticated()) {
       authenticationManager.setAuthenticated(false);
