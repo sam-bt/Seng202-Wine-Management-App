@@ -3,7 +3,7 @@ package seng202.team6.util.Exceptions;
 /**
  * Thrown when validation for an item has failed
  */
-public class ValidationException extends Exception{
+public class ValidationException extends Exception {
 
   /**
    * Constructor
@@ -14,6 +14,7 @@ public class ValidationException extends Exception{
 
   /**
    * Constructor
+   *
    * @param message error message
    */
   public ValidationException(String message) {
@@ -22,8 +23,9 @@ public class ValidationException extends Exception{
 
   /**
    * Constructor
+   *
    * @param message error message
-   * @param cause cause
+   * @param cause   cause
    */
   public ValidationException(String message, Throwable cause) {
     super(message, cause);
@@ -31,6 +33,7 @@ public class ValidationException extends Exception{
 
   /**
    * Constructor
+   *
    * @param cause cause
    */
   public ValidationException(Throwable cause) {

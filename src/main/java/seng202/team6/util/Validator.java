@@ -1,9 +1,9 @@
 package seng202.team6.util;
 
 import java.util.Objects;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
-import seng202.team6.managers.DatabaseManager;
 import seng202.team6.util.Exceptions.ValidationException;
 
 /**
@@ -62,28 +62,28 @@ public class Validator {
       String abv,
       String price,
       GeoLocation geoLocation
-      ) throws ValidationException {
-      try {
+  ) throws ValidationException {
+    try {
 
-        return new Wine(
-            -1,
-            databaseManager,
-            title,
-            variety,
-            country,
-            region,
-            winery,
-            color,
-            parseVintage(vintage),
-            description,
-            Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
-            Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
-            Objects.equals(price, "") ? 0 : Float.parseFloat(price),
-            geoLocation
-        );
-      }  catch (Exception e) {
-        throw new ValidationException("Failed to parse wine", e);
-      }
+      return new Wine(
+          -1,
+          databaseManager,
+          title,
+          variety,
+          country,
+          region,
+          winery,
+          color,
+          parseVintage(vintage),
+          description,
+          Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
+          Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
+          Objects.equals(price, "") ? 0 : Float.parseFloat(price),
+          geoLocation
+      );
+    } catch (Exception e) {
+      throw new ValidationException("Failed to parse wine", e);
+    }
   }
 
   private static int parseIntegerOrDefault(String string) {

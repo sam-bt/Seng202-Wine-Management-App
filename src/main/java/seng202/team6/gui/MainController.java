@@ -56,11 +56,11 @@ public class MainController extends Controller {
   }
 
   public void initialize() {
-      adminScreenButton.setVisible(false);
-      navBarBox.getChildren().remove(listScreenButton);
-      navBarBox.getChildren().add(3, listScreenButton);
-      listScreenButton.setVisible(false);
-      openWineScreen();
+    adminScreenButton.setVisible(false);
+    navBarBox.getChildren().remove(listScreenButton);
+    navBarBox.getChildren().add(3, listScreenButton);
+    listScreenButton.setVisible(false);
+    openWineScreen();
 
   }
 
@@ -97,7 +97,7 @@ public class MainController extends Controller {
       Parent parent = loader.load();
       pageContent.getChildren().clear();
       pageContent.getChildren().add(parent);
-      if(loader.getController() instanceof Controller controller){
+      if (loader.getController() instanceof Controller controller) {
         controller.init();
       }
       managerContext.GUIManager.setWindowTitle(title);
@@ -106,6 +106,7 @@ public class MainController extends Controller {
       e.printStackTrace();
     }
   }
+
   public void logout() {
     loginButton.setText("Login");
     registerButton.setText("Register");
@@ -130,7 +131,8 @@ public class MainController extends Controller {
    */
   @FXML
   public void openDataSetsScreen() {
-    switchScene("/fxml/dataset_screen.fxml", "Manage Datasets", () -> new DataTableController(managerContext));
+    switchScene("/fxml/dataset_screen.fxml", "Manage Datasets",
+        () -> new DataTableController(managerContext));
   }
 
   /**
@@ -138,14 +140,17 @@ public class MainController extends Controller {
    */
   @FXML
   public void openWineScreen() {
-    switchScene("/fxml/wine_screen.fxml", "Wine Information", () -> new WineScreenController(managerContext));
+    switchScene("/fxml/wine_screen.fxml", "Wine Information",
+        () -> new WineScreenController(managerContext));
   }
+
   /**
    * Launches the list screen.
    */
   @FXML
   public void openListScreen() {
-    switchScene("/fxml/list_screen.fxml", "My Lists", () -> new ListScreenController(managerContext));
+    switchScene("/fxml/list_screen.fxml", "My Lists",
+        () -> new ListScreenController(managerContext));
   }
 
   /**
@@ -161,20 +166,24 @@ public class MainController extends Controller {
    */
   @FXML
   public void openRegisterScreen() {
-    switchScene("/fxml/register_screen.fxml", "Register", () -> new RegisterController(managerContext));
+    switchScene("/fxml/register_screen.fxml", "Register",
+        () -> new RegisterController(managerContext));
   }
 
   @FXML
   public void openAdminScreen() {
     switchScene("/fxml/admin_screen.fxml", "Register", () -> new AdminController(managerContext));
   }
+
   @FXML
   public void openSettingsScreen() {
-    switchScene("/fxml/settings_screen.fxml", "Register", () -> new SettingsController(managerContext));
+    switchScene("/fxml/settings_screen.fxml", "Register",
+        () -> new SettingsController(managerContext));
   }
 
   @FXML
   public void openUpdatePasswordScreen() {
-    switchScene("/fxml/update_password_screen.fxml", "Register", () -> new UpdatePasswordController(managerContext));
+    switchScene("/fxml/update_password_screen.fxml", "Register",
+        () -> new UpdatePasswordController(managerContext));
   }
 }

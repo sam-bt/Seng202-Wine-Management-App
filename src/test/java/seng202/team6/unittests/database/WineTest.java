@@ -1,14 +1,14 @@
 package seng202.team6.unittests.database;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import seng202.team6.model.Wine;
 import seng202.team6.managers.DatabaseManager;
+import seng202.team6.model.Wine;
 
 /**
  * Tests wine class
@@ -103,6 +103,7 @@ class WineTest {
     getTestWine().setVintage(25);
     assertEquals(25, getTestWine().getVintage());
   }
+
   /**
    * Tests setting the region
    */

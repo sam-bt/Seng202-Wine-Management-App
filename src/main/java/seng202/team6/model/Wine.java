@@ -16,20 +16,6 @@ import seng202.team6.managers.DatabaseManager;
 public class Wine {
 
   /**
-   * ID of wine record
-   * <p>
-   * -1 represents no database record attached. Setters will fail in this case.
-   * </p>
-   */
-  private long key;
-  /**
-   * Reference to database
-   * <p>
-   * We need to maintain this for JavaBean compliance with the setters and getters
-   * </p>
-   */
-  private DatabaseManager databaseManager;
-  /**
    * Title
    */
   private final StringProperty title;
@@ -77,9 +63,24 @@ public class Wine {
    */
   private final FloatProperty price;
   /**
+   * ID of wine record
+   * <p>
+   * -1 represents no database record attached. Setters will fail in this case.
+   * </p>
+   */
+  private long key;
+  /**
+   * Reference to database
+   * <p>
+   * We need to maintain this for JavaBean compliance with the setters and getters
+   * </p>
+   */
+  private DatabaseManager databaseManager;
+  /**
    * GeoLocation which holds the coordinates of the region name
    * <p>
-   *   If the region is invalid, not present, or not found from the geolocation dataset, this will be null
+   * If the region is invalid, not present, or not found from the geolocation dataset, this will be
+   * null
    * </p>
    */
   private GeoLocation geoLocation;
@@ -154,7 +155,8 @@ public class Wine {
   /**
    * Setup listeners
    * <p>
-   *   JavaFX uses properties to change stuff. This means we need to listen to changes rather than just intercept through setters.
+   * JavaFX uses properties to change stuff. This means we need to listen to changes rather than
+   * just intercept through setters.
    * </p>
    */
   public void setupSetters() {
@@ -226,7 +228,6 @@ public class Wine {
     });
 
   }
-
 
 
   /**

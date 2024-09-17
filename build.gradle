@@ -91,7 +91,7 @@ application {
 
 javafx {
     version = "${javafxVersion}"
-    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.web']
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web']
 }
 
 test {
@@ -105,7 +105,7 @@ test {
 }
 
 
-tasks.register("cucumber", Test)  {
+tasks.register("cucumber", Test) {
     group = "verification"
 
     useJUnitPlatform()
@@ -135,7 +135,7 @@ jar {
         attributes 'Main-Class': mainClassName
     }
     from {
-        configurations.runtimeClasspath.collect {it.isDirectory()?it:zipTree(it)}
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
@@ -143,7 +143,6 @@ run {
     // Add the internal JavaFX API to the module path
     jvmArgs = ['--module-path', classpath.asPath, '--add-exports', 'javafx.web/com.sun.javafx.webkit=ALL-UNNAMED']
 }
-
 
 
 // Jacoco test coverage config

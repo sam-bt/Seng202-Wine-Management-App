@@ -2,18 +2,17 @@ package seng202.team6.unittests.managers;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import seng202.team6.model.Wine;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Filters;
+import seng202.team6.model.Wine;
 
 class DatabaseManagerTest {
 
@@ -87,7 +86,8 @@ class DatabaseManagerTest {
   void testBrokenIDs() throws SQLException {
     addWines(2);
     manager.getWinesInRange(0, 1);
-    assertNotEquals(manager.getWinesInRange(0,1).getFirst().getKey(), manager.getWinesInRange(1,2).getFirst().getKey());
+    assertNotEquals(manager.getWinesInRange(0, 1).getFirst().getKey(),
+        manager.getWinesInRange(1, 2).getFirst().getKey());
   }
 
 

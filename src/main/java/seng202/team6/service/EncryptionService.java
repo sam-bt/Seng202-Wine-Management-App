@@ -1,12 +1,14 @@
 package seng202.team6.service;
+
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import java.util.Base64;
 
 public class EncryptionService {
+
   private static final int ITERATIONS = 10000;
   private static final int KEY_LENGTH = 256;
   private static final String ALGORITHM = "PBKDF2WithHmacSHA1";
@@ -31,8 +33,8 @@ public class EncryptionService {
     }
   }
 
-  public static boolean verifyPassword(String enteredPassword, String storedHash, String salt){
-      String hashOfEnteredPassword = hashPassword(enteredPassword, salt);
-      return hashOfEnteredPassword.equals(storedHash);
+  public static boolean verifyPassword(String enteredPassword, String storedHash, String salt) {
+    String hashOfEnteredPassword = hashPassword(enteredPassword, salt);
+    return hashOfEnteredPassword.equals(storedHash);
   }
 }

@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import seng202.team6.model.GeoLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import seng202.team6.model.Filters;
+import seng202.team6.model.GeoLocation;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
-import seng202.team6.model.Filters;
 import seng202.team6.service.EncryptionService;
 import seng202.team6.util.ProcessCSV;
 
@@ -45,10 +45,12 @@ public class DatabaseManager implements AutoCloseable {
    * Connects to a db file for management. The path to the file is specified by dbpath
    * <p>
    * This method will fail if application is opened from a directory without appropriate file perms.
-   * Check <a href="https://www.sqlite.org/wal.html">...</a> for details on WAL. It is much faster in testing
+   * Check <a href="https://www.sqlite.org/wal.html">...</a> for details on WAL. It is much faster
+   * in testing
    * </p>
+   *
    * @param databaseFileName name of database file to open
-   * @param useWal whether to use WAL
+   * @param useWal           whether to use WAL
    * @throws SQLException if failed to initialize
    */
   public DatabaseManager(String databaseFileName, boolean useWal) throws SQLException {
@@ -73,7 +75,7 @@ public class DatabaseManager implements AutoCloseable {
     createWineListsTable();
 
     try (Statement statement = connection.createStatement()) {
-      if(useWal) {
+      if (useWal) {
         statement.execute("pragma journal_mode=wal");
       }
     }
@@ -120,22 +122,6 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-
-  /**
-   * Callback to set the attribute to update
-   */
-  public interface AttributeSetterCallBack {
-
-    /**
-     * Updates the prepared statement with the value to set
-     * <p>
-     * Attribute must be index 1 in prepared statement
-     * </p>
-     */
-    void setAttribute(PreparedStatement statement) throws SQLException;
-  }
-
-
   /**
    * Sets a given wines attribute
    *
@@ -167,11 +153,12 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
     long milliseconds = System.currentTimeMillis();
     ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query = "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE from WINE "
-        + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
-        + "order by WINE.ID "
-        + "limit ? "
-        + "offset ?;";
+    String query =
+        "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE from WINE "
+            + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
+            + "order by WINE.ID "
+            + "limit ? "
+            + "offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setInt(1, end - begin);
       statement.setInt(2, begin);
@@ -201,7 +188,8 @@ public class DatabaseManager implements AutoCloseable {
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
-    LogManager.getLogger(getClass()).info("Time to process getWinesInRange: {}", System.currentTimeMillis() - milliseconds);
+    LogManager.getLogger(getClass())
+        .info("Time to process getWinesInRange: {}", System.currentTimeMillis() - milliseconds);
     return wines;
   }
 
@@ -282,19 +270,21 @@ public class DatabaseManager implements AutoCloseable {
       throw new RuntimeException(e);
     }
 
-    LogManager.getLogger(getClass()).info("Time to process getWinesInRange with filter: {}", System.currentTimeMillis() - milliseconds);
+    LogManager.getLogger(getClass()).info("Time to process getWinesInRange with filter: {}",
+        System.currentTimeMillis() - milliseconds);
     return wines;
   }
 
-
   private GeoLocation createGeoLocation(ResultSet set) throws SQLException {
     double latitude = set.getDouble("LATITUDE");
-    if (set.wasNull())
+    if (set.wasNull()) {
       return null;
+    }
 
     double longitude = set.getDouble("LONGITUDE");
-    if (set.wasNull())
+    if (set.wasNull()) {
       return null;
+    }
 
     return new GeoLocation(latitude, longitude);
   }
@@ -312,7 +302,6 @@ public class DatabaseManager implements AutoCloseable {
       return set.getInt(1);
     }
   }
-
 
   /**
    * Replaces all wines in the database with a new list
@@ -364,7 +353,8 @@ public class DatabaseManager implements AutoCloseable {
       }
       insertStatement.executeBatch();
     }
-    LogManager.getLogger(getClass()).info("Time to process addWines: {}", System.currentTimeMillis() - milliseconds);
+    LogManager.getLogger(getClass())
+        .info("Time to process addWines: {}", System.currentTimeMillis() - milliseconds);
   }
 
   /**
@@ -547,13 +537,13 @@ public class DatabaseManager implements AutoCloseable {
 
   private void createWineListsTable() throws SQLException {
     String listNameTable = "CREATE TABLE IF NOT EXISTS LIST_NAME (" +
-            "ID INTEGER PRIMARY KEY," +
-            "USERNAME VARCHAR(32) NOT NULL," +
-            "NAME VARCHAR(10) NOT NULL);";
+        "ID INTEGER PRIMARY KEY," +
+        "USERNAME VARCHAR(32) NOT NULL," +
+        "NAME VARCHAR(10) NOT NULL);";
     String listItemsTable = "CREATE TABLE IF NOT EXISTS LIST_ITEMS (" +
-            "ID INTEGER PRIMARY KEY," +
-            "LIST_ID INT NOT NULL," +
-            "WINE_ID INT NOT NULL);";
+        "ID INTEGER PRIMARY KEY," +
+        "LIST_ID INT NOT NULL," +
+        "WINE_ID INT NOT NULL);";
     try (Statement statement = connection.createStatement()) {
       statement.execute(listNameTable);
     }
@@ -566,8 +556,8 @@ public class DatabaseManager implements AutoCloseable {
 
   private void createAdminFavouritesList() {
     String checkAndInsert = "INSERT INTO LIST_NAME (ID, USERNAME, NAME) " +
-            "SELECT null, 'admin', 'Favourites'" +
-            "WHERE NOT EXISTS (SELECT 1 FROM LIST_NAME WHERE username = 'admin')";
+        "SELECT null, 'admin', 'Favourites'" +
+        "WHERE NOT EXISTS (SELECT 1 FROM LIST_NAME WHERE username = 'admin')";
     try (Statement statement = connection.createStatement()) {
       statement.execute(checkAndInsert);
     } catch (SQLException error) {
@@ -581,7 +571,7 @@ public class DatabaseManager implements AutoCloseable {
       statement.setString(1, username);
       statement.setString(2, listName);
       statement.execute();
-    } catch (SQLException error ) {
+    } catch (SQLException error) {
       log.error("Could not add list to the database", error);
     }
   }
@@ -592,7 +582,7 @@ public class DatabaseManager implements AutoCloseable {
       statement.setString(1, username);
       statement.setString(2, listName);
       statement.executeUpdate();
-    } catch (SQLException error ) {
+    } catch (SQLException error) {
       log.error("Could not delete a list from the database", error);
     }
   }
@@ -629,5 +619,19 @@ public class DatabaseManager implements AutoCloseable {
     } catch (SQLException e) {
       log.error("Error closing connection", e);
     }
+  }
+
+  /**
+   * Callback to set the attribute to update
+   */
+  public interface AttributeSetterCallBack {
+
+    /**
+     * Updates the prepared statement with the value to set
+     * <p>
+     * Attribute must be index 1 in prepared statement
+     * </p>
+     */
+    void setAttribute(PreparedStatement statement) throws SQLException;
   }
 }

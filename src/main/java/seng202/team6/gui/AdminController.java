@@ -5,7 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import seng202.team6.managers.ManagerContext;
 
-public class AdminController extends Controller{
+public class AdminController extends Controller {
 
   @FXML
   Label adminMessageLabel;
@@ -35,11 +35,13 @@ public class AdminController extends Controller{
     yesButton.setVisible(true);
     deleteButton.setText("Are you sure?");
   }
+
   @FXML
   private void onYes() {
     managerContext.databaseManager.deleteAllUsers();
     managerContext.GUIManager.mainController.openWineScreen();
   }
+
   @FXML
   private void onNo() {
     deleteButton.setDisable(false);

@@ -137,31 +137,31 @@ public class User {
     return role;
   }
 
-/**
- * Gets the salt
- *
- * @return salt
- */
-public String getSalt() {
-  return salt.get();
-}
+  /**
+   * Gets the salt
+   *
+   * @return salt
+   */
+  public String getSalt() {
+    return salt.get();
+  }
 
-/**
- * Sets the salt
- *
- * @param salt salt
- */
-public void setSalt(String salt) {
-  this.salt.set(salt);
-}
+  /**
+   * Sets the salt
+   *
+   * @param salt salt
+   */
+  public void setSalt(String salt) {
+    this.salt.set(salt);
+  }
 
-/**
- * Gets the salt property
- *
- * @return salt property
- */
-public StringProperty saltProperty() {
-  return salt;
-}
+  /**
+   * Gets the salt property
+   *
+   * @return salt property
+   */
+  public StringProperty saltProperty() {
+    return salt;
+  }
 
 }

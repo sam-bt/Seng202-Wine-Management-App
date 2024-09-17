@@ -9,7 +9,7 @@ import seng202.team6.service.UserService;
 /**
  * Login Controller (MORE DETAIL HERE!)
  */
-public class LoginController extends Controller{
+public class LoginController extends Controller {
 
   @FXML
   private TextField usernameField;
@@ -17,6 +17,7 @@ public class LoginController extends Controller{
   private TextField passwordField;
   @FXML
   private Label loginMessageLabel;
+
   /**
    * Constructor
    *
@@ -26,8 +27,8 @@ public class LoginController extends Controller{
     super(managerContext);
   }
 
-  private String validateLogin(String username,String password) {
-    String result = UserService.validateLogin(username,password, managerContext);
+  private String validateLogin(String username, String password) {
+    String result = UserService.validateLogin(username, password, managerContext);
     return result;
   }
 
@@ -36,7 +37,7 @@ public class LoginController extends Controller{
 
     String username = usernameField.getText();
     String password = passwordField.getText();
-    String validateResponse = validateLogin(username,password);
+    String validateResponse = validateLogin(username, password);
     if (validateResponse.equals("Success")) {
       managerContext.authenticationManager.setAuthenticated(true);
       managerContext.authenticationManager.setAdmin(false);

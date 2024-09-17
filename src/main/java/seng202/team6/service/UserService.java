@@ -1,22 +1,20 @@
 package seng202.team6.service;
 
-import seng202.team6.model.User;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.User;
 
 public class UserService {
 
   /**
    * Validates the user login credentials
+   *
    * @param username the username of the user attempting to login
    * @param password the password of the user attempting to login
-   * @param manager the ManagerContext object
-   *
-   * @return A string indicating the result of the login attempt:
-   *         "All fields must be filled!" if username or password is empty,
-   *         "Username or Password is Incorrect" if credentials are invalid,
-   *         "Admin First Success" for first-time admin login,
-   *         "Admin Success" for subsequent admin logins,
-   *         "Success" for successful non-admin logins.
+   * @param manager  the ManagerContext object
+   * @return A string indicating the result of the login attempt: "All fields must be filled!" if
+   * username or password is empty, "Username or Password is Incorrect" if credentials are invalid,
+   * "Admin First Success" for first-time admin login, "Admin Success" for subsequent admin logins,
+   * "Success" for successful non-admin logins.
    */
   public static String validateLogin(String username, String password, ManagerContext manager) {
     if (username.isEmpty() || password.isEmpty()) {
@@ -45,18 +43,16 @@ public class UserService {
 
   /**
    * Validates and processes user registration
-   * @param username the username for the new user
-   * @param password the password for the new user
-   * @param confirmPassword the confirmed password for the user
-   * @param manager the ManagerContext object
    *
-   * @return A string indicating the result of the registration attempt:
-   *         "All fields must be filled!" if any field is empty,
-   *         "Passwords do not match!" if password and confirmPassword don't match,
-   *         "Invalid name, ..." if username doesn't meet criteria,
-   *         "Invalid password, ..." if password doesn't meet criteria,
-   *         "Success" if registration is successful,
-   *         "Unexpected Error occurred" if registration fails unexpectedly.
+   * @param username        the username for the new user
+   * @param password        the password for the new user
+   * @param confirmPassword the confirmed password for the user
+   * @param manager         the ManagerContext object
+   * @return A string indicating the result of the registration attempt: "All fields must be
+   * filled!" if any field is empty, "Passwords do not match!" if password and confirmPassword don't
+   * match, "Invalid name, ..." if username doesn't meet criteria, "Invalid password, ..." if
+   * password doesn't meet criteria, "Success" if registration is successful, "Unexpected Error
+   * occurred" if registration fails unexpectedly.
    */
   public static String validateRegistration(String username, String password,
       String confirmPassword, ManagerContext manager) {
@@ -84,19 +80,17 @@ public class UserService {
 
   /**
    * Validates and processes a password update request
-   * @param username the current username of the user
+   *
+   * @param username    the current username of the user
    * @param oldPassword the current password of the user
    * @param newPassword the new password for the user
-   * @param manager the ManagerContext object
-   *
-   * @return A string indicating the result of the password update attempt:
-   *         "All fields must be filled!" if any field is empty,
-   *         "Password is Incorrect" if the old password is invalid,
-   *         "Admin password cannot be 'admin'" for admin users trying to set 'admin' as password,
-   *         "New password cannot be same as old password" if old and new passwords match,
-   *         "Invalid password, ..." if the new password doesn't meet criteria,
-   *         "Success" if the password update is successful,
-   *         "Unexpected error Occurred" if the update fails unexpectedly.
+   * @param manager     the ManagerContext object
+   * @return A string indicating the result of the password update attempt: "All fields must be
+   * filled!" if any field is empty, "Password is Incorrect" if the old password is invalid, "Admin
+   * password cannot be 'admin'" for admin users trying to set 'admin' as password, "New password
+   * cannot be same as old password" if old and new passwords match, "Invalid password, ..." if the
+   * new password doesn't meet criteria, "Success" if the password update is successful, "Unexpected
+   * error Occurred" if the update fails unexpectedly.
    */
   public static String validateUpdate(String username, String oldPassword, String newPassword,
       ManagerContext manager) {

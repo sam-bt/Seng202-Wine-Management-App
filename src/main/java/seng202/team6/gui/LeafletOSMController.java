@@ -1,10 +1,9 @@
 package seng202.team6.gui;
 
+import com.sun.javafx.webkit.WebConsoleListener;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import com.sun.javafx.webkit.WebConsoleListener;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 import javafx.concurrent.Worker;
@@ -16,10 +15,11 @@ import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
 
 /**
- * Map controller which is responsible for loading the map and calling JavaScript functions
- * which add markers to the map
+ * Map controller which is responsible for loading the map and calling JavaScript functions which
+ * add markers to the map
  */
 public class LeafletOSMController {
+
   private static final Logger log = LogManager.getLogger(LeafletOSMController.class);
 
   /**
@@ -35,8 +35,8 @@ public class LeafletOSMController {
   /**
    * The action to run when the map is ready
    * <p>
-   *   This is used when the wine screen is opened for the first time and the map has not yet
-   *   been loaded
+   * This is used when the wine screen is opened for the first time and the map has not yet been
+   * loaded
    * </p>
    */
   private Runnable onReadyAction;
@@ -46,14 +46,14 @@ public class LeafletOSMController {
    *
    * @param webEngine the web engine for the map view
    */
-  LeafletOSMController( WebEngine webEngine) {
+  LeafletOSMController(WebEngine webEngine) {
     this.webEngine = webEngine;
   }
 
   /**
-   * Load the HTML map code and send it to the web engine. A state listener is created
-   * which listens for a successful state change. On successful state change, the initMap command
-   * is send to JavaScript to setup the map.
+   * Load the HTML map code and send it to the web engine. A state listener is created which listens
+   * for a successful state change. On successful state change, the initMap command is send to
+   * JavaScript to setup the map.
    */
   public void initMap() {
     // read the content from the HTML file
@@ -70,7 +70,8 @@ public class LeafletOSMController {
 
     // add a listener to the web console in order to view log messages which are sent in JavaScript
     WebConsoleListener.setDefaultListener((view, message, lineNumber, sourceId) ->
-        log.info(String.format("Map WebView console log line: %d, message : %s", lineNumber, message)));
+        log.info(
+            String.format("Map WebView console log line: %d, message : %s", lineNumber, message)));
 
     // wait until the web engine has successfully loaded the HTML then call the JavaScript function
     // initMap using the JavaScript connector
@@ -94,7 +95,7 @@ public class LeafletOSMController {
   /**
    * Calls the clearMarkers function in JavaScript
    * <p>
-   *   The JavaScript function will clear all of the markers on the map
+   * The JavaScript function will clear all of the markers on the map
    * </p>
    */
   public void clearWineMarkers() {
@@ -104,7 +105,7 @@ public class LeafletOSMController {
   /**
    * Calls the clearHeatmap function in JavaScript
    * <p>
-   *   The JavaScript function will clear the heatmap
+   * The JavaScript function will clear the heatmap
    * </p>
    */
   public void clearHeatmap() {
@@ -114,23 +115,25 @@ public class LeafletOSMController {
   /**
    * Calls the addWineMarker function in JavaScript
    * <p>
-   *   The JavaScript function will create a new marker of the wine and display it at the wines
-   *   geolocation
+   * The JavaScript function will create a new marker of the wine and display it at the wines
+   * geolocation
    * </p>
    *
    * @param wine the wine for which the marker should represent
    */
   public void addWineMarker(Wine wine) {
     GeoLocation geoLocation = wine.getGeoLocation();
-    javaScriptConnector.call("addWineMarker", wine.getTitle(), wine.getRegion(), wine.getColor(), geoLocation.getLatitude(), geoLocation.getLongitude());
+    javaScriptConnector.call("addWineMarker", wine.getTitle(), wine.getRegion(), wine.getColor(),
+        geoLocation.getLatitude(), geoLocation.getLongitude());
   }
 
   /**
    * Sets the on ready action
    * <p>
-   *   If the map has loaded, the runnable param can be ran straight away. If the map has not loaded,
-   *   the runnable is stored and will be executed when the map has loaded
+   * If the map has loaded, the runnable param can be ran straight away. If the map has not loaded,
+   * the runnable is stored and will be executed when the map has loaded
    * </p>
+   *
    * @param runnable the action to be preformed when the map is loaded
    */
   public void setOnReadyAction(Runnable runnable) {

@@ -7,7 +7,8 @@ import javafx.scene.control.TitledPane;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.service.UserService;
 
-public class UpdatePasswordController extends Controller{
+public class UpdatePasswordController extends Controller {
+
   @FXML
   private TextField oldPasswordField;
   @FXML
@@ -28,8 +29,8 @@ public class UpdatePasswordController extends Controller{
     super(managerContext);
   }
 
-  private String validateUpdate(String username, String oldPassword,String newPassword) {
-    String result = UserService.validateUpdate(username, oldPassword,newPassword, managerContext);
+  private String validateUpdate(String username, String oldPassword, String newPassword) {
+    String result = UserService.validateUpdate(username, oldPassword, newPassword, managerContext);
     return result;
   }
 
@@ -46,7 +47,7 @@ public class UpdatePasswordController extends Controller{
     String username = managerContext.authenticationManager.getUsername();
     String oldPassword = oldPasswordField.getText();
     String newPassword = newPasswordField.getText();
-    String validateResponse = validateUpdate(username, oldPassword,newPassword);
+    String validateResponse = validateUpdate(username, oldPassword, newPassword);
     if (validateResponse.equals("Success")) {
       // todo signify success somehow
       if (disabled) {

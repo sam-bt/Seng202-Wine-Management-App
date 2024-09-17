@@ -9,7 +9,7 @@ import seng202.team6.service.UserService;
 /**
  * Register Controller
  */
-public class RegisterController extends Controller{
+public class RegisterController extends Controller {
 
   @FXML
   private TextField usernameField;
@@ -29,8 +29,9 @@ public class RegisterController extends Controller{
     super(managerContext);
   }
 
-  private String validateRegistration(String username,String password, String confirmPassword) {
-    String result = UserService.validateRegistration(username,password,confirmPassword, managerContext);
+  private String validateRegistration(String username, String password, String confirmPassword) {
+    String result = UserService.validateRegistration(username, password, confirmPassword,
+        managerContext);
     return result;
   }
 
@@ -40,7 +41,7 @@ public class RegisterController extends Controller{
     String username = usernameField.getText();
     String password = passwordField.getText();
     String confirmPassword = confirmPasswordField.getText();
-    String validateResponse = validateRegistration(username,password,confirmPassword);
+    String validateResponse = validateRegistration(username, password, confirmPassword);
     if (validateResponse.equals("Success")) {
       managerContext.GUIManager.mainController.openLoginScreen();
 

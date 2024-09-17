@@ -11,18 +11,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.web.WebView;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.FloatStringConverter;
 import javafx.util.converter.IntegerStringConverter;
-import javafx.scene.web.WebView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
 import seng202.team6.gui.controls.AutoCompletionTextField;
-import seng202.team6.model.Wine;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Filters;
+import seng202.team6.model.Wine;
 
 /**
  * Controller for the screen that displays wines
@@ -77,8 +77,9 @@ public class WineScreenController extends Controller {
 
   /**
    * Opens a page of wines from the database according to filters
-   * @param begin first element
-   * @param end last element + 1
+   *
+   * @param begin   first element
+   * @param end     last element + 1
    * @param filters list of filters
    */
   private void openWineRange(int begin, int end, Filters filters) {
@@ -209,7 +210,7 @@ public class WineScreenController extends Controller {
     TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
     TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
 
-    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title") );
+    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
     varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));
     wineryColumn.setCellValueFactory(new PropertyValueFactory<>("winery"));
     regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));
@@ -221,14 +222,20 @@ public class WineScreenController extends Controller {
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
     // Enable editing if admin
-    if(managerContext.authenticationManager.isAdmin()) {
-      titleColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
-      varietyColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
-      wineryColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
-      regionColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
-      colorColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+    if (managerContext.authenticationManager.isAdmin()) {
+      titleColumn.setCellFactory(
+          wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      varietyColumn.setCellFactory(
+          wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      wineryColumn.setCellFactory(
+          wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      regionColumn.setCellFactory(
+          wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      colorColumn.setCellFactory(
+          wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       vintageColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
-      descriptionColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      descriptionColumn.setCellFactory(
+          wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       scoreColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
       abvColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
       priceColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
@@ -249,7 +256,7 @@ public class WineScreenController extends Controller {
   /**
    * Called after the constructor for when fxml is loaded
    * <p>
-   *   Gets, loads, and displays a table from a list of wines from the controller layer
+   * Gets, loads, and displays a table from a list of wines from the controller layer
    * </p>
    */
   @Override

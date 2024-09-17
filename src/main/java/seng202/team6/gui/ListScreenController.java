@@ -1,11 +1,14 @@
 package seng202.team6.gui;
 
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import seng202.team6.managers.ManagerContext;
-
-import java.util.List;
 
 /**
  * List Screen Controller (MORE DETAIL HERE!)
@@ -58,6 +61,7 @@ public class ListScreenController extends Controller {
 
   /**
    * opens the tab for creating lists and hides the tab for viewing lists.
+   *
    * @param actionEvent triggers this function when on action.
    */
   @FXML
@@ -70,6 +74,7 @@ public class ListScreenController extends Controller {
 
   /**
    * opens the tab for viewing lists and hides the tab for creating lists.
+   *
    * @param actionEvent triggers this function when on action.
    */
   @FXML
@@ -90,6 +95,7 @@ public class ListScreenController extends Controller {
 
   /**
    * creates the lists, adding it to the array and updates relevant information on screen
+   *
    * @param actionEvent triggers this function when on action.
    */
   @FXML
@@ -124,6 +130,7 @@ public class ListScreenController extends Controller {
 
   /**
    * deletes the selected list. Cannot delete the favourites list.
+   *
    * @param actionEvent triggers this function when on action.
    */
   public void onDeleteListRequestButton(ActionEvent actionEvent) {
@@ -148,7 +155,8 @@ public class ListScreenController extends Controller {
 
   @FXML
   public void updateListOptions() {
-    Button[] buttons = {listOneButton, listTwoButton, listThreeButton, listFourButton, listFiveButton};
+    Button[] buttons = {listOneButton, listTwoButton, listThreeButton, listFourButton,
+        listFiveButton};
     String user = managerContext.authenticationManager.getUsername();
     wineLists = managerContext.databaseManager.getUserLists(user);
     for (int i = 0; i < buttons.length; i++) {
@@ -164,6 +172,7 @@ public class ListScreenController extends Controller {
 
   /**
    * Selects List One.
+   *
    * @param actionEvent triggers this function when on action.
    */
   public void onListOneButton(ActionEvent actionEvent) {
@@ -173,6 +182,7 @@ public class ListScreenController extends Controller {
 
   /**
    * Selects List Two.
+   *
    * @param actionEvent triggers this function when on action.
    */
   public void onListTwoButton(ActionEvent actionEvent) {
@@ -183,6 +193,7 @@ public class ListScreenController extends Controller {
 
   /**
    * Selects List Three.
+   *
    * @param actionEvent triggers this function when on action.
    */
   public void onListThreeButton(ActionEvent actionEvent) {
@@ -193,6 +204,7 @@ public class ListScreenController extends Controller {
 
   /**
    * Selects List Four.
+   *
    * @param actionEvent triggers this function when on action.
    */
   public void onListFourButton(ActionEvent actionEvent) {
@@ -203,6 +215,7 @@ public class ListScreenController extends Controller {
 
   /**
    * Selects List Five;
+   *
    * @param actionEvent triggers this function when on action.
    */
   public void onListFiveButton(ActionEvent actionEvent) {

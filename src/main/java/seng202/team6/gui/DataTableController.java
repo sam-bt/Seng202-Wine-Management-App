@@ -15,8 +15,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.apache.logging.log4j.LogManager;
-import seng202.team6.model.Wine;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.Wine;
 import seng202.team6.util.Exceptions.ValidationException;
 import seng202.team6.util.ProcessCSV;
 import seng202.team6.util.Validator;
@@ -90,9 +90,7 @@ public class DataTableController extends Controller {
   /**
    * Checks that all remap columns are in a valid state
    * <p>
-   *   A state is valid if:
-   *   - Only one column of each type is selected
-   *   - The title is selected
+   * A state is valid if: - Only one column of each type is selected - The title is selected
    * </p>
    *
    * @return if state is valid
@@ -287,7 +285,7 @@ public class DataTableController extends Controller {
    * Makes a list of columns for remapping
    *
    * @param columnNames names of columns
-   * @param rows list of rows
+   * @param rows        list of rows
    */
   private void makeColumnRemapList(String[] columnNames, List<String[]> rows) {
 

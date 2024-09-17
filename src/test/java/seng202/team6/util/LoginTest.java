@@ -1,6 +1,6 @@
 package seng202.team6.util;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.SQLException;
 import org.junit.jupiter.api.AfterEach;
@@ -33,8 +33,8 @@ class LoginTest {
     String username = "testName";
     String password = "testPassword";
     String salt = "SALT";
-    database.addUser(username,password,salt);
-    assertEquals(username,database.getUser(username).getUsername());
+    database.addUser(username, password, salt);
+    assertEquals(username, database.getUser(username).getUsername());
   }
 
   /**
@@ -45,4 +45,4 @@ class LoginTest {
     database.close();
   }
 
-  }
+}
