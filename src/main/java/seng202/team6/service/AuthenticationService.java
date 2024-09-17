@@ -3,6 +3,7 @@ package seng202.team6.service;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.model.User;
 
 public class AuthenticationService {
   private final AuthenticationManager authenticationManager;
@@ -33,9 +34,28 @@ public class AuthenticationService {
     boolean userAdded = databaseManager.addUser(username, hashedPassword, salt);
     if (userAdded) {
       authenticationManager.setAuthenticated(true);
-      authenticationManager.setAdmin(username.equals("admin"));
       return AuthenticationResponse.REGISTER_SUCCESS;
     }
     return AuthenticationResponse.USERNAME_ALREADY_REGISTERED;
+  }
+
+  public AuthenticationResponse validateLogin(String username, String password) {
+    if (username.isEmpty() || password.isEmpty()) {
+      return AuthenticationResponse.MISSING_FIELDS;
+    }
+
+    User userInfo = databaseManager.getUser(username);
+    if (userInfo == null) {
+      return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
+    }
+
+    boolean validPassword = EncryptionService.verifyPassword(password, userInfo.getPassword(),
+        userInfo.getSalt());
+    if (validPassword) {
+      authenticationManager.setAuthenticated(true);
+      authenticationManager.setAdmin(username.equals("admin"));
+      return AuthenticationResponse.LOGIN_SUCCESS;
+    }
+    return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
   }
 }

@@ -13,7 +13,7 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.service.AuthenticationService;
 
-public class UserAuthenticationStepDefinitions {
+public class UserRegistrationStepDefinitions {
   private DatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private AuthenticationService authenticationService;
