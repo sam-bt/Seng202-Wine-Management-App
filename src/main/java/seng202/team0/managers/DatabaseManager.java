@@ -72,6 +72,7 @@ public class DatabaseManager implements AutoCloseable {
     createWinesTable();
     createUsersTable();
     createGeolocationTable();
+    createNotesTable();
     addGeolocations();
     createWineListsTable();
 
@@ -687,6 +688,17 @@ public class DatabaseManager implements AutoCloseable {
       statement.execute();
     } catch (SQLException error) {
       log.error("Could not add a wine to a list", error);
+    }
+  }
+
+  private void createNotesTable() throws SQLException {
+    String create = "create table if not exists NOTES (" +
+            "ID INTEGER PRIMARY KEY," +
+            "USERNAME varchar(64) NOT NULL," +
+            "WINE_ID int NOT NULL" +
+            "NOTE text;";
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(create);
     }
   }
 

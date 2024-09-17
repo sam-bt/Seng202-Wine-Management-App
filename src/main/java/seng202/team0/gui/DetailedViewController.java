@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import seng202.team0.database.Wine;
 import seng202.team0.database.WineList;
 import seng202.team0.managers.ManagerContext;
+import seng202.team0.util.RegexProcessor;
 
 import java.awt.event.ActionEvent;
 import java.util.stream.Collectors;
@@ -46,6 +47,8 @@ public class DetailedViewController extends Controller {
 
     private Wine wine;
 
+    private RegexProcessor extractor = new RegexProcessor();
+
 
     public DetailedViewController(ManagerContext context) {
         super(context);
@@ -67,6 +70,7 @@ public class DetailedViewController extends Controller {
         errorText.setVisible(false);
     }
 
+
     @FXML
     public void onAddToListButton() {
         WineList selectedWineList = (WineList) choiceBoxListSelector.getValue();
@@ -82,10 +86,16 @@ public class DetailedViewController extends Controller {
 
     }
 
+
+
     public void setWine(Wine wine) {
         this.wine = new Wine(wine.getKey(), managerContext.databaseManager, wine.getTitle(), wine.getVariety(), "", "", wine.getWinery(), wine.getColor(), 1000, wine.getDescription(), 0, 0.0f, 0.0f, null);
         wineNameLabel.setText(wine.getTitle());
-        yearLabel.setText("0000");
+        if (wine.getVintage() == 0) {
+            yearLabel.setText(extractor.extractYearFromString(wine.getTitle()));
+        } else {
+            yearLabel.setText(String.valueOf(wine.getVintage()));
+        }
         countryLabel.setText(wine.getCountry());
         descriptionArea.setText(wine.getDescription());
         wineryLabel.setText(wine.getWinery());
