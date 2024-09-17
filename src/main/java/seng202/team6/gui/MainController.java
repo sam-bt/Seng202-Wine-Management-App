@@ -54,10 +54,7 @@ public class MainController extends Controller {
    */
   public MainController(ManagerContext managerContext) {
     super(managerContext);
-    authenticationService = new AuthenticationService(
-        managerContext.authenticationManager,
-        managerContext.databaseManager
-    );
+    authenticationService = new AuthenticationService(managerContext.databaseManager);
 
     // This is an ugly circular dependency. It is easier to resolve here
     managerContext.GUIManager.setMainController(this);
@@ -74,9 +71,9 @@ public class MainController extends Controller {
   }
 
   public void onLogin() {
-    if (managerContext.authenticationManager.isAuthenticated()) {
-      adminScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
-      dataSetsScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
+    if (authenticationService.isAuthenticated()) {
+      adminScreenButton.setVisible(authenticationService.isAdmin());
+      dataSetsScreenButton.setVisible(authenticationService.isAdmin());
       loginButton.setText("Settings");
       registerButton.setText("Logout");
 
@@ -153,7 +150,7 @@ public class MainController extends Controller {
   @FXML
   public void openWineScreen() {
     switchScene("/fxml/wine_screen.fxml", "Wine Information",
-        () -> new WineScreenController(managerContext));
+        () -> new WineScreenController(managerContext, authenticationService));
   }
 
   /**
@@ -162,7 +159,7 @@ public class MainController extends Controller {
   @FXML
   public void openListScreen() {
     switchScene("/fxml/list_screen.fxml", "My Lists",
-        () -> new ListScreenController(managerContext));
+        () -> new ListScreenController(managerContext, authenticationService));
   }
 
   /**

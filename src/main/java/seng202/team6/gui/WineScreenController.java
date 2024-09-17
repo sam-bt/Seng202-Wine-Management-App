@@ -23,6 +23,7 @@ import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
+import seng202.team6.service.AuthenticationService;
 
 /**
  * Controller for the screen that displays wines
@@ -31,6 +32,7 @@ import seng202.team6.model.Wine;
 public class WineScreenController extends Controller {
 
   private final Logger log = LogManager.getLogger(WineScreenController.class);
+  private final AuthenticationService authenticationService;
 
   @FXML
   TableView<Wine> tableView;
@@ -71,8 +73,9 @@ public class WineScreenController extends Controller {
    *
    * @param managerContext manager context
    */
-  public WineScreenController(ManagerContext managerContext) {
+  public WineScreenController(ManagerContext managerContext, AuthenticationService authenticationService) {
     super(managerContext);
+    this.authenticationService = authenticationService;
   }
 
   /**
@@ -222,7 +225,7 @@ public class WineScreenController extends Controller {
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
     // Enable editing if admin
-    if (managerContext.authenticationManager.isAdmin()) {
+    if (authenticationService.isAdmin()) {
       titleColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       varietyColumn.setCellFactory(

@@ -38,7 +38,7 @@ public class LoginController extends Controller {
     String password = passwordField.getText();
     AuthenticationResponse response = authenticationService.validateLogin(username, password);
     if (response == AuthenticationResponse.LOGIN_SUCCESS) {
-      if (managerContext.authenticationManager.isAdminFirstLogin()) {
+      if (authenticationService.isAdminFirstLogin()) {
         managerContext.GUIManager.mainController.setDisable(true);
         managerContext.GUIManager.mainController.openUpdatePasswordScreen();
         return;

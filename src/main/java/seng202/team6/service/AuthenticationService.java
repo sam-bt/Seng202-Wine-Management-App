@@ -3,7 +3,6 @@ package seng202.team6.service;
 import static seng202.team6.model.AuthenticationResponse.PASSWORD_CHANGED_SUCCESS;
 import static seng202.team6.model.AuthenticationResponse.UNEXPECTED_ERROR;
 
-import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.model.User;
@@ -14,18 +13,17 @@ import seng202.team6.util.EncryptionUtil;
  * This class provides methods for user registration, login, password update, and logout.
  */
 public class AuthenticationService {
-  private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
+  private String authenticatedUsername;
+  private boolean admin;
+  private boolean adminFirstLogin;
 
   /**
-   * Constructs an AuthenticationService with the specified managers.
+   * Constructs an AuthenticationService with the database manager
    *
-   * @param authenticationManager The AuthenticationManager to handle authentication state.
    * @param databaseManager The DatabaseManager to interact with the user database.
    */
-  public AuthenticationService(AuthenticationManager authenticationManager,
-      DatabaseManager databaseManager) {
-    this.authenticationManager = authenticationManager;
+  public AuthenticationService(DatabaseManager databaseManager) {
     this.databaseManager = databaseManager;
   }
 
@@ -55,7 +53,6 @@ public class AuthenticationService {
     String hashedPassword = EncryptionUtil.hashPassword(password, salt);
     boolean userAdded = databaseManager.addUser(username, hashedPassword, salt);
     if (userAdded) {
-      authenticationManager.setAuthenticated(true);
       return AuthenticationResponse.REGISTER_SUCCESS;
     }
     return AuthenticationResponse.USERNAME_ALREADY_REGISTERED;
@@ -81,10 +78,9 @@ public class AuthenticationService {
     boolean validPassword = EncryptionUtil.verifyPassword(password, userInfo.getPassword(),
         userInfo.getSalt());
     if (validPassword) {
-      authenticationManager.setAuthenticated(true);
-      authenticationManager.setUsername(username);
-      authenticationManager.setAdmin(username.equals("admin"));
-      authenticationManager.setAdminFirstLogin(password.equals("admin"));
+      setAuthenticatedUsername(username);
+      setAdmin(username.equals("admin"));
+      setAdminFirstLogin(password.equals("admin"));
       return AuthenticationResponse.LOGIN_SUCCESS;
     }
     return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
@@ -138,13 +134,40 @@ public class AuthenticationService {
    * @return An AuthenticationResponse indicating the result of the logout attempt.
    */
   public AuthenticationResponse logout() {
-    if (authenticationManager.isAuthenticated()) {
-      authenticationManager.setAuthenticated(false);
-      authenticationManager.setAdmin(false);
-      authenticationManager.setAdminFirstLogin(false);
-      authenticationManager.setUsername(null);
+    if (isAuthenticated()) {
+      setAuthenticatedUsername(null);
+      setAdmin(false);
+      setAdminFirstLogin(false);
       return AuthenticationResponse.LOGOUT_SUCCESS;
     }
     return UNEXPECTED_ERROR;
+  }
+
+  public boolean isAuthenticated() {
+    return authenticatedUsername != null;
+  }
+
+  public String getAuthenticatedUsername() {
+    return authenticatedUsername;
+  }
+
+  public void setAuthenticatedUsername(String authenticatedUsername) {
+    this.authenticatedUsername = authenticatedUsername;
+  }
+
+  public boolean isAdmin() {
+    return admin;
+  }
+
+  public void setAdmin(boolean admin) {
+    this.admin = admin;
+  }
+
+  public boolean isAdminFirstLogin() {
+    return adminFirstLogin;
+  }
+
+  public void setAdminFirstLogin(boolean adminFirstLogin) {
+    this.adminFirstLogin = adminFirstLogin;
   }
 }

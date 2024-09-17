@@ -9,14 +9,12 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.sql.SQLException;
-import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.service.AuthenticationService;
 
 public class UserRegistrationStepDefinitions {
   private DatabaseManager databaseManager;
-  private AuthenticationManager authenticationManager;
   private AuthenticationService authenticationService;
   private String username;
   private String password;
@@ -24,9 +22,8 @@ public class UserRegistrationStepDefinitions {
 
   @Before
   public void setup() throws SQLException {
-    authenticationManager = new AuthenticationManager();
     databaseManager = new DatabaseManager();
-    authenticationService = new AuthenticationService(authenticationManager, databaseManager);
+    authenticationService = new AuthenticationService(databaseManager);
   }
 
   @After
@@ -36,7 +33,7 @@ public class UserRegistrationStepDefinitions {
 
   @Given("the user is not authenticated and is registering")
   public void the_user_is_not_authenticated_and_is_registering() {
-    authenticationManager.setAuthenticated(false);
+    authenticationService.setAuthenticatedUsername(null);
   }
 
   @When("the user enters a valid username, password, and confirmed password")

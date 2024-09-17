@@ -43,18 +43,11 @@ public class UpdatePasswordController extends Controller {
 
   @FXML
   private void onConfirm() {
-    String username = managerContext.authenticationManager.getUsername();
+    String username = authenticationService.getAuthenticatedUsername();
     String oldPassword = oldPasswordField.getText();
     String newPassword = newPasswordField.getText();
     AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword);
     if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
-      // todo signify success somehow
-      if (disabled) {
-        managerContext.authenticationManager.setAuthenticated(true);
-        managerContext.authenticationManager.setAdmin(true);
-        managerContext.GUIManager.mainController.setDisable(false);
-        managerContext.GUIManager.mainController.onLogin();
-      }
       managerContext.GUIManager.mainController.openWineScreen();
     } else {
       loginMessageLabel.setStyle("-fx-text-fill: red");

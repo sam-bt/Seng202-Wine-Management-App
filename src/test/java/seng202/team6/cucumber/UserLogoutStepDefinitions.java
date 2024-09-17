@@ -10,21 +10,17 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.sql.SQLException;
-import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.service.AuthenticationService;
 
 public class UserLogoutStepDefinitions {
-
-  private AuthenticationManager authenticationManager;
   private AuthenticationService authenticationService;
 
   @Before
   public void setup() throws SQLException {
     DatabaseManager databaseManager = new DatabaseManager();
-    authenticationManager = new AuthenticationManager();
-    authenticationService = new AuthenticationService(authenticationManager, databaseManager);
+    authenticationService = new AuthenticationService(databaseManager);
   }
 
   @Given("the user is authenticated and wants to logout")
@@ -39,8 +35,8 @@ public class UserLogoutStepDefinitions {
     AuthenticationResponse loginResponse = authenticationService.validateLogin(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, loginResponse);
 
-    assertTrue(authenticationManager.isAuthenticated());
-    assertEquals(authenticationManager.getUsername(), username);
+    assertTrue(authenticationService.isAuthenticated());
+    assertEquals(authenticationService.getAuthenticatedUsername(), username);
   }
 
   @When("the user requests to logout")
@@ -50,10 +46,10 @@ public class UserLogoutStepDefinitions {
 
   @Then("the user is logged out of their account")
   public void theUserIsLoggedOutOfTheirAccount() {
-    assertFalse(authenticationManager.isAuthenticated());
-    assertFalse(authenticationManager.isAdmin());
-    assertFalse(authenticationManager.isAdminFirstLogin());
-    assertNull(authenticationManager.getUsername());
+    assertFalse(authenticationService.isAuthenticated());
+    assertFalse(authenticationService.isAdmin());
+    assertFalse(authenticationService.isAdminFirstLogin());
+    assertNull(authenticationService.getAuthenticatedUsername());
   }
 
 }

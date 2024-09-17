@@ -11,7 +11,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.sql.SQLException;
-import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.model.User;
@@ -28,9 +27,8 @@ public class UserChangePasswordStepDefinitions {
 
   @Before
   public void setup() throws SQLException {
-    AuthenticationManager authenticationManager = new AuthenticationManager();
     databaseManager = new DatabaseManager();
-    authenticationService = new AuthenticationService(authenticationManager, databaseManager);
+    authenticationService = new AuthenticationService(databaseManager);
   }
 
   @Given("the user is authenticated and changing their password")

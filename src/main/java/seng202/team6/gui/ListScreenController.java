@@ -9,12 +9,15 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.service.AuthenticationService;
 
 /**
  * List Screen Controller (MORE DETAIL HERE!)
  */
 public class ListScreenController extends Controller {
 
+  private final AuthenticationService authenticationService;
+  
   @FXML
   public Button createListRequestButton;
   @FXML
@@ -42,8 +45,10 @@ public class ListScreenController extends Controller {
    *
    * @param managerContext manager context
    */
-  public ListScreenController(ManagerContext managerContext) {
+  public ListScreenController(ManagerContext managerContext,
+      AuthenticationService authenticationService) {
     super(managerContext);
+    this.authenticationService = authenticationService;
   }
 
   /**
@@ -112,7 +117,7 @@ public class ListScreenController extends Controller {
       } else {
         errorText.setVisible(false);
 
-        String user = managerContext.authenticationManager.getUsername();
+        String user = authenticationService.getAuthenticatedUsername();
 
         managerContext.databaseManager.createList(user, name);
 
@@ -136,7 +141,7 @@ public class ListScreenController extends Controller {
   public void onDeleteListRequestButton(ActionEvent actionEvent) {
     if (selected != 1) {
 
-      String user = managerContext.authenticationManager.getUsername();
+      String user = authenticationService.getAuthenticatedUsername();
       String selectedName = wineLists.get(selected - 1);
       managerContext.databaseManager.deleteList(user, selectedName);
       updateListOptions();
@@ -157,7 +162,7 @@ public class ListScreenController extends Controller {
   public void updateListOptions() {
     Button[] buttons = {listOneButton, listTwoButton, listThreeButton, listFourButton,
         listFiveButton};
-    String user = managerContext.authenticationManager.getUsername();
+    String user = authenticationService.getAuthenticatedUsername();
     wineLists = managerContext.databaseManager.getUserLists(user);
     for (int i = 0; i < buttons.length; i++) {
       if (i < wineLists.size()) {

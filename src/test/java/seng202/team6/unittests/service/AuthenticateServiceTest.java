@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.service.AuthenticationService;
@@ -17,7 +16,6 @@ import seng202.team6.service.AuthenticationService;
  */
 public class AuthenticateServiceTest {
   private AuthenticationService authenticationService;
-  private AuthenticationManager authenticationManager;
   private DatabaseManager databaseManager;
 
   /**
@@ -28,9 +26,8 @@ public class AuthenticateServiceTest {
    */
   @BeforeEach
   public void setup() throws SQLException {
-    authenticationManager = new AuthenticationManager();
     databaseManager = new DatabaseManager();
-    authenticationService = new AuthenticationService(authenticationManager, databaseManager);
+    authenticationService = new AuthenticationService(databaseManager);
   }
 
   /**
