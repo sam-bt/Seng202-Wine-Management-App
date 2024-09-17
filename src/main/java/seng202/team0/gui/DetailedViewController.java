@@ -10,6 +10,7 @@ import seng202.team0.managers.ManagerContext;
 import seng202.team0.util.RegexProcessor;
 
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 public class DetailedViewController extends Controller {
@@ -86,6 +87,28 @@ public class DetailedViewController extends Controller {
 
     }
 
+    @FXML
+    void onSaveNoteClicked(){
+        try {
+            managerContext.databaseManager.writeNoteToTable(notesArea.getText(), wine.getKey(), managerContext.authenticationManager.getUsername());
+            System.out.println("Note Saved");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Error saving note");
+        }
+    }
+
+    private String getNote(long wineID) {
+        String uname = managerContext.authenticationManager.getUsername();
+        try {
+            String note = managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
+            return note;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return "NO NOTE FOUND";
+        }
+    }
+
 
 
     public void setWine(Wine wine) {
@@ -102,5 +125,6 @@ public class DetailedViewController extends Controller {
         double score = wine.getScorePercent();
         score /= 100.0;
         scoreWheel.setProgress(score);
+        notesArea.setText(getNote(wine.getKey()));
     }
 }

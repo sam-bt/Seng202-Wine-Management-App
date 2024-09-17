@@ -695,10 +695,37 @@ public class DatabaseManager implements AutoCloseable {
     String create = "create table if not exists NOTES (" +
             "ID INTEGER PRIMARY KEY," +
             "USERNAME varchar(64) NOT NULL," +
-            "WINE_ID int NOT NULL" +
-            "NOTE text;";
+            "WINE_ID int NOT NULL, " +
+            "NOTE text);";
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
+    }
+  }
+
+  public void writeNoteToTable(String note, long wineID, String user) throws SQLException {
+    String insert = "INSERT INTO NOTES VALUES (null, ?, ?, ?)";
+    try (PreparedStatement statement = connection.prepareStatement(insert)) {
+      statement.setString(1, user);
+      statement.setLong(2, wineID);
+      statement.setString(3, note);
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      log.error("Failed to add note to table");
+    }
+  }
+
+  public String getNoteByUserAndWine(String user, long wineID) throws SQLException {
+    String find = "SELECT * FROM NOTES WHERE USERNAME = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(find)) {
+      statement.setString(1, user);
+      statement.setLong(2, wineID);
+
+      ResultSet set = statement.executeQuery();
+      return set.getString("NOTE");
+    } catch (SQLException error) {
+      log.warn("Note not found!");
+      return "";
+
     }
   }
 
