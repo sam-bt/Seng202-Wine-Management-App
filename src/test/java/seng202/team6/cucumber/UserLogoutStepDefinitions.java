@@ -16,25 +16,24 @@ import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.service.AuthenticationService;
 
 public class UserLogoutStepDefinitions {
-  private DatabaseManager databaseManager;
+
   private AuthenticationManager authenticationManager;
   private AuthenticationService authenticationService;
-  private String username;
-  private String password;
 
   @Before
   public void setup() throws SQLException {
+    DatabaseManager databaseManager = new DatabaseManager();
     authenticationManager = new AuthenticationManager();
-    databaseManager = new DatabaseManager();
     authenticationService = new AuthenticationService(authenticationManager, databaseManager);
   }
 
   @Given("the user is authenticated and wants to logout")
   public void theUserIsAuthenticatedAndWantsToLogout() {
-    username = "MyAccount";
-    password = "MyPassword";
+    String username = "MyAccount";
+    String password = "MyPassword";
 
-    AuthenticationResponse registrationResponse = authenticationService.validateRegistration(username, password, password);
+    AuthenticationResponse registrationResponse = authenticationService.validateRegistration(
+        username, password, password);
     assertEquals(AuthenticationResponse.REGISTER_SUCCESS, registrationResponse);
 
     AuthenticationResponse loginResponse = authenticationService.validateLogin(username, password);

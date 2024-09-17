@@ -20,7 +20,6 @@ import seng202.team6.service.EncryptionService;
 
 public class UserChangePasswordStepDefinitions {
   private DatabaseManager databaseManager;
-  private AuthenticationManager authenticationManager;
   private AuthenticationService authenticationService;
   private String username;
   private String password;
@@ -29,7 +28,7 @@ public class UserChangePasswordStepDefinitions {
 
   @Before
   public void setup() throws SQLException {
-    authenticationManager = new AuthenticationManager();
+    AuthenticationManager authenticationManager = new AuthenticationManager();
     databaseManager = new DatabaseManager();
     authenticationService = new AuthenticationService(authenticationManager, databaseManager);
   }
