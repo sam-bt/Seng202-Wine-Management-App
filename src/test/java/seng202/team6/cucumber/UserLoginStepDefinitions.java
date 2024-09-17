@@ -2,9 +2,9 @@ package seng202.team6.cucumber;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -13,9 +13,7 @@ import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
-import seng202.team6.model.User;
 import seng202.team6.service.AuthenticationService;
-import seng202.team6.service.EncryptionService;
 
 public class UserLoginStepDefinitions {
   private DatabaseManager databaseManager;
@@ -29,6 +27,11 @@ public class UserLoginStepDefinitions {
     authenticationManager = new AuthenticationManager();
     databaseManager = new DatabaseManager();
     authenticationService = new AuthenticationService(authenticationManager, databaseManager);
+  }
+
+  @After
+  public void close() {
+    databaseManager.close();
   }
 
   @Given("the user is not authenticated and is logging in")
