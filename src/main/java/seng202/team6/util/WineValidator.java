@@ -13,7 +13,7 @@ import seng202.team6.util.Exceptions.ValidationException;
  * scenarios where one forgets to validate an input or constructs a broken object.
  * </p>
  */
-public class Validator {
+public class WineValidator {
 
 
   /**
