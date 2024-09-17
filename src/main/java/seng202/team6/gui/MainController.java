@@ -119,6 +119,7 @@ public class MainController extends Controller {
   }
 
   public void logout() {
+    authenticationService.logout();
     loginButton.setText("Login");
     registerButton.setText("Register");
     loginButton.setOnMouseClicked(event -> openLoginScreen());
@@ -130,7 +131,6 @@ public class MainController extends Controller {
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
 
-    managerContext.authenticationManager.logout();
     openWineScreen();
   }
 

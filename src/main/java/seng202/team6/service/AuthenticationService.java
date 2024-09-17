@@ -1,10 +1,10 @@
 package seng202.team6.service;
 
 import static seng202.team6.model.AuthenticationResponse.PASSWORD_CHANGED_SUCCESS;
+import static seng202.team6.model.AuthenticationResponse.UNEXPECTED_ERROR;
 
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.model.User;
 
@@ -94,5 +94,16 @@ public class AuthenticationService {
       return PASSWORD_CHANGED_SUCCESS;
     }
     return AuthenticationResponse.UNEXPECTED_ERROR;
+  }
+
+  public AuthenticationResponse logout() {
+    if (authenticationManager.isAuthenticated()) {
+      authenticationManager.setAuthenticated(false);
+      authenticationManager.setAdmin(false);
+      authenticationManager.setAdminFirstLogin(false);
+      authenticationManager.setUsername(null);
+      return AuthenticationResponse.LOGOUT_SUCCESS;
+    }
+    return UNEXPECTED_ERROR;
   }
 }

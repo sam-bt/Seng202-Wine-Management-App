@@ -50,12 +50,6 @@ public class AuthenticationManager {
     this.username = username;
   }
 
-  public void logout() {
-    authenticated = false;
-    admin = false;
-    username = "";
-  }
-
   // Getters and Setters
   public Role getRole() {
     return null;

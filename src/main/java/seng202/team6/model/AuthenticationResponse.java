@@ -17,6 +17,7 @@ public enum AuthenticationResponse {
   OLD_PASSWORD_SAME_AS_NEW("New password cannot be same as old password."),
   PASSWORD_CHANGED_SUCCESS(null),
 
+  LOGOUT_SUCCESS(null),
   UNEXPECTED_ERROR("An unexpected error occurred. Please try again.")
   ;
 
