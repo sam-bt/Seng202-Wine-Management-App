@@ -1,14 +1,30 @@
 package seng202.team6.gui;
 
 import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import org.apache.xmlbeans.impl.xb.xsdschema.All;
 import seng202.team6.managers.ManagerContext;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.StringConverter;
+import javafx.util.converter.DefaultStringConverter;
+import javafx.util.converter.FloatStringConverter;
+import javafx.util.converter.IntegerStringConverter;
+import seng202.team6.model.Wine;
+import seng202.team6.model.WineList;
+import seng202.team6.managers.ManagerContext;
+
+import java.util.List;
 import seng202.team6.service.AuthenticationService;
 
 /**
@@ -17,7 +33,7 @@ import seng202.team6.service.AuthenticationService;
 public class ListScreenController extends Controller {
 
   private final AuthenticationService authenticationService;
-  
+
   @FXML
   public Button createListRequestButton;
   @FXML
@@ -36,8 +52,10 @@ public class ListScreenController extends Controller {
   public Button listOneButton, listTwoButton, listThreeButton, listFourButton, listFiveButton;
   @FXML
   public Button deleteListRequestButton;
+  @FXML
+  public TableView<Wine> tableView;
 
-  public List<String> wineLists;
+  public List<WineList> wineLists;
   private int selected = 1;
 
   /**
@@ -59,6 +77,7 @@ public class ListScreenController extends Controller {
     updateListOptions();
     tabViewing.setText("VIEWING: " + wineLists.getFirst());
     selected = 1;
+    changeSelected();
     if (wineLists.size() == 1) {
       deleteListRequestButton.setDisable(true);
     }
@@ -106,8 +125,8 @@ public class ListScreenController extends Controller {
   @FXML
   public void onCreateListConfirmButton(ActionEvent actionEvent) {
     String name = listName.getText();
-    if (wineLists.contains(name)) {
-      errorText.setText("User Already Exists");
+    if (wineLists.stream().anyMatch(wineList -> wineList.name().equals(name))) {
+      errorText.setText("List Already Exists");
       errorText.setVisible(true);
     } else {
 
@@ -140,10 +159,8 @@ public class ListScreenController extends Controller {
    */
   public void onDeleteListRequestButton(ActionEvent actionEvent) {
     if (selected != 1) {
-
-      String user = authenticationService.getAuthenticatedUsername();
-      String selectedName = wineLists.get(selected - 1);
-      managerContext.databaseManager.deleteList(user, selectedName);
+      WineList wineList = wineLists.get(selected - 1);
+      managerContext.databaseManager.deleteList(wineList);
       updateListOptions();
       selected -= 1;
       changeSelected();
@@ -166,7 +183,7 @@ public class ListScreenController extends Controller {
     wineLists = managerContext.databaseManager.getUserLists(user);
     for (int i = 0; i < buttons.length; i++) {
       if (i < wineLists.size()) {
-        buttons[i].setText(wineLists.get(i));
+        buttons[i].setText(wineLists.get(i).name());
         buttons[i].setDisable(false);
       } else {
         buttons[i].setText("Empty List");
@@ -232,7 +249,95 @@ public class ListScreenController extends Controller {
   /**
    * Changes the selected list.
    */
+  @FXML
   public void changeSelected() {
-    tabViewing.setText("VIEWING: " + wineLists.get(selected - 1));
+    tabViewing.setText("VIEWING: " + wineLists.get(selected - 1).name());
+    tableView.getItems().clear();
+
+    String user = authenticationService.getAuthenticatedUsername();
+    List<WineList> userLists = managerContext.databaseManager.getUserLists(user);
+    WineList fromUserLists = userLists.get(selected-1);
+    List<Wine> list = managerContext.databaseManager.getWinesInList(fromUserLists);
+    ObservableList<Wine> observableList = FXCollections.observableList(list);
+    setupTableView();
+    tableView.setItems(observableList);
+  }
+
+  @FXML
+  public void setupTableView() {
+    tableView.getColumns().clear();
+
+    StringConverter<String> stringConverter = new DefaultStringConverter();
+    StringConverter<Integer> intConverter = new IntegerStringConverter();
+    StringConverter<Float> floatConverter = new FloatStringConverter();
+
+
+    tableView.setEditable(true);
+
+    TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
+
+    TableColumn<Wine, String> varietyColumn = new TableColumn<>("Variety");
+
+    TableColumn<Wine, String> wineryColumn = new TableColumn<>("Winery");
+
+    TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
+
+    TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
+
+    TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
+
+    TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
+
+    TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
+
+    TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
+
+    TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
+
+
+    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title") );
+    varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));
+    wineryColumn.setCellValueFactory(new PropertyValueFactory<>("winery"));
+    regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));
+    colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
+    vintageColumn.setCellValueFactory(new PropertyValueFactory<>("vintage"));
+    descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+    scoreColumn.setCellValueFactory(new PropertyValueFactory<>("scorePercent"));
+    abvColumn.setCellValueFactory(new PropertyValueFactory<>("abv"));
+    priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+    tableView.getColumns().add(titleColumn);
+    tableView.getColumns().add(varietyColumn);
+    tableView.getColumns().add(wineryColumn);
+    tableView.getColumns().add(regionColumn);
+    tableView.getColumns().add(colorColumn);
+    tableView.getColumns().add(vintageColumn);
+    tableView.getColumns().add(descriptionColumn);
+    tableView.getColumns().add(scoreColumn);
+    tableView.getColumns().add(abvColumn);
+    tableView.getColumns().add(priceColumn);
+
+    tableView.setRowFactory((tableView) -> {
+      TableRow<Wine> tableRow = new TableRow<>();
+      tableRow.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2 && !tableRow.isEmpty()) {
+          Wine wine = tableRow.getItem();
+          onWineInListClick(wine);
+        }
+      });
+      return tableRow;
+    });
+  }
+
+  public void onWineInListClick(Wine wine) {
+    Alert alert = new Alert(AlertType.CONFIRMATION);
+    alert.setTitle("Delete Wine from List");
+    alert.setHeaderText("Would you like to remove " + wine.getTitle() + " from this list?");
+    ButtonType buttonType = alert.showAndWait().orElse(null);
+    if (buttonType == ButtonType.OK) {
+      WineList selectedList = wineLists.get(selected - 1);
+      managerContext.databaseManager.deleteWineFromList(selectedList, wine);
+      tableView.getItems().remove(wine);
+    }
   }
 }

@@ -1,17 +1,23 @@
 package seng202.team6.gui;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.FloatStringConverter;
@@ -290,6 +296,8 @@ public class WineScreenController extends Controller {
 
     setupTableColumns();
     openWineRange(0, 100, null);
+
+    tableView.setOnMouseClicked(this::openWineOnClick);
   }
 
   /**
@@ -369,4 +377,35 @@ public class WineScreenController extends Controller {
     openWineRange(0, 100, null);
   }
 
+  @FXML
+  public void openWineOnClick(MouseEvent event) {
+    if (event.getClickCount() == 2) {
+      try {
+        createWineDialog(tableView.getSelectionModel().getSelectedItem());
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  private void createWineDialog(Wine wine) throws IOException {
+
+    FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/detailed_view.fxml"));
+    baseLoader.setControllerFactory(param -> new DetailedViewController(managerContext, authenticationService));
+
+    Parent root = baseLoader.load();
+    Stage stage = new Stage();
+    stage.setTitle(wine.getTitle());
+    Scene scene = new Scene(root, 500, 700);
+    stage.setScene(scene);
+    stage.setResizable(false);
+
+    DetailedViewController detailedViewController = baseLoader.getController();
+    detailedViewController.setWine(wine);
+    detailedViewController.init();
+
+    managerContext.GUIManager.mainController.setWholePageInteractable(false);
+    stage.showAndWait();
+    managerContext.GUIManager.mainController.setWholePageInteractable(true);
+  }
 }

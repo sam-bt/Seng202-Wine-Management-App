@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="700.0" minWidth="500.0" prefHeight="700.0" prefWidth="500.0" styleClass="application-background" stylesheets="@../css/detailed_view.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.DetailedViewController">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="245.0" minWidth="10.0" prefWidth="121.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="435.0" minWidth="10.0" prefWidth="379.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="90.0" minHeight="10.0" prefHeight="88.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="212.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="175.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="201.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="84.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <AnchorPane prefHeight="130.0" prefWidth="121.0" GridPane.rowIndex="1">
+         <children>
+            <Label text="Year: " AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label text="Winery: " AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label text="Origin:" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="90.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label text="Description" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <TextArea fx:id="notesArea" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="146.0" prefWidth="359.0" styleClass="notes-area" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+         <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </GridPane.margin>
+      </TextArea>
+      <Label text="Score:" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="TOP">
+         <font>
+            <Font size="20.0" />
+         </font>
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </Label>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <children>
+            <Label fx:id="yearLabel" text="{YEAR}" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="wineryLabel" layoutX="10.0" layoutY="10.0" text="{WINERY}" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="countryLabel" layoutX="10.0" layoutY="10.0" text="{COUNTRY" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="90.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <VBox prefHeight="80.0" prefWidth="500.0" styleClass="wine-title" GridPane.columnSpan="2147483647" GridPane.vgrow="ALWAYS">
+         <children>
+            <Label fx:id="wineNameLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="76.0" prefWidth="480.0" text="{WINE_TITLE}" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+      <ProgressIndicator fx:id="scoreWheel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="75.0" progress="0.0" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+         <GridPane.margin>
+            <Insets bottom="80.0" />
+         </GridPane.margin>
+      </ProgressIndicator>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" stylesheets="@../css/global.css" GridPane.columnIndex="1" GridPane.rowIndex="4">
+         <children>
+            <Button fx:id="saveNoteButton" layoutX="283.0" layoutY="12.0" mnemonicParsing="false" onAction="#onSaveNoteClicked" prefHeight="50.0" prefWidth="85.0" styleClass="primary-button" text="Save Notes" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="11.0" />
+            <Button fx:id="addToListButton" mnemonicParsing="false" onMouseClicked="#onAddToListButton" prefHeight="50.0" prefWidth="112.0" styleClass="primary-button" text="Add to List" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="99.0" />
+            <ChoiceBox fx:id="choiceBoxListSelector" layoutX="14.0" layoutY="12.0" prefHeight="50.0" prefWidth="150.0" styleClass="primary-button" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="215.0" />
+            <Button fx:id="deleteFromListButton" disable="true" layoutX="166.0" layoutY="12.0" mnemonicParsing="false" onMouseClicked="#onDeleteFromListButton" prefHeight="50.0" prefWidth="112.0" styleClass="primary-button" text="Delete From List" visible="false" />
+         </children>
+      </AnchorPane>
+      <Label fx:id="errorText" text="Notes" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="TOP">
+         <font>
+            <Font size="20.0" />
+         </font>
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </Label>
+      <TextArea fx:id="descriptionArea" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </TextArea>
+   </children>
+</GridPane>

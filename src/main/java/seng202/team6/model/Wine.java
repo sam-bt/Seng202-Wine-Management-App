@@ -1,6 +1,7 @@
 package seng202.team6.model;
 
 import java.sql.SQLException;
+import java.util.Objects;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleFloatProperty;
@@ -605,5 +606,17 @@ public class Wine {
    */
   public void setGeoLocation(GeoLocation geoLocation) {
     this.geoLocation = geoLocation;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Wine wine = (Wine) o;
+    return key == wine.key;
   }
 }

@@ -3,16 +3,21 @@ package seng202.team6.unittests.managers;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import java.util.List;
+import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineList;
 
 class DatabaseManagerTest {
 
@@ -278,11 +283,6 @@ class DatabaseManagerTest {
     }
   }
 
-  @Test
-  void adminHasFavourite() {
-    assertTrue(manager.getUserLists("admin").contains("Favourites"));
-  }
-
   private void addFilterableWines() throws SQLException {
     ArrayList<Wine> wines = new ArrayList<>();
     wines.add(
@@ -322,5 +322,43 @@ class DatabaseManagerTest {
               (float) i, null));
     }
     manager.addWines(wines);
+  }
+
+  @Test
+  void adminHasFavourite() {
+    assertTrue(manager.getUserLists("admin").stream().anyMatch(wineList -> wineList.name().equals("Favourites")));
+  }
+
+  @Test
+  void createdListIsAddedToDatabase() {
+    String listName = "2024 Wines";
+    manager.createList("admin", listName);
+
+    List<WineList> wineLists = manager.getUserLists("admin");
+    assertTrue(wineLists.stream().anyMatch(wineList -> wineList.name().equals(listName)));
+  }
+
+  @Test
+  void addedWineSavesToListOnDatabase() throws SQLException {
+    WineList favouritesList = manager.getUserLists("admin").stream()
+        .filter(wineList -> wineList.name().equals("Favourites"))
+        .findFirst()
+        .orElse(null);
+    assertNotNull(favouritesList);
+
+    Wine wine = new Wine(1, manager, "wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011,
+        "na", 99, 25f,
+        (float) 1, null);
+    manager.addWines(List.of(wine));
+
+    // ensure the size of the list is initially 0
+    List<Wine> wines = manager.getWinesInList(favouritesList);
+    assertEquals(0, wines.size());
+
+    // ensure a wine added to the list is saved and can be retrieved
+    manager.addWineToList(favouritesList, wine);
+    List<Wine> updatedWines = manager.getWinesInList(favouritesList);
+    assertEquals(1, updatedWines.size());
+    assertEquals(updatedWines.getFirst(), wine);
   }
 }

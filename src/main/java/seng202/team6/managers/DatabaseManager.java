@@ -19,6 +19,7 @@ import seng202.team6.model.Filters;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineList;
 import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.ProcessCSV;
 
@@ -71,6 +72,7 @@ public class DatabaseManager implements AutoCloseable {
     createWinesTable();
     createUsersTable();
     createGeolocationTable();
+    createNotesTable();
     addGeolocations();
     createWineListsTable();
 
@@ -153,12 +155,11 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
     long milliseconds = System.currentTimeMillis();
     ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query =
-        "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE from WINE "
-            + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
-            + "order by WINE.ID "
-            + "limit ? "
-            + "offset ?;";
+    String query = "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE from WINE "
+        + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
+        + "order by WINE.ID "
+        + "limit ? "
+        + "offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setInt(1, end - begin);
       statement.setInt(2, begin);
@@ -563,42 +564,165 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  public void createList(String username, String listName) {
+  public WineList createList(String username, String listName) {
     String create = "insert into LIST_NAME (ID, USERNAME, NAME) values (null, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(create)) {
       statement.setString(1, username);
       statement.setString(2, listName);
-      statement.execute();
+
+      int rowsAffected = statement.executeUpdate();
+      if (rowsAffected > 0) {
+        ResultSet generatedKeys = statement.getGeneratedKeys();
+        if (generatedKeys.next()) {
+          long id = generatedKeys.getLong(1);
+          return new WineList(id, listName);
+        }
+      }
+      log.error("Could not add list to the database");
+      return null;
     } catch (SQLException error) {
       log.error("Could not add list to the database", error);
+      return null;
     }
   }
 
-  public void deleteList(String username, String listName) {
-    String delete = "delete from LIST_NAME where USERNAME = ? and NAME = ?";
+  public void deleteList(WineList wineList) {
+    String delete = "delete from LIST_NAME where ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(delete)) {
-      statement.setString(1, username);
-      statement.setString(2, listName);
+      statement.setLong(1, wineList.id());
       statement.executeUpdate();
     } catch (SQLException error) {
       log.error("Could not delete a list from the database", error);
     }
   }
 
-  public List<String> getUserLists(String username) {
-    List<String> listNames = new ArrayList<>();
+  public List<WineList> getUserLists(String username) {
+    List<WineList> listNames = new ArrayList<>();
     String query = "select ID, NAME from LIST_NAME where USERNAME = ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setString(1, username);
 
       ResultSet set = statement.executeQuery();
       while (set.next()) {
-        listNames.add(set.getString("NAME"));
+        listNames.add(new WineList(
+            set.getLong("ID"),
+            set.getString("NAME")
+        ));
       }
     } catch (SQLException error) {
       log.error("Could not read user lists from the database", error);
     }
     return listNames;
+  }
+
+  public List<Wine> getWinesInList(WineList wineList) {
+    List<Wine> wines = new ArrayList<>();
+    String query = "SELECT WINE.* FROM WINE " +
+        "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID " +
+        "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID " +
+        "WHERE LIST_NAME.ID = ?";
+
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setLong(1, wineList.id());
+
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        Wine wine = new Wine(
+            set.getLong("ID"),
+            this,
+            set.getString("TITLE"),
+            set.getString("VARIETY"),
+            set.getString("COUNTRY"),
+            set.getString("REGION"),
+            set.getString("WINERY"),
+            set.getString("COLOR"),
+            set.getInt("VINTAGE"),
+            set.getString("DESCRIPTION"),
+            set.getInt("SCORE_PERCENT"),
+            set.getFloat("ABV"),
+            set.getFloat("PRICE"),
+            null
+        );
+        wines.add(wine);
+      }
+      return wines;
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public boolean isWineInList(WineList wineList, Wine wine) {
+    String query = "SELECT * FROM LIST_ITEMS WHERE LIST_ID = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setLong(1, wineList.id());
+      statement.setLong(2, wine.getKey());
+
+      ResultSet set = statement.executeQuery();
+      return set.next();
+    } catch (SQLException error) {
+      log.error("Could check if a wine is apart of a list in the database", error);
+    }
+    return false;
+  }
+
+  public void addWineToList(WineList wineList, Wine wine) {
+    String insert = "INSERT INTO LIST_ITEMS VALUES (null, ?, ?)";
+    try (PreparedStatement statement = connection.prepareStatement(insert)) {
+      statement.setLong(1, wineList.id());
+      statement.setLong(2, wine.getKey());
+      statement.executeUpdate();
+    } catch (SQLException error) {
+      log.error("Could not add a wine to a list", error);
+    }
+  }
+
+  public void deleteWineFromList(WineList wineList, Wine wine) {
+    String delete = "DELETE FROM LIST_ITEMS WHERE LIST_ID = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(delete)) {
+      statement.setLong(1, wineList.id());
+      statement.setLong(2, wine.getKey());
+      statement.executeUpdate();
+    } catch (SQLException error) {
+      log.error("Could not add a wine to a list", error);
+    }
+  }
+
+  private void createNotesTable() throws SQLException {
+    String create = "create table if not exists NOTES (" +
+            "ID INTEGER PRIMARY KEY," +
+            "USERNAME varchar(64) NOT NULL," +
+            "WINE_ID int NOT NULL, " +
+            "NOTE text);";
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(create);
+    }
+  }
+
+  public void writeNoteToTable(String note, long wineID, String user) throws SQLException {
+    String insert = "INSERT INTO NOTES VALUES (null, ?, ?, ?)";
+    try (PreparedStatement statement = connection.prepareStatement(insert)) {
+      statement.setString(1, user);
+      statement.setLong(2, wineID);
+      statement.setString(3, note);
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      log.error("Failed to add note to table");
+    }
+  }
+
+  public String getNoteByUserAndWine(String user, long wineID) throws SQLException {
+    String find = "SELECT * FROM NOTES WHERE USERNAME = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(find)) {
+      statement.setString(1, user);
+      statement.setLong(2, wineID);
+
+      ResultSet set = statement.executeQuery();
+      return set.getString("NOTE");
+    } catch (SQLException error) {
+      log.warn("Note not found!");
+      return "";
+
+    }
   }
 
   /**
