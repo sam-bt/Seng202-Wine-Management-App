@@ -652,7 +652,7 @@ public class DatabaseManager implements AutoCloseable {
   }
 
   public boolean isWineInList(WineList wineList, Wine wine) {
-    String query = "SELECT * FROM LIST_ITEMS WHERE ID = ? AND WINE_ID = ?";
+    String query = "SELECT * FROM LIST_ITEMS WHERE LIST_ID = ? AND WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setLong(1, wineList.id());
       statement.setLong(2, wine.getKey());
@@ -676,12 +676,12 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  public void deleteWineToList(WineList wineList, Wine wine) {
+  public void deleteWineFromList(WineList wineList, Wine wine) {
     String delete = "DELETE FROM LIST_ITEMS WHERE LIST_ID = ? AND WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(delete)) {
       statement.setLong(1, wineList.id());
       statement.setLong(2, wine.getKey());
-      statement.execute();
+      statement.executeUpdate();
     } catch (SQLException error) {
       log.error("Could not add a wine to a list", error);
     }

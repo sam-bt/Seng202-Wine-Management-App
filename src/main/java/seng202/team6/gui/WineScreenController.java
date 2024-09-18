@@ -401,8 +401,8 @@ public class WineScreenController extends Controller {
     stage.setResizable(false);
 
     DetailedViewController detailedViewController = baseLoader.getController();
-    detailedViewController.init();
     detailedViewController.setWine(wine);
+    detailedViewController.init();
 
     stage.show();
   }

@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -49,6 +50,9 @@ public class DetailedViewController extends Controller {
     private Button addToListButton;
 
     @FXML
+    private Button deleteFromListButton;
+
+    @FXML
     private Label errorText;
 
     @FXML
@@ -76,6 +80,11 @@ public class DetailedViewController extends Controller {
             ObservableList<WineList> list = FXCollections.observableList(managerContext.databaseManager.getUserLists(user));
             choiceBoxListSelector.setItems(list);
             choiceBoxListSelector.setValue(list.getFirst());
+            choiceBoxListSelector.getSelectionModel().selectedIndexProperty().addListener((property, oldIndex, newIndex) -> {
+                WineList selectedList = list.get(newIndex.intValue());
+                updateListButton(selectedList);
+            });
+            updateListButton(list.getFirst());
         } else {
             addToListButton.setVisible(false);
             choiceBoxListSelector.setVisible(false);
@@ -85,21 +94,35 @@ public class DetailedViewController extends Controller {
         errorText.setVisible(false);
     }
 
+    private void updateListButton(WineList selectedList) {
+        if (managerContext.databaseManager.isWineInList(selectedList, wine)) {
+            deleteFromListButton.setDisable(false);
+            addToListButton.setDisable(true);
+
+            deleteFromListButton.setVisible(true);
+            addToListButton.setVisible(false);
+        } else {
+            addToListButton.setDisable(false);
+            deleteFromListButton.setDisable(true);
+
+            addToListButton.setVisible(true);
+            deleteFromListButton.setVisible(false);
+        }
+    }
 
     @FXML
     public void onAddToListButton() {
-        System.out.println(1);
-        WineList selectedWineList = (WineList) choiceBoxListSelector.getValue();
-        if (managerContext.databaseManager.isWineInList(selectedWineList, wine)) {
-            errorText.setVisible(true);
-            errorText.setText("Wine Already in list " + selectedWineList);
-            System.out.println(2);
-        } else {
-            errorText.setVisible(false);
-            managerContext.databaseManager.addWineToList(selectedWineList, wine);
-            System.out.println(3);
-        }
+        // button is only shown if the wine is not in the list
+        WineList selectedWineList = choiceBoxListSelector.getValue();
+        managerContext.databaseManager.addWineToList(selectedWineList, wine);
+        updateListButton(selectedWineList);
+    }
 
+    @FXML
+    public void onDeleteFromListButton() {
+        WineList selectedWineList = choiceBoxListSelector.getValue();
+        managerContext.databaseManager.deleteWineFromList(selectedWineList, wine);
+        updateListButton(selectedWineList);
     }
 
     @FXML
