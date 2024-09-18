@@ -80,7 +80,7 @@ public class AuthenticationService {
     if (validPassword) {
       setAuthenticatedUsername(username);
       setAdmin(username.equals("admin"));
-      setAdminFirstLogin(password.equals("admin"));
+      setAdminFirstLogin(isAdmin() && password.equals("admin"));
       return AuthenticationResponse.LOGIN_SUCCESS;
     }
     return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
