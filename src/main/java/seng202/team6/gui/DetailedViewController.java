@@ -88,13 +88,16 @@ public class DetailedViewController extends Controller {
 
     @FXML
     public void onAddToListButton() {
+        System.out.println(1);
         WineList selectedWineList = (WineList) choiceBoxListSelector.getValue();
         if (managerContext.databaseManager.isWineInList(selectedWineList, wine)) {
             errorText.setVisible(true);
             errorText.setText("Wine Already in list " + selectedWineList);
+            System.out.println(2);
         } else {
             errorText.setVisible(false);
             managerContext.databaseManager.addWineToList(selectedWineList, wine);
+            System.out.println(3);
         }
 
     }

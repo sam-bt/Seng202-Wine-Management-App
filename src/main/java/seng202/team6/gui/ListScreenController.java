@@ -51,7 +51,7 @@ public class ListScreenController extends Controller {
   @FXML
   public Button deleteListRequestButton;
   @FXML
-  public TableView tableView;
+  public TableView<Wine> tableView;
 
   public List<WineList> wineLists;
   private int selected = 1;
@@ -123,8 +123,8 @@ public class ListScreenController extends Controller {
   @FXML
   public void onCreateListConfirmButton(ActionEvent actionEvent) {
     String name = listName.getText();
-    if (wineLists.contains(name)) {
-      errorText.setText("User Already Exists");
+    if (wineLists.stream().anyMatch(wineList -> wineList.name().equals(name))) {
+      errorText.setText("List Already Exists");
       errorText.setVisible(true);
     } else {
 
@@ -157,8 +157,6 @@ public class ListScreenController extends Controller {
    */
   public void onDeleteListRequestButton(ActionEvent actionEvent) {
     if (selected != 1) {
-
-      String user = authenticationService.getAuthenticatedUsername();
       WineList wineList = wineLists.get(selected - 1);
       managerContext.databaseManager.deleteList(wineList);
       updateListOptions();
@@ -259,9 +257,8 @@ public class ListScreenController extends Controller {
     WineList fromUserLists = userLists.get(selected-1);
     List<Wine> list = managerContext.databaseManager.getWinesInList(fromUserLists);
     ObservableList<Wine> observableList = FXCollections.observableList(list);
+    setupTableView();
     tableView.setItems(observableList);
-
-
   }
 
   @FXML
