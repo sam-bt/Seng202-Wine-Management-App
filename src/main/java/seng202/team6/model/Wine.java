@@ -1,7 +1,6 @@
 package seng202.team6.model;
 
 import java.sql.SQLException;
-import java.util.Objects;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleFloatProperty;

@@ -1,21 +1,21 @@
 package seng202.team6.gui;
 
-import javafx.beans.value.ChangeListener;
+import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TextArea;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
-import seng202.team6.managers.ManagerContext;
 import seng202.team6.service.AuthenticationService;
 import seng202.team6.util.RegexProcessor;
-
-import java.awt.event.ActionEvent;
-import java.sql.SQLException;
-import java.util.stream.Collectors;
 
 public class DetailedViewController extends Controller {
 
