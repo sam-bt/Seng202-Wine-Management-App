@@ -4,9 +4,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.service.AuthenticationService;
 import seng202.team6.util.RegexProcessor;
 
 import java.awt.event.ActionEvent;
@@ -15,6 +18,8 @@ import java.util.stream.Collectors;
 
 public class DetailedViewController extends Controller {
 
+    private final Logger log = LogManager.getLogger(getClass());
+    private final AuthenticationService authenticationService;
 
     @FXML
     private Label countryLabel;
@@ -38,7 +43,7 @@ public class DetailedViewController extends Controller {
     private Label yearLabel;
 
     @FXML
-    private ChoiceBox choiceBoxListSelector;
+    private ChoiceBox<WineList> choiceBoxListSelector;
 
     @FXML
     private Button addToListButton;
@@ -55,18 +60,19 @@ public class DetailedViewController extends Controller {
     private RegexProcessor extractor = new RegexProcessor();
 
 
-    public DetailedViewController(ManagerContext context) {
+    public DetailedViewController(ManagerContext context, AuthenticationService authenticationService) {
         super(context);
+        this.authenticationService = authenticationService;
     }
 
     @FXML
     public void init() {
-        if(managerContext.authenticationManager.isAuthenticated()) {
+        if(authenticationService.isAuthenticated()) {
             addToListButton.setVisible(true);
             choiceBoxListSelector.setVisible(true);
             notesArea.setVisible(true);
             saveNoteButton.setVisible(true);
-            String user = managerContext.authenticationManager.getUsername();
+            String user = authenticationService.getAuthenticatedUsername();
             ObservableList<WineList> list = FXCollections.observableList(managerContext.databaseManager.getUserLists(user));
             choiceBoxListSelector.setItems(list);
             choiceBoxListSelector.setValue(list.getFirst());
@@ -86,11 +92,9 @@ public class DetailedViewController extends Controller {
         if (managerContext.databaseManager.isWineInList(selectedWineList, wine)) {
             errorText.setVisible(true);
             errorText.setText("Wine Already in list " + selectedWineList);
-            System.out.println("Error AAdding to list");
         } else {
             errorText.setVisible(false);
             managerContext.databaseManager.addWineToList(selectedWineList, wine);
-            System.out.println("AAAAdding to list");
         }
 
     }
@@ -98,26 +102,20 @@ public class DetailedViewController extends Controller {
     @FXML
     void onSaveNoteClicked(){
         try {
-            managerContext.databaseManager.writeNoteToTable(notesArea.getText(), wine.getKey(), managerContext.authenticationManager.getUsername());
-            System.out.println("Note Saved");
+            managerContext.databaseManager.writeNoteToTable(notesArea.getText(), wine.getKey(), authenticationService.getAuthenticatedUsername());
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Error saving note");
+            log.error("Could not save note", e);
         }
     }
 
     private String getNote(long wineID) {
-        String uname = managerContext.authenticationManager.getUsername();
+        String uname = authenticationService.getAuthenticatedUsername();
         try {
-            String note = managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
-            return note;
+          return managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
         } catch (SQLException e) {
-            System.out.println(e);
             return "NO NOTE FOUND";
         }
     }
-
-
 
     public void setWine(Wine wine) {
         this.wine = new Wine(wine.getKey(), managerContext.databaseManager, wine.getTitle(), wine.getVariety(), "", "", wine.getWinery(), wine.getColor(), 1000, wine.getDescription(), 0, 0.0f, 0.0f, null);
