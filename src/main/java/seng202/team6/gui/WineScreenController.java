@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.ObservableList;
@@ -393,7 +394,6 @@ public class WineScreenController extends Controller {
     Stage stage = new Stage();
     stage.setTitle(wine.getTitle());
     Scene scene = new Scene(root, 500, 700);
-    //scene.getStylesheets().add(getClass().getResource("/css/detailed_view.css").toExternalForm());
     stage.setScene(scene);
     stage.setResizable(false);
     detailedViewController.init();

@@ -3,6 +3,7 @@ package seng202.team6.unittests.managers;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineList;
 
 class DatabaseManagerTest {
 

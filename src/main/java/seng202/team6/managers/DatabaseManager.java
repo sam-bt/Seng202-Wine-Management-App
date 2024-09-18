@@ -19,6 +19,7 @@ import seng202.team6.model.Filters;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineList;
 import seng202.team6.service.EncryptionService;
 import seng202.team6.util.ProcessCSV;
 
