@@ -436,9 +436,7 @@ public class DatabaseManager implements AutoCloseable {
       insertStatement.executeUpdate();
       return true;
     } catch (SQLException e) {
-      if (e.getMessage().contains("PRIMARY KEY")) {
-        log.error("Duplicate username: {}", username, e);
-      } else {
+      if (!e.getMessage().contains("A PRIMARY KEY constraint failed")) {
         log.error("Database error occurred: {}", e.getMessage(), e);
       }
       return false;
