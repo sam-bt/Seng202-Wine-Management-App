@@ -1,4 +1,4 @@
-package seng202.team6.unittests.database;
+package seng202.team6.unittests.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -19,7 +19,7 @@ import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.util.Exceptions.ValidationException;
 import seng202.team6.util.ProcessCSV;
-import seng202.team6.util.Validator;
+import seng202.team6.util.WineValidator;
 
 /**
  * This class handles importing existing data into the managers
@@ -167,7 +167,7 @@ public class DataTableController extends Controller {
         continue;
       }
 
-      wines.add(Validator.parseWine(
+      wines.add(WineValidator.parseWine(
           managerContext.databaseManager,
           title != -1 ? tuple[title] : "",
           variety != -1 ? tuple[variety] : "",

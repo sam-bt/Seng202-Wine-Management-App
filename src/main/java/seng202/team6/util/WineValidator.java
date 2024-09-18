@@ -13,7 +13,7 @@ import seng202.team6.util.Exceptions.ValidationException;
  * scenarios where one forgets to validate an input or constructs a broken object.
  * </p>
  */
-public class Validator {
+public class WineValidator {
 
 
   /**
@@ -83,14 +83,6 @@ public class Validator {
       );
     } catch (Exception e) {
       throw new ValidationException("Failed to parse wine", e);
-    }
-  }
-
-  private static int parseIntegerOrDefault(String string) {
-    try {
-      return Integer.parseInt(string);
-    } catch (NumberFormatException ignored) {
-      return 0;
     }
   }
 }

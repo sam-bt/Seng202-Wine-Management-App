@@ -111,7 +111,7 @@ tasks.register("cucumber", Test) {
     useJUnitPlatform()
 
     filter {
-        includeTestsMatching "seng202.team0.cucumber.*"
+        includeTestsMatching "seng202.team6.cucumber.*"
     }
 
     testLogging {
@@ -156,5 +156,11 @@ jacocoTestReport {
     }
     reports {
         html.destination file("${buildDir}/reports/tests/coverage/")
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: 'seng202/team6/gui/**')
+        }))
     }
 }

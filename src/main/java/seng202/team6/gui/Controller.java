@@ -24,22 +24,4 @@ public abstract class Controller {
   public void init() {
   }
 
-  /**
-   * Called to get a return value when this controller is destroyed
-   *
-   * @return a value
-   */
-  public Object onPopped() {
-    return null;
-  }
-
-  /**
-   * Called to provide the value from onPopped on the successor controller
-   *
-   * @param obj object from 'called' controller
-   */
-  public void onChildContextPopped(Object obj) {
-
-  }
-
 }

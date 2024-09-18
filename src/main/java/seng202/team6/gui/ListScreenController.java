@@ -23,11 +23,14 @@ import seng202.team6.model.WineList;
 import seng202.team6.managers.ManagerContext;
 
 import java.util.List;
+import seng202.team6.service.AuthenticationService;
 
 /**
  * List Screen Controller (MORE DETAIL HERE!)
  */
 public class ListScreenController extends Controller {
+
+  private final AuthenticationService authenticationService;
 
   @FXML
   public Button createListRequestButton;
@@ -58,8 +61,10 @@ public class ListScreenController extends Controller {
    *
    * @param managerContext manager context
    */
-  public ListScreenController(ManagerContext managerContext) {
+  public ListScreenController(ManagerContext managerContext,
+      AuthenticationService authenticationService) {
     super(managerContext);
+    this.authenticationService = authenticationService;
   }
 
   /**
@@ -68,8 +73,7 @@ public class ListScreenController extends Controller {
   public void initialize() {
     listScreenTabs.getTabs().remove(tabCreating);
     updateListOptions();
-    tabViewing.setText("VIEWING: " + wineLists.getFirst().name());
-    setupTableView();
+    tabViewing.setText("VIEWING: " + wineLists.getFirst());
     selected = 1;
     changeSelected();
     if (wineLists.size() == 1) {
@@ -130,7 +134,7 @@ public class ListScreenController extends Controller {
       } else {
         errorText.setVisible(false);
 
-        String user = managerContext.authenticationManager.getUsername();
+        String user = authenticationService.getAuthenticatedUsername();
 
         managerContext.databaseManager.createList(user, name);
 
@@ -154,7 +158,7 @@ public class ListScreenController extends Controller {
   public void onDeleteListRequestButton(ActionEvent actionEvent) {
     if (selected != 1) {
 
-      String user = managerContext.authenticationManager.getUsername();
+      String user = authenticationService.getAuthenticatedUsername();
       WineList wineList = wineLists.get(selected - 1);
       managerContext.databaseManager.deleteList(wineList);
       updateListOptions();
@@ -175,7 +179,7 @@ public class ListScreenController extends Controller {
   public void updateListOptions() {
     Button[] buttons = {listOneButton, listTwoButton, listThreeButton, listFourButton,
         listFiveButton};
-    String user = managerContext.authenticationManager.getUsername();
+    String user = authenticationService.getAuthenticatedUsername();
     wineLists = managerContext.databaseManager.getUserLists(user);
     for (int i = 0; i < buttons.length; i++) {
       if (i < wineLists.size()) {
@@ -250,7 +254,7 @@ public class ListScreenController extends Controller {
     tabViewing.setText("VIEWING: " + wineLists.get(selected - 1).name());
     tableView.getItems().clear();
 
-    String user = managerContext.authenticationManager.getUsername();
+    String user = authenticationService.getAuthenticatedUsername();
     List<WineList> userLists = managerContext.databaseManager.getUserLists(user);
     WineList fromUserLists = userLists.get(selected-1);
     List<Wine> list = managerContext.databaseManager.getWinesInList(fromUserLists);

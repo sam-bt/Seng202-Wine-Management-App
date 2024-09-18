@@ -20,7 +20,7 @@ import seng202.team6.model.GeoLocation;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
-import seng202.team6.service.EncryptionService;
+import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.ProcessCSV;
 
 
@@ -385,8 +385,8 @@ public class DatabaseManager implements AutoCloseable {
         "SELECT ?, ?, ?, ? " +
         "WHERE NOT EXISTS (SELECT 1 FROM USER WHERE username = ?)";
     try (PreparedStatement statement = connection.prepareStatement(checkAndInsert)) {
-      String salt = EncryptionService.generateSalt();
-      String password = EncryptionService.hashPassword("admin", salt);
+      String salt = EncryptionUtil.generateSalt();
+      String password = EncryptionUtil.hashPassword("admin", salt);
       statement.setString(1, "admin");
       statement.setString(2, password);
       statement.setString(3, "admin");
@@ -437,9 +437,7 @@ public class DatabaseManager implements AutoCloseable {
       insertStatement.executeUpdate();
       return true;
     } catch (SQLException e) {
-      if (e.getMessage().contains("PRIMARY KEY")) {
-        log.error("Duplicate username: {}", username, e);
-      } else {
+      if (!e.getMessage().contains("A PRIMARY KEY constraint failed")) {
         log.error("Database error occurred: {}", e.getMessage(), e);
       }
       return false;
