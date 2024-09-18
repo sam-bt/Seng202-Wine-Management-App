@@ -18,7 +18,7 @@ import seng202.team6.service.AuthenticationService;
 public class MainController extends Controller {
 
   @FXML
-  private BorderPane borderPane;
+  private AnchorPane page;
 
   @FXML
   private AnchorPane pageContent;
@@ -112,7 +112,6 @@ public class MainController extends Controller {
       managerContext.GUIManager.setWindowTitle(title);
     } catch (IOException e) {
       System.err.println("Failed to load screen: " + fxml);
-      e.printStackTrace();
     }
   }
 
@@ -195,5 +194,9 @@ public class MainController extends Controller {
   public void openUpdatePasswordScreen() {
     switchScene("/fxml/update_password_screen.fxml", "Register",
         () -> new UpdatePasswordController(managerContext, authenticationService));
+  }
+
+  public void setWholePageInteractable(boolean interactable) {
+    page.setDisable(!interactable);
   }
 }

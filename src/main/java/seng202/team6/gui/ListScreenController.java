@@ -5,11 +5,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import org.apache.xmlbeans.impl.xb.xsdschema.All;
 import seng202.team6.managers.ManagerContext;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -314,5 +316,28 @@ public class ListScreenController extends Controller {
     tableView.getColumns().add(scoreColumn);
     tableView.getColumns().add(abvColumn);
     tableView.getColumns().add(priceColumn);
+
+    tableView.setRowFactory((tableView) -> {
+      TableRow<Wine> tableRow = new TableRow<>();
+      tableRow.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2 && !tableRow.isEmpty()) {
+          Wine wine = tableRow.getItem();
+          onWineInListClick(wine);
+        }
+      });
+      return tableRow;
+    });
+  }
+
+  public void onWineInListClick(Wine wine) {
+    Alert alert = new Alert(AlertType.CONFIRMATION);
+    alert.setTitle("Delete Wine from List");
+    alert.setHeaderText("Would you like to remove " + wine.getTitle() + " from this list?");
+    ButtonType buttonType = alert.showAndWait().orElse(null);
+    if (buttonType == ButtonType.OK) {
+      WineList selectedList = wineLists.get(selected - 1);
+      managerContext.databaseManager.deleteWineFromList(selectedList, wine);
+      tableView.getItems().remove(wine);
+    }
   }
 }

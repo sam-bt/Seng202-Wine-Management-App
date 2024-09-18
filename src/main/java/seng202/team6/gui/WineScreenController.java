@@ -404,6 +404,8 @@ public class WineScreenController extends Controller {
     detailedViewController.setWine(wine);
     detailedViewController.init();
 
-    stage.show();
+    managerContext.GUIManager.mainController.setWholePageInteractable(false);
+    stage.showAndWait();
+    managerContext.GUIManager.mainController.setWholePageInteractable(true);
   }
 }
