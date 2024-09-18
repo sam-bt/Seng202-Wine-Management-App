@@ -6,9 +6,9 @@ plugins {
 }
 
 archivesBaseName = 'wino'
-group = 'seng202.team0'
+group = 'seng202.team6'
 version = '0.2-snapshot'
-mainClassName = 'seng202.team0.App'
+mainClassName = 'seng202.team6.App'
 
 def javaVersion = '21'
 def javafxVersion = '20.0.1'
@@ -91,7 +91,7 @@ application {
 
 javafx {
     version = "${javafxVersion}"
-    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.web']
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web']
 }
 
 test {
@@ -105,7 +105,7 @@ test {
 }
 
 
-tasks.register("cucumber", Test)  {
+tasks.register("cucumber", Test) {
     group = "verification"
 
     useJUnitPlatform()
@@ -135,7 +135,7 @@ jar {
         attributes 'Main-Class': mainClassName
     }
     from {
-        configurations.runtimeClasspath.collect {it.isDirectory()?it:zipTree(it)}
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
@@ -143,7 +143,6 @@ run {
     // Add the internal JavaFX API to the module path
     jvmArgs = ['--module-path', classpath.asPath, '--add-exports', 'javafx.web/com.sun.javafx.webkit=ALL-UNNAMED']
 }
-
 
 
 // Jacoco test coverage config
