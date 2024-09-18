@@ -49,6 +49,12 @@ public class UpdatePasswordController extends Controller {
     AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword);
     if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
       managerContext.GUIManager.mainController.openWineScreen();
+      if (authenticationService.isAdminFirstLogin()) {
+        managerContext.GUIManager.mainController.onLogin();
+        managerContext.GUIManager.mainController.setDisable(false);
+        authenticationService.setAdminFirstLogin(false);
+        disabled = true;
+      }
     } else {
       loginMessageLabel.setStyle("-fx-text-fill: red");
       loginMessageLabel.setText(response.getMessage());

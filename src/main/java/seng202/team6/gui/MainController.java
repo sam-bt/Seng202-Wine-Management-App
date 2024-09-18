@@ -67,7 +67,6 @@ public class MainController extends Controller {
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
     openWineScreen();
-
   }
 
   public void onLogin() {
