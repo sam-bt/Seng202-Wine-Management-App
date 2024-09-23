@@ -710,6 +710,13 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
+
+  /**
+   * THe two functions below are used to update an existing note record or create a new one respectively.
+   * @param wineID
+   * @param user
+   * @param note
+   */
   public void updateExistingNote(Long wineID, String user, String note) {
     String update = "UPDATE NOTES SET NOTE = ? WHERE USERNAME = ? AND WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(update)) {
@@ -737,6 +744,11 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
+  /**
+   * Gets a list of all notes created by the given user
+   * @param user
+   * @return an ObservableList<String> of all notes created by a user
+   */
   public ObservableList<String> getNotesByUser(String user) {
     ObservableList<String> notes = FXCollections.observableArrayList();
     String find = "SELECT * FROM NOTES WHERE USERNAME = ?";
@@ -755,6 +767,12 @@ public class DatabaseManager implements AutoCloseable {
 
   }
 
+
+  /**
+   * Gets a wines title using its id. TODO: This will instead return a wine object
+   * @param wineID
+   * @return the title of the wine as a string
+   */
   public String getWineTitleByID(long wineID) {
     String find = "SELECT * FROM WINE WHERE ID = ?";
 
