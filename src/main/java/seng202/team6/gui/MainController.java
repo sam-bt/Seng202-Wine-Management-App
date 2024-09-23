@@ -35,7 +35,11 @@ public class MainController extends Controller {
   private Button adminScreenButton;
 
   @FXML
+  private Button noteScreenButton;
+
+  @FXML
   private Button loginButton;
+
 
   @FXML
   private Button registerButton;
@@ -193,6 +197,12 @@ public class MainController extends Controller {
   public void openUpdatePasswordScreen() {
     switchScene("/fxml/update_password_screen.fxml", "Register",
         () -> new UpdatePasswordController(managerContext, authenticationService));
+  }
+
+  @FXML
+  void openNotesScreen() {
+    switchScene("/fxml/notes_screen.fxml", "Notes",
+            () -> new NotesController(managerContext, authenticationService));
   }
 
   public void setWholePageInteractable(boolean interactable) {

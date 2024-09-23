@@ -725,6 +725,25 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
+  public ObservableList<String> getNotesByUser(String user) {
+    System.out.println("FUNCTION CALLED");
+    ObservableList<String> notes = FXCollections.observableArrayList();
+    String find = "SELECT * FROM NOTES WHERE USERNAME = ?";
+    try (PreparedStatement statement = connection.prepareStatement(find)) {
+      statement.setString(1, user);
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        notes.add(set.getString("NOTE"));
+        System.out.println(set.getString("NOTE"));
+      }
+    } catch (SQLException e) {
+      log.warn("Error fetching notes");
+    }
+
+    return notes;
+
+  }
+
   /**
    * Closes the database connection
    * <p>
