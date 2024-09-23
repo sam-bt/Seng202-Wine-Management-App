@@ -60,6 +60,7 @@ public class DetailedViewController extends Controller {
 
 
     private Wine wine;
+    private boolean noteAlreadyExists = false;
 
     private RegexProcessor extractor = new RegexProcessor();
 
@@ -126,21 +127,34 @@ public class DetailedViewController extends Controller {
     }
 
     @FXML
-    void onSaveNoteClicked(){
-        try {
-            managerContext.databaseManager.writeNoteToTable(notesArea.getText(), wine.getKey(), authenticationService.getAuthenticatedUsername());
-        } catch (SQLException e) {
-            log.error("Could not save note", e);
+    void onSaveNoteClicked() {
+
+        if (noteAlreadyExists) {
+            managerContext.databaseManager.updateExistingNote(wine.getKey(), authenticationService.getAuthenticatedUsername(), notesArea.getText());
+        } else {
+            managerContext.databaseManager.writeNewNoteToTable(notesArea.getText(), wine.getKey(), authenticationService.getAuthenticatedUsername());
         }
     }
 
     private String getNote(long wineID) {
         String uname = authenticationService.getAuthenticatedUsername();
+        String output = "";
         try {
-          return managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
+          output = managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
         } catch (SQLException e) {
-            return "NO NOTE FOUND";
+            output = "";
+            log.error("Error retrieving note");
         }
+        System.out.println("Printing getNote->output:");
+        System.out.println(output);
+        if (output == "" || output == null) {
+            noteAlreadyExists = false;
+        } else {
+            noteAlreadyExists  = true;
+        }
+        return output;
+
+
     }
 
     public void setWine(Wine wine) {

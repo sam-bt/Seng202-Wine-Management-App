@@ -698,7 +698,7 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  public void writeNoteToTable(String note, long wineID, String user) throws SQLException {
+  public void writeNewNoteToTable(String note, long wineID, String user) {
     String insert = "INSERT INTO NOTES VALUES (null, ?, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(insert)) {
       statement.setString(1, user);
@@ -707,6 +707,18 @@ public class DatabaseManager implements AutoCloseable {
       statement.executeUpdate();
     } catch (SQLException e) {
       log.error("Failed to add note to table");
+    }
+  }
+
+  public void updateExistingNote(Long wineID, String user, String note) {
+    String update = "UPDATE NOTES SET NOTE = ? WHERE USERNAME = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(update)) {
+      statement.setString(1, note);
+      statement.setString(2, user);
+      statement.setLong(3, wineID);
+      statement.executeUpdate();
+    } catch (SQLException error) {
+      log.error("Failed to update note in table");
     }
   }
 
@@ -726,14 +738,13 @@ public class DatabaseManager implements AutoCloseable {
   }
 
   public ObservableList<String> getNotesByUser(String user) {
-    System.out.println("FUNCTION CALLED");
     ObservableList<String> notes = FXCollections.observableArrayList();
     String find = "SELECT * FROM NOTES WHERE USERNAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(find)) {
       statement.setString(1, user);
       ResultSet set = statement.executeQuery();
       while (set.next()) {
-        notes.add(set.getString("NOTE"));
+        notes.add(getWineTitleByID(set.getLong("WINE_ID")) + ": " + set.getString("NOTE"));
         System.out.println(set.getString("NOTE"));
       }
     } catch (SQLException e) {
@@ -742,6 +753,19 @@ public class DatabaseManager implements AutoCloseable {
 
     return notes;
 
+  }
+
+  public String getWineTitleByID(long wineID) {
+    String find = "SELECT * FROM WINE WHERE ID = ?";
+
+    try (PreparedStatement statement = connection.prepareStatement(find)) {
+      statement.setLong(1, wineID);
+      ResultSet set = statement.executeQuery();
+      return set.getString("TITLE");
+    } catch (SQLException error) {
+      log.error("Failed to retrieve wine from ID!");
+    }
+    return "Title Not Found";
   }
 
   /**
