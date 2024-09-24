@@ -27,7 +27,7 @@ import seng202.team6.util.WineValidator;
  * @author Samuel Beattie
  * @author Angus McDougall
  */
-public class DataTableController extends Controller {
+public class DatasetImportController extends Controller {
 
   /**
    * Names of columns
@@ -83,7 +83,7 @@ public class DataTableController extends Controller {
    *
    * @param managerContext manager context
    */
-  public DataTableController(ManagerContext managerContext) {
+  public DatasetImportController(ManagerContext managerContext) {
     super(managerContext);
   }
 
