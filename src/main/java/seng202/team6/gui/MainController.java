@@ -3,7 +3,6 @@ package seng202.team6.gui;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
@@ -12,11 +11,11 @@ import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.gui.popup.WineReviewPopupController;
-import seng202.team6.gui.popup.WineReviewPopupController.CloseCallback;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.AuthenticationService;
+import seng202.team6.service.WineReviewsService;
 
 /**
  * Main controller from where other scenes are embedded
@@ -236,9 +235,9 @@ public class MainController extends Controller {
         () -> new DetailedWineViewController(managerContext, authenticationService, wine, backButtonAction));
   }
 
-  public void openPopupWineReview(CloseCallback closeCallback, WineReview existingReview, long reviewingWineId) {
+  public void openPopupWineReview(WineReviewsService wineReviewsService) {
     openPopup("/fxml/popup/review_popup.fxml",
-        () -> new WineReviewPopupController(managerContext, authenticationService, closeCallback, existingReview, reviewingWineId));
+        () -> new WineReviewPopupController(managerContext, wineReviewsService));
   }
 
   public void closePopup() {

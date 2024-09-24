@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -111,7 +111,15 @@
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Button>
-                  <Pane fx:id="averageReviewPane" layoutX="381.0" layoutY="14.0" prefHeight="45.0" prefWidth="284.0" />
+                  <HBox fx:id="ratingsContainer" alignment="CENTER_LEFT" layoutX="381.0" layoutY="25.0" maxHeight="45.0" minHeight="30.0" prefHeight="30.0" prefWidth="372.0">
+                     <children>
+                        <Label fx:id="ratingsLabel" text="Label">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
                </children>
             </AnchorPane>
         </content>
@@ -123,11 +131,6 @@
          <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="336.0">
                <children>
-                  <Button fx:id="addReviewButton" layoutX="85.0" layoutY="685.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onAddReviewButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Add Review">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Button>
                   <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutY="14.0" maxWidth="337.0" minWidth="-Infinity" prefHeight="661.0" prefWidth="336.0" stylesheets="@../css/scroll_pane.css">
                      <content>
                         <VBox fx:id="reviewsBox" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
@@ -136,6 +139,26 @@
                         <Insets />
                      </opaqueInsets>
                   </ScrollPane>
+                  <GridPane layoutX="1.0" layoutY="675.0" prefHeight="53.0" prefWidth="338.0">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button fx:id="addReviewButton" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onAddReviewButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Add Review">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Button>
+                        <Label fx:id="loginToReviewLabel" alignment="CENTER" disable="true" text="Login to add a review!" textAlignment="CENTER" visible="false">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </GridPane>
                </children>
             </AnchorPane>
          </content>

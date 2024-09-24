@@ -4,14 +4,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.Controller;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
-import seng202.team6.service.AuthenticationService;
 import seng202.team6.service.WineReviewValidator;
+import seng202.team6.service.WineReviewsService;
 
 public class WineReviewPopupController extends Controller {
   @FXML
@@ -21,31 +21,31 @@ public class WineReviewPopupController extends Controller {
   private Button submitButton;
 
   @FXML
+  private Button deleteButton;
+
+  @FXML
   private TitledPane createModifyReviewTitlePane;
 
   @FXML
   private TextArea descriptionTextArea;
 
+  @FXML
+  private HBox buttonsContainer;
+
   private Rating ratingStars;
 
-  private final AuthenticationService authenticationService;
-  private final CloseCallback closeCallback;
-  private final WineReview existingReview;
-  private final long reviewingWineID;
+  private final WineReviewsService wineReviewsService;
 
-  public WineReviewPopupController(ManagerContext context,
-      AuthenticationService authenticationService, CloseCallback closeCallback, WineReview existingReview, long reviewingWineID) {
+  public WineReviewPopupController(ManagerContext context, WineReviewsService wineReviewsService) {
     super(context);
-    this.authenticationService = authenticationService;
-    this.closeCallback = closeCallback;
-    this.existingReview = existingReview;
-    this.reviewingWineID = reviewingWineID;
+    this.wineReviewsService = wineReviewsService;
   }
 
   @Override
   public void init() {
-    createModifyReviewTitlePane.setText((isModifying() ? "Modify" : "Create") + " a Review");
-    submitButton.setText(isModifying() ? "Modify" : "Create");
+    boolean modifying = wineReviewsService.hasUserReviewed();
+    createModifyReviewTitlePane.setText((modifying ? "Modify" : "Create") + " a Review");
+    submitButton.setText(modifying ? "Modify" : "Create");
 
     // create the rating control
     ratingStars = new Rating();
@@ -59,9 +59,12 @@ public class WineReviewPopupController extends Controller {
     }));
 
     // set the defaults if we are modifying
-    if (isModifying()) {
+    if (modifying) {
+      WineReview existingReview = wineReviewsService.getUsersReview();
       ratingStars.setRating(existingReview.getRating());
       descriptionTextArea.setText(existingReview.getDescription());
+    } else {
+      buttonsContainer.getChildren().remove(deleteButton);
     }
   }
 
@@ -71,29 +74,18 @@ public class WineReviewPopupController extends Controller {
   }
 
   @FXML
-  void onSubmitButtonClick() {
-    double rating = ratingStars.getRating();
-    String description = descriptionTextArea.getText();
-    String username = authenticationService.getAuthenticatedUsername();
-    if (isModifying()) {
-      existingReview.setRating(rating);
-      existingReview.setDescription(description);
-      managerContext.databaseManager.updateWineReview(username, reviewingWineID, rating, description);
-      if (closeCallback != null)
-        closeCallback.onClose(null, existingReview, null);
-    } else {
-      WineReview createWineView = managerContext.databaseManager.addWineReview(username, reviewingWineID, rating, description);
-      if (closeCallback != null)
-        closeCallback.onClose(createWineView, null, null);
-    }
+  void onDeleteButtonClick() {
+    wineReviewsService.deleteUsersReview();
     managerContext.GUIManager.mainController.closePopup();
   }
 
-  private boolean isModifying() {
-    return existingReview != null;
+  @FXML
+  void onSubmitButtonClick() {
+    double rating = ratingStars.getRating();
+    String description = descriptionTextArea.getText();
+    wineReviewsService.addOrUpdateUserReview(rating, description);
+    managerContext.GUIManager.mainController.closePopup();
   }
 
-  public interface CloseCallback {
-    void onClose(WineReview createdReview, WineReview modifiedReview, WineReview deletedReview);
-  }
+
 }

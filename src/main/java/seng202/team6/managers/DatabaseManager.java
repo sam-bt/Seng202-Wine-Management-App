@@ -746,8 +746,8 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  public List<WineReview> getWineReviews(Wine wine) {
-    List<WineReview> wineReviews = new ArrayList<>();
+  public ObservableList<WineReview> getWineReviews(Wine wine) {
+    ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
     String query = "SELECT * FROM WINE_REVIEW "
         + "WHERE WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -817,6 +817,18 @@ public class DatabaseManager implements AutoCloseable {
     }
     log.error("Failed to add a review to the database");
     return null;
+  }
+
+  public void removeWineReview(WineReview wineReview) {
+    String remove = "DELETE FROM WINE_REVIEW "
+        + "WHERE USERNAME = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(remove)) {
+      statement.setString(1, wineReview.getUsername());
+      statement.setLong(2, wineReview.getWineID());
+      statement.execute();
+    } catch (SQLException error) {
+      log.error("Failed to remove a review from the database", error);
+    }
   }
 
   public void updateWineReview(String username, long wineId, double rating, String description) {
