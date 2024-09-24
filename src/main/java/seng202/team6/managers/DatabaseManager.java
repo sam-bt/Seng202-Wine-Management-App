@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
@@ -70,7 +71,10 @@ public class DatabaseManager implements AutoCloseable {
     }
 
     String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + databaseFileName;
-    this.connection = DriverManager.getConnection(dbPath);
+    Properties properties = new Properties();
+    properties.setProperty("encoding", "UTF-8");
+    properties.setProperty("foreign_keys", "true");
+    connection = DriverManager.getConnection(dbPath, properties);
     createWinesTable();
     createUsersTable();
     createGeolocationTable();
