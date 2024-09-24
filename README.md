@@ -1,5 +1,8 @@
 # SENG202 Template Project Overview
 
+TODO - add attribution
+https://www.freepik.com/free-vector/realistic-wine-collection-bottles-glasses-with-white-red-rose-beverages-isolated_10347028.htm****
+
 Welcome to the template project for SENG202-2024 which you will transform into your own.
 This README file includes some useful information to help you get started.
 However, we expect that this README becomes your own

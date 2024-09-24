@@ -9,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Builder;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.Wine;
 import seng202.team6.service.AuthenticationService;
 
 /**
@@ -193,6 +194,11 @@ public class MainController extends Controller {
   public void openUpdatePasswordScreen() {
     switchScene("/fxml/update_password_screen.fxml", "Register",
         () -> new UpdatePasswordController(managerContext, authenticationService));
+  }
+
+  public void openDetailedWineView(Wine wine, Runnable backButtonAction) {
+    switchScene("/fxml/detailed_wine_view.fxml", "Detailed Wine View",
+        () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
   }
 
   public void setWholePageInteractable(boolean interactable) {

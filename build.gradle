@@ -10,8 +10,8 @@ group = 'seng202.team6'
 version = '0.2-snapshot'
 mainClassName = 'seng202.team6.App'
 
-def javaVersion = '21'
-def javafxVersion = '20.0.1'
+def javaVersion = '21.0.1'
+def javafxVersion = '21.0.1'
 def log4jVersion = '2.17.2'
 def cucumberVersion = "7.5.0"
 def junitVersion = "5.8.1"
