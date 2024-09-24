@@ -27,7 +27,7 @@ import seng202.team6.util.WineValidator;
  * @author Samuel Beattie
  * @author Angus McDougall
  */
-public class DataTableController extends Controller {
+public class DatasetImportController extends Controller {
 
   /**
    * Names of columns
@@ -83,7 +83,7 @@ public class DataTableController extends Controller {
    *
    * @param managerContext manager context
    */
-  public DataTableController(ManagerContext managerContext) {
+  public DatasetImportController(ManagerContext managerContext) {
     super(managerContext);
   }
 
@@ -161,11 +161,6 @@ public class DataTableController extends Controller {
     for (int row = 1; row < selectedTable.size(); row++) {
 
       String[] tuple = selectedTable.get(row);
-
-      // Ignore countries other than NZ
-      if (country != -1 && tuple[country].compareToIgnoreCase("New Zealand") != 0) {
-        continue;
-      }
 
       wines.add(WineValidator.parseWine(
           managerContext.databaseManager,

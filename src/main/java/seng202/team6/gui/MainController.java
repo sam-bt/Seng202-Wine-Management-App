@@ -174,8 +174,8 @@ public class MainController extends Controller {
    */
   @FXML
   public void openDataSetsScreen() {
-    switchScene("/fxml/dataset_screen.fxml", "Manage Datasets",
-        () -> new DataTableController(managerContext));
+    switchScene("/fxml/dataset_import_screen.fxml", "Manage Datasets",
+        () -> new DatasetImportController(managerContext));
   }
 
   /**
