@@ -19,6 +19,8 @@ import javafx.scene.layout.VBox;
 import org.controlsfx.control.Rating;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineReview;
+import seng202.team6.util.DateFormatter;
 import seng202.team6.util.ImageReader;
 
 public class DetailedWineViewController extends Controller {
@@ -114,14 +116,8 @@ public class DetailedWineViewController extends Controller {
     backButtonAction.run();
   }
 
-  private void addReview() {
-    String username = "Corey";
-    double stars = 4;
-    String description = "This was a nice wine! A captivating red wine with luscious berry aromas and subtle oak undertones. The palate is greeted with a harmonious blend of dark fruits and a touch of spice. Smooth, velvety finish with well-integrated tannins. Ideal for pairing with gourmet dishes or savoring on a cozy evening.";
-    Date date = new Date();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-    String formattedDate = dateFormat.format(date);
-
+  private void addReview(WineReview wineReview) {
+    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
     VBox wrapper = new VBox();
     wrapper.setMaxWidth(reviewsBox.getMaxWidth());
     wrapper.setMaxHeight(Double.MAX_VALUE);
@@ -131,13 +127,13 @@ public class DetailedWineViewController extends Controller {
         + "-fx-border-insets: 10;");
 
     Rating rating = new Rating();
-    rating.setRating(stars);
+    rating.setRating(wineReview.getRating()); 
 
-    Label reviewCaptionLabel = new Label("From " + username + " on " + formattedDate);
+    Label reviewCaptionLabel = new Label("From " + wineReview.getUsername() + " on " + formattedDate);
     reviewCaptionLabel.setMaxWidth(wrapper.getMaxWidth());
     reviewCaptionLabel.setWrapText(true);
 
-    Label descriptionLabel = new Label(description);
+    Label descriptionLabel = new Label(wineReview.getDescription());
     descriptionLabel.setMaxWidth(wrapper.getMaxWidth());
     descriptionLabel.setWrapText(true);
     descriptionLabel.setStyle("-fx-padding: 10 0 0 0;");
