@@ -131,20 +131,18 @@ public class DetailedViewController extends Controller {
 
         if (noteAlreadyExists) {
             managerContext.databaseManager.updateExistingNote(wine.getKey(), authenticationService.getAuthenticatedUsername(), notesArea.getText());
+
         } else {
             managerContext.databaseManager.writeNewNoteToTable(notesArea.getText(), wine.getKey(), authenticationService.getAuthenticatedUsername());
+            noteAlreadyExists = true;
         }
     }
 
     private String getNote(long wineID) {
         String uname = authenticationService.getAuthenticatedUsername();
         String output = "";
-        try {
-          output = managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
-        } catch (SQLException e) {
-            output = "";
-            log.error("Error retrieving note");
-        }
+        output = managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
+
         System.out.println("Printing getNote->output:");
         System.out.println(output);
         if (output == "" || output == null) {

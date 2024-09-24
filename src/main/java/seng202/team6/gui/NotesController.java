@@ -46,6 +46,9 @@ public class NotesController extends Controller{
         saveButton.setDisable(true);
     }
 
+    /**
+     * Populates table columns using the wineTitle string property in the Note object. Called to refresh the notes in the table.
+     */
     private void populateTable() {
         ObservableList<Note> noteList = managerContext.databaseManager.getNotesByUser(authenticationService.getAuthenticatedUsername());
         setupColumns();
@@ -54,10 +57,13 @@ public class NotesController extends Controller{
         notesTable.setOnMouseClicked(this::openNoteOnClick);
     }
 
+    /**
+     * Sets up the table's only column.
+     */
     private void setupColumns() {
         notesTable.getColumns().clear();
 
-        TableColumn<Note, String> titleColumn = new TableColumn<>("Title");
+        TableColumn<Note, String> titleColumn = new TableColumn<>("Wine");
 
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         titleColumn.setMinWidth(500);
@@ -66,6 +72,12 @@ public class NotesController extends Controller{
         notesTable.getColumns().add(titleColumn);
     }
 
+    /**
+     * Clears the right hand side of the page:
+     *      Removes text from the notetaking field
+     *      Resets the title to 'No note selected'
+     *      Used when a note is deleted so that it doesn't stick around.
+     */
     private void clearNotesPanel() {
         noteArea.clear();
         wineTitle.setText("No note selected");

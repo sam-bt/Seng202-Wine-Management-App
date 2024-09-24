@@ -70,6 +70,7 @@ public class MainController extends Controller {
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
     dataSetsScreenButton.setVisible(false);
+    noteScreenButton.setVisible(false);
     openWineScreen();
   }
 
@@ -77,6 +78,7 @@ public class MainController extends Controller {
     if (authenticationService.isAuthenticated()) {
       adminScreenButton.setVisible(authenticationService.isAdmin());
       dataSetsScreenButton.setVisible(authenticationService.isAdmin());
+      noteScreenButton.setVisible(true);
       loginButton.setText("Settings");
       registerButton.setText("Logout");
 

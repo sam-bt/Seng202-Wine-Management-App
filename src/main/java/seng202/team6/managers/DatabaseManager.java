@@ -683,7 +683,10 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  private void createNotesTable() throws SQLException {
+  /**
+   * Initialises the NOTE table
+   */
+  private void createNotesTable() {
     String create = "create table if not exists NOTES (" +
             "ID INTEGER PRIMARY KEY," +
             "USERNAME varchar(64) NOT NULL," +
@@ -691,6 +694,31 @@ public class DatabaseManager implements AutoCloseable {
             "NOTE text);";
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
+    } catch (SQLException error) {
+      log.error("Failed to create NOTE table!");
+      log.error(error.getMessage());
+    }
+  }
+
+
+
+
+  /**
+   * THe two functions below are used to update an existing note record or create a new one respectively.
+   * @param wineID the primary key of the wine the note is associated with
+   * @param user a String of the username the note is associated with
+   * @param note The text of the note.
+   *             This has seperated into 2 methods to prevent the creation of duplicate note records. TODO: consolidate this. (if record already exists -> use update instead)
+   */
+  public void updateExistingNote(Long wineID, String user, String note) {
+    String update = "UPDATE NOTES SET NOTE = ? WHERE USERNAME = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(update)) {
+      statement.setString(1, note);
+      statement.setString(2, user);
+      statement.setLong(3, wineID);
+      statement.executeUpdate();
+    } catch (SQLException error) {
+      log.error("Failed to update note in table");
     }
   }
 
@@ -706,26 +734,13 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-
   /**
-   * THe two functions below are used to update an existing note record or create a new one respectively.
-   * @param wineID
-   * @param user
-   * @param note
+   * Retrieves a note from the NOTES table using their username and the primary key of the wine the note is associated with. TODO: Make this return a Note object instead
+   * @param user is a String of the username
+   * @param wineID is the primary key of the wine
+   * @return a String of the notes text.
    */
-  public void updateExistingNote(Long wineID, String user, String note) {
-    String update = "UPDATE NOTES SET NOTE = ? WHERE USERNAME = ? AND WINE_ID = ?";
-    try (PreparedStatement statement = connection.prepareStatement(update)) {
-      statement.setString(1, note);
-      statement.setString(2, user);
-      statement.setLong(3, wineID);
-      statement.executeUpdate();
-    } catch (SQLException error) {
-      log.error("Failed to update note in table");
-    }
-  }
-
-  public String getNoteByUserAndWine(String user, long wineID) throws SQLException {
+  public String getNoteByUserAndWine(String user, long wineID) {
     String find = "SELECT * FROM NOTES WHERE USERNAME = ? AND WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(find)) {
       statement.setString(1, user);
@@ -740,6 +755,12 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
+  /**
+   * Deletes a note from the table
+   * @param wineID is the primary key of the wine, and
+   * @param user is a String of the username you want to remove a note for.
+   *             These two together uniquely identify a given note for deletion
+   */
   public void deleteNote(long wineID, String user) {
     String delete = "DELETE FROM NOTES WHERE USERNAME = ? AND WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(delete)) {
@@ -755,7 +776,7 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Gets a list of all notes created by the given user
-   * @param user
+   * @param user is a String of the username you want to get notes for
    * @return an ObservableList<String> of all notes created by a user
    */
   public ObservableList<Note> getNotesByUser(String user) {
@@ -780,7 +801,7 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Gets a wines title using its id. TODO: This will instead return a wine object
-   * @param wineID
+   * @param wineID is the primary key of the wine you wish to retrieve
    * @return the title of the wine as a string
    */
   public String getWineTitleByID(long wineID) {
