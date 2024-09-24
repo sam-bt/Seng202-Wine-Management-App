@@ -19,7 +19,7 @@ public class UpdatePasswordController extends Controller {
   @FXML
   private Label updateMessageLabel;
   @FXML
-  private TitledPane titlePane;
+  private TitledPane titledPane;
 
   private final AuthenticationService authenticationService;
 
@@ -39,7 +39,7 @@ public class UpdatePasswordController extends Controller {
   public void initialize() {
     disabled = managerContext.GUIManager.mainController.isDisabled();
     if (disabled) {
-      titlePane.setText("First time admin login, please change password");
+      titledPane.setText("First time admin login, please change password");
     }
   }
 
