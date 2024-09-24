@@ -7,7 +7,7 @@ import seng202.team6.managers.ManagerContext;
  */
 public abstract class Controller {
 
-  ManagerContext managerContext;
+  protected ManagerContext managerContext;
 
   /**
    * Constructor

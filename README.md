@@ -1,5 +1,8 @@
 # SENG202 Project: WINO
 
+TODO - add attribution
+https://www.freepik.com/free-vector/realistic-wine-collection-bottles-glasses-with-white-red-rose-beverages-isolated_10347028.htm****
+
 Wino is an application to help wine drinkers keep track of their wine.
 
 ## Authors

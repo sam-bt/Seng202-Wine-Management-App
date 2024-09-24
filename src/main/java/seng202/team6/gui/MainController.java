@@ -8,8 +8,14 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Builder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.Wine;
+import seng202.team6.model.WineReview;
 import seng202.team6.service.AuthenticationService;
+import seng202.team6.service.WineReviewsService;
 
 /**
  * Main controller from where other scenes are embedded
@@ -39,8 +45,17 @@ public class MainController extends Controller {
 
   @FXML
   private Button registerButton;
+
   @FXML
   private HBox navBarBox;
+
+  @FXML
+  private AnchorPane popupActionBlocker;
+
+  @FXML
+  private AnchorPane popupContent;
+
+  private final Logger log = LogManager.getLogger(getClass());
 
   private final AuthenticationService authenticationService;
 
@@ -110,7 +125,27 @@ public class MainController extends Controller {
       }
       managerContext.GUIManager.setWindowTitle(title);
     } catch (IOException e) {
-      System.err.println("Failed to load screen: " + fxml);
+      log.error("Failed to load screen {}", fxml, e);
+    }
+  }
+
+  public void openPopup(String fxml, Builder<?> builder) {
+    try {
+      FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
+      loader.setControllerFactory(param -> builder.build());
+
+      Parent parent = loader.load();
+      pageContent.getChildren().add(parent);
+      if (loader.getController() instanceof Controller controller) {
+        controller.init();
+      }
+      popupContent.getChildren().add(parent);
+      popupContent.setVisible(true);
+      popupContent.setDisable(false);
+      popupActionBlocker.setVisible(true);
+      popupActionBlocker.setDisable(false);
+    } catch (IOException e) {
+      log.error("Failed to load screen {}", fxml, e);
     }
   }
 
@@ -193,6 +228,24 @@ public class MainController extends Controller {
   public void openUpdatePasswordScreen() {
     switchScene("/fxml/update_password_screen.fxml", "Register",
         () -> new UpdatePasswordController(managerContext, authenticationService));
+  }
+
+  public void openDetailedWineView(Wine wine, Runnable backButtonAction) {
+    switchScene("/fxml/detailed_wine_view.fxml", "Detailed Wine View",
+        () -> new DetailedWineViewController(managerContext, authenticationService, wine, backButtonAction));
+  }
+
+  public void openPopupWineReview(WineReviewsService wineReviewsService) {
+    openPopup("/fxml/popup/review_popup.fxml",
+        () -> new WineReviewPopupController(managerContext, wineReviewsService));
+  }
+
+  public void closePopup() {
+    popupActionBlocker.setVisible(false);
+    popupActionBlocker.setDisable(true);
+    popupContent.setVisible(false);
+    popupContent.setDisable(true);
+    popupContent.getChildren().clear();
   }
 
   public void setWholePageInteractable(boolean interactable) {
