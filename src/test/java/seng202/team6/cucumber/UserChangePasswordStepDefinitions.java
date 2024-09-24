@@ -60,13 +60,18 @@ public class UserChangePasswordStepDefinitions {
     newPassword = "MyNewPassword";
   }
 
-  @And("the user enters the same password to confirm")
+  @And("the user enters the same valid password to confirm")
   public void theUserEntersAValidConfirmPassword() {
     confirmNewPassword = "MyNewPassword";
   }
 
   @And("the user enters an invalid new password")
   public void theUserEntersAnInvalidNewPassword() {
+    newPassword = "My&New%Password";
+  }
+
+  @And("the user enters the same invalid new confirm password")
+  public void theUserEntersAnInvalidNewConfirmPassword() {
     newPassword = "My&New%Password";
   }
 
