@@ -337,6 +337,8 @@ public class DatabaseManager implements AutoCloseable {
     long milliseconds = System.currentTimeMillis();
     // null key is auto generated
     String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    connection.setAutoCommit(false);
+    int i = 0;
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
       for (Wine wine : list) {
         insertStatement.setString(1, wine.getTitle());
@@ -351,8 +353,15 @@ public class DatabaseManager implements AutoCloseable {
         insertStatement.setFloat(10, wine.getAbv());
         insertStatement.setFloat(11, wine.getPrice());
         insertStatement.addBatch();
+        // Execute in batches to avoid building a massive string
+        if (i++ % 2048 == 0) {
+          insertStatement.executeBatch();
+        }
       }
       insertStatement.executeBatch();
+      connection.commit();
+    } finally {
+      connection.setAutoCommit(true);
     }
     LogManager.getLogger(getClass())
         .info("Time to process addWines: {}", System.currentTimeMillis() - milliseconds);

@@ -162,11 +162,6 @@ public class DatasetImportController extends Controller {
 
       String[] tuple = selectedTable.get(row);
 
-      // Ignore countries other than NZ
-      if (country != -1 && tuple[country].compareToIgnoreCase("New Zealand") != 0) {
-        continue;
-      }
-
       wines.add(WineValidator.parseWine(
           managerContext.databaseManager,
           title != -1 ? tuple[title] : "",
