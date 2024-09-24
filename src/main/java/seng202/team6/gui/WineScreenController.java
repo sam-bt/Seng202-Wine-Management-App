@@ -1,11 +1,13 @@
 package seng202.team6.gui;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -55,6 +57,19 @@ public class WineScreenController extends Controller {
   @FXML
   Button resetFiltersButton;
 
+  @FXML
+  Button prevPageButton;
+
+  @FXML
+  Button nextPageButton;
+
+  @FXML
+  TextField pageNumberTextField;
+
+  private final static int WINES_PER_PAGE = 100;
+
+  private int currentPage = 1;
+
   AutoCompletionTextField countryTextField;
 
   AutoCompletionTextField wineryTextField;
@@ -87,13 +102,15 @@ public class WineScreenController extends Controller {
   /**
    * Opens a page of wines from the database according to filters
    *
-   * @param begin   first element
-   * @param end     last element + 1
    * @param filters list of filters
    */
-  private void openWineRange(int begin, int end, Filters filters) {
+  private void openWineRange(Filters filters) {
     // Clear existing data
     tableView.getItems().clear();
+
+    // Calculate range of data to get
+    int begin = currentPage * WINES_PER_PAGE - 100;
+    int end = currentPage * WINES_PER_PAGE;
 
     // Check if filters exist
     ObservableList<Wine> wines;
@@ -290,12 +307,23 @@ public class WineScreenController extends Controller {
     // Set button functions
     applyFiltersButton.setOnAction(event -> onApplyFiltersButtonPressed());
     resetFiltersButton.setOnAction(event -> onResetFiltersButtonPressed());
+    prevPageButton.setOnAction(actionEvent -> previousPage());
+    nextPageButton.setOnAction(actionEvent -> nextPage());
+
+    // Set textfield listener
+    pageNumberTextField.focusedProperty().addListener((observableValue, oldvalue, newvalue) -> {
+      if (!newvalue) {
+        // This is executed when the text field loses focus
+        ensureValidPageNumber();
+      }
+    });
+    pageNumberTextField.setOnAction(actionEvent -> ensureValidPageNumber());
 
     mapController = new LeafletOSMController(webView.getEngine());
     mapController.initMap();
 
     setupTableColumns();
-    openWineRange(0, 100, null);
+    openWineRange(null);
 
     tableView.setOnMouseClicked(this::openWineOnClick);
   }
@@ -355,7 +383,7 @@ public class WineScreenController extends Controller {
         priceSlider.getLowValue(),
         priceSlider.getHighValue()
     );
-    openWineRange(0, 100, filters);
+    openWineRange(filters);
   }
 
   public void onResetFiltersButtonPressed() {
@@ -374,7 +402,7 @@ public class WineScreenController extends Controller {
     colorTextField.setText("");
 
     // Update wines
-    openWineRange(0, 100, null);
+    openWineRange(null);
   }
 
   @FXML
@@ -407,5 +435,40 @@ public class WineScreenController extends Controller {
     managerContext.GUIManager.mainController.setWholePageInteractable(false);
     stage.showAndWait();
     managerContext.GUIManager.mainController.setWholePageInteractable(true);
+  }
+
+  public void nextPage() {
+    currentPage++;
+    pageNumberTextField.setText(String.valueOf(currentPage)); // update text field
+    setPage();
+  }
+
+  public void previousPage() {
+    currentPage--;
+    pageNumberTextField.setText(String.valueOf(currentPage)); // update text field
+    setPage();
+  }
+
+  public void ensureValidPageNumber(){
+    String currentText = pageNumberTextField.getText();
+
+    if (!isInteger(currentText)){
+      pageNumberTextField.setText(String.valueOf(currentPage)); // Set back to current page
+    } else {
+      setPage();
+    }
+  }
+
+  public void setPage() {
+
+  }
+
+  private boolean isInteger(String str) {
+    try {
+      Integer.parseInt(str);
+      return true;
+    } catch (NumberFormatException e) {
+      return false;
+    }
   }
 }
