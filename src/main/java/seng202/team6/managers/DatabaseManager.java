@@ -740,6 +740,19 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
+  public void deleteNote(long wineID, String user) {
+    String delete = "DELETE FROM NOTES WHERE USERNAME = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(delete)) {
+      statement.setString(1, user);
+      statement.setLong(2, wineID);
+      statement.executeUpdate();
+
+    } catch (SQLException error) {
+      log.error("Failed to delete note");
+      log.error(error.getMessage());
+    }
+  }
+
   /**
    * Gets a list of all notes created by the given user
    * @param user

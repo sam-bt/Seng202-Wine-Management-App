@@ -11,6 +11,7 @@ import seng202.team6.model.Note;
 import seng202.team6.service.AuthenticationService;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class NotesController extends Controller{
     @FXML
@@ -22,6 +23,13 @@ public class NotesController extends Controller{
     @FXML
     private Label wineTitle;
 
+    @FXML
+    private Button deleteButton;
+
+    @FXML
+    private Button saveButton;
+
+    private Note note;
     private ManagerContext managerContext;
     private AuthenticationService authenticationService;
 
@@ -33,6 +41,12 @@ public class NotesController extends Controller{
 
 
     public void init() {
+        populateTable();
+        deleteButton.setDisable(true);
+        saveButton.setDisable(true);
+    }
+
+    private void populateTable() {
         ObservableList<Note> noteList = managerContext.databaseManager.getNotesByUser(authenticationService.getAuthenticatedUsername());
         setupColumns();
         notesTable.getItems().clear();
@@ -46,16 +60,50 @@ public class NotesController extends Controller{
         TableColumn<Note, String> titleColumn = new TableColumn<>("Title");
 
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        titleColumn.setMinWidth(500);
+        titleColumn.setResizable(false);
 
         notesTable.getColumns().add(titleColumn);
+    }
+
+    private void clearNotesPanel() {
+        noteArea.clear();
+        wineTitle.setText("No note selected");
+        deleteButton.setDisable(true);
+        saveButton.setDisable(true);
     }
 
     @FXML
     public void openNoteOnClick(MouseEvent event) {
         if (event.getClickCount() == 2) {
-            Note thisNote = notesTable.getSelectionModel().getSelectedItem();
-            wineTitle.setText(thisNote.getWineTitle());
-            noteArea.setText(thisNote.getNote());
+            note = notesTable.getSelectionModel().getSelectedItem();
+            wineTitle.setText(note.getWineTitle());
+            noteArea.setText(note.getNote());
+            saveButton.setDisable(false);
+            deleteButton.setDisable(false);
         }
+    }
+
+    @FXML
+    public void onSaveClicked() {
+        managerContext.databaseManager.updateExistingNote(note.getWineID(), authenticationService.getAuthenticatedUsername(), noteArea.getText());
+        populateTable();
+
+    }
+
+    @FXML
+    public void onDeleteClicked() {
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Confirm Deletion");
+        confirmation.setHeaderText("Deleting: " + note.getWineTitle());
+        confirmation.setContentText("Are you sure you want to delete this note?");
+
+        Optional<ButtonType> result = confirmation.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            managerContext.databaseManager.deleteNote(note.getWineID(), authenticationService.getAuthenticatedUsername());
+            populateTable();
+            clearNotesPanel();
+        }
+
     }
 }

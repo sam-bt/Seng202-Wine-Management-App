@@ -29,7 +29,7 @@
                <children>
                   <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Label fx:id="wineTitle" text="{TITLE}" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+                        <Label fx:id="wineTitle" text="No note selected" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
                            <font>
                               <Font size="35.0" />
                            </font>
@@ -39,7 +39,7 @@
                   <TextArea fx:id="noteArea" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="830.0" styleClass="notes-area" wrapText="true" />
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Button mnemonicParsing="false" styleClass="primary-button" text="Delete Note" AnchorPane.rightAnchor="130.0" AnchorPane.topAnchor="10.0">
+                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDeleteClicked" styleClass="primary-button" text="Delete Note" AnchorPane.rightAnchor="130.0" AnchorPane.topAnchor="10.0">
                            <font>
                               <Font size="15.0" />
                            </font>
@@ -47,7 +47,7 @@
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
                         </Button>
-                        <Button mnemonicParsing="false" styleClass="primary-button" text="Save Note" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#onSaveClicked" styleClass="primary-button" text="Save Note" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                            <font>
                               <Font size="15.0" />
                            </font>

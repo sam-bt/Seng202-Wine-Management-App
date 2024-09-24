@@ -33,6 +33,10 @@ public class Note {
         return wineTitle.get();
     }
 
+    public long getWineID() {
+        return wineID;
+    }
+
 
 
 
