@@ -1,6 +1,6 @@
 package seng202.team6.model;
 
-import java.util.Date;
+import java.sql.Date;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyLongProperty;
@@ -63,6 +63,10 @@ public class WineReview {
     return rating.get();
   }
 
+  public void setRating(double rating) {
+    this.rating.setValue(rating);
+  }
+
   public DoubleProperty ratingProperty() {
     return rating;
   }
@@ -73,6 +77,10 @@ public class WineReview {
 
   public StringProperty descriptionProperty() {
     return description;
+  }
+
+  public void setDescription(String description) {
+    this.description.setValue(description);
   }
 
   public Date getDate() {

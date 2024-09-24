@@ -123,7 +123,7 @@
          <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="336.0">
                <children>
-                  <Button layoutX="85.0" layoutY="685.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onAddReviewButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Add Review">
+                  <Button fx:id="addReviewButton" layoutX="85.0" layoutY="685.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onAddReviewButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Add Review">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>

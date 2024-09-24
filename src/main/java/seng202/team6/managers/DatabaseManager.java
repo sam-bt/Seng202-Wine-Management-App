@@ -4,6 +4,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -732,6 +733,7 @@ public class DatabaseManager implements AutoCloseable {
         + "ID INTEGER PRIMARY KEY,"
         + "USERNAME varchar(64) NOT NULL,"
         + "WINE_ID INTEGER NOT NULL,"
+        + "RATING DOUBLE NOT NULL,"
         + "DESCRIPTION VARCHAR(256) NOT NULL,"
         + "DATE DATE NOT NULL,"
         + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME),"
@@ -749,6 +751,7 @@ public class DatabaseManager implements AutoCloseable {
     String query = "SELECT * FROM WINE_REVIEW "
         + "WHERE WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setLong(1, wine.getKey());
       try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
           WineReview wineReview = new WineReview(
@@ -765,11 +768,72 @@ public class DatabaseManager implements AutoCloseable {
     } catch (SQLException error) {
       log.error("Failed to read wine reviews from the database", error);
     }
+
+    try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM WINE_REVIEW")) {
+      ResultSet resultSet = statement.executeQuery();
+      while (resultSet.next()) {
+        System.out.println("id:" + resultSet.getLong("ID") + " wine_id:" +
+            resultSet.getLong("WINE_ID") + " username:" +
+            resultSet.getString("USERNAME") + " rating:" +
+            resultSet.getDouble("RATING") + " description:" +
+            resultSet.getString("DESCRIPTION") + " date:" +
+            resultSet.getDate("DATE"));
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     return wineReviews;
   }
 
-  public WineReview getWineReview(String username, Wine wine) {
+  public WineReview addWineReview(String username, long wineId, double rating, String description) {
+    String insert = "INSERT INTO WINE_REVIEW "
+        + "VALUES (null, ?, ?, ?, ?, ?)";
+    Date currentDate = new Date(System.currentTimeMillis());
+    try (PreparedStatement statement = connection.prepareStatement(insert)) {
+      statement.setString(1, username);
+      statement.setLong(2, wineId);
+      statement.setDouble(3, rating);
+      statement.setString(4, description);
+      statement.setDate(5, currentDate); // current date
+
+      int rowsChanged = statement.executeUpdate();
+      if (rowsChanged > 0) {
+        try (ResultSet resultSet = statement.getGeneratedKeys()) {
+          if (resultSet.next()) {
+            return new WineReview(
+                resultSet.getLong(1),
+                wineId,
+                username,
+                rating,
+                description,
+                currentDate
+            );
+          }
+        }
+      }
+    } catch (SQLException error) {
+      log.error("Failed to add a review to the database", error);
+      return null;
+    }
+    log.error("Failed to add a review to the database");
     return null;
+  }
+
+  public void updateWineReview(String username, long wineId, double rating, String description) {
+    String update = "UPDATE WINE_REVIEW "
+        + "SET RATING = ?, DESCRIPTION = ?, DATE = ? "
+        + "WHERE USERNAME = ? AND WINE_ID = ?";
+    Date currentDate = new Date(System.currentTimeMillis());
+    try (PreparedStatement statement = connection.prepareStatement(update)) {
+      statement.setDouble(1, rating);
+      statement.setString(2, description);
+      statement.setDate(3, currentDate);
+      statement.setString(4, username);
+      statement.setLong(5, wineId);
+      statement.execute();
+    } catch (SQLException error) {
+      log.error("Failed to add a review to the database", error);
+    }
   }
 
   /**

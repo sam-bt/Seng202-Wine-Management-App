@@ -12,8 +12,10 @@ import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.gui.popup.WineReviewPopupController;
+import seng202.team6.gui.popup.WineReviewPopupController.CloseCallback;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineReview;
 import seng202.team6.service.AuthenticationService;
 
 /**
@@ -231,12 +233,12 @@ public class MainController extends Controller {
 
   public void openDetailedWineView(Wine wine, Runnable backButtonAction) {
     switchScene("/fxml/detailed_wine_view.fxml", "Detailed Wine View",
-        () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
+        () -> new DetailedWineViewController(managerContext, authenticationService, wine, backButtonAction));
   }
 
-  public void openPopupWineReview(boolean isModifying) {
+  public void openPopupWineReview(CloseCallback closeCallback, WineReview existingReview, long reviewingWineId) {
     openPopup("/fxml/popup/review_popup.fxml",
-        () -> new WineReviewPopupController(managerContext, isModifying));
+        () -> new WineReviewPopupController(managerContext, authenticationService, closeCallback, existingReview, reviewingWineId));
   }
 
   public void closePopup() {

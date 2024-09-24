@@ -42,7 +42,7 @@
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <TextArea prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3" />
+                  <TextArea fx:id="descriptionTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.rowIndex="3" />
                   <GridPane GridPane.rowIndex="4">
                     <columnConstraints>
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -57,7 +57,7 @@
                               <Font name="System Bold" size="16.0" />
                            </font>
                         </Button>
-                        <Button fx:id="createModifyButton" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Create" GridPane.columnIndex="1">
+                        <Button fx:id="submitButton" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onSubmitButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Create" GridPane.columnIndex="1">
                            <font>
                               <Font name="System Bold" size="16.0" />
                            </font>
