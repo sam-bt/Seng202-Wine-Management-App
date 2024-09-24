@@ -75,8 +75,8 @@ public class DatabaseManager implements AutoCloseable {
     properties.setProperty("encoding", "UTF-8");
     properties.setProperty("foreign_keys", "true");
     connection = DriverManager.getConnection(dbPath, properties);
-    try (Statement statement = connection.createStatement()) {
-      if (useWal) {
+    if (useWal) {
+      try (Statement statement = connection.createStatement()) {
         statement.execute("pragma journal_mode=wal");
       }
     }
