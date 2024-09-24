@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -14,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.Rating;
@@ -73,6 +76,8 @@ public class DetailedWineViewController extends Controller {
 
   private final Runnable backButtonAction;
 
+  private final Map<WineReview, VBox> wineReviews = FXCollections.observableHashMap();
+
   private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine.png");
   private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage("/img/white_wine.png");
 
@@ -109,6 +114,9 @@ public class DetailedWineViewController extends Controller {
     rating.setOnMouseClicked(Event::consume);
     rating.setOnMouseDragEntered(Event::consume);
     averageReviewPane.getChildren().add(rating);
+
+    managerContext.databaseManager.getWineReviews(viewedWine)
+        .forEach(this::displayReview);
   }
 
   @FXML
@@ -116,7 +124,12 @@ public class DetailedWineViewController extends Controller {
     backButtonAction.run();
   }
 
-  private void addReview(WineReview wineReview) {
+  @FXML
+  void onAddReviewButtonClick(MouseEvent event) {
+    managerContext.GUIManager.mainController.openPopupWineReview(false);
+  }
+
+  private void displayReview(WineReview wineReview) {
     String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
     VBox wrapper = new VBox();
     wrapper.setMaxWidth(reviewsBox.getMaxWidth());
@@ -140,6 +153,7 @@ public class DetailedWineViewController extends Controller {
 
     wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel);
     reviewsBox.getChildren().add(wrapper);
+    wineReviews.put(wineReview, wrapper);
   }
 
   private String getOrDefault(String property) {

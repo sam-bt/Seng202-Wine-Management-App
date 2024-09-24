@@ -12,51 +12,51 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class WineReview {
-  private final ReadOnlyLongProperty wineIdProperty;
-  private final ReadOnlyLongProperty userIdProperty;
-  private final StringProperty usernameProperty;
+  private final ReadOnlyLongProperty id;
+  private final ReadOnlyLongProperty wineId;
+  private final StringProperty username;
   private final DoubleProperty rating;
-  private final StringProperty descriptionProperty;
-  private final Property<Date> dateProperty;
+  private final StringProperty description;
+  private final Property<Date> date;
 
-  private WineReview(
+  public WineReview(
+      long id,
       long wineId,
-      long userId,
       String username,
       double rating,
       String description,
       Date date
   ) {
-    this.wineIdProperty = new ReadOnlyLongWrapper(wineId);
-    this.userIdProperty = new ReadOnlyLongWrapper(userId);
-    this.usernameProperty = new ReadOnlyStringWrapper(username);
+    this.id = new ReadOnlyLongWrapper(wineId);
+    this.wineId = new ReadOnlyLongWrapper(wineId);
+    this.username = new ReadOnlyStringWrapper(username);
     this.rating = new SimpleDoubleProperty(rating);
-    this.descriptionProperty = new SimpleStringProperty(description);
-    this.dateProperty = new SimpleObjectProperty<>(date);
+    this.description = new SimpleStringProperty(description);
+    this.date = new SimpleObjectProperty<>(date);
   }
 
-  public long getWineId() {
-    return wineIdProperty.get();
+  public long getID() {
+    return id.get();
   }
 
-  public ReadOnlyLongProperty wineIdPropertyProperty() {
-    return wineIdProperty;
+  public ReadOnlyLongProperty idProperty() {
+    return id;
   }
 
-  public long getUserId() {
-    return userIdProperty.get();
+  public long getWineID() {
+    return wineId.get();
   }
 
-  public ReadOnlyLongProperty userIdPropertyProperty() {
-    return userIdProperty;
+  public ReadOnlyLongProperty wineIDProperty() {
+    return wineId;
   }
 
   public String getUsername() {
-    return usernameProperty.get();
+    return username.get();
   }
 
-  public StringProperty usernamePropertyProperty() {
-    return usernameProperty;
+  public StringProperty usernameProperty() {
+    return username;
   }
 
   public double getRating() {
@@ -68,18 +68,18 @@ public class WineReview {
   }
 
   public String getDescription() {
-    return descriptionProperty.get();
+    return description.get();
   }
 
-  public StringProperty descriptionPropertyProperty() {
-    return descriptionProperty;
+  public StringProperty descriptionProperty() {
+    return description;
   }
 
   public Date getDate() {
-    return dateProperty.getValue();
+    return date.getValue();
   }
 
-  public Property<Date> datePropertyProperty() {
-    return dateProperty;
+  public Property<Date> dateProperty() {
+    return date;
   }
 }

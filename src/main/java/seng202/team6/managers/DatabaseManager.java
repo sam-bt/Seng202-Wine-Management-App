@@ -20,6 +20,7 @@ import seng202.team6.model.GeoLocation;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
+import seng202.team6.model.WineReview;
 import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.ProcessCSV;
 
@@ -732,6 +733,7 @@ public class DatabaseManager implements AutoCloseable {
         + "USERNAME varchar(64) NOT NULL,"
         + "WINE_ID INTEGER NOT NULL,"
         + "DESCRIPTION VARCHAR(256) NOT NULL,"
+        + "DATE DATE NOT NULL,"
         + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME),"
         + "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID)"
         + ")";
@@ -740,6 +742,34 @@ public class DatabaseManager implements AutoCloseable {
     } catch (SQLException error) {
       log.error("Could not create wine review table", error);
     }
+  }
+
+  public List<WineReview> getWineReviews(Wine wine) {
+    List<WineReview> wineReviews = new ArrayList<>();
+    String query = "SELECT * FROM WINE_REVIEW "
+        + "WHERE WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          WineReview wineReview = new WineReview(
+              resultSet.getLong("ID"),
+              resultSet.getLong("WINE_ID"),
+              resultSet.getString("USERNAME"),
+              resultSet.getDouble("RATING"),
+              resultSet.getString("DESCRIPTION"),
+              resultSet.getDate("DATE")
+          );
+          wineReviews.add(wineReview);
+        }
+      }
+    } catch (SQLException error) {
+      log.error("Failed to read wine reviews from the database", error);
+    }
+    return wineReviews;
+  }
+
+  public WineReview getWineReview(String username, Wine wine) {
+    return null;
   }
 
   /**
