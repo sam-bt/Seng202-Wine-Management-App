@@ -519,30 +519,26 @@ public class DatabaseManager implements AutoCloseable {
       log.error("Could not add geolocations to the database", error);
     }
 
-    try {
-      query = "INSERT INTO GEOLOCATION values (?, ?, ?);";
+    query = "INSERT INTO GEOLOCATION values (?, ?, ?);";
 
-      ArrayList<String[]> rows = ProcessCSV.getCSVRows(
-          getClass().getResourceAsStream("/nz_geolocations.csv"));
+    List<String[]> rows = ProcessCSV.getCSVRows(
+        getClass().getResourceAsStream("/nz_geolocations.csv"));
 
-      try (PreparedStatement statement = connection.prepareStatement(query)) {
-        for (int i = 1; i < rows.size(); i++) {
-          String[] row = rows.get(i);
-          String name = row[0];
-          double latitude = Double.parseDouble(row[1]);
-          double longitude = Double.parseDouble(row[2]);
-          int queryIndex = 1;
-          statement.setString(queryIndex++, name);
-          statement.setDouble(queryIndex++, latitude);
-          statement.setDouble(queryIndex++, longitude);
-          statement.addBatch();
-        }
-        statement.executeBatch();
-      } catch (SQLException error) {
-        log.error("Could not add geolocations to the database", error);
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      for (int i = 1; i < rows.size(); i++) {
+        String[] row = rows.get(i);
+        String name = row[0];
+        double latitude = Double.parseDouble(row[1]);
+        double longitude = Double.parseDouble(row[2]);
+        int queryIndex = 1;
+        statement.setString(queryIndex++, name);
+        statement.setDouble(queryIndex++, latitude);
+        statement.setDouble(queryIndex++, longitude);
+        statement.addBatch();
       }
-    } catch (CsvValidationException | IOException e) {
-      throw new RuntimeException(e);
+      statement.executeBatch();
+    } catch (SQLException error) {
+      log.error("Could not add geolocations to the database", error);
     }
   }
 
