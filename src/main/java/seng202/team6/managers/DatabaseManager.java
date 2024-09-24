@@ -75,6 +75,7 @@ public class DatabaseManager implements AutoCloseable {
     createNotesTable();
     addGeolocations();
     createWineListsTable();
+    createWineReviewTable();
 
     try (Statement statement = connection.createStatement()) {
       if (useWal) {
@@ -722,6 +723,22 @@ public class DatabaseManager implements AutoCloseable {
       log.warn("Note not found!");
       return "";
 
+    }
+  }
+
+  private void createWineReviewTable() {
+    String create = "CREATE TABLE IF NOT EXISTS WINE_REVIEW ("
+        + "ID INTEGER PRIMARY KEY,"
+        + "USERNAME varchar(64) NOT NULL,"
+        + "WINE_ID INTEGER NOT NULL,"
+        + "DESCRIPTION VARCHAR(256) NOT NULL,"
+        + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME),"
+        + "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID)"
+        + ")";
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(create);
+    } catch (SQLException error) {
+      log.error("Could not create wine review table", error);
     }
   }
 
