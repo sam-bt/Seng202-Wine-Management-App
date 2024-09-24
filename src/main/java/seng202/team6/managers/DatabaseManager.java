@@ -15,11 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import seng202.team6.model.Filters;
-import seng202.team6.model.GeoLocation;
-import seng202.team6.model.User;
-import seng202.team6.model.Wine;
-import seng202.team6.model.WineList;
+import seng202.team6.model.*;
 import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.ProcessCSV;
 
@@ -749,14 +745,14 @@ public class DatabaseManager implements AutoCloseable {
    * @param user
    * @return an ObservableList<String> of all notes created by a user
    */
-  public ObservableList<String> getNotesByUser(String user) {
-    ObservableList<String> notes = FXCollections.observableArrayList();
+  public ObservableList<Note> getNotesByUser(String user) {
+    ObservableList<Note> notes = FXCollections.observableArrayList();
     String find = "SELECT * FROM NOTES WHERE USERNAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(find)) {
       statement.setString(1, user);
       ResultSet set = statement.executeQuery();
       while (set.next()) {
-        notes.add(getWineTitleByID(set.getLong("WINE_ID")) + ": " + set.getString("NOTE"));
+        notes.add(new Note(set.getString("NOTE"), set.getLong("WINE_ID"), user, this));
         System.out.println(set.getString("NOTE"));
       }
     } catch (SQLException e) {
@@ -766,6 +762,7 @@ public class DatabaseManager implements AutoCloseable {
     return notes;
 
   }
+
 
 
   /**

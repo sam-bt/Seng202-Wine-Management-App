@@ -33,3 +33,17 @@
 .secondary-button:pressed {
   -fx-background-color: #DC2626;
 }
+
+.table-view {
+  -fx-background-color: #FEF0F0;
+}
+
+.table-view .column-header-background {
+  -fx-background-color: #F87171;
+  -fx-text-fill: white;
+}
+
+.table-view .column-header {
+  -fx-background-color: transparent;
+  -fx-text-fill: white;
+}
