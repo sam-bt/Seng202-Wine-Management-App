@@ -94,9 +94,12 @@ public class AuthenticationService {
    * @param newPassword The new password to set.
    * @return An AuthenticationResponse indicating the result of the password update attempt.
    */
-  public AuthenticationResponse validateUpdate(String username, String oldPassword, String newPassword) {
+  public AuthenticationResponse validateUpdate(String username, String oldPassword, String newPassword, String confirmNewPassword) {
     if (username.isEmpty() || oldPassword.isEmpty() || newPassword.isEmpty()) {
       return AuthenticationResponse.MISSING_FIELDS;
+    }
+    if (!newPassword.equals(confirmNewPassword)) {
+      return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
     }
 
     User user = databaseManager.getUser(username);
