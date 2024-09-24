@@ -75,6 +75,12 @@ public class DatabaseManager implements AutoCloseable {
     properties.setProperty("encoding", "UTF-8");
     properties.setProperty("foreign_keys", "true");
     connection = DriverManager.getConnection(dbPath, properties);
+    try (Statement statement = connection.createStatement()) {
+      if (useWal) {
+        statement.execute("pragma journal_mode=wal");
+      }
+    }
+
     createWinesTable();
     createUsersTable();
     createGeolocationTable();
@@ -83,11 +89,6 @@ public class DatabaseManager implements AutoCloseable {
     createWineListsTable();
     createWineReviewTable();
 
-    try (Statement statement = connection.createStatement()) {
-      if (useWal) {
-        statement.execute("pragma journal_mode=wal");
-      }
-    }
   }
 
 
