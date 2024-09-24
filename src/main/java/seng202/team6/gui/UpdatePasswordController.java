@@ -15,7 +15,9 @@ public class UpdatePasswordController extends Controller {
   @FXML
   private TextField newPasswordField;
   @FXML
-  private Label loginMessageLabel;
+  private TextField confirmNewPasswordField;
+  @FXML
+  private Label updateMessageLabel;
   @FXML
   private TitledPane titlePane;
 
@@ -46,7 +48,8 @@ public class UpdatePasswordController extends Controller {
     String username = authenticationService.getAuthenticatedUsername();
     String oldPassword = oldPasswordField.getText();
     String newPassword = newPasswordField.getText();
-    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword);
+    String confirmNewPassword = confirmNewPasswordField.getText();
+    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword, confirmNewPassword);
     if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
       managerContext.GUIManager.mainController.openWineScreen();
       if (authenticationService.isAdminFirstLogin()) {
@@ -56,8 +59,8 @@ public class UpdatePasswordController extends Controller {
         disabled = true;
       }
     } else {
-      loginMessageLabel.setStyle("-fx-text-fill: red");
-      loginMessageLabel.setText(response.getMessage());
+      updateMessageLabel.setStyle("-fx-text-fill: red");
+      updateMessageLabel.setText(response.getMessage());
     }
   }
 }

@@ -201,7 +201,8 @@ public class AuthenticateServiceTest {
     username = "";
     String oldPassword = "MyPassword";
     String newPassword = "MyNewPassword";
-    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword);
+    String confirmNewPassword = "MyNewPassword";
+    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
 
     username = "MyAccount";
@@ -228,7 +229,8 @@ public class AuthenticateServiceTest {
 
     String oldPassword = "MyOtherPassword";
     String newPassword = "MyNewPassword";
-    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword);
+    String confirmNewPassword = "MyNewPassword";
+    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.INCORRECT_OLD_PASSWORD, response);
   }
 
@@ -240,12 +242,14 @@ public class AuthenticateServiceTest {
     String username = "admin";
     String oldPassword = "admin";
     String newPassword = "MyNewPassword";
-    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword);
+    String confirmNewPassword = "MyNewPassword";
+    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
 
     oldPassword = newPassword;
     newPassword = "admin";
-    response = authenticationService.validateUpdate(username, oldPassword, newPassword);
+    confirmNewPassword = "admin";
+    response = authenticationService.validateUpdate(username, oldPassword, newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.ADMIN_PASSWORD_CANNOT_BE_ADMIN, response);
   }
 
@@ -256,9 +260,10 @@ public class AuthenticateServiceTest {
   public void testUpdateOldPasswordSameAsNew() {
     String username = "MyAccount";
     String password = "MyPassword";
+    String confirmNewPassword = "MyPassword";
     registerAccount(username, password);
 
-    AuthenticationResponse response = authenticationService.validateUpdate(username, password, password);
+    AuthenticationResponse response = authenticationService.validateUpdate(username, password, password, confirmNewPassword);
     assertEquals(AuthenticationResponse.OLD_PASSWORD_SAME_AS_NEW, response);
   }
 
@@ -272,8 +277,24 @@ public class AuthenticateServiceTest {
     registerAccount(username, password);
 
     String newPassword = "My$Password";
-    AuthenticationResponse response = authenticationService.validateUpdate(username, password, newPassword);
+    String confirmNewPassword = "My$Password";
+    AuthenticationResponse response = authenticationService.validateUpdate(username, password, newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.INVALID_PASSWORD, response);
+  }
+
+  /**
+   * Tests password update with non-matching new passwords
+   */
+  @Test
+  public void testUpdateWrongConfirmPassword() {
+    String username = "MyAccount";
+    String password = "MyPassword";
+    registerAccount(username, password);
+
+    String newPassword = "MyPassword";
+    String confirmNewPassword = "NotMyPassword";
+    AuthenticationResponse response = authenticationService.validateUpdate(username, password, newPassword, confirmNewPassword);
+    assertEquals(AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD, response);
   }
 
   /**

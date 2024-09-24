@@ -24,6 +24,7 @@ public class UserChangePasswordStepDefinitions {
   private String password;
   private String oldPassword;
   private String newPassword;
+  private String confirmNewPassword;
 
   @Before
   public void setup() throws SQLException {
@@ -59,6 +60,11 @@ public class UserChangePasswordStepDefinitions {
     newPassword = "MyNewPassword";
   }
 
+  @And("the user enters the same password to confirm")
+  public void theUserEntersAValidConfirmPassword() {
+    confirmNewPassword = "MyNewPassword";
+  }
+
   @And("the user enters an invalid new password")
   public void theUserEntersAnInvalidNewPassword() {
     newPassword = "My&New%Password";
@@ -67,7 +73,7 @@ public class UserChangePasswordStepDefinitions {
   @Then("the accounts password is not changed")
   public void theAccountsPasswordIsNotChanged() {
     AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword,
-        newPassword);
+        newPassword, confirmNewPassword);
     assertNotEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
 
     User user = databaseManager.getUser(username);
@@ -79,7 +85,7 @@ public class UserChangePasswordStepDefinitions {
   @Then("the accounts password is changed")
   public void theAccountsPasswordIsChanged() {
     AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword,
-        newPassword);
+        newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
 
     User user = databaseManager.getUser(username);
