@@ -20,6 +20,7 @@ import seng202.team6.model.GeoLocation;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
+import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.ProcessCSV;
 
@@ -41,6 +42,10 @@ public class DatabaseManager implements AutoCloseable {
    * </p>
    */
   private Connection connection;
+  /**
+   * Cache of alive wines to unique
+   */
+  DatabaseObjectUniquer<Wine> wineCache = new DatabaseObjectUniquer<>();
 
   /**
    * Connects to a db file for management. The path to the file is specified by dbpath
@@ -99,6 +104,52 @@ public class DatabaseManager implements AutoCloseable {
   }
 
   /**
+   * Unpacks a result set into a list of wines
+   * <p>
+   * Wines are also uniqued by id to prevent inconsistencies if an object is changed
+   * </p>
+   *
+   * @param resultSet result set from jdbc
+   * @return list of wines
+   * @throws SQLException if underlying JDBC error
+   */
+  private ObservableList<Wine> resultSetToList(ResultSet resultSet) throws SQLException {
+    ObservableList<Wine> wines = FXCollections.observableArrayList();
+
+    while (resultSet.next()) {
+      long id = resultSet.getLong("ID");
+      // If wine already exists use that reference instead
+      Wine maybeWine = wineCache.tryGetObject(id);
+      if (maybeWine != null) {
+        wines.add(maybeWine);
+      } else {
+
+        GeoLocation geoLocation = createGeoLocation(resultSet);
+        Wine wine = new Wine(
+            id,
+            this,
+            resultSet.getString("TITLE"),
+            resultSet.getString("VARIETY"),
+            resultSet.getString("COUNTRY"),
+            resultSet.getString("REGION"),
+            resultSet.getString("WINERY"),
+            resultSet.getString("COLOR"),
+            resultSet.getInt("VINTAGE"),
+            resultSet.getString("DESCRIPTION"),
+            resultSet.getInt("SCORE_PERCENT"),
+            resultSet.getFloat("ABV"),
+            resultSet.getFloat("PRICE"),
+            geoLocation
+        );
+        wines.add(wine);
+        wineCache.addObject(id, wine);
+      }
+    }
+    return wines;
+  }
+
+
+  /**
    * Creates the WINE table if it does not exist
    *
    * @throws SQLException on sql error
@@ -154,8 +205,7 @@ public class DatabaseManager implements AutoCloseable {
    */
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
     long milliseconds = System.currentTimeMillis();
-    ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query = "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE from WINE "
+    String query = "select * from WINE "
         + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
         + "order by WINE.ID "
         + "limit ? "
@@ -164,34 +214,13 @@ public class DatabaseManager implements AutoCloseable {
       statement.setInt(1, end - begin);
       statement.setInt(2, begin);
 
-      ResultSet set = statement.executeQuery();
-      while (set.next()) {
-        GeoLocation geoLocation = createGeoLocation(set);
-        Wine wine = new Wine(
-            set.getLong("ID"),
-            this,
-            set.getString("TITLE"),
-            set.getString("VARIETY"),
-            set.getString("COUNTRY"),
-            set.getString("REGION"),
-            set.getString("WINERY"),
-            set.getString("COLOR"),
-            set.getInt("VINTAGE"),
-            set.getString("DESCRIPTION"),
-            set.getInt("SCORE_PERCENT"),
-            set.getFloat("ABV"),
-            set.getFloat("PRICE"),
-            geoLocation
-        );
-        wines.add(wine);
-      }
-
+      ObservableList<Wine> wines = resultSetToList(statement.executeQuery());
+      LogManager.getLogger(getClass())
+          .info("Time to process getWinesInRange: {}", System.currentTimeMillis() - milliseconds);
+      return wines;
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
-    LogManager.getLogger(getClass())
-        .info("Time to process getWinesInRange: {}", System.currentTimeMillis() - milliseconds);
-    return wines;
   }
 
   /**
@@ -207,9 +236,8 @@ public class DatabaseManager implements AutoCloseable {
    */
   public ObservableList<Wine> getWinesInRange(int begin, int end, Filters filters) {
     long milliseconds = System.currentTimeMillis();
-    ObservableList<Wine> wines = FXCollections.observableArrayList();
     String query =
-        "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE "
+        "select * "
             + "from WINE "
             + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
             + "where WINE.TITLE like ? "
@@ -244,36 +272,14 @@ public class DatabaseManager implements AutoCloseable {
       statement.setInt(paramIndex++, end - begin);
       statement.setInt(paramIndex, begin);
 
-      // Add filtered wines to list
-      ResultSet set = statement.executeQuery();
-      while (set.next()) {
-        GeoLocation geoLocation = createGeoLocation(set);
-        Wine wine = new Wine(
-            set.getLong("ID"),
-            this,
-            set.getString("TITLE"),
-            set.getString("VARIETY"),
-            set.getString("COUNTRY"),
-            set.getString("REGION"),
-            set.getString("WINERY"),
-            set.getString("COLOR"),
-            set.getInt("VINTAGE"),
-            set.getString("DESCRIPTION"),
-            set.getInt("SCORE_PERCENT"),
-            set.getFloat("ABV"),
-            set.getFloat("PRICE"),
-            geoLocation
-        );
-        wines.add(wine);
-      }
-
+      ObservableList<Wine> wines = resultSetToList(statement.executeQuery());
+      LogManager.getLogger(getClass()).info("Time to process getWinesInRange with filter: {}",
+          System.currentTimeMillis() - milliseconds);
+      return wines;
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
 
-    LogManager.getLogger(getClass()).info("Time to process getWinesInRange with filter: {}",
-        System.currentTimeMillis() - milliseconds);
-    return wines;
   }
 
   private GeoLocation createGeoLocation(ResultSet set) throws SQLException {
@@ -616,36 +622,17 @@ public class DatabaseManager implements AutoCloseable {
   }
 
   public List<Wine> getWinesInList(WineList wineList) {
-    List<Wine> wines = new ArrayList<>();
-    String query = "SELECT WINE.* FROM WINE " +
+    String query = "SELECT * FROM WINE " +
         "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID " +
         "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID " +
+        "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) " +
         "WHERE LIST_NAME.ID = ?";
 
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setLong(1, wineList.id());
 
-      ResultSet set = statement.executeQuery();
-      while (set.next()) {
-        Wine wine = new Wine(
-            set.getLong("ID"),
-            this,
-            set.getString("TITLE"),
-            set.getString("VARIETY"),
-            set.getString("COUNTRY"),
-            set.getString("REGION"),
-            set.getString("WINERY"),
-            set.getString("COLOR"),
-            set.getInt("VINTAGE"),
-            set.getString("DESCRIPTION"),
-            set.getInt("SCORE_PERCENT"),
-            set.getFloat("ABV"),
-            set.getFloat("PRICE"),
-            null
-        );
-        wines.add(wine);
-      }
-      return wines;
+      return resultSetToList(statement.executeQuery());
+
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
@@ -689,10 +676,10 @@ public class DatabaseManager implements AutoCloseable {
 
   private void createNotesTable() throws SQLException {
     String create = "create table if not exists NOTES (" +
-            "ID INTEGER PRIMARY KEY," +
-            "USERNAME varchar(64) NOT NULL," +
-            "WINE_ID int NOT NULL, " +
-            "NOTE text);";
+        "ID INTEGER PRIMARY KEY," +
+        "USERNAME varchar(64) NOT NULL," +
+        "WINE_ID int NOT NULL, " +
+        "NOTE text);";
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
     }
