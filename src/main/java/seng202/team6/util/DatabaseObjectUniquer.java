@@ -23,7 +23,7 @@ public class DatabaseObjectUniquer<T> {
   /**
    * Timer for garbage collection
    */
-  private int garbageCollectionTimer = 1;
+  private int garbageCollectionTimer = 0;
 
   /**
    * Tries to remove outdated references
@@ -54,8 +54,9 @@ public class DatabaseObjectUniquer<T> {
    * @param object object
    */
   public void addObject(long id, T object) {
-    if(garbageCollectionTimer++ % 4096 == 0) {
+    if(garbageCollectionTimer++ == 4096) {
       tryGarbageCollect();
+      garbageCollectionTimer = 0;
     }
     if(objects.containsKey(id))
       throw new IllegalStateException("Duplicate keys are not allowed and attempting indicates a leak");
