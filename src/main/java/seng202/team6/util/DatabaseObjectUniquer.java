@@ -1,11 +1,12 @@
 package seng202.team6.util;
 
 
-import java.util.WeakHashMap;
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
 
 
 /**
- * Database objects are required to be unique in memory to assure consistancy
+ * Database objects are required to be unique in memory to assure consistency
  * <p>
  *   This class implements a simple weak cache to resolve that problem.
  *   Objects are stored with weak references to prevent memory leaks. Map is auto cleared by java
@@ -17,7 +18,19 @@ public class DatabaseObjectUniquer<T> {
   /**
    * Object map
    */
-  private final WeakHashMap<Long, T> objects = new WeakHashMap<>();
+  private final HashMap<Long, WeakReference<T>> objects = new HashMap<>();
+
+  /**
+   * Timer for garbage collection
+   */
+  private int garbageCollectionTimer = 1;
+
+  /**
+   * Tries to remove outdated references
+   */
+  public void tryGarbageCollect() {
+    objects.values().removeIf(object -> object.get() == null);
+  }
 
   /**
    * Tries to get an object from the cache
@@ -25,7 +38,14 @@ public class DatabaseObjectUniquer<T> {
    * @return stored object or null
    */
   public T tryGetObject(long id) {
-    return objects.get(id);
+    WeakReference<T> ref = objects.get(id);
+    if(ref == null)
+      return null;
+    T strongRef = ref.get();
+    if(strongRef == null) {
+      objects.remove(id);
+    }
+    return strongRef;
   }
 
   /**
@@ -34,8 +54,21 @@ public class DatabaseObjectUniquer<T> {
    * @param object object
    */
   public void addObject(long id, T object) {
+    if(garbageCollectionTimer++ % 4096 == 0) {
+      tryGarbageCollect();
+    }
     if(objects.containsKey(id))
       throw new IllegalStateException("Duplicate keys are not allowed and attempting indicates a leak");
-    objects.put(id, object);
+    objects.put(id, new WeakReference<>(object));
   }
+
+  /**
+   * Returns an upper bound for alive objects.
+   * @return number of objects in map
+   */
+  int size() {
+    return objects.size();
+  }
+
+
 }
