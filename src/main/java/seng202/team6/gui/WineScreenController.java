@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.ObservableList;
@@ -24,6 +25,7 @@ import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
+import seng202.team6.util.YearStringConverter;
 
 /**
  * Controller for the screen that displays wines
@@ -184,6 +186,12 @@ public class WineScreenController extends Controller {
       // Ensure the sliders display properly
       scoreSlider.setMajorTickUnit(1);
       vintageSlider.setMajorTickUnit(1);
+      vintageSlider.setMinorTickCount(0);
+
+      YearStringConverter yearStringConverter = new YearStringConverter();
+      vintageSlider.setLabelFormatter(yearStringConverter);
+
+
     }
 
   }
