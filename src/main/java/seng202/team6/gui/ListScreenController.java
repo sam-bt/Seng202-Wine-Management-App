@@ -24,14 +24,12 @@ import javafx.util.converter.IntegerStringConverter;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
-import seng202.team6.service.AuthenticationService;
 
 /**
  * List Screen Controller (MORE DETAIL HERE!)
  */
 public class ListScreenController extends Controller {
 
-  private final AuthenticationService authenticationService;
 
   @FXML
   public Button createListRequestButton;
@@ -62,10 +60,8 @@ public class ListScreenController extends Controller {
    *
    * @param managerContext manager context
    */
-  public ListScreenController(ManagerContext managerContext,
-      AuthenticationService authenticationService) {
+  public ListScreenController(ManagerContext managerContext) {
     super(managerContext);
-    this.authenticationService = authenticationService;
   }
 
   /**
@@ -135,7 +131,7 @@ public class ListScreenController extends Controller {
       } else {
         errorText.setVisible(false);
 
-        String user = authenticationService.getAuthenticatedUsername();
+        String user = managerContext.authenticationManager.getAuthenticatedUsername();
 
         managerContext.databaseManager.createList(user, name);
 
@@ -178,7 +174,7 @@ public class ListScreenController extends Controller {
   public void updateListOptions() {
     Button[] buttons = {listOneButton, listTwoButton, listThreeButton, listFourButton,
         listFiveButton};
-    String user = authenticationService.getAuthenticatedUsername();
+    String user = managerContext.authenticationManager.getAuthenticatedUsername();
     wineLists = managerContext.databaseManager.getUserLists(user);
     for (int i = 0; i < buttons.length; i++) {
       if (i < wineLists.size()) {
@@ -253,7 +249,7 @@ public class ListScreenController extends Controller {
     tabViewing.setText("VIEWING: " + wineLists.get(selected - 1).name());
     tableView.getItems().clear();
 
-    String user = authenticationService.getAuthenticatedUsername();
+    String user = managerContext.authenticationManager.getAuthenticatedUsername();
     List<WineList> userLists = managerContext.databaseManager.getUserLists(user);
     WineList fromUserLists = userLists.get(selected-1);
     List<Wine> list = managerContext.databaseManager.getWinesInList(fromUserLists);

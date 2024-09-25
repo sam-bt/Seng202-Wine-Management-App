@@ -1,4 +1,4 @@
-package seng202.team6.unittests.service;
+package seng202.team6.unittests.managers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -8,26 +8,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
-import seng202.team6.service.AuthenticationService;
+import seng202.team6.managers.AuthenticationManager;
 
 /**
- * Test class for the AuthenticationService.
- * This class contains unit tests to verify the functionality of the AuthenticationService
+ * Test class for the AuthenticationManager.
+ * This class contains unit tests to verify the functionality of the authenticationManager
  */
-public class AuthenticateServiceTest {
-  private AuthenticationService authenticationService;
+public class AuthenticationManagerTest {
+  private AuthenticationManager authenticationManager;
   private DatabaseManager databaseManager;
 
   /**
    * Sets up the test environment before each test method.
-   * Initializes the AuthenticationManager, DatabaseManager, and AuthenticationService.
+   * Initializes the AuthenticationManager and DatabaseManager.
    *
    * @throws SQLException if there's an error setting up the database connection
    */
   @BeforeEach
   public void setup() throws SQLException {
     databaseManager = new DatabaseManager();
-    authenticationService = new AuthenticationService(databaseManager);
+    authenticationManager = new AuthenticationManager();
   }
 
   /**
@@ -46,7 +46,7 @@ public class AuthenticateServiceTest {
     String username = "MyAccount";
     String password = "MyPassword";
     String confirmedPassword = "MyPassword";
-    AuthenticationResponse response = authenticationService.validateRegistration(username, password,
+    AuthenticationResponse response = authenticationManager.validateRegistration(databaseManager, username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.REGISTER_SUCCESS, response);
   }
@@ -60,21 +60,21 @@ public class AuthenticateServiceTest {
     String username = "";
     String password = "MyPassword";
     String confirmedPassword = "MyPassword";
-    AuthenticationResponse response = authenticationService.validateRegistration(username, password,
+    AuthenticationResponse response = authenticationManager.validateRegistration(databaseManager, username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
 
     username = "MyAccount";
     password = "";
     confirmedPassword = "MyPassword";
-    response = authenticationService.validateRegistration(username, password,
+    response = authenticationManager.validateRegistration(databaseManager, username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
 
     username = "MyAccount";
     password = "MyPassword";
     confirmedPassword = "";
-    response = authenticationService.validateRegistration(username, password,
+    response = authenticationManager.validateRegistration(databaseManager, username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
   }
@@ -87,7 +87,7 @@ public class AuthenticateServiceTest {
     String username = "MyAccount";
     String password = "MyPassword";
     String confirmedPassword = "MyOtherPassword";
-    AuthenticationResponse response = authenticationService.validateRegistration(username, password,
+    AuthenticationResponse response = authenticationManager.validateRegistration(databaseManager, username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD, response);
   }
@@ -100,12 +100,12 @@ public class AuthenticateServiceTest {
   public void testLoginEmptyFields() {
     String username = "";
     String password = "MyPassword";
-    AuthenticationResponse response = authenticationService.validateLogin(username, password);
+    AuthenticationResponse response = authenticationManager.validateLogin(databaseManager, username, password);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
 
     username = "MyAccount";
     password = "";
-    response = authenticationService.validateLogin(username, password);
+    response = authenticationManager.validateLogin(databaseManager, username, password);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
   }
 
@@ -117,7 +117,7 @@ public class AuthenticateServiceTest {
     String username = "My$Account";
     String password = "MyPassword";
     String confirmedPassword = "MyPassword";
-    AuthenticationResponse response = authenticationService.validateRegistration(username, password,
+    AuthenticationResponse response = authenticationManager.validateRegistration(databaseManager, username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.INVALID_USERNAME, response);
   }
@@ -130,7 +130,7 @@ public class AuthenticateServiceTest {
     String username = "MyAccount";
     String password = "My$Password";
     String confirmedPassword = "My$Password";
-    AuthenticationResponse response = authenticationService.validateRegistration(username, password,
+    AuthenticationResponse response = authenticationManager.validateRegistration(databaseManager, username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.INVALID_PASSWORD, response);
   }
@@ -146,7 +146,7 @@ public class AuthenticateServiceTest {
     registerAccount(username, password);
 
     // try to register the account again
-    AuthenticationResponse response = authenticationService.validateRegistration(username, password,
+    AuthenticationResponse response = authenticationManager.validateRegistration(databaseManager, username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.USERNAME_ALREADY_REGISTERED, response);
   }
@@ -160,7 +160,7 @@ public class AuthenticateServiceTest {
     String password = "MyPassword";
     registerAccount(username, password);
 
-    AuthenticationResponse response = authenticationService.validateLogin(username, password);
+    AuthenticationResponse response = authenticationManager.validateLogin(databaseManager, username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, response);
   }
 
@@ -171,7 +171,7 @@ public class AuthenticateServiceTest {
   public void testLoginInvalidUsernamePasswordCombination() {
     String username = "MyAccount";
     String password = "MyPassword";
-    AuthenticationResponse response = authenticationService.validateLogin(username, password);
+    AuthenticationResponse response = authenticationManager.validateLogin(databaseManager, username, password);
     assertEquals(AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION, response);
   }
 
@@ -185,7 +185,7 @@ public class AuthenticateServiceTest {
     registerAccount(username, password);
 
     password = "MyOtherPassword";
-    AuthenticationResponse response = authenticationService.validateLogin(username, password);
+    AuthenticationResponse response = authenticationManager.validateLogin(databaseManager, username, password);
     assertEquals(AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION, response);
   }
 
@@ -202,19 +202,19 @@ public class AuthenticateServiceTest {
     String oldPassword = "MyPassword";
     String newPassword = "MyNewPassword";
     String confirmNewPassword = "MyNewPassword";
-    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword, confirmNewPassword);
+    AuthenticationResponse response = authenticationManager.validateUpdate(databaseManager, username, oldPassword, newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
 
     username = "MyAccount";
     oldPassword = "";
     newPassword = "MyNewPassword";
-    response = authenticationService.validateRegistration(username, oldPassword, newPassword);
+    response = authenticationManager.validateRegistration(databaseManager, username, oldPassword, newPassword);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
 
     username = "MyAccount";
     oldPassword = "MyPassword";
     newPassword = "";
-    response = authenticationService.validateRegistration(username, oldPassword, newPassword);
+    response = authenticationManager.validateRegistration(databaseManager, username, oldPassword, newPassword);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
   }
 
@@ -230,7 +230,7 @@ public class AuthenticateServiceTest {
     String oldPassword = "MyOtherPassword";
     String newPassword = "MyNewPassword";
     String confirmNewPassword = "MyNewPassword";
-    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword, confirmNewPassword);
+    AuthenticationResponse response = authenticationManager.validateUpdate(databaseManager, username, oldPassword, newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.INCORRECT_OLD_PASSWORD, response);
   }
 
@@ -243,13 +243,13 @@ public class AuthenticateServiceTest {
     String oldPassword = "admin";
     String newPassword = "MyNewPassword";
     String confirmNewPassword = "MyNewPassword";
-    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword, confirmNewPassword);
+    AuthenticationResponse response = authenticationManager.validateUpdate(databaseManager, username, oldPassword, newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
 
     oldPassword = newPassword;
     newPassword = "admin";
     confirmNewPassword = "admin";
-    response = authenticationService.validateUpdate(username, oldPassword, newPassword, confirmNewPassword);
+    response = authenticationManager.validateUpdate(databaseManager, username, oldPassword, newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.ADMIN_PASSWORD_CANNOT_BE_ADMIN, response);
   }
 
@@ -263,7 +263,7 @@ public class AuthenticateServiceTest {
     String confirmNewPassword = "MyPassword";
     registerAccount(username, password);
 
-    AuthenticationResponse response = authenticationService.validateUpdate(username, password, password, confirmNewPassword);
+    AuthenticationResponse response = authenticationManager.validateUpdate(databaseManager, username, password, password, confirmNewPassword);
     assertEquals(AuthenticationResponse.OLD_PASSWORD_SAME_AS_NEW, response);
   }
 
@@ -278,7 +278,7 @@ public class AuthenticateServiceTest {
 
     String newPassword = "My$Password";
     String confirmNewPassword = "My$Password";
-    AuthenticationResponse response = authenticationService.validateUpdate(username, password, newPassword, confirmNewPassword);
+    AuthenticationResponse response = authenticationManager.validateUpdate(databaseManager, username, password, newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.INVALID_PASSWORD, response);
   }
 
@@ -293,7 +293,7 @@ public class AuthenticateServiceTest {
 
     String newPassword = "MyPassword";
     String confirmNewPassword = "NotMyPassword";
-    AuthenticationResponse response = authenticationService.validateUpdate(username, password, newPassword, confirmNewPassword);
+    AuthenticationResponse response = authenticationManager.validateUpdate(databaseManager, username, password, newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD, response);
   }
 
@@ -304,7 +304,7 @@ public class AuthenticateServiceTest {
    * @param password the password to use for registration
    */
   private void registerAccount(String username, String password) {
-    AuthenticationResponse response = authenticationService.validateRegistration(username, password,
+    AuthenticationResponse response = authenticationManager.validateRegistration(databaseManager, username, password,
         password);
     assertEquals(AuthenticationResponse.REGISTER_SUCCESS, response);
   }

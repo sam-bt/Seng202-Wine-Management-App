@@ -11,11 +11,11 @@ import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
-import seng202.team6.service.AuthenticationService;
+import seng202.team6.managers.AuthenticationManager;
 
 public class UserRegistrationStepDefinitions {
   private DatabaseManager databaseManager;
-  private AuthenticationService authenticationService;
+  private AuthenticationManager authenticationManager;
   private String username;
   private String password;
   private String confirmedPassword;
@@ -23,7 +23,7 @@ public class UserRegistrationStepDefinitions {
   @Before
   public void setup() throws SQLException {
     databaseManager = new DatabaseManager();
-    authenticationService = new AuthenticationService(databaseManager);
+    authenticationManager = new AuthenticationManager();
   }
 
   @After
@@ -33,7 +33,7 @@ public class UserRegistrationStepDefinitions {
 
   @Given("the user is not authenticated and is registering")
   public void the_user_is_not_authenticated_and_is_registering() {
-    authenticationService.setAuthenticatedUsername(null);
+    authenticationManager.setAuthenticatedUsername(null);
   }
 
   @When("the user enters a valid username, password, and confirmed password")
@@ -70,13 +70,13 @@ public class UserRegistrationStepDefinitions {
 
   @Then("a new account for the user is created")
   public void a_new_account_for_the_user_is_created() {
-    AuthenticationResponse response = authenticationService.validateRegistration(username, password, confirmedPassword);
+    AuthenticationResponse response = authenticationManager.validateRegistration(databaseManager, username, password, confirmedPassword);
     assertEquals(AuthenticationResponse.REGISTER_SUCCESS, response);
   }
 
   @Then("the account is not created")
   public void the_account_is_not_created() {
-    AuthenticationResponse response = authenticationService.validateRegistration(username, password, confirmedPassword);
+    AuthenticationResponse response = authenticationManager.validateRegistration(databaseManager, username, password, confirmedPassword);
     assertNotEquals(AuthenticationResponse.REGISTER_SUCCESS, response);
   }
 }
