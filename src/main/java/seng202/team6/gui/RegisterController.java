@@ -36,7 +36,7 @@ public class RegisterController extends Controller {
     String password = passwordField.getText();
     String confirmPassword = confirmPasswordField.getText();
     AuthenticationResponse response = managerContext.authenticationManager.validateRegistration(
-        managerContext.databaseManager, username, password, confirmPassword);
+        username, password, confirmPassword);
     if (response == AuthenticationResponse.REGISTER_SUCCESS) {
       managerContext.GUIManager.mainController.openLoginScreen();
       managerContext.databaseManager.createList(username, "Favourites");

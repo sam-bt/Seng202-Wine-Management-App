@@ -10,17 +10,15 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.sql.SQLException;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
-import seng202.team6.managers.AuthenticationManager;
 
 public class UserLogoutStepDefinitions {
   private AuthenticationManager authenticationManager;
-  private DatabaseManager databaseManager;
   @Before
   public void setup() throws SQLException {
-    databaseManager = new DatabaseManager();
-    authenticationManager = new AuthenticationManager();
+    authenticationManager = new AuthenticationManager(new DatabaseManager());
   }
 
   @Given("the user is authenticated and wants to logout")
@@ -28,11 +26,11 @@ public class UserLogoutStepDefinitions {
     String username = "MyAccount";
     String password = "MyPassword";
 
-    AuthenticationResponse registrationResponse = authenticationManager.validateRegistration(databaseManager,
+    AuthenticationResponse registrationResponse = authenticationManager.validateRegistration(
         username, password, password);
     assertEquals(AuthenticationResponse.REGISTER_SUCCESS, registrationResponse);
 
-    AuthenticationResponse loginResponse = authenticationManager.validateLogin(databaseManager, username, password);
+    AuthenticationResponse loginResponse = authenticationManager.validateLogin(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, loginResponse);
 
     assertTrue(authenticationManager.isAuthenticated());

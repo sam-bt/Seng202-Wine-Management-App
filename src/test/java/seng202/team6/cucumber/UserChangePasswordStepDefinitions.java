@@ -11,10 +11,10 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.sql.SQLException;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.model.User;
-import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.util.EncryptionUtil;
 
 public class UserChangePasswordStepDefinitions {
@@ -29,7 +29,7 @@ public class UserChangePasswordStepDefinitions {
   @Before
   public void setup() throws SQLException {
     databaseManager = new DatabaseManager();
-    authenticationManager = new AuthenticationManager();
+    authenticationManager = new AuthenticationManager(databaseManager);
   }
 
   @Given("the user is authenticated and changing their password")
@@ -37,10 +37,11 @@ public class UserChangePasswordStepDefinitions {
     username = "MyAccount";
     password = "MyPassword";
 
-    AuthenticationResponse registrationResponse = authenticationManager.validateRegistration(databaseManager, username, password, password);
+    AuthenticationResponse registrationResponse = authenticationManager.validateRegistration(
+        username, password, password);
     assertEquals(AuthenticationResponse.REGISTER_SUCCESS, registrationResponse);
 
-    AuthenticationResponse loginResponse = authenticationManager.validateLogin(databaseManager, username, password);
+    AuthenticationResponse loginResponse = authenticationManager.validateLogin(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, loginResponse);
   }
 
@@ -77,7 +78,7 @@ public class UserChangePasswordStepDefinitions {
 
   @Then("the accounts password is not changed")
   public void theAccountsPasswordIsNotChanged() {
-    AuthenticationResponse response = authenticationManager.validateUpdate(databaseManager, username, oldPassword,
+    AuthenticationResponse response = authenticationManager.validateUpdate(username, oldPassword,
         newPassword, confirmNewPassword);
     assertNotEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
 
@@ -89,7 +90,7 @@ public class UserChangePasswordStepDefinitions {
 
   @Then("the accounts password is changed")
   public void theAccountsPasswordIsChanged() {
-    AuthenticationResponse response = authenticationManager.validateUpdate(databaseManager, username, oldPassword,
+    AuthenticationResponse response = authenticationManager.validateUpdate(username, oldPassword,
         newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
 

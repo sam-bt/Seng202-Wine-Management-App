@@ -9,9 +9,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.sql.SQLException;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
-import seng202.team6.managers.AuthenticationManager;
 
 public class UserRegistrationStepDefinitions {
   private DatabaseManager databaseManager;
@@ -23,7 +23,7 @@ public class UserRegistrationStepDefinitions {
   @Before
   public void setup() throws SQLException {
     databaseManager = new DatabaseManager();
-    authenticationManager = new AuthenticationManager();
+    authenticationManager = new AuthenticationManager(databaseManager);
   }
 
   @After
@@ -70,13 +70,15 @@ public class UserRegistrationStepDefinitions {
 
   @Then("a new account for the user is created")
   public void a_new_account_for_the_user_is_created() {
-    AuthenticationResponse response = authenticationManager.validateRegistration(databaseManager, username, password, confirmedPassword);
+    AuthenticationResponse response = authenticationManager.validateRegistration(username, password,
+        confirmedPassword);
     assertEquals(AuthenticationResponse.REGISTER_SUCCESS, response);
   }
 
   @Then("the account is not created")
   public void the_account_is_not_created() {
-    AuthenticationResponse response = authenticationManager.validateRegistration(databaseManager, username, password, confirmedPassword);
+    AuthenticationResponse response = authenticationManager.validateRegistration(username, password,
+        confirmedPassword);
     assertNotEquals(AuthenticationResponse.REGISTER_SUCCESS, response);
   }
 }

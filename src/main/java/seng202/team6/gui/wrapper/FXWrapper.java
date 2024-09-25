@@ -36,10 +36,11 @@ public class FXWrapper {
   public void init(Stage stage) {
     this.stage = stage;
     try {
+      DatabaseManager databaseManager = new DatabaseManager("database.db", true);
       this.managerContext = new ManagerContext(
-          new DatabaseManager("database.db", true),
+          databaseManager,
           new GUIManager(this),
-          new AuthenticationManager()
+          new AuthenticationManager(databaseManager)
       );
 
       stage.setOnCloseRequest((event) -> managerContext.databaseManager.close());

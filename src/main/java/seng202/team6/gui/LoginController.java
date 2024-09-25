@@ -32,8 +32,8 @@ public class LoginController extends Controller {
 
     String username = usernameField.getText();
     String password = passwordField.getText();
-    AuthenticationResponse response = managerContext.authenticationManager.validateLogin(
-        managerContext.databaseManager, username, password);
+    AuthenticationResponse response = managerContext.authenticationManager.validateLogin(username,
+        password);
     if (response == AuthenticationResponse.LOGIN_SUCCESS) {
       if (managerContext.authenticationManager.isAdminFirstLogin()) {
         managerContext.GUIManager.mainController.setDisable(true);

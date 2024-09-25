@@ -45,7 +45,7 @@ public class UpdatePasswordController extends Controller {
     String newPassword = newPasswordField.getText();
     String confirmNewPassword = confirmNewPasswordField.getText();
     AuthenticationResponse response = managerContext.authenticationManager.validateUpdate(
-        managerContext.databaseManager, username, oldPassword, newPassword, confirmNewPassword);
+        username, oldPassword, newPassword, confirmNewPassword);
     if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
       managerContext.GUIManager.mainController.openWineScreen();
       if (managerContext.authenticationManager.isAdminFirstLogin()) {

@@ -15,11 +15,12 @@ public class AuthenticationManager {
   private String authenticatedUsername;
   private boolean admin;
   private boolean adminFirstLogin;
-
+  private final DatabaseManager databaseManager;
   /**
    * Constructs an AuthenticationManager
    */
-  public AuthenticationManager() {
+  public AuthenticationManager(DatabaseManager databaseManager) {
+    this.databaseManager = databaseManager;
   }
 
   /**
@@ -30,8 +31,8 @@ public class AuthenticationManager {
    * @param confirmedPassword The confirmed password for verification.
    * @return An AuthenticationResponse indicating the result of the registration attempt.
    */
-  public AuthenticationResponse validateRegistration(DatabaseManager databaseManager,
-      String username, String password, String confirmedPassword) {
+  public AuthenticationResponse validateRegistration(String username, String password,
+      String confirmedPassword) {
     if (username.isEmpty() || password.isEmpty() || confirmedPassword.isEmpty()) {
       return AuthenticationResponse.MISSING_FIELDS;
     }
@@ -61,7 +62,7 @@ public class AuthenticationManager {
    * @param password The password of the account to log in.
    * @return An AuthenticationResponse indicating the result of the login attempt.
    */
-  public AuthenticationResponse validateLogin(DatabaseManager databaseManager, String username,
+  public AuthenticationResponse validateLogin(String username,
       String password) {
     if (username.isEmpty() || password.isEmpty()) {
       return AuthenticationResponse.MISSING_FIELDS;
@@ -91,7 +92,7 @@ public class AuthenticationManager {
    * @param newPassword The new password to set.
    * @return An AuthenticationResponse indicating the result of the password update attempt.
    */
-  public AuthenticationResponse validateUpdate(DatabaseManager databaseManager, String username,
+  public AuthenticationResponse validateUpdate(String username,
       String oldPassword, String newPassword, String confirmNewPassword) {
     if (username.isEmpty() || oldPassword.isEmpty() || newPassword.isEmpty()) {
       return AuthenticationResponse.MISSING_FIELDS;

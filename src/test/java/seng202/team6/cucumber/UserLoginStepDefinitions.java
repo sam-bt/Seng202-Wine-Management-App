@@ -11,9 +11,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.sql.SQLException;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
-import seng202.team6.managers.AuthenticationManager;
 
 public class UserLoginStepDefinitions {
   private DatabaseManager databaseManager;
@@ -24,7 +24,7 @@ public class UserLoginStepDefinitions {
   @Before
   public void setup() throws SQLException {
     databaseManager = new DatabaseManager();
-    authenticationManager = new AuthenticationManager();
+    authenticationManager = new AuthenticationManager(databaseManager);
   }
 
   @After
@@ -47,12 +47,12 @@ public class UserLoginStepDefinitions {
   public void theUserEntersACorrectUsernameAndPasswordCombination() {
     username = "MyAccount";
     password = "MyPassword";
-    authenticationManager.validateRegistration(databaseManager, username, password, password);
+    authenticationManager.validateRegistration(username, password, password);
   }
 
   @Then("the account is logged in")
   public void theAccountIsLoggedIn() {
-    AuthenticationResponse response = authenticationManager.validateLogin(databaseManager, username, password);
+    AuthenticationResponse response = authenticationManager.validateLogin(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, response);
     assertTrue(authenticationManager.isAuthenticated());
     assertEquals(username, authenticationManager.getAuthenticatedUsername());
@@ -60,7 +60,7 @@ public class UserLoginStepDefinitions {
 
   @Then("the account is not logged in")
   public void theAccountIsNotLoggedIn() {
-    AuthenticationResponse response = authenticationManager.validateLogin(databaseManager, username, password);
+    AuthenticationResponse response = authenticationManager.validateLogin(username, password);
     assertEquals(AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION, response);
     assertFalse(authenticationManager.isAuthenticated());
     assertNotEquals(username, authenticationManager.getAuthenticatedUsername());
