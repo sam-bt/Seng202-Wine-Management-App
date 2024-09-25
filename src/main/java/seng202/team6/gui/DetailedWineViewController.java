@@ -69,9 +69,13 @@ public class DetailedWineViewController extends Controller {
 
   private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine.png");
   private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage("/img/white_wine.png");
+  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rosé_wine.png");
+  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage("/img/default_wine.png");
   private static final Map<String, Image> wineImages = new HashMap<>() {{
-    put("red", ImageReader.loadImage("/img/red_wine.png"));
-    put("white", ImageReader.loadImage("/img/white_wine.png"));
+    put("red", RED_WINE_IMAGE);
+    put("white", WHITE_WINE_IMAGE);
+    put("rose", ROSE_WINE_IMAGE);
+    put("rosé", ROSE_WINE_IMAGE);
   }};
   private final AuthenticationService authenticationService;
   private final WineReviewsService wineReviewsService;
@@ -103,10 +107,9 @@ public class DetailedWineViewController extends Controller {
     viewingWineTitledPane.setText("Viewing Wine: " + viewedWine.getTitle());
 
     // todo - add a default image
-    Image wineImage = wineImages.get(colourTextbox.getText().toLowerCase());
-    if (wineImage != null) {
-      imageView.setImage(wineImage);
-    }
+    Image wineImage = wineImages.getOrDefault(colourTextbox.getText().toLowerCase(),
+        DEFAULT_WINE_IMAGE);
+    imageView.setImage(wineImage);
 
     // create the rating control and disable it being edited by consuming mouse events
     ratingStars.setUpdateOnHover(false);
