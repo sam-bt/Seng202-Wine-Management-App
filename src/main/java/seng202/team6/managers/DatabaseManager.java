@@ -562,18 +562,26 @@ public class DatabaseManager implements AutoCloseable {
     try (Statement statement = connection.createStatement()) {
       statement.execute(listItemsTable);
     }
-    createAdminFavouritesList();
+    createAdminListIfNotExists("Favourites'");
+    createAdminListIfNotExists("History");
   }
 
-  private void createAdminFavouritesList() {
+  /**
+   * Creates a list as admin if it does not already exist
+   * @param listName name of list
+   */
+  private void createAdminListIfNotExists(String listName) {
     String checkAndInsert = "INSERT INTO LIST_NAME (ID, USERNAME, NAME) " +
-        "SELECT null, 'admin', 'Favourites'" +
-        "WHERE NOT EXISTS (SELECT 1 FROM LIST_NAME WHERE username = 'admin')";
-    try (Statement statement = connection.createStatement()) {
-      statement.execute(checkAndInsert);
+        "SELECT null, 'admin', ? " +
+        "WHERE NOT EXISTS (SELECT 1 FROM LIST_NAME WHERE username = 'admin' and name = ?)";
+    try (PreparedStatement statement = connection.prepareStatement(checkAndInsert)) {
+      statement.setString(1, listName);
+      statement.setString(2, listName);
+      statement.execute();
     } catch (SQLException error) {
       log.error("Could not add list to the database", error);
     }
+    System.out.println(getUserLists("admin").toString());
   }
 
   public WineList createList(String username, String listName) {
