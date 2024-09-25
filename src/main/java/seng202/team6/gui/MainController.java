@@ -235,6 +235,15 @@ public class MainController extends Controller {
         () -> new DetailedWineViewController(managerContext, authenticationService, wine, backButtonAction));
   }
 
+  /**
+   * Launches the social screen.
+   */
+  @FXML
+  public void openSocialScreen() {
+    switchScene("/fxml/social_screen.fxml", "Social",
+        () -> new SocialController(managerContext, authenticationService));
+  }
+
   public void openPopupWineReview(WineReviewsService wineReviewsService) {
     openPopup("/fxml/popup/review_popup.fxml",
         () -> new WineReviewPopupController(managerContext, wineReviewsService));

@@ -51,6 +51,11 @@
                 <Font name="System Bold" size="20.0" />
               </font>
             </Button>
+                  <Button fx:id="socialScreenButton" mnemonicParsing="false" onAction="#openSocialScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Social">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Button>
             <Button fx:id="dataSetsScreenButton" mnemonicParsing="false" onAction="#openDataSetsScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Datasets">
               <font>
                 <Font name="System Bold" size="20.0" />
