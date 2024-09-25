@@ -10,7 +10,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
@@ -23,14 +22,11 @@ import javafx.scene.text.Font;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
-import seng202.team6.service.AuthenticationService;
 
 /**
  * List Screen Controller (MORE DETAIL HERE!)
  */
 public class ListScreenController extends Controller {
-
-  private final AuthenticationService authenticationService;
 
   @FXML
   public Button createListRequestButton;
@@ -60,10 +56,8 @@ public class ListScreenController extends Controller {
    *
    * @param managerContext manager context
    */
-  public ListScreenController(ManagerContext managerContext,
-      AuthenticationService authenticationService) {
+  public ListScreenController(ManagerContext managerContext) {
     super(managerContext);
-    this.authenticationService = authenticationService;
   }
 
   /**
@@ -71,7 +65,7 @@ public class ListScreenController extends Controller {
    * @return list of wine lists
    */
   private List<WineList> getWineLists() {
-    String user = authenticationService.getAuthenticatedUsername();
+    String user = managerContext.authenticationManager.getAuthenticatedUsername();
     return managerContext.databaseManager.getUserLists(user);
   }
 
@@ -161,7 +155,7 @@ public class ListScreenController extends Controller {
   @FXML
   public void onCreateListConfirmButton(ActionEvent actionEvent) {
     String name = listName.getText();
-    List<WineList> wineLists = managerContext.databaseManager.getUserLists(authenticationService.getAuthenticatedUsername());
+    List<WineList> wineLists = managerContext.databaseManager.getUserLists(managerContext.authenticationManager.getAuthenticatedUsername());
     if (wineLists.stream().anyMatch(wineList -> wineList.name().equals(name))) {
       errorText.setText("List Already Exists");
       errorText.setVisible(true);
@@ -173,7 +167,7 @@ public class ListScreenController extends Controller {
       } else {
         errorText.setVisible(false);
 
-        String user = authenticationService.getAuthenticatedUsername();
+        String user = managerContext.authenticationManager.getAuthenticatedUsername();
 
         managerContext.databaseManager.createList(user, name);
 
@@ -203,7 +197,6 @@ public class ListScreenController extends Controller {
    * @param wineLists list of wine lists
    */
   public void changeSelected(List<WineList> wineLists) {
-;
     List<Wine> list = managerContext.databaseManager.getWinesInList(wineLists.get(selected));
     ObservableList<Wine> observableList = FXCollections.observableList(list);
     setupTableView(observableList);
