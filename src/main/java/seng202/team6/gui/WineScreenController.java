@@ -381,9 +381,12 @@ public class WineScreenController extends Controller {
   public void openWineOnClick(MouseEvent event) {
     if (event.getClickCount() == 2) {
       try {
-        createWineDialog(tableView.getSelectionModel().getSelectedItem());
+        Wine wine = tableView.getSelectionModel().getSelectedItem();
+        if(wine != null) {
+          createWineDialog(wine);
+        }
       } catch (IOException e) {
-        e.printStackTrace();
+        LogManager.getLogger(getClass()).error("Failed to load detailed wine view", e);
       }
     }
   }
