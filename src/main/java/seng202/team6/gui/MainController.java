@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import seng202.team6.gui.popup.AddToListPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
@@ -239,6 +240,12 @@ public class MainController extends Controller {
     openPopup("/fxml/popup/review_popup.fxml",
         () -> new WineReviewPopupController(managerContext, wineReviewsService));
   }
+
+  public void openAddToListPopup(Wine wine) {
+    openPopup("/fxml/popup/add_to_list_popup.fxml",
+        () -> new AddToListPopupController(managerContext, authenticationService, wine));
+  }
+
 
   public void closePopup() {
     popupActionBlocker.setVisible(false);

@@ -101,12 +101,12 @@
                         </Label>
                      </children>
                   </GridPane>
-                  <Button fx:id="backButton" layoutX="327.0" layoutY="679.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onBackButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Back">
+                  <Button fx:id="backButton" layoutX="294.0" layoutY="679.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onBackButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Back">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Button>
-                  <Button fx:id="viewOnMapButton" layoutX="512.0" layoutY="679.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="View on Map">
+                  <Button layoutX="479.0" layoutY="679.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onOpenListsButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Open Lists">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
@@ -120,6 +120,11 @@
                         </Label>
                      </children>
                   </HBox>
+                  <Button fx:id="viewOnMapButton" layoutX="666.0" layoutY="679.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="View on Map">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Button>
                </children>
             </AnchorPane>
         </content>
