@@ -18,9 +18,48 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.ListScreenController">
-  <children>
-    <TabPane fx:id="listScreenTabs" layoutX="332.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
+
+<HBox spacing="15.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.ListScreenController">
+   <children>
+    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../../../../build/resources/main/css/titled_pane.css" text="Lists">
+      <font>
+        <Font name="System Bold" size="24.0" />
+      </font>
+         <content>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="50.0">
+               <children>
+                  <ScrollPane focusTraversable="false" hbarPolicy="NEVER" pickOnBounds="false" prefHeight="20000.0" stylesheets="@../css/scroll_pane.css" VBox.vgrow="ALWAYS">
+                     <content>
+                        <VBox fx:id="buttonList" alignment="CENTER" fillWidth="false" maxHeight="1.7976931348623157E308" minWidth="200.0" prefWidth="273.0" spacing="10.0">
+                           <children>
+                        <Button disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" prefWidth="10000.0" styleClass="primary-button" text="Button">
+                          <font>
+                            <Font name="System Bold" size="18.0" />
+                          </font>
+                        </Button>
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                     <children>
+                  <Button fx:id="createListRequestButton" mnemonicParsing="false" onAction="#onCreateListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Create List">
+                    <font>
+                      <Font name="System Bold" size="16.0" />
+                    </font>
+                  </Button>
+                  <Button fx:id="deleteListRequestButton" mnemonicParsing="false" onAction="#onDeleteListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Delete List">
+                    <font>
+                      <Font name="System Bold" size="16.0" />
+                    </font>
+                  </Button>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </content>
+    </TitledPane>
+    <TabPane fx:id="listScreenTabs" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
       <tabs>
         <Tab fx:id="tabViewing" text="VIEWING &lt;LIST_NAME&gt;">
           <content>
@@ -93,43 +132,5 @@
         </Tab>
       </tabs>
     </TabPane>
-    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../../../../build/resources/main/css/titled_pane.css" text="Lists">
-      <font>
-        <Font name="System Bold" size="24.0" />
-      </font>
-         <content>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="50.0">
-               <children>
-                  <ScrollPane fx:id="scrollPane" focusTraversable="false" hbarPolicy="NEVER" pickOnBounds="false" prefHeight="20000.0" stylesheets="@../css/scroll_pane.css" VBox.vgrow="ALWAYS">
-                     <content>
-                        <VBox fx:id="buttonList" alignment="CENTER" fillWidth="false" maxHeight="1.7976931348623157E308" minWidth="200.0" prefWidth="273.0" spacing="10.0">
-                           <children>
-                        <Button disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" prefWidth="10000.0" styleClass="primary-button" text="Button">
-                          <font>
-                            <Font name="System Bold" size="18.0" />
-                          </font>
-                        </Button>
-                           </children>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
-                     <children>
-                  <Button fx:id="createListRequestButton" mnemonicParsing="false" onAction="#onCreateListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Create List">
-                    <font>
-                      <Font name="System Bold" size="16.0" />
-                    </font>
-                  </Button>
-                  <Button fx:id="deleteListRequestButton" mnemonicParsing="false" onAction="#onDeleteListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Delete List">
-                    <font>
-                      <Font name="System Bold" size="16.0" />
-                    </font>
-                  </Button>
-                     </children>
-                  </VBox>
-               </children>
-            </VBox>
-         </content>
-    </TitledPane>
-  </children>
-</AnchorPane>
+   </children>
+</HBox>
