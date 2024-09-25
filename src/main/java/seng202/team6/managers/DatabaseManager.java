@@ -352,14 +352,17 @@ public class DatabaseManager implements AutoCloseable {
 
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
       for (Wine wine : list) {
-        //log.info(Integer.valueOf("Extracted Year: " + regexp.extractYearFromString(wine.getTitle())));
         insertStatement.setString(1, wine.getTitle());
         insertStatement.setString(2, wine.getVariety());
         insertStatement.setString(3, wine.getCountry());
         insertStatement.setString(4, wine.getRegion());
         insertStatement.setString(5, wine.getWinery());
         insertStatement.setString(6, wine.getColor());
-        insertStatement.setInt(7, wine.getVintage());
+        if (wine.getVintage() == 0) {
+          insertStatement.setInt(7, Integer.parseInt(regexp.extractYearFromString(wine.getTitle())));
+        } else {
+          insertStatement.setInt(7, wine.getVintage());
+        }
         insertStatement.setString(8, wine.getDescription());
         insertStatement.setInt(9, wine.getScorePercent());
         insertStatement.setFloat(10, wine.getAbv());
