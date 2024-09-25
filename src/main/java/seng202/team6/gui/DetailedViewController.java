@@ -23,7 +23,6 @@ import seng202.team6.util.RegexProcessor;
 public class DetailedViewController extends Controller {
 
     private final Logger log = LogManager.getLogger(getClass());
-    private final AuthenticationManager authenticationManager;
 
     @FXML
     private Label countryLabel;
@@ -68,20 +67,18 @@ public class DetailedViewController extends Controller {
     private RegexProcessor extractor = new RegexProcessor();
 
 
-    public DetailedViewController(ManagerContext context,
-        AuthenticationManager authenticationManager) {
+    public DetailedViewController(ManagerContext context) {
         super(context);
-        this.authenticationManager = authenticationManager;
     }
 
     @FXML
     public void init() {
-        if (authenticationManager.isAuthenticated()) {
+        if (managerContext.authenticationManager.isAuthenticated()) {
             addToListButton.setVisible(true);
             choiceBoxListSelector.setVisible(true);
             notesArea.setVisible(true);
             saveNoteButton.setVisible(true);
-            String user = authenticationManager.getAuthenticatedUsername();
+            String user = managerContext.authenticationManager.getAuthenticatedUsername();
             ObservableList<WineList> list = FXCollections.observableList(managerContext.databaseManager.getUserLists(user));
             choiceBoxListSelector.setItems(list);
             choiceBoxListSelector.setValue(list.getFirst());
@@ -143,7 +140,7 @@ public class DetailedViewController extends Controller {
     }
 
     private String getNote(long wineID) {
-        String uname = authenticationManager.getAuthenticatedUsername();
+        String uname = managerContext.authenticationManager.getAuthenticatedUsername();
         String output = "";
         output = managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
 
