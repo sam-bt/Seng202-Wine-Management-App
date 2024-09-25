@@ -581,7 +581,6 @@ public class DatabaseManager implements AutoCloseable {
     } catch (SQLException error) {
       log.error("Could not add list to the database", error);
     }
-    System.out.println(getUserLists("admin").toString());
   }
 
   public WineList createList(String username, String listName) {
