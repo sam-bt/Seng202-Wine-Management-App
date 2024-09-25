@@ -100,70 +100,20 @@
          <content>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="50.0">
                <children>
-                  <ScrollPane hbarPolicy="NEVER" styleClass="content" stylesheets="@../css/scroll_pane.css" VBox.vgrow="ALWAYS">
+                  <ScrollPane hbarPolicy="NEVER" prefHeight="1000.0" prefWidth="260.0" stylesheets="@../css/scroll_pane.css" VBox.vgrow="ALWAYS">
                      <content>
-                        <VBox alignment="CENTER">
+                        <VBox fx:id="buttonList" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                            <children>
-                        <Button fx:id="listOneButton" disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListOneButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
+                        <Button disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
                           <font>
                             <Font name="System Bold" size="18.0" />
                           </font>
                         </Button>
-                        <Button fx:id="listTwoButton" disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListTwoButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
-                          <font>
-                            <Font name="System Bold" size="18.0" />
-                          </font>
-                        </Button>
-                        <Button fx:id="listThreeButton" disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListThreeButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
-                          <font>
-                            <Font name="System Bold" size="18.0" />
-                          </font>
-                        </Button>
-                        <Button fx:id="listFourButton" disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListFourButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
-                          <font>
-                            <Font name="System Bold" size="18.0" />
-                          </font>
-                        </Button>
-                        <Button fx:id="listFiveButton" disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListFiveButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
-                          <font>
-                            <Font name="System Bold" size="18.0" />
-                          </font>
-                        </Button>
-                              <Button fx:id="listFiveButton1" disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListFiveButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Button>
-                              <Button fx:id="listFiveButton2" disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListFiveButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Button>
-                              <Button fx:id="listFiveButton3" disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListFiveButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Button>
-                              <Button fx:id="listFiveButton4" disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListFiveButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Button>
-                              <Button fx:id="listFiveButton5" disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListFiveButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Button>
-                              <Button fx:id="listFiveButton6" disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" onAction="#onListFiveButton" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                              </Button>
                            </children>
                         </VBox>
                      </content>
                   </ScrollPane>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                      <children>
                   <Button fx:id="createListRequestButton" mnemonicParsing="false" onAction="#onCreateListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Create List">
                     <font>

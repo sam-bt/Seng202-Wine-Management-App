@@ -1,10 +1,12 @@
 package seng202.team6.gui;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -17,6 +19,8 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.FloatStringConverter;
@@ -48,14 +52,13 @@ public class ListScreenController extends Controller {
   @FXML
   public Label errorText;
   @FXML
-  public Button listOneButton, listTwoButton, listThreeButton, listFourButton, listFiveButton;
+  public VBox buttonList;
   @FXML
   public Button deleteListRequestButton;
   @FXML
   public TableView<Wine> tableView;
 
-  public List<WineList> wineLists;
-  private int selected = 1;
+  private int selected = 0;
 
   /**
    * Constructor
@@ -67,19 +70,49 @@ public class ListScreenController extends Controller {
     super(managerContext);
     this.authenticationService = authenticationService;
   }
+  List<WineList> getWineLists() {
+    String user = authenticationService.getAuthenticatedUsername();
+    return managerContext.databaseManager.getUserLists(user);
+  }
+  public void updateButtons() {
+    buttonList.getChildren().clear();
+    int i=0;
+    List<WineList> wineLists = getWineLists();
+    for(WineList wineList : wineLists) {
+      Button button = new Button();
+      button.setText(wineList.name());
+      button.setMinSize(220, 70);
+      button.getStyleClass().add("primary-button");
+      button.setFont(new Font("System Bold", 18));
+      button.setDisable(false);
+      int iCopy = i++;
+      button.setOnAction(actionEvent -> {
+        selected = iCopy;
+        render();
+      });
+
+      buttonList.getChildren().add(button);
+    }
+    createListRequestButton.setDisable(false);
+    deleteListRequestButton.setDisable(wineLists.size() <= 2);
+  }
+
+  public void render() {
+    updateButtons();
+    List<WineList> wineLists = managerContext.databaseManager.getUserLists(authenticationService.getAuthenticatedUsername());
+    tabViewing.setText("VIEWING: " + wineLists.get(selected));
+    changeSelected();
+
+  }
+
 
   /**
    * Initializes the page making sure the tab for creating lists is hidden.
    */
   public void initialize() {
     listScreenTabs.getTabs().remove(tabCreating);
-    updateListOptions();
-    tabViewing.setText("VIEWING: " + wineLists.getFirst());
-    selected = 1;
-    changeSelected();
-    if (wineLists.size() == 1) {
-      deleteListRequestButton.setDisable(true);
-    }
+    selected = 0;
+    render();
   }
 
   /**
@@ -104,15 +137,7 @@ public class ListScreenController extends Controller {
   public void onBackButton(ActionEvent actionEvent) {
     listScreenTabs.getTabs().add(tabViewing);
     listScreenTabs.getTabs().remove(tabCreating);
-    createListRequestButton.setDisable(false);
-    deleteListRequestButton.setDisable(false);
-    if (wineLists.size() == 5) {
-      createListRequestButton.setDisable(true);
-    } else if (wineLists.size() == 1) {
-      deleteListRequestButton.setDisable(true);
-    }
-    listName.setText("");
-    errorText.setVisible(false);
+    render();
 
   }
 
@@ -124,6 +149,7 @@ public class ListScreenController extends Controller {
   @FXML
   public void onCreateListConfirmButton(ActionEvent actionEvent) {
     String name = listName.getText();
+    List<WineList> wineLists = managerContext.databaseManager.getUserLists(authenticationService.getAuthenticatedUsername());
     if (wineLists.stream().anyMatch(wineList -> wineList.name().equals(name))) {
       errorText.setText("List Already Exists");
       errorText.setVisible(true);
@@ -140,14 +166,10 @@ public class ListScreenController extends Controller {
         managerContext.databaseManager.createList(user, name);
 
         listName.setText("");
-        updateListOptions();
-        deleteListRequestButton.setDisable(false);
+        selected = wineLists.size() - 1;
+        render();
         onBackButton(actionEvent);
-        selected = wineLists.size();
-        changeSelected();
       }
-
-
     }
   }
 
@@ -157,106 +179,20 @@ public class ListScreenController extends Controller {
    * @param actionEvent triggers this function when on action.
    */
   public void onDeleteListRequestButton(ActionEvent actionEvent) {
-    if (selected != 1) {
-      WineList wineList = wineLists.get(selected - 1);
+    if (selected != 0) {
+      WineList wineList = getWineLists().get(selected);
       managerContext.databaseManager.deleteList(wineList);
-      updateListOptions();
-      selected -= 1;
-      changeSelected();
-      createListRequestButton.setDisable(false);
-      if (wineLists.size() == 1) {
-        deleteListRequestButton.setDisable(true);
-      }
+      render();
     }
-  }
-
-  /**
-   * updates the information displayed on the screen
-   **/
-
-  @FXML
-  public void updateListOptions() {
-    Button[] buttons = {listOneButton, listTwoButton, listThreeButton, listFourButton,
-        listFiveButton};
-    String user = authenticationService.getAuthenticatedUsername();
-    wineLists = managerContext.databaseManager.getUserLists(user);
-    for (int i = 0; i < buttons.length; i++) {
-      if (i < wineLists.size()) {
-        buttons[i].setText(wineLists.get(i).name());
-        buttons[i].setDisable(false);
-      } else {
-        buttons[i].setText("Empty List");
-        buttons[i].setDisable(true);
-      }
-    }
-  }
-
-  /**
-   * Selects List One.
-   *
-   * @param actionEvent triggers this function when on action.
-   */
-  public void onListOneButton(ActionEvent actionEvent) {
-    selected = 1;
-    changeSelected();
-  }
-
-  /**
-   * Selects List Two.
-   *
-   * @param actionEvent triggers this function when on action.
-   */
-  public void onListTwoButton(ActionEvent actionEvent) {
-    selected = 2;
-    changeSelected();
-
-  }
-
-  /**
-   * Selects List Three.
-   *
-   * @param actionEvent triggers this function when on action.
-   */
-  public void onListThreeButton(ActionEvent actionEvent) {
-    selected = 3;
-    changeSelected();
-
-  }
-
-  /**
-   * Selects List Four.
-   *
-   * @param actionEvent triggers this function when on action.
-   */
-  public void onListFourButton(ActionEvent actionEvent) {
-    selected = 4;
-    changeSelected();
-
-  }
-
-  /**
-   * Selects List Five;
-   *
-   * @param actionEvent triggers this function when on action.
-   */
-  public void onListFiveButton(ActionEvent actionEvent) {
-    selected = 5;
-    changeSelected();
-
   }
 
   /**
    * Changes the selected list.
    */
-  @FXML
   public void changeSelected() {
-    tabViewing.setText("VIEWING: " + wineLists.get(selected - 1).name());
     tableView.getItems().clear();
-
-    String user = authenticationService.getAuthenticatedUsername();
-    List<WineList> userLists = managerContext.databaseManager.getUserLists(user);
-    WineList fromUserLists = userLists.get(selected-1);
-    List<Wine> list = managerContext.databaseManager.getWinesInList(fromUserLists);
+;
+    List<Wine> list = managerContext.databaseManager.getWinesInList(getWineLists().get(selected));
     ObservableList<Wine> observableList = FXCollections.observableList(list);
     setupTableView();
     tableView.setItems(observableList);
@@ -334,7 +270,7 @@ public class ListScreenController extends Controller {
     alert.setHeaderText("Would you like to remove " + wine.getTitle() + " from this list?");
     ButtonType buttonType = alert.showAndWait().orElse(null);
     if (buttonType == ButtonType.OK) {
-      WineList selectedList = wineLists.get(selected - 1);
+      WineList selectedList = getWineLists().get(selected);
       managerContext.databaseManager.deleteWineFromList(selectedList, wine);
       tableView.getItems().remove(wine);
     }
