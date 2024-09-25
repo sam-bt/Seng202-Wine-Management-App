@@ -5,7 +5,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.AuthenticationResponse;
-import seng202.team6.service.AuthenticationService;
 
 /**
  * Login Controller (MORE DETAIL HERE!)
@@ -19,16 +18,13 @@ public class LoginController extends Controller {
   @FXML
   private Label loginMessageLabel;
 
-  private final AuthenticationService authenticationService;
-
   /**
    * Constructor
    *
    * @param managerContext manager context
    */
-  public LoginController(ManagerContext managerContext, AuthenticationService authenticationService) {
+  public LoginController(ManagerContext managerContext) {
     super(managerContext);
-    this.authenticationService = authenticationService;
   }
 
   @FXML
@@ -36,9 +32,10 @@ public class LoginController extends Controller {
 
     String username = usernameField.getText();
     String password = passwordField.getText();
-    AuthenticationResponse response = authenticationService.validateLogin(username, password);
+    AuthenticationResponse response = managerContext.authenticationManager.validateLogin(username,
+        password);
     if (response == AuthenticationResponse.LOGIN_SUCCESS) {
-      if (authenticationService.isAdminFirstLogin()) {
+      if (managerContext.authenticationManager.isAdminFirstLogin()) {
         managerContext.GUIManager.mainController.setDisable(true);
         managerContext.GUIManager.mainController.openUpdatePasswordScreen();
         return;

@@ -12,16 +12,22 @@ public class ManagerContext {
 
   final public GUIManager GUIManager;
 
+  final public AuthenticationManager authenticationManager;
+
   /**
    * Constructor for ManagerContext
    *
    * @param databaseManager       database manager
    * @param GUIManager            interface manager
+   * @param authenticationManager authentication manager
    */
   public ManagerContext(
       DatabaseManager databaseManager,
-      GUIManager GUIManager) {
+      GUIManager GUIManager,
+      AuthenticationManager authenticationManager
+  ) {
     this.databaseManager = databaseManager;
     this.GUIManager = GUIManager;
+    this.authenticationManager = authenticationManager;
   }
 }
