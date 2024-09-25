@@ -100,11 +100,11 @@
          <content>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="50.0">
                <children>
-                  <ScrollPane hbarPolicy="NEVER" prefHeight="1000.0" prefWidth="260.0" stylesheets="@../css/scroll_pane.css" VBox.vgrow="ALWAYS">
+                  <ScrollPane fx:id="scrollPane" focusTraversable="false" hbarPolicy="NEVER" pickOnBounds="false" prefHeight="20000.0" stylesheets="@../css/scroll_pane.css" VBox.vgrow="ALWAYS">
                      <content>
-                        <VBox fx:id="buttonList" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                        <VBox fx:id="buttonList" alignment="CENTER" fillWidth="false" maxHeight="1.7976931348623157E308" minWidth="200.0" prefWidth="273.0" spacing="10.0">
                            <children>
-                        <Button disable="true" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" text="Button">
+                        <Button disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" prefWidth="10000.0" styleClass="primary-button" text="Button">
                           <font>
                             <Font name="System Bold" size="18.0" />
                           </font>

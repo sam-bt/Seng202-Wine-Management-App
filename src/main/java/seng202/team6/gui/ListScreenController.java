@@ -1,17 +1,16 @@
 package seng202.team6.gui;
 
-import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
@@ -89,6 +88,7 @@ public class ListScreenController extends Controller {
       Button button = new Button();
       button.setText(wineList.name());
       button.setMinSize(220, 70);
+      button.setPrefWidth(100000);
       button.getStyleClass().add("primary-button");
       button.setFont(new Font("System Bold", 18));
       button.setDisable(false);
