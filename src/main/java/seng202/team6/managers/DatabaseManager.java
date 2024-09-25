@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
@@ -70,7 +71,15 @@ public class DatabaseManager implements AutoCloseable {
     }
 
     String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + databaseFileName;
-    this.connection = DriverManager.getConnection(dbPath);
+    Properties properties = new Properties();
+    properties.setProperty("foreign_keys", "true");
+    connection = DriverManager.getConnection(dbPath, properties);
+    if (useWal) {
+      try (Statement statement = connection.createStatement()) {
+        statement.execute("pragma journal_mode=wal");
+      }
+    }
+
     createWinesTable();
     createUsersTable();
     createGeolocationTable();
@@ -78,12 +87,6 @@ public class DatabaseManager implements AutoCloseable {
     addGeolocations();
     createWineListsTable();
     createWineReviewTable();
-
-    try (Statement statement = connection.createStatement()) {
-      if (useWal) {
-        statement.execute("pragma journal_mode=wal");
-      }
-    }
   }
 
 
@@ -231,7 +234,7 @@ public class DatabaseManager implements AutoCloseable {
       statement.setString(paramIndex++,
           filters.getTitle().isEmpty() ? "%" : "%" + filters.getTitle() + "%");
       statement.setString(paramIndex++,
-          filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry());
+          filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry() + "%");
       statement.setString(paramIndex++,
           filters.getWinery().isEmpty() ? "%" : "%" + filters.getWinery() + "%");
       statement.setString(paramIndex++,
@@ -519,30 +522,26 @@ public class DatabaseManager implements AutoCloseable {
       log.error("Could not add geolocations to the database", error);
     }
 
-    try {
-      query = "INSERT INTO GEOLOCATION values (?, ?, ?);";
+    query = "INSERT INTO GEOLOCATION values (?, ?, ?);";
 
-      ArrayList<String[]> rows = ProcessCSV.getCSVRows(
-          getClass().getResourceAsStream("/nz_geolocations.csv"));
+    List<String[]> rows = ProcessCSV.getCSVRows(
+        getClass().getResourceAsStream("/nz_geolocations.csv"));
 
-      try (PreparedStatement statement = connection.prepareStatement(query)) {
-        for (int i = 1; i < rows.size(); i++) {
-          String[] row = rows.get(i);
-          String name = row[0];
-          double latitude = Double.parseDouble(row[1]);
-          double longitude = Double.parseDouble(row[2]);
-          int queryIndex = 1;
-          statement.setString(queryIndex++, name);
-          statement.setDouble(queryIndex++, latitude);
-          statement.setDouble(queryIndex++, longitude);
-          statement.addBatch();
-        }
-        statement.executeBatch();
-      } catch (SQLException error) {
-        log.error("Could not add geolocations to the database", error);
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      for (int i = 1; i < rows.size(); i++) {
+        String[] row = rows.get(i);
+        String name = row[0];
+        double latitude = Double.parseDouble(row[1]);
+        double longitude = Double.parseDouble(row[2]);
+        int queryIndex = 1;
+        statement.setString(queryIndex++, name);
+        statement.setDouble(queryIndex++, latitude);
+        statement.setDouble(queryIndex++, longitude);
+        statement.addBatch();
       }
-    } catch (CsvValidationException | IOException e) {
-      throw new RuntimeException(e);
+      statement.executeBatch();
+    } catch (SQLException error) {
+      log.error("Could not add geolocations to the database", error);
     }
   }
 
