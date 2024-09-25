@@ -379,14 +379,15 @@ public class WineScreenController extends Controller {
 
   @FXML
   public void openWineOnClick(MouseEvent event) {
-    if (event.getClickCount() != 2)
-      return;
+    if (event.getClickCount() == 2) {
 
-    Wine selectedWine = tableView.getSelectionModel().getSelectedItem();
-    if (selectedWine == null)
-      return;
+      Wine wine = tableView.getSelectionModel().getSelectedItem();
+      if(wine != null) {
 
-    Runnable backAction = () -> managerContext.GUIManager.mainController.openWineScreen();
-    managerContext.GUIManager.mainController.openDetailedWineView(selectedWine, backAction);
+        Runnable backAction = () -> managerContext.GUIManager.mainController.openWineScreen();
+        managerContext.GUIManager.mainController.openDetailedWineView(wine, backAction);
+      }
+    }
   }
+
 }

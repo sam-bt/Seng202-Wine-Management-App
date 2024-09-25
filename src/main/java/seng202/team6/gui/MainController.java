@@ -9,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.gui.popup.AddToListPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
@@ -42,7 +43,11 @@ public class MainController extends Controller {
   private Button adminScreenButton;
 
   @FXML
+  private Button noteScreenButton;
+
+  @FXML
   private Button loginButton;
+
 
   @FXML
   private Button registerButton;
@@ -82,6 +87,7 @@ public class MainController extends Controller {
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
     dataSetsScreenButton.setVisible(false);
+    noteScreenButton.setVisible(false);
     openWineScreen();
   }
 
@@ -89,6 +95,7 @@ public class MainController extends Controller {
     if (authenticationService.isAuthenticated()) {
       adminScreenButton.setVisible(authenticationService.isAdmin());
       dataSetsScreenButton.setVisible(authenticationService.isAdmin());
+      noteScreenButton.setVisible(true);
       loginButton.setText("Settings");
       registerButton.setText("Logout");
 
@@ -158,6 +165,7 @@ public class MainController extends Controller {
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
     adminScreenButton.setVisible(false);
     dataSetsScreenButton.setVisible(false);
+    noteScreenButton.setVisible(false);
 
     navBarBox.getChildren().remove(listScreenButton);
     navBarBox.getChildren().add(3, listScreenButton);
@@ -229,6 +237,12 @@ public class MainController extends Controller {
   public void openUpdatePasswordScreen() {
     switchScene("/fxml/update_password_screen.fxml", "Register",
         () -> new UpdatePasswordController(managerContext, authenticationService));
+  }
+
+  @FXML
+  void openNotesScreen() {
+    switchScene("/fxml/notes_screen.fxml", "Notes",
+            () -> new NotesController(managerContext, authenticationService));
   }
 
   public void openDetailedWineView(Wine wine, Runnable backButtonAction) {

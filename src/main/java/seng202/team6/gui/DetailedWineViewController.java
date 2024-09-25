@@ -34,6 +34,11 @@ import seng202.team6.util.ImageReader;
 public class DetailedWineViewController extends Controller {
 
   @FXML
+  private Button saveNotes;
+  @FXML
+  private Label noteLabel;
+
+  @FXML
   private Button addReviewButton;
   @FXML
   private Button backButton;
@@ -42,7 +47,7 @@ public class DetailedWineViewController extends Controller {
   @FXML
   private TextField countryTextbox;
   @FXML
-  private TextArea descriptionTextbox;
+  private TextArea descriptionArea;
   @FXML
   private ImageView imageView;
   @FXML
@@ -69,9 +74,13 @@ public class DetailedWineViewController extends Controller {
 
   private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine.png");
   private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage("/img/white_wine.png");
+  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rosé_wine.png");
+  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage("/img/default_wine.png");
   private static final Map<String, Image> wineImages = new HashMap<>() {{
-    put("red", ImageReader.loadImage("/img/red_wine.png"));
-    put("white", ImageReader.loadImage("/img/white_wine.png"));
+    put("red", RED_WINE_IMAGE);
+    put("white", WHITE_WINE_IMAGE);
+    put("rose", ROSE_WINE_IMAGE);
+    put("rosé", ROSE_WINE_IMAGE);
   }};
   private final AuthenticationService authenticationService;
   private final WineReviewsService wineReviewsService;
@@ -102,11 +111,18 @@ public class DetailedWineViewController extends Controller {
         viewedWine.getPrice() <= 0 ? "N/A" : "%f.2".formatted(viewedWine.getPrice()));
     viewingWineTitledPane.setText("Viewing Wine: " + viewedWine.getTitle());
 
-    // todo - add a default image
-    Image wineImage = wineImages.get(colourTextbox.getText().toLowerCase());
-    if (wineImage != null) {
-      imageView.setImage(wineImage);
+    descriptionArea.setText(getOrDefault(viewedWine.getDescription()));
+    if(authenticationService.isAuthenticated()) {
+      setNotesVisible(true);
+      notesTextbox.setText(managerContext.databaseManager.getNoteByUserAndWine(authenticationService.getAuthenticatedUsername(), viewedWine.getKey()));
+    } else {
+      setNotesVisible(false);
     }
+
+    // todo - add a default image
+    Image wineImage = wineImages.getOrDefault(colourTextbox.getText().toLowerCase(),
+        DEFAULT_WINE_IMAGE);
+    imageView.setImage(wineImage);
 
     // create the rating control and disable it being edited by consuming mouse events
     ratingStars.setUpdateOnHover(false);
@@ -209,6 +225,29 @@ public class DetailedWineViewController extends Controller {
 
     wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel);
     return wrapper;
+  }
+
+  /**
+   * Sets the visibilty of note-related elements based on the visibile parameter. Also changes
+   * the text of the label, assuming that notes are only hidden when the user is not signed in.
+   * @param visible Whether or not the elements should be visible
+   */
+  private void setNotesVisible(boolean visible) {
+    if (!visible) {
+      noteLabel.setText("Sign in to save notes");
+    } else {
+      noteLabel.setText("My Notes");
+    }
+    notesTextbox.setVisible(visible);
+    saveNotes.setVisible(visible);
+  }
+
+  /**
+   * Saves the note when clicked
+   */
+  @FXML
+  public void onSaveClicked() {
+    managerContext.databaseManager.saveNote(viewedWine.getKey(), authenticationService.getAuthenticatedUsername(), notesTextbox.getText());
   }
 
   private String getOrDefault(String property) {
