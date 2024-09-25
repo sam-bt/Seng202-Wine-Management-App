@@ -89,6 +89,8 @@ public class NotesController extends Controller{
     public void openNoteOnClick(MouseEvent event) {
         if (event.getClickCount() == 2) {
             note = notesTable.getSelectionModel().getSelectedItem();
+            if (note == null)
+                return;
             wineTitle.setText(note.getWineTitle());
             noteArea.setText(note.getNote());
             saveButton.setDisable(false);
