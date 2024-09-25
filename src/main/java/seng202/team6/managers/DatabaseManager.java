@@ -26,6 +26,7 @@ import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
 import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.ProcessCSV;
+import seng202.team6.util.RegexProcessor;
 
 
 /**
@@ -37,6 +38,8 @@ public class DatabaseManager implements AutoCloseable {
    * Logger for the DatabaseManager class
    */
   private final Logger log = LogManager.getLogger(getClass());
+  private boolean getVintageFromTitle = true;
+  private RegexProcessor regexp = new RegexProcessor();
 
   /**
    * Database connection
@@ -328,7 +331,7 @@ public class DatabaseManager implements AutoCloseable {
    * @throws SQLException if a database error occurs
    */
   public void removeWines() throws SQLException {
-    String delete = "delete from WINE;";
+    String delete = "DELETE FROM WINE;";
     try (Statement statement = connection.createStatement()) {
       statement.executeUpdate(delete);
     }
@@ -346,8 +349,10 @@ public class DatabaseManager implements AutoCloseable {
     String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     connection.setAutoCommit(false);
     int i = 0;
+
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
       for (Wine wine : list) {
+        //log.info(Integer.valueOf("Extracted Year: " + regexp.extractYearFromString(wine.getTitle())));
         insertStatement.setString(1, wine.getTitle());
         insertStatement.setString(2, wine.getVariety());
         insertStatement.setString(3, wine.getCountry());
@@ -797,8 +802,8 @@ public class DatabaseManager implements AutoCloseable {
         + "RATING DOUBLE NOT NULL,"
         + "DESCRIPTION VARCHAR(256) NOT NULL,"
         + "DATE DATE NOT NULL,"
-        + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME),"
-        + "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID)"
+        + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE,"
+        + "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE"
         + ")";
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);

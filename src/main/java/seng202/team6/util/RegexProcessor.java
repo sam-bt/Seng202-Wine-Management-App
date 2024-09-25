@@ -16,7 +16,7 @@ public class RegexProcessor {
         if (yearMatcher.find()) {
             return yearMatcher.group();
         } else {
-            return "-1";
+            return "0";
         }
     }
 }
