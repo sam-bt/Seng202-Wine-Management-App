@@ -219,6 +219,11 @@ public class DetailedWineViewController extends Controller {
     return wrapper;
   }
 
+  /**
+   * Sets the visibilty of note-related elements based on the visibile parameter. Also changes
+   * the text of the label, assuming that notes are only hidden when the user is not signed in.
+   * @param visible Whether or not the elements should be visible
+   */
   private void setNotesVisible(boolean visible) {
     if (!visible) {
       noteLabel.setText("Sign in to save notes");
@@ -229,6 +234,9 @@ public class DetailedWineViewController extends Controller {
     saveNotes.setVisible(visible);
   }
 
+  /**
+   * Saves the note when clicked
+   */
   @FXML
   public void onSaveClicked() {
     managerContext.databaseManager.saveNote(viewedWine.getKey(), authenticationService.getAuthenticatedUsername(), notesTextbox.getText());

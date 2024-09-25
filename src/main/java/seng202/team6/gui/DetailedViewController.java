@@ -17,6 +17,10 @@ import seng202.team6.model.WineList;
 import seng202.team6.service.AuthenticationService;
 import seng202.team6.util.RegexProcessor;
 
+
+/**
+ * This controller is now defunct. It will be removed once list functionality has been migrated to the new one.
+ */
 public class DetailedViewController extends Controller {
 
     private final Logger log = LogManager.getLogger(getClass());
@@ -130,10 +134,10 @@ public class DetailedViewController extends Controller {
     void onSaveNoteClicked() {
 
         if (noteAlreadyExists) {
-            managerContext.databaseManager.updateExistingNote(wine.getKey(), authenticationService.getAuthenticatedUsername(), notesArea.getText());
+            //managerContext.databaseManager.updateExistingNote(wine.getKey(), authenticationService.getAuthenticatedUsername(), notesArea.getText());
 
         } else {
-            managerContext.databaseManager.writeNewNoteToTable(notesArea.getText(), wine.getKey(), authenticationService.getAuthenticatedUsername());
+            //managerContext.databaseManager.writeNewNoteToTable(notesArea.getText(), wine.getKey(), authenticationService.getAuthenticatedUsername());
             noteAlreadyExists = true;
         }
     }

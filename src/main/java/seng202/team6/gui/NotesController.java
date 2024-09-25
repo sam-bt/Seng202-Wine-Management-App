@@ -13,6 +13,7 @@ import seng202.team6.service.AuthenticationService;
 import java.io.IOException;
 import java.util.Optional;
 
+
 public class NotesController extends Controller{
     @FXML
     private TextArea noteArea;
@@ -100,7 +101,7 @@ public class NotesController extends Controller{
 
     @FXML
     public void onSaveClicked() {
-        managerContext.databaseManager.updateExistingNote(note.getWineID(), authenticationService.getAuthenticatedUsername(), noteArea.getText());
+        managerContext.databaseManager.saveNote(note.getWineID(), authenticationService.getAuthenticatedUsername(), noteArea.getText());
         populateTable();
 
     }

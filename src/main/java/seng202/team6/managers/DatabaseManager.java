@@ -717,16 +717,12 @@ public class DatabaseManager implements AutoCloseable {
   }
 
 
-
-
   /**
-   * THe two functions below are used to update an existing note record or create a new one respectively.
-   * @param wineID the primary key of the wine the note is associated with
-   * @param user a String of the username the note is associated with
-   * @param note The text of the note.
-   *             This has seperated into 2 methods to prevent the creation of duplicate note records. TODO: consolidate this. (if record already exists -> use update instead)
+   * This function replaces the two that I had used earlier. It checks for an existing record and sends the correct query rather than requiring the controller to do the logic
+   * @param wineID the primary key of the wine associated with the note
+   * @param user the username of the user associated with the note
+   * @param note the text of the note itself.
    */
-
   public void saveNote(long wineID, String user, String note) {
     String find = "SELECT * FROM NOTES WHERE WINE_ID = ? AND USERNAME = ?";
     boolean noteExists = false;
@@ -771,29 +767,6 @@ public class DatabaseManager implements AutoCloseable {
 
   }
 
-  public void updateExistingNote(Long wineID, String user, String note) {
-    String update = "UPDATE NOTES SET NOTE = ? WHERE USERNAME = ? AND WINE_ID = ?";
-    try (PreparedStatement statement = connection.prepareStatement(update)) {
-      statement.setString(1, note);
-      statement.setString(2, user);
-      statement.setLong(3, wineID);
-      statement.executeUpdate();
-    } catch (SQLException error) {
-      log.error("Failed to update note in table");
-    }
-  }
-
-  public void writeNewNoteToTable(String note, long wineID, String user) {
-    String insert = "INSERT INTO NOTES VALUES (null, ?, ?, ?)";
-    try (PreparedStatement statement = connection.prepareStatement(insert)) {
-      statement.setString(1, user);
-      statement.setLong(2, wineID);
-      statement.setString(3, note);
-      statement.executeUpdate();
-    } catch (SQLException e) {
-      log.error("Failed to add note to table");
-    }
-  }
 
   /**
    * Retrieves a note from the NOTES table using their username and the primary key of the wine the note is associated with. TODO: Make this return a Note object instead
