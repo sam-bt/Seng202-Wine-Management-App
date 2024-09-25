@@ -11,7 +11,7 @@ version = '0.2-snapshot'
 mainClassName = 'seng202.team6.App'
 
 def javaVersion = '21'
-def javafxVersion = '20.0.1'
+def javafxVersion = '21.0.4'
 def log4jVersion = '2.17.2'
 def cucumberVersion = "7.5.0"
 def junitVersion = "5.8.1"
@@ -82,6 +82,8 @@ dependencies {
     implementation 'org.apache.poi:poi:5.2.0'
     implementation 'org.apache.poi:poi-ooxml:5.2.0'
 
+// https://mvnrepository.com/artifact/com.ibm.icu/icu4j
+    implementation 'com.ibm.icu:icu4j:75.1'
 }
 
 application {

@@ -379,33 +379,14 @@ public class WineScreenController extends Controller {
 
   @FXML
   public void openWineOnClick(MouseEvent event) {
-    if (event.getClickCount() == 2) {
-      try {
-        createWineDialog(tableView.getSelectionModel().getSelectedItem());
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-  }
+    if (event.getClickCount() != 2)
+      return;
 
-  private void createWineDialog(Wine wine) throws IOException {
+    Wine selectedWine = tableView.getSelectionModel().getSelectedItem();
+    if (selectedWine == null)
+      return;
 
-    FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/detailed_view.fxml"));
-    baseLoader.setControllerFactory(param -> new DetailedViewController(managerContext, authenticationService));
-
-    Parent root = baseLoader.load();
-    Stage stage = new Stage();
-    stage.setTitle(wine.getTitle());
-    Scene scene = new Scene(root, 500, 700);
-    stage.setScene(scene);
-    stage.setResizable(false);
-
-    DetailedViewController detailedViewController = baseLoader.getController();
-    detailedViewController.setWine(wine);
-    detailedViewController.init();
-
-    managerContext.GUIManager.mainController.setWholePageInteractable(false);
-    stage.showAndWait();
-    managerContext.GUIManager.mainController.setWholePageInteractable(true);
+    Runnable backAction = () -> managerContext.GUIManager.mainController.openWineScreen();
+    managerContext.GUIManager.mainController.openDetailedWineView(selectedWine, backAction);
   }
 }
