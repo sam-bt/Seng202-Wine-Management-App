@@ -139,7 +139,9 @@ public class WineScreenController extends Controller {
         }
 
         if (w.getVintage() < minVintage) {
-          minVintage = w.getVintage();
+          if (w.getVintage() != -1) {
+            minVintage = w.getVintage();
+          }
         }
 
         if (w.getPrice() > maxPrice) {
