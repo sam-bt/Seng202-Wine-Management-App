@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Builder;
+import org.apache.logging.log4j.LogManager;
 import seng202.team6.gui.Controller;
 import seng202.team6.gui.MainController;
 import seng202.team6.managers.DatabaseManager;
@@ -72,8 +73,7 @@ public class FXWrapper {
       }
       stage.setTitle(title);
     } catch (IOException e) {
-      System.out.println("Failed to load screen: " + fxml);
-      e.printStackTrace();
+      LogManager.getLogger(getClass()).error("Failed to load screen: {}", fxml, e);
     }
   }
 

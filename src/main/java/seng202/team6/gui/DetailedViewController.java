@@ -143,8 +143,6 @@ public class DetailedViewController extends Controller {
         String output = "";
         output = managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
 
-        System.out.println("Printing getNote->output:");
-        System.out.println(output);
         if (output == "" || output == null) {
             noteAlreadyExists = false;
         } else {
