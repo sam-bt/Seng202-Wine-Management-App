@@ -214,7 +214,7 @@ public class WineScreenController extends Controller {
     TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
     TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
     TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
-    TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
+    //TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
     TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
     TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
     TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
@@ -225,7 +225,7 @@ public class WineScreenController extends Controller {
     regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));
     colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
     vintageColumn.setCellValueFactory(new PropertyValueFactory<>("vintage"));
-    descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+    //descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
     scoreColumn.setCellValueFactory(new PropertyValueFactory<>("scorePercent"));
     abvColumn.setCellValueFactory(new PropertyValueFactory<>("abv"));
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
@@ -243,8 +243,8 @@ public class WineScreenController extends Controller {
       colorColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       vintageColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
-      descriptionColumn.setCellFactory(
-          wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      //descriptionColumn.setCellFactory(
+          //wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       scoreColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
       abvColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
       priceColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
@@ -256,7 +256,7 @@ public class WineScreenController extends Controller {
     tableView.getColumns().add(regionColumn);
     tableView.getColumns().add(colorColumn);
     tableView.getColumns().add(vintageColumn);
-    tableView.getColumns().add(descriptionColumn);
+    //tableView.getColumns().add(descriptionColumn);
     tableView.getColumns().add(scoreColumn);
     tableView.getColumns().add(abvColumn);
     tableView.getColumns().add(priceColumn);
