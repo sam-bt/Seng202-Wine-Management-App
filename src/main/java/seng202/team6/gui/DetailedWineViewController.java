@@ -34,6 +34,11 @@ import seng202.team6.util.ImageReader;
 public class DetailedWineViewController extends Controller {
 
   @FXML
+  private Button saveNotes;
+  @FXML
+  private Label noteLabel;
+
+  @FXML
   private Button addReviewButton;
   @FXML
   private Button backButton;
@@ -42,7 +47,7 @@ public class DetailedWineViewController extends Controller {
   @FXML
   private TextField countryTextbox;
   @FXML
-  private TextArea descriptionTextbox;
+  private TextArea descriptionArea;
   @FXML
   private ImageView imageView;
   @FXML
@@ -105,6 +110,14 @@ public class DetailedWineViewController extends Controller {
     priceTextbox.setText(
         viewedWine.getPrice() <= 0 ? "N/A" : "%f.2".formatted(viewedWine.getPrice()));
     viewingWineTitledPane.setText("Viewing Wine: " + viewedWine.getTitle());
+
+    descriptionArea.setText(getOrDefault(viewedWine.getDescription()));
+    if(authenticationService.isAuthenticated()) {
+      setNotesVisible(true);
+      notesTextbox.setText(managerContext.databaseManager.getNoteByUserAndWine(authenticationService.getAuthenticatedUsername(), viewedWine.getKey()));
+    } else {
+      setNotesVisible(false);
+    }
 
     // todo - add a default image
     Image wineImage = wineImages.getOrDefault(colourTextbox.getText().toLowerCase(),
@@ -207,6 +220,29 @@ public class DetailedWineViewController extends Controller {
 
     wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel);
     return wrapper;
+  }
+
+  /**
+   * Sets the visibilty of note-related elements based on the visibile parameter. Also changes
+   * the text of the label, assuming that notes are only hidden when the user is not signed in.
+   * @param visible Whether or not the elements should be visible
+   */
+  private void setNotesVisible(boolean visible) {
+    if (!visible) {
+      noteLabel.setText("Sign in to save notes");
+    } else {
+      noteLabel.setText("My Notes");
+    }
+    notesTextbox.setVisible(visible);
+    saveNotes.setVisible(visible);
+  }
+
+  /**
+   * Saves the note when clicked
+   */
+  @FXML
+  public void onSaveClicked() {
+    managerContext.databaseManager.saveNote(viewedWine.getKey(), authenticationService.getAuthenticatedUsername(), notesTextbox.getText());
   }
 
   private String getOrDefault(String property) {

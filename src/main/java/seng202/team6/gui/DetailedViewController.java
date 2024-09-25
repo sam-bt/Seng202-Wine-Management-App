@@ -17,6 +17,10 @@ import seng202.team6.model.WineList;
 import seng202.team6.service.AuthenticationService;
 import seng202.team6.util.RegexProcessor;
 
+
+/**
+ * This controller is now defunct. It will be removed once list functionality has been migrated to the new one.
+ */
 public class DetailedViewController extends Controller {
 
     private final Logger log = LogManager.getLogger(getClass());
@@ -60,6 +64,7 @@ public class DetailedViewController extends Controller {
 
 
     private Wine wine;
+    private boolean noteAlreadyExists = false;
 
     private RegexProcessor extractor = new RegexProcessor();
 
@@ -126,21 +131,30 @@ public class DetailedViewController extends Controller {
     }
 
     @FXML
-    void onSaveNoteClicked(){
-        try {
-            managerContext.databaseManager.writeNoteToTable(notesArea.getText(), wine.getKey(), authenticationService.getAuthenticatedUsername());
-        } catch (SQLException e) {
-            log.error("Could not save note", e);
+    void onSaveNoteClicked() {
+
+        if (noteAlreadyExists) {
+            //managerContext.databaseManager.updateExistingNote(wine.getKey(), authenticationService.getAuthenticatedUsername(), notesArea.getText());
+
+        } else {
+            //managerContext.databaseManager.writeNewNoteToTable(notesArea.getText(), wine.getKey(), authenticationService.getAuthenticatedUsername());
+            noteAlreadyExists = true;
         }
     }
 
     private String getNote(long wineID) {
         String uname = authenticationService.getAuthenticatedUsername();
-        try {
-          return managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
-        } catch (SQLException e) {
-            return "NO NOTE FOUND";
+        String output = "";
+        output = managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
+
+        if (output == "" || output == null) {
+            noteAlreadyExists = false;
+        } else {
+            noteAlreadyExists  = true;
         }
+        return output;
+
+
     }
 
     public void setWine(Wine wine) {

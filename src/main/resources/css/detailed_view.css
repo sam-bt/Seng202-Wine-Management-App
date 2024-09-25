@@ -1,14 +1,14 @@
 .text-area {
     -fx-background-insets: 0;
-    -fx-background-color: transparent, #FEF0F0, transparent, #FEF0F0;
+    -fx-background-color: transparent, transparent, transparent, transparent;
 }
 
 .text-area .content {
-    -fx-background-color: transparent, #FEF0F0, transparent, #FEF0F0;
+    -fx-background-color: transparent, transparent, transparent, transparent;
 }
 
 .text-area:focused .content {
-    -fx-background-color: transparent, #FEF0F0, transparent, #FEF0F0;
+    -fx-background-color: transparent, transparent, transparent, transparent;
 }
 
 .notes-area {
