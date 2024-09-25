@@ -21,10 +21,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.util.StringConverter;
-import javafx.util.converter.DefaultStringConverter;
-import javafx.util.converter.FloatStringConverter;
-import javafx.util.converter.IntegerStringConverter;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
@@ -70,14 +66,25 @@ public class ListScreenController extends Controller {
     super(managerContext);
     this.authenticationService = authenticationService;
   }
-  List<WineList> getWineLists() {
+
+  /**
+   * Gets a list of the wine lists for this user
+   * @return list of wine lists
+   */
+  private List<WineList> getWineLists() {
     String user = authenticationService.getAuthenticatedUsername();
     return managerContext.databaseManager.getUserLists(user);
   }
-  public void updateButtons() {
+
+
+
+  /**
+   * Updates all the buttons
+   * @param wineLists list of wine lists
+   */
+  public void updateButtons(List<WineList> wineLists) {
     buttonList.getChildren().clear();
     int i=0;
-    List<WineList> wineLists = getWineLists();
     for(WineList wineList : wineLists) {
       Button button = new Button();
       button.setText(wineList.name());
@@ -97,11 +104,16 @@ public class ListScreenController extends Controller {
     deleteListRequestButton.setDisable(wineLists.size() <= 2);
   }
 
+  /**
+   * Refreshes all the buttons & UI state when there is an update
+   */
   public void render() {
-    updateButtons();
-    List<WineList> wineLists = managerContext.databaseManager.getUserLists(authenticationService.getAuthenticatedUsername());
+
+    List<WineList> wineLists = getWineLists();
+    selected = Math.min(selected, wineLists.size() - 1);
+    updateButtons(wineLists);
     tabViewing.setText("VIEWING: " + wineLists.get(selected));
-    changeSelected();
+    changeSelected(wineLists);
 
   }
 
@@ -188,26 +200,20 @@ public class ListScreenController extends Controller {
 
   /**
    * Changes the selected list.
+   * @param wineLists list of wine lists
    */
-  public void changeSelected() {
-    tableView.getItems().clear();
+  public void changeSelected(List<WineList> wineLists) {
 ;
-    List<Wine> list = managerContext.databaseManager.getWinesInList(getWineLists().get(selected));
+    List<Wine> list = managerContext.databaseManager.getWinesInList(wineLists.get(selected));
     ObservableList<Wine> observableList = FXCollections.observableList(list);
-    setupTableView();
-    tableView.setItems(observableList);
+    setupTableView(observableList);
   }
 
   @FXML
-  public void setupTableView() {
+  public void setupTableView(ObservableList<Wine> wines) {
     tableView.getColumns().clear();
 
-    StringConverter<String> stringConverter = new DefaultStringConverter();
-    StringConverter<Integer> intConverter = new IntegerStringConverter();
-    StringConverter<Float> floatConverter = new FloatStringConverter();
-
-
-    tableView.setEditable(true);
+    tableView.setEditable(false);
 
     TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
 
@@ -262,6 +268,9 @@ public class ListScreenController extends Controller {
       });
       return tableRow;
     });
+
+    tableView.getItems().clear();
+    tableView.setItems(wines);
   }
 
   public void onWineInListClick(Wine wine) {
