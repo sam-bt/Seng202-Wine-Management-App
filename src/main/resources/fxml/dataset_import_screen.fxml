@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0"
   minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
-  xmlns="http://javafx.com/javafx/21" fx:controller="seng202.team6.gui.DataTableController">
+  xmlns="http://javafx.com/javafx/21" fx:controller="seng202.team6.gui.DatasetImportController">
   <children>
     <Button minHeight="50.0" minWidth="200.0" mnemonicParsing="false" onAction="#importCSVFile"
       prefHeight="50.0" prefWidth="200.0" styleClass="secondary-button" stylesheets="@../css/global.css"

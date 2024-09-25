@@ -97,13 +97,13 @@ public class Filters {
         "",
         "",
         "",
-        Integer.MIN_VALUE,
+        0,
         Integer.MAX_VALUE,
-        Double.MIN_VALUE,
+        0,
         Double.MAX_VALUE,
-        Double.MIN_VALUE,
+        0,
         Double.MAX_VALUE,
-        Double.MIN_VALUE,
+        0,
         Double.MAX_VALUE);
   }
 
