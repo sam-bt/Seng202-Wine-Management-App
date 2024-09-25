@@ -70,6 +70,8 @@ public class WineScreenController extends Controller {
 
   private int currentPage = 1;
 
+  private Filters currentFilters;
+
   AutoCompletionTextField countryTextField;
 
   AutoCompletionTextField wineryTextField;
@@ -383,6 +385,8 @@ public class WineScreenController extends Controller {
         priceSlider.getLowValue(),
         priceSlider.getHighValue()
     );
+    // Save current filters for pagination
+    this.currentFilters = filters;
     openWineRange(filters);
   }
 
@@ -400,6 +404,9 @@ public class WineScreenController extends Controller {
     countryTextField.setText("");
     titleTextField.setText("");
     colorTextField.setText("");
+
+    // Reset current filters
+    this.currentFilters = null;
 
     // Update wines
     openWineRange(null);
@@ -437,30 +444,59 @@ public class WineScreenController extends Controller {
     managerContext.GUIManager.mainController.setWholePageInteractable(true);
   }
 
+  /**
+   * Go to the next page
+   *
+   */
   public void nextPage() {
     currentPage++;
     pageNumberTextField.setText(String.valueOf(currentPage)); // update text field
-    setPage();
+    setPage(currentPage);
+
+    // Open new wines
+    openWineRange(currentFilters);
   }
 
+  /**
+   * Go to the previous page
+   *
+   */
   public void previousPage() {
-    currentPage--;
-    pageNumberTextField.setText(String.valueOf(currentPage)); // update text field
-    setPage();
+    if (currentPage > 1) {
+      currentPage--;
+      pageNumberTextField.setText(String.valueOf(currentPage)); // update text field
+      setPage(currentPage);
+
+      // Open new wines
+      openWineRange(currentFilters);
+    }
   }
 
+  /**
+   * Ensures the pagenumber inserted into the text field is valid
+   *
+   */
   public void ensureValidPageNumber(){
     String currentText = pageNumberTextField.getText();
 
     if (!isInteger(currentText)){
       pageNumberTextField.setText(String.valueOf(currentPage)); // Set back to current page
     } else {
-      setPage();
+      setPage(Integer.parseInt(currentText));
     }
   }
 
-  public void setPage() {
+  /**
+   * Sets the current page
+   *
+   * @param page the page to go to
+   */
+  public void setPage(int page) {
+    // Update page
+    this.currentPage = page;
 
+    // Open new wines
+    openWineRange(currentFilters);
   }
 
   private boolean isInteger(String str) {
