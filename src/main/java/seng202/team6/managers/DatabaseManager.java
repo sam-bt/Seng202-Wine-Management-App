@@ -787,7 +787,6 @@ public class DatabaseManager implements AutoCloseable {
       ResultSet set = statement.executeQuery();
       while (set.next()) {
         notes.add(new Note(set.getString("NOTE"), set.getLong("WINE_ID"), user, this));
-        System.out.println(set.getString("NOTE"));
       }
     } catch (SQLException e) {
       log.warn("Error fetching notes");

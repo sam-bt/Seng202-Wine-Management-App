@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Builder;
+import org.apache.logging.log4j.LogManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.service.AuthenticationService;
 
@@ -116,7 +117,7 @@ public class MainController extends Controller {
       }
       managerContext.GUIManager.setWindowTitle(title);
     } catch (IOException e) {
-      System.err.println("Failed to load screen: " + fxml);
+      LogManager.getLogger(getClass()).error("Failed to load screen: {}", fxml, e);
     }
   }
 
