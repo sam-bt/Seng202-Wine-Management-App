@@ -726,6 +726,51 @@ public class DatabaseManager implements AutoCloseable {
    * @param note The text of the note.
    *             This has seperated into 2 methods to prevent the creation of duplicate note records. TODO: consolidate this. (if record already exists -> use update instead)
    */
+
+  public void saveNote(long wineID, String user, String note) {
+    String find = "SELECT * FROM NOTES WHERE WINE_ID = ? AND USERNAME = ?";
+    boolean noteExists = false;
+    try (PreparedStatement statement = connection.prepareStatement(find)) {
+      statement.setLong(1, wineID);
+      statement.setString(2, user);
+
+      ResultSet set = statement.executeQuery();
+      if (set.next()) {
+        noteExists = true;
+      } else {
+        noteExists = false;
+      }
+    } catch (SQLException e) {
+      log.error("Checking for existing note failed!");
+      log.error(e.getMessage());
+    }
+
+    if (noteExists) {
+      String update = "UPDATE NOTES SET NOTE = ? WHERE WINE_ID = ? AND USERNAME = ?";
+      try (PreparedStatement statement = connection.prepareStatement(update)) {
+        statement.setString(1, note);
+        statement.setLong(2, wineID);
+        statement.setString(3, user);
+      } catch (SQLException error) {
+        log.error("Could not update note table!");
+        log.error(error.getMessage());
+      }
+    } else {
+      String insert = "INSERT INTO NOTES VALUES (null, ?, ?, ?)";
+      try (PreparedStatement statement = connection.prepareStatement(insert)) {
+        statement.setString(1, user);
+        statement.setLong(2, wineID);
+        statement.setString(3, note);
+        statement.executeUpdate();
+      } catch (SQLException e) {
+        log.error("Failed to add new note to table");
+        log.error(e.getMessage());
+      }
+    }
+
+
+  }
+
   public void updateExistingNote(Long wineID, String user, String note) {
     String update = "UPDATE NOTES SET NOTE = ? WHERE USERNAME = ? AND WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(update)) {

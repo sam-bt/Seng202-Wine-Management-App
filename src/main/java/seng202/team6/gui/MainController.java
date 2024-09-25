@@ -164,6 +164,7 @@ public class MainController extends Controller {
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
     adminScreenButton.setVisible(false);
     dataSetsScreenButton.setVisible(false);
+    noteScreenButton.setVisible(false);
 
     navBarBox.getChildren().remove(listScreenButton);
     navBarBox.getChildren().add(3, listScreenButton);
