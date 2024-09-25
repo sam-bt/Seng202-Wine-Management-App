@@ -1,13 +1,11 @@
 package seng202.team6.gui;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -32,6 +30,7 @@ import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
 import seng202.team6.service.AuthenticationService;
+import seng202.team6.service.PageService;
 
 /**
  * Controller for the screen that displays wines
@@ -41,46 +40,29 @@ public class WineScreenController extends Controller {
 
   private final Logger log = LogManager.getLogger(WineScreenController.class);
   private final AuthenticationService authenticationService;
-
+  private final PageService pageService = new PageService(100); // ← Number of wines per page = 100
   @FXML
   TableView<Wine> tableView;
-
   @FXML
   AnchorPane filtersPane;
-
   @FXML
   WebView webView;
-
   @FXML
   Button applyFiltersButton;
-
   @FXML
   Button resetFiltersButton;
-
   @FXML
   Button prevPageButton;
-
   @FXML
   Button nextPageButton;
-
   @FXML
   TextField pageNumberTextField;
-
-  private final static int WINES_PER_PAGE = 100;
-
-  private int currentPage = 1;
-
-  private Filters currentFilters;
-
   AutoCompletionTextField countryTextField;
-
   AutoCompletionTextField wineryTextField;
-
   AutoCompletionTextField colorTextField;
-
   @FXML
   TextField titleTextField;
-
+  private Filters currentFilters;
   private RangeSlider scoreSlider;
 
   private RangeSlider abvSlider;
@@ -96,7 +78,8 @@ public class WineScreenController extends Controller {
    *
    * @param managerContext manager context
    */
-  public WineScreenController(ManagerContext managerContext, AuthenticationService authenticationService) {
+  public WineScreenController(ManagerContext managerContext,
+      AuthenticationService authenticationService) {
     super(managerContext);
     this.authenticationService = authenticationService;
   }
@@ -111,8 +94,8 @@ public class WineScreenController extends Controller {
     tableView.getItems().clear();
 
     // Calculate range of data to get
-    int begin = currentPage * WINES_PER_PAGE - 100;
-    int end = currentPage * WINES_PER_PAGE;
+    int begin = this.pageService.getMinRange();
+    int end = this.pageService.getMaxRange();
 
     // Check if filters exist
     ObservableList<Wine> wines;
@@ -312,7 +295,7 @@ public class WineScreenController extends Controller {
     prevPageButton.setOnAction(actionEvent -> previousPage());
     nextPageButton.setOnAction(actionEvent -> nextPage());
 
-    // Set textfield listener
+    // Set textfield listener and on action to ensure valid inputs
     pageNumberTextField.focusedProperty().addListener((observableValue, oldvalue, newvalue) -> {
       if (!newvalue) {
         // This is executed when the text field loses focus
@@ -320,6 +303,10 @@ public class WineScreenController extends Controller {
       }
     });
     pageNumberTextField.setOnAction(actionEvent -> ensureValidPageNumber());
+
+    // Set listener to pageService to change pages
+    pageService.pageNumberProperty()
+        .addListener((observableValue, oldvalue, newvalue) -> setPage());
 
     mapController = new LeafletOSMController(webView.getEngine());
     mapController.initMap();
@@ -418,7 +405,7 @@ public class WineScreenController extends Controller {
       try {
         createWineDialog(tableView.getSelectionModel().getSelectedItem());
       } catch (IOException e) {
-        e.printStackTrace();
+        LogManager.getLogger().error("Unable to create wine dialog", e);
       }
     }
   }
@@ -426,7 +413,8 @@ public class WineScreenController extends Controller {
   private void createWineDialog(Wine wine) throws IOException {
 
     FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/detailed_view.fxml"));
-    baseLoader.setControllerFactory(param -> new DetailedViewController(managerContext, authenticationService));
+    baseLoader.setControllerFactory(
+        param -> new DetailedViewController(managerContext, authenticationService));
 
     Parent root = baseLoader.load();
     Stage stage = new Stage();
@@ -444,61 +432,40 @@ public class WineScreenController extends Controller {
     managerContext.GUIManager.mainController.setWholePageInteractable(true);
   }
 
-  /**
-   * Go to the next page
-   *
-   */
-  public void nextPage() {
-    currentPage++;
-    pageNumberTextField.setText(String.valueOf(currentPage)); // update text field
-    setPage(currentPage);
-
-    // Open new wines
-    openWineRange(currentFilters);
-  }
-
-  /**
-   * Go to the previous page
-   *
-   */
-  public void previousPage() {
-    if (currentPage > 1) {
-      currentPage--;
-      pageNumberTextField.setText(String.valueOf(currentPage)); // update text field
-      setPage(currentPage);
-
-      // Open new wines
-      openWineRange(currentFilters);
-    }
-  }
-
-  /**
-   * Ensures the pagenumber inserted into the text field is valid
-   *
-   */
-  public void ensureValidPageNumber(){
+  public void ensureValidPageNumber() {
     String currentText = pageNumberTextField.getText();
 
-    if (!isInteger(currentText)){
-      pageNumberTextField.setText(String.valueOf(currentPage)); // Set back to current page
+    if (!isInteger(currentText)) {
+      pageNumberTextField.setText(
+          String.valueOf(this.pageService.getPageNumber())); // Set back to current page
     } else {
-      setPage(Integer.parseInt(currentText));
+      pageService.setPageNumber(Integer.parseInt(currentText)); // Change page if valid
     }
   }
 
-  /**
-   * Sets the current page
-   *
-   * @param page the page to go to
-   */
-  public void setPage(int page) {
-    // Update page
-    this.currentPage = page;
-
-    // Open new wines
-    openWineRange(currentFilters);
+  public void nextPage() {
+    this.pageService.nextPage();
+    pageNumberTextField.setText(this.pageService.pageNumberProperty().getValue().toString());
   }
 
+  public void previousPage() {
+    this.pageService.previousPage();
+    pageNumberTextField.setText(this.pageService.pageNumberProperty().getValue().toString());
+  }
+
+  /**
+   * Sets the data in the table to the current page specified by the page service
+   */
+  public void setPage() {
+    openWineRange(this.currentFilters);
+  }
+
+  /**
+   * Ensures a value is an integer
+   *
+   * @param str string value to check
+   * @return true if it is an integer false if not
+   */
   private boolean isInteger(String str) {
     try {
       Integer.parseInt(str);
