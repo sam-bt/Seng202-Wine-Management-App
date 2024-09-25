@@ -3,8 +3,6 @@ package seng202.team6.gui;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -20,13 +18,11 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.Rating;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
-import seng202.team6.service.AuthenticationService;
 import seng202.team6.service.WineReviewsService;
 import seng202.team6.util.DateFormatter;
 import seng202.team6.util.ImageReader;
@@ -82,17 +78,16 @@ public class DetailedWineViewController extends Controller {
     put("rose", ROSE_WINE_IMAGE);
     put("rosé", ROSE_WINE_IMAGE);
   }};
-  private final AuthenticationService authenticationService;
   private final WineReviewsService wineReviewsService;
   private final Wine viewedWine;
   private final Runnable backButtonAction;
   private final ObservableMap<WineReview, VBox> wineReviewWrappers = FXCollections.observableHashMap();
 
-  public DetailedWineViewController(ManagerContext managerContext,
-      AuthenticationService authenticationService, Wine viewedWine, Runnable backButtonAction) {
+  public DetailedWineViewController(ManagerContext managerContext, Wine viewedWine,
+      Runnable backButtonAction) {
     super(managerContext);
-    this.authenticationService = authenticationService;
-    this.wineReviewsService = new WineReviewsService(authenticationService, managerContext.databaseManager, viewedWine);
+    this.wineReviewsService = new WineReviewsService(managerContext.authenticationManager,
+        managerContext.databaseManager, viewedWine);
     this.viewedWine = viewedWine;
     this.backButtonAction = backButtonAction;
     this.ratingStars = new Rating();
@@ -112,9 +107,10 @@ public class DetailedWineViewController extends Controller {
     viewingWineTitledPane.setText("Viewing Wine: " + viewedWine.getTitle());
 
     descriptionArea.setText(getOrDefault(viewedWine.getDescription()));
-    if(authenticationService.isAuthenticated()) {
+    if (managerContext.authenticationManager.isAuthenticated()) {
       setNotesVisible(true);
-      notesTextbox.setText(managerContext.databaseManager.getNoteByUserAndWine(authenticationService.getAuthenticatedUsername(), viewedWine.getKey()));
+      notesTextbox.setText(managerContext.databaseManager.getNoteByUserAndWine(
+          managerContext.authenticationManager.getAuthenticatedUsername(), viewedWine.getKey()));
     } else {
       setNotesVisible(false);
     }
@@ -132,7 +128,7 @@ public class DetailedWineViewController extends Controller {
     ratingStars.setPartialRating(true);
     ratingsContainer.getChildren().addFirst(ratingStars);
 
-    if (!authenticationService.isAuthenticated()) {
+    if (!managerContext.authenticationManager.isAuthenticated()) {
       addReviewButton.setDisable(true);
       addReviewButton.setVisible(false);
       loginToReviewLabel.setVisible(true);
@@ -247,7 +243,8 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   public void onSaveClicked() {
-    managerContext.databaseManager.saveNote(viewedWine.getKey(), authenticationService.getAuthenticatedUsername(), notesTextbox.getText());
+    managerContext.databaseManager.saveNote(viewedWine.getKey(),
+        managerContext.authenticationManager.getAuthenticatedUsername(), notesTextbox.getText());
   }
 
   private String getOrDefault(String property) {

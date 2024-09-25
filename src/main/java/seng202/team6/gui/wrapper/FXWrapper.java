@@ -10,6 +10,7 @@ import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import seng202.team6.gui.Controller;
 import seng202.team6.gui.MainController;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.managers.GUIManager;
 import seng202.team6.managers.ManagerContext;
@@ -35,9 +36,11 @@ public class FXWrapper {
   public void init(Stage stage) {
     this.stage = stage;
     try {
+      DatabaseManager databaseManager = new DatabaseManager("database.db", true);
       this.managerContext = new ManagerContext(
-          new DatabaseManager("database.db", true),
-          new GUIManager(this)
+          databaseManager,
+          new GUIManager(this),
+          new AuthenticationManager(databaseManager)
       );
 
       stage.setOnCloseRequest((event) -> managerContext.databaseManager.close());

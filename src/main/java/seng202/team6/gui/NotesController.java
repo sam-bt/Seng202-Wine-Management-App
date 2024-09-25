@@ -1,17 +1,19 @@
 package seng202.team6.gui;
 
+import java.util.Optional;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
-import seng202.team6.service.AuthenticationService;
-
-import java.io.IOException;
-import java.util.Optional;
 
 
 public class NotesController extends Controller{
@@ -31,13 +33,9 @@ public class NotesController extends Controller{
     private Button saveButton;
 
     private Note note;
-    private ManagerContext managerContext;
-    private AuthenticationService authenticationService;
 
-    public NotesController(ManagerContext managerContext, AuthenticationService authenticationService) {
+    public NotesController(ManagerContext managerContext) {
         super(managerContext);
-        this.managerContext = managerContext;
-        this.authenticationService = authenticationService;
     }
 
 
@@ -51,7 +49,8 @@ public class NotesController extends Controller{
      * Populates table columns using the wineTitle string property in the Note object. Called to refresh the notes in the table.
      */
     private void populateTable() {
-        ObservableList<Note> noteList = managerContext.databaseManager.getNotesByUser(authenticationService.getAuthenticatedUsername());
+        ObservableList<Note> noteList = managerContext.databaseManager.getNotesByUser(
+            managerContext.authenticationManager.getAuthenticatedUsername());
         setupColumns();
         notesTable.getItems().clear();
         notesTable.setItems(noteList);
@@ -101,7 +100,8 @@ public class NotesController extends Controller{
 
     @FXML
     public void onSaveClicked() {
-        managerContext.databaseManager.saveNote(note.getWineID(), authenticationService.getAuthenticatedUsername(), noteArea.getText());
+        managerContext.databaseManager.saveNote(note.getWineID(),
+            managerContext.authenticationManager.getAuthenticatedUsername(), noteArea.getText());
         populateTable();
 
     }
@@ -115,7 +115,8 @@ public class NotesController extends Controller{
 
         Optional<ButtonType> result = confirmation.showAndWait();
         if (result.get() == ButtonType.OK) {
-            managerContext.databaseManager.deleteNote(note.getWineID(), authenticationService.getAuthenticatedUsername());
+            managerContext.databaseManager.deleteNote(note.getWineID(),
+                managerContext.authenticationManager.getAuthenticatedUsername());
             populateTable();
             clearNotesPanel();
         }
