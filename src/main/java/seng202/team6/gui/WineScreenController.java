@@ -296,8 +296,8 @@ public class WineScreenController extends Controller {
     nextPageButton.setOnAction(actionEvent -> nextPage());
 
     // Set textfield listener and on action to ensure valid inputs
-    pageNumberTextField.focusedProperty().addListener((observableValue, oldvalue, newvalue) -> {
-      if (!newvalue) {
+    pageNumberTextField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
+      if (!newValue) {
         // This is executed when the text field loses focus
         ensureValidPageNumber();
       }
@@ -306,7 +306,7 @@ public class WineScreenController extends Controller {
 
     // Set listener to pageService to change pages
     pageService.pageNumberProperty()
-        .addListener((observableValue, oldvalue, newvalue) -> setPage());
+        .addListener((observableValue, oldValue, newValue) -> setPage());
 
     mapController = new LeafletOSMController(webView.getEngine());
     mapController.initMap();
