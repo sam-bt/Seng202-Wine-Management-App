@@ -337,6 +337,15 @@ class DatabaseManagerTest {
   }
 
   @Test
+  void historyExists() {
+    WineList favouritesList = manager.getUserLists("admin").stream()
+        .filter(wineList -> wineList.name().equals("History"))
+        .findFirst()
+        .orElse(null);
+    assertNotNull(favouritesList);
+  }
+
+  @Test
   void addedWineSavesToListOnDatabase() throws SQLException {
     WineList favouritesList = manager.getUserLists("admin").stream()
         .filter(wineList -> wineList.name().equals("Favourites"))
