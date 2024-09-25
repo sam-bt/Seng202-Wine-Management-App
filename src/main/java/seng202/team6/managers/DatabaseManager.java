@@ -562,7 +562,7 @@ public class DatabaseManager implements AutoCloseable {
     try (Statement statement = connection.createStatement()) {
       statement.execute(listItemsTable);
     }
-    createAdminListIfNotExists("Favourites'");
+    createAdminListIfNotExists("Favourites");
     createAdminListIfNotExists("History");
   }
 
