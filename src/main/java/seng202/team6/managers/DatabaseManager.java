@@ -72,7 +72,6 @@ public class DatabaseManager implements AutoCloseable {
 
     String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + databaseFileName;
     Properties properties = new Properties();
-    properties.setProperty("encoding", "UTF-8");
     properties.setProperty("foreign_keys", "true");
     connection = DriverManager.getConnection(dbPath, properties);
     if (useWal) {
@@ -88,7 +87,6 @@ public class DatabaseManager implements AutoCloseable {
     addGeolocations();
     createWineListsTable();
     createWineReviewTable();
-
   }
 
 
@@ -236,7 +234,7 @@ public class DatabaseManager implements AutoCloseable {
       statement.setString(paramIndex++,
           filters.getTitle().isEmpty() ? "%" : "%" + filters.getTitle() + "%");
       statement.setString(paramIndex++,
-          filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry());
+          filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry() + "%");
       statement.setString(paramIndex++,
           filters.getWinery().isEmpty() ? "%" : "%" + filters.getWinery() + "%");
       statement.setString(paramIndex++,
