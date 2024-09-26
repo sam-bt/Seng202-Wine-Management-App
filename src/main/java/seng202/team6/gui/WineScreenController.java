@@ -133,6 +133,7 @@ public class WineScreenController extends Controller {
           .forEach(mapController::addWineMarker);
     });
 
+    winesViewContainer.getChildren().clear();
     wines.forEach(this::createWineCard);
 
     // Set fetched data to the table
@@ -303,6 +304,16 @@ public class WineScreenController extends Controller {
         openDetailedWineView(wine);
       }
     });
+
+    // when the page is loaded, the width of the container is not set immediately, so we have to
+    // listen to the width property changing. But, after it is loaded, and we add a new wine card,
+    // the wine property will not change, so we need to take this into account
+    if (winesViewContainer.getWidth() != 0) {
+      double totalWidth = winesViewContainer.getWidth();
+      // minus 10 for insets
+      double tileWidth = (totalWidth - winesViewContainer.getHgap() * 2) / 3 - 10;
+      wrapper.setPrefWidth(tileWidth);
+    }
 
     Image wineImage = wineImages.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
     ImageView imageView = new ImageView(wineImage);
