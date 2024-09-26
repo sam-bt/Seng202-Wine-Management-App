@@ -1,6 +1,8 @@
 stages:
   - test
   - deploy
+  - check_java_src
+  - check_fxml
 
 junit:
   stage: test
@@ -13,14 +15,14 @@ cucumber:
     - ./gradlew cucumber
 
 ban_print_statements:
-  stage: test
+  stage: check_java_src
   before_script:
     - cd scripts
   script:
     - ./ban_print_statements.sh
 
 check_javafx_resource_path:
-  stage: test
+  stage: check_fxml
   before_script:
     - cd scripts
   script:
