@@ -40,7 +40,7 @@ public class FXWindow extends Application {
 
     primaryStage.setTitle("WINO App [DEV]");
     Scene scene = new Scene(root);
-    //primaryStage.setResizable(false); <- Need to reenable this on commit
+    primaryStage.setResizable(false);
     primaryStage.setScene(scene);
     primaryStage.sizeToScene();
     primaryStage.setMinHeight(900);

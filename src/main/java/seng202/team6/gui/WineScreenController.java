@@ -272,16 +272,18 @@ public class WineScreenController extends Controller {
    */
   @Override
   public void init() {
+    // Create AutoCompleteBoxes
+    this.countryTextField = createAutoCompleteTextField(9.0, 105.0);
+    this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
+    this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
+
     // Create sliders
     this.vintageSlider = createSlider(11, 290, 0, 100, 10);
     this.scoreSlider = createSlider(11, 365, 0, 100, 10);
     this.abvSlider = createSlider(11, 445, 0, 100, 10);
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
 
-    // Create AutoCompleteBoxes
-    this.countryTextField = createAutoCompleteTextField(9.0, 105.0);
-    this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
-    this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
+
 
     // Set snap to ticks
     vintageSlider.setSnapToTicks(true);
