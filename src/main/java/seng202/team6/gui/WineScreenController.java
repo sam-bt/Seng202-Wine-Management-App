@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.ObservableList;
@@ -24,6 +25,7 @@ import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
+import seng202.team6.util.YearStringConverter;
 
 /**
  * Controller for the screen that displays wines
@@ -139,7 +141,9 @@ public class WineScreenController extends Controller {
         }
 
         if (w.getVintage() < minVintage) {
-          minVintage = w.getVintage();
+          if (w.getVintage() != -1) {
+            minVintage = w.getVintage();
+          }
         }
 
         if (w.getPrice() > maxPrice) {
@@ -182,6 +186,12 @@ public class WineScreenController extends Controller {
       // Ensure the sliders display properly
       scoreSlider.setMajorTickUnit(1);
       vintageSlider.setMajorTickUnit(1);
+      vintageSlider.setMinorTickCount(0);
+
+      YearStringConverter yearStringConverter = new YearStringConverter();
+      vintageSlider.setLabelFormatter(yearStringConverter);
+
+
     }
 
   }
@@ -206,7 +216,7 @@ public class WineScreenController extends Controller {
     TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
     TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
     TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
-    TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
+    //TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
     TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
     TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
     TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
@@ -217,7 +227,7 @@ public class WineScreenController extends Controller {
     regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));
     colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
     vintageColumn.setCellValueFactory(new PropertyValueFactory<>("vintage"));
-    descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+    //descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
     scoreColumn.setCellValueFactory(new PropertyValueFactory<>("scorePercent"));
     abvColumn.setCellValueFactory(new PropertyValueFactory<>("abv"));
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
@@ -235,8 +245,8 @@ public class WineScreenController extends Controller {
       colorColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       vintageColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
-      descriptionColumn.setCellFactory(
-          wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      //descriptionColumn.setCellFactory(
+          //wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       scoreColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
       abvColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
       priceColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
@@ -248,7 +258,7 @@ public class WineScreenController extends Controller {
     tableView.getColumns().add(regionColumn);
     tableView.getColumns().add(colorColumn);
     tableView.getColumns().add(vintageColumn);
-    tableView.getColumns().add(descriptionColumn);
+    //tableView.getColumns().add(descriptionColumn);
     tableView.getColumns().add(scoreColumn);
     tableView.getColumns().add(abvColumn);
     tableView.getColumns().add(priceColumn);
@@ -262,16 +272,18 @@ public class WineScreenController extends Controller {
    */
   @Override
   public void init() {
+    // Create AutoCompleteBoxes
+    this.countryTextField = createAutoCompleteTextField(9.0, 105.0);
+    this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
+    this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
+
     // Create sliders
     this.vintageSlider = createSlider(11, 290, 0, 100, 10);
     this.scoreSlider = createSlider(11, 365, 0, 100, 10);
     this.abvSlider = createSlider(11, 445, 0, 100, 10);
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
 
-    // Create AutoCompleteBoxes
-    this.countryTextField = createAutoCompleteTextField(9.0, 105.0);
-    this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
-    this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
+
 
     // Set snap to ticks
     vintageSlider.setSnapToTicks(true);
