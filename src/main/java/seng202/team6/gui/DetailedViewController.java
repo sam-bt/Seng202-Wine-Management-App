@@ -1,6 +1,5 @@
 package seng202.team6.gui;
 
-import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,16 +10,19 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
-import seng202.team6.service.AuthenticationService;
 import seng202.team6.util.RegexProcessor;
 
+
+/**
+ * This controller is now defunct. It will be removed once list functionality has been migrated to the new one.
+ */
 public class DetailedViewController extends Controller {
 
     private final Logger log = LogManager.getLogger(getClass());
-    private final AuthenticationService authenticationService;
 
     @FXML
     private Label countryLabel;
@@ -60,23 +62,23 @@ public class DetailedViewController extends Controller {
 
 
     private Wine wine;
+    private boolean noteAlreadyExists = false;
 
     private RegexProcessor extractor = new RegexProcessor();
 
 
-    public DetailedViewController(ManagerContext context, AuthenticationService authenticationService) {
+    public DetailedViewController(ManagerContext context) {
         super(context);
-        this.authenticationService = authenticationService;
     }
 
     @FXML
     public void init() {
-        if(authenticationService.isAuthenticated()) {
+        if (managerContext.authenticationManager.isAuthenticated()) {
             addToListButton.setVisible(true);
             choiceBoxListSelector.setVisible(true);
             notesArea.setVisible(true);
             saveNoteButton.setVisible(true);
-            String user = authenticationService.getAuthenticatedUsername();
+            String user = managerContext.authenticationManager.getAuthenticatedUsername();
             ObservableList<WineList> list = FXCollections.observableList(managerContext.databaseManager.getUserLists(user));
             choiceBoxListSelector.setItems(list);
             choiceBoxListSelector.setValue(list.getFirst());
@@ -126,21 +128,30 @@ public class DetailedViewController extends Controller {
     }
 
     @FXML
-    void onSaveNoteClicked(){
-        try {
-            managerContext.databaseManager.writeNoteToTable(notesArea.getText(), wine.getKey(), authenticationService.getAuthenticatedUsername());
-        } catch (SQLException e) {
-            log.error("Could not save note", e);
+    void onSaveNoteClicked() {
+
+        if (noteAlreadyExists) {
+            //managerContext.databaseManager.updateExistingNote(wine.getKey(), authenticationManager.getAuthenticatedUsername(), notesArea.getText());
+
+        } else {
+            //managerContext.databaseManager.writeNewNoteToTable(notesArea.getText(), wine.getKey(), authenticationManager.getAuthenticatedUsername());
+            noteAlreadyExists = true;
         }
     }
 
     private String getNote(long wineID) {
-        String uname = authenticationService.getAuthenticatedUsername();
-        try {
-          return managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
-        } catch (SQLException e) {
-            return "NO NOTE FOUND";
+        String uname = managerContext.authenticationManager.getAuthenticatedUsername();
+        String output = "";
+        output = managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
+
+        if (output == "" || output == null) {
+            noteAlreadyExists = false;
+        } else {
+            noteAlreadyExists  = true;
         }
+        return output;
+
+
     }
 
     public void setWine(Wine wine) {
