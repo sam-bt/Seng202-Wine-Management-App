@@ -3,14 +3,37 @@
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.ConsumptionController">
+<VBox alignment="CENTER" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.ConsumptionController">
    <children>
-      <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="10.0">
+      <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox fx:id="wineHistoryList" prefHeight="200.0" prefWidth="100.0" />
+            <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0" stylesheets="@../css/global.css" HBox.hgrow="ALWAYS">
+               <children>
+                  <ScrollPane hbarPolicy="NEVER" prefHeight="318.0" prefWidth="334.0" VBox.vgrow="ALWAYS">
+                     <content>
+                        <VBox fx:id="wineHistoryList" prefHeight="347.0" prefWidth="321.0" />
+                     </content>
+                  </ScrollPane>
+                  <TitledPane animated="false" collapsible="false" stylesheets="@../css/titled_pane.css" text="My Consumption">
+                     <graphic>
+                        <VBox alignment="CENTER">
+                           <children>
+                              <Label text="10 Drinks" />
+                              <ProgressBar prefWidth="200.0" progress="0.0" />
+                           </children>
+                        </VBox>
+                     </graphic>
+                  </TitledPane>
+               </children>
+            </VBox>
             <LineChart>
               <xAxis>
                 <CategoryAxis side="BOTTOM" />
@@ -21,6 +44,9 @@
             </LineChart>
          </children>
       </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0" />
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <ListView prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+         </children></HBox>
    </children>
 </VBox>
