@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -11,10 +10,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -29,15 +25,7 @@
                <children>
                   <ScrollPane focusTraversable="false" hbarPolicy="NEVER" pickOnBounds="false" prefHeight="20000.0" stylesheets="@../css/scroll_pane.css" VBox.vgrow="ALWAYS">
                      <content>
-                        <VBox fx:id="buttonList" alignment="CENTER" fillWidth="false" maxHeight="1.7976931348623157E308" minWidth="200.0" prefWidth="273.0" spacing="10.0">
-                           <children>
-                        <Button disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" prefWidth="10000.0" styleClass="primary-button" text="Button">
-                          <font>
-                            <Font name="System Bold" size="18.0" />
-                          </font>
-                        </Button>
-                           </children>
-                        </VBox>
+                        <VBox fx:id="buttonList" alignment="CENTER" fillWidth="false" maxHeight="1.7976931348623157E308" minWidth="200.0" prefWidth="273.0" spacing="10.0" />
                      </content>
                   </ScrollPane>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
@@ -62,35 +50,15 @@
       <tabs>
         <Tab fx:id="tabViewing" text="VIEWING &lt;LIST_NAME&gt;">
           <content>
-            <VBox minHeight="720.0" prefHeight="720.0" prefWidth="1014.0">
-              <children>
-                <GridPane prefHeight="729.0" prefWidth="1229.0">
-                  <children>
-                    <HBox prefHeight="28.0" prefWidth="914.0">
-                      <children>
-                        <Label>
-                          <HBox.margin>
-                            <Insets right="10.0" top="6.0" />
-                          </HBox.margin>
-                        </Label>
-                      </children>
-                    </HBox>
-                    <TableView fx:id="tableView" prefHeight="696.0" prefWidth="1040.0" GridPane.rowIndex="1">
-                      <columns>
-                        <TableColumn minWidth="-1.0" prefWidth="-1.0" />
-                      </columns>
-                    </TableView>
-                  </children>
-                  <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  </columnConstraints>
-                  <rowConstraints>
-                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                  </rowConstraints>
-                </GridPane>
-              </children>
-            </VBox>
+                  <HBox>
+                     <children>
+              <TableView fx:id="tableView" prefHeight="10000.0" prefWidth="100000.0">
+                <columns>
+                  <TableColumn minWidth="-1.0" prefWidth="-1.0" />
+                </columns>
+              </TableView>
+                     </children>
+                  </HBox>
           </content>
         </Tab>
         <Tab fx:id="tabCreating" text="CREATE NEW LIST">
