@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -359,7 +360,7 @@ class DatabaseManagerTest {
     assertEquals(0, wines.size());
 
     // ensure a wine added to the list is saved and can be retrieved
-    manager.addWineToList(favouritesList, wine);
+    manager.addWineToList(favouritesList, wine, new Date());
     List<Wine> updatedWines = manager.getWinesInList(favouritesList);
     assertEquals(1, updatedWines.size());
     assertEquals(updatedWines.getFirst(), wine);

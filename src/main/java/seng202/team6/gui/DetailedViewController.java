@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.util.Date;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -116,7 +117,7 @@ public class DetailedViewController extends Controller {
     public void onAddToListButton() {
         // button is only shown if the wine is not in the list
         WineList selectedWineList = choiceBoxListSelector.getValue();
-        managerContext.databaseManager.addWineToList(selectedWineList, wine);
+        managerContext.databaseManager.addWineToList(selectedWineList, wine, new Date());
         updateListButton(selectedWineList);
     }
 

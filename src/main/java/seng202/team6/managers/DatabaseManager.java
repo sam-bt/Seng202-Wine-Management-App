@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
 import javafx.collections.FXCollections;
@@ -560,7 +562,8 @@ public class DatabaseManager implements AutoCloseable {
     String listItemsTable = "CREATE TABLE IF NOT EXISTS LIST_ITEMS (" +
         "ID INTEGER PRIMARY KEY," +
         "LIST_ID INT NOT NULL," +
-        "WINE_ID INT NOT NULL);";
+        "WINE_ID INT NOT NULL," +
+        "DATE_ADDED DATE NOT NULL);";
     try (Statement statement = connection.createStatement()) {
       statement.execute(listNameTable);
     }
@@ -671,11 +674,12 @@ public class DatabaseManager implements AutoCloseable {
     return false;
   }
 
-  public void addWineToList(WineList wineList, Wine wine) {
-    String insert = "INSERT INTO LIST_ITEMS VALUES (null, ?, ?)";
+  public void addWineToList(WineList wineList, Wine wine, java.util.Date date) {
+    String insert = "INSERT INTO LIST_ITEMS VALUES (null, ?, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(insert)) {
       statement.setLong(1, wineList.id());
       statement.setLong(2, wine.getKey());
+      statement.setDate(3, new java.sql.Date(date.getTime()), new GregorianCalendar());
       statement.executeUpdate();
     } catch (SQLException error) {
       log.error("Could not add a wine to a list", error);
