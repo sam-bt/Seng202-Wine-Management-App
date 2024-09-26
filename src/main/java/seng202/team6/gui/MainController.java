@@ -43,8 +43,10 @@ public class MainController extends Controller {
   private Button noteScreenButton;
 
   @FXML
-  private Button loginButton;
+  private Button consumptionScreenButton;
 
+  @FXML
+  private Button loginButton;
 
   @FXML
   private Button registerButton;
