@@ -3,7 +3,10 @@ package seng202.team6.gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.Wine;
 
 public class AdminController extends Controller {
 
@@ -48,6 +51,12 @@ public class AdminController extends Controller {
     noButton.setVisible(false);
     yesButton.setVisible(false);
     deleteButton.setText("Delete all Users");
+  }
+
+  @FXML
+  public void onManageUsers() {
+    Runnable backAction = () -> managerContext.GUIManager.mainController.openAdminScreen();
+    managerContext.GUIManager.mainController.openUserManagementView(backAction);
   }
 
 }

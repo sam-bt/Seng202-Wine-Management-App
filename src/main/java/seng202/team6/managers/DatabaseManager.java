@@ -502,6 +502,39 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
+  /**
+   * Returns an ObservableList of all usernames in the system. Used to populate the user management screen.
+   * @return
+   */
+  public ObservableList<String> getUsernames() {
+    ObservableList<String> users = FXCollections.observableArrayList();
+    String find = "SELECT * FROM USER WHERE USERNAME != ?";
+    try (PreparedStatement statement = connection.prepareStatement(find)) {
+      statement.setString(1, "admin");
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        users.add(set.getString("USERNAME"));
+      }
+    } catch (SQLException e) {
+      log.error("Error retrieving users: {}", e.getMessage(), e);
+    }
+    return users;
+  }
+
+  /**
+   * Deletes a single user from the table.
+   * @param user
+   */
+  public void deleteUserFromTable(String user) {
+    String delete = "DELETE FROM USER WHERE USERNAME = ?";
+    try (PreparedStatement statement = connection.prepareStatement(delete)) {
+      statement.setString(1, user);
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      log.error("Error deleting user: {}", e.getMessage(), e);
+    }
+  }
+
   private void createGeolocationTable() throws SQLException {
     String create = "create table if not exists GEOLOCATION ("
         + "NAME varchar(64) PRIMARY KEY,"
@@ -707,7 +740,9 @@ public class DatabaseManager implements AutoCloseable {
             "ID INTEGER PRIMARY KEY," +
             "USERNAME varchar(64) NOT NULL," +
             "WINE_ID int NOT NULL, " +
-            "NOTE text);";
+            "NOTE text, " +
+            "FOREIGN KEY USERNAME REFERENCES USER(USERNAME) ON DELETE CASCADE"
+            + ");";
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
     } catch (SQLException error) {
@@ -797,8 +832,8 @@ public class DatabaseManager implements AutoCloseable {
         + "RATING DOUBLE NOT NULL,"
         + "DESCRIPTION VARCHAR(256) NOT NULL,"
         + "DATE DATE NOT NULL,"
-        + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME),"
-        + "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID)"
+        + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE,"
+        + "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE"
         + ")";
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);

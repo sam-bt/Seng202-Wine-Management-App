@@ -243,6 +243,11 @@ public class MainController extends Controller {
         () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
   }
 
+  public void openUserManagementView(Runnable backButtonAction) {
+    switchScene("/fxml/user_management.fxml", "Detailed Wine View",
+            () -> new UserManagementController(managerContext, backButtonAction));
+  }
+
   public void openPopupWineReview(WineReviewsService wineReviewsService) {
     openPopup("/fxml/popup/review_popup.fxml",
         () -> new WineReviewPopupController(managerContext, wineReviewsService));
