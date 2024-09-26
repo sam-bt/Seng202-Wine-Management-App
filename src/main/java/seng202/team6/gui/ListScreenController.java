@@ -69,7 +69,20 @@ public class ListScreenController extends Controller {
     return managerContext.databaseManager.getUserLists(user);
   }
 
+  /**
+   * Checks if a wine is removable (not builtin)
+   * @param wineList wine list
+   * @return if removable
+   */
+  private boolean canRemoveWineList(WineList wineList) {
+    if(wineList.name().compareTo("Favourites") == 0)
+      return false;
 
+    if(wineList.name().compareTo("History") == 0)
+      return false;
+
+    return true;
+  }
 
   /**
    * Updates all the buttons
@@ -180,16 +193,18 @@ public class ListScreenController extends Controller {
   }
 
   /**
-   * deletes the selected list. Cannot delete the favourites list.
+   * deletes the selected list. Cannot delete the favourites or history list.
    *
    * @param actionEvent triggers this function when on action.
    */
   public void onDeleteListRequestButton(ActionEvent actionEvent) {
-    if (selected != 0) {
-      WineList wineList = getWineLists().get(selected);
-      managerContext.databaseManager.deleteList(wineList);
-      render();
-    }
+    WineList wineList = getWineLists().get(selected);
+    if(!canRemoveWineList(wineList))
+      return;
+
+    managerContext.databaseManager.deleteList(wineList);
+    render();
+
   }
 
   /**
