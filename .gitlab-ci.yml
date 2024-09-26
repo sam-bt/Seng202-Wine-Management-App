@@ -19,8 +19,8 @@ ban_print_statements:
   script:
     - ./ban_print_statements.sh
 
-check_javafx_path:
-  stage: test
+check_javafx_resource_path:
+  stage: check path
   before_script:
     - cd scripts
   script:
