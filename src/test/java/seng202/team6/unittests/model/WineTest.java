@@ -33,7 +33,7 @@ class WineTest {
    */
   void addWine() throws SQLException {
     ArrayList<Wine> list = new ArrayList<>();
-    list.add(new Wine(-1, database, "", "", "", "", "", "", 0, "", 0, 0f, 0f, null));
+    list.add(new Wine(-1, database, "", "", "", "", "", "", -1, "", 0, 0f, 0f, null));
     database.addWines(list);
   }
 
@@ -99,7 +99,7 @@ class WineTest {
    */
   @Test
   void setVintage() {
-    assertEquals(0, getTestWine().getVintage());
+    assertEquals(-1, getTestWine().getVintage());
     getTestWine().setVintage(25);
     assertEquals(25, getTestWine().getVintage());
   }

@@ -27,6 +27,7 @@ import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
 import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.ProcessCSV;
+import seng202.team6.util.RegexProcessor;
 
 
 /**
@@ -38,6 +39,8 @@ public class DatabaseManager implements AutoCloseable {
    * Logger for the DatabaseManager class
    */
   private final Logger log = LogManager.getLogger(getClass());
+  private boolean getVintageFromTitle = true;
+  private RegexProcessor regexp = new RegexProcessor();
 
   /**
    * Database connection
@@ -405,7 +408,7 @@ public class DatabaseManager implements AutoCloseable {
    * @throws SQLException if a database error occurs
    */
   public void removeWines() throws SQLException {
-    String delete = "delete from WINE;";
+    String delete = "DELETE FROM WINE;";
     try (Statement statement = connection.createStatement()) {
       statement.executeUpdate(delete);
     }
@@ -423,6 +426,7 @@ public class DatabaseManager implements AutoCloseable {
     String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     connection.setAutoCommit(false);
     int i = 0;
+
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
       for (Wine wine : list) {
         insertStatement.setString(1, wine.getTitle());
@@ -431,7 +435,11 @@ public class DatabaseManager implements AutoCloseable {
         insertStatement.setString(4, wine.getRegion());
         insertStatement.setString(5, wine.getWinery());
         insertStatement.setString(6, wine.getColor());
-        insertStatement.setInt(7, wine.getVintage());
+        if (wine.getVintage() == 0) {
+          insertStatement.setInt(7, Integer.parseInt(regexp.extractYearFromString(wine.getTitle())));
+        } else {
+          insertStatement.setInt(7, wine.getVintage());
+        }
         insertStatement.setString(8, wine.getDescription());
         insertStatement.setInt(9, wine.getScorePercent());
         insertStatement.setFloat(10, wine.getAbv());
@@ -874,7 +882,7 @@ public class DatabaseManager implements AutoCloseable {
         + "RATING DOUBLE NOT NULL,"
         + "DESCRIPTION VARCHAR(256) NOT NULL,"
         + "DATE DATE NOT NULL,"
-        + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME),"
+        + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE,"
         + "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE"
         + ")";
     try (Statement statement = connection.createStatement()) {
