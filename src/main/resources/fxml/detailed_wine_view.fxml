@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="400.0" prefWidth="1370.0" stylesheets="@../css/detailed_view.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.DetailedWineViewController">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="400.0" prefWidth="1370.0" stylesheets="@../css/detailed_view.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.DetailedWineViewController">
    <children>
       <TitledPane fx:id="viewingWineTitledPane" animated="false" collapsible="false" prefHeight="780.0" prefWidth="1016.0" stylesheets="@../css/titled_pane.css" text="Viewing Wine: Wine Name">
         <content>
@@ -121,6 +121,11 @@
                      </font>
                   </Button>
                   <Button fx:id="saveNotes" layoutX="14.0" layoutY="638.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onAction="#onSaveClicked" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Save Note">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Button>
+                  <Button layoutX="668.0" layoutY="679.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onOpenListsButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Open Lists">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>

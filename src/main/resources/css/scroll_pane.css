@@ -5,4 +5,5 @@
 .scroll-pane {
    -fx-background: white;
    -fx-border-color: #FFFFFF;
+   -fx-background-color: white;
 }
