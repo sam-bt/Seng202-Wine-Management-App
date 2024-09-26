@@ -40,9 +40,9 @@
                         </Button>
                      </children>
                   </HBox>
-                  <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0">
+                  <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" style="-fx-background: white;" stylesheets="@../../css/scroll_pane.css">
                      <content>
-                        <VBox fx:id="listsContainer" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="427.0" />
+                        <VBox fx:id="listsContainer" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="427.0" spacing="10.0" />
                      </content>
                   </ScrollPane>
                </children>

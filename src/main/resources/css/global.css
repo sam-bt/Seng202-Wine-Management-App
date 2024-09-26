@@ -16,6 +16,7 @@
   -fx-background-color: #eb4034;
   -fx-background-radius: 10px;
   -fx-text-fill: white;
+  -fx-cursor: hand;
 }
 
 .primary-button:hover {
@@ -30,6 +31,7 @@
   -fx-background-color: #F87171;
   -fx-background-radius: 10px;
   -fx-text-fill: white;
+  -fx-cursor: hand;
 }
 
 .secondary-button:hover {
