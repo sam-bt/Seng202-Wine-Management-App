@@ -84,6 +84,8 @@ public class MainController extends Controller {
     listScreenButton.setVisible(false);
     dataSetsScreenButton.setVisible(false);
     noteScreenButton.setVisible(false);
+    consumptionScreenButton.setVisible(false);
+
     openWineScreen();
   }
 
@@ -99,6 +101,7 @@ public class MainController extends Controller {
       navBarBox.getChildren().add(1, listScreenButton);
       listScreenButton.setVisible(true);
       dataSetsScreenButton.setVisible(true);
+      consumptionScreenButton.setVisible(true);
 
       loginButton.setOnMouseClicked(event -> openSettingsScreen());
       registerButton.setOnMouseClicked(event -> logout());
@@ -114,6 +117,7 @@ public class MainController extends Controller {
     listScreenButton.setDisable(status);
     dataSetsScreenButton.setDisable(status);
     adminScreenButton.setDisable(status);
+    consumptionScreenButton.setVisible(status);
   }
 
   public void switchScene(String fxml, String title, Builder<?> builder) {
@@ -162,10 +166,12 @@ public class MainController extends Controller {
     adminScreenButton.setVisible(false);
     dataSetsScreenButton.setVisible(false);
     noteScreenButton.setVisible(false);
+    consumptionScreenButton.setVisible(false);
 
     navBarBox.getChildren().remove(listScreenButton);
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
+
 
     openWineScreen();
   }
@@ -254,6 +260,11 @@ public class MainController extends Controller {
   public void openAddToListPopup(Wine wine) {
     openPopup("/fxml/popup/add_to_list_popup.fxml",
         () -> new AddToListPopupController(managerContext, wine));
+  }
+  @FXML
+  public void openConsumptionScreen() {
+    switchScene("/fxml/consumption_screen.fxml", "Consumption",
+        () -> new ConsumptionController(managerContext));
   }
 
 
