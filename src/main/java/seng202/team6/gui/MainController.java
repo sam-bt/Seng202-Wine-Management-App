@@ -269,7 +269,6 @@ public class MainController extends Controller {
   }
 
   public void closePopup() {
-    System.out.println("closing popup");
     popupActionBlocker.setVisible(false);
     popupActionBlocker.setDisable(true);
     popupContent.setVisible(false);

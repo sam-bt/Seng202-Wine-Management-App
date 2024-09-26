@@ -83,7 +83,6 @@ public class ReviewViewPopupController extends Controller {
 
   @FXML
   void onUserButtonClick() {
-    System.out.println("Open " + reviewer.getUsername() + "'s Profile" );
     managerContext.GUIManager.mainController.closePopup();
   }
 

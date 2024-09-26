@@ -267,8 +267,6 @@ public class DatabaseManager implements AutoCloseable {
             set.getInt("review_count"),
             set.getDouble("average_rating")
         );
-        System.out.println("REVIEWS"+set.getInt("review_count"));
-
         wines.add(wine);
       }
 
@@ -912,12 +910,12 @@ public class DatabaseManager implements AutoCloseable {
     try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM WINE_REVIEW")) {
       ResultSet resultSet = statement.executeQuery();
       while (resultSet.next()) {
-        System.out.println("id:" + resultSet.getLong("ID") + " wine_id:" +
-            resultSet.getLong("WINE_ID") + " username:" +
-            resultSet.getString("USERNAME") + " rating:" +
-            resultSet.getDouble("RATING") + " description:" +
-            resultSet.getString("DESCRIPTION") + " date:" +
-            resultSet.getDate("DATE"));
+//        System.out.println("id:" + resultSet.getLong("ID") + " wine_id:" + FIXME idk what this is
+//            resultSet.getLong("WINE_ID") + " username:" +
+//            resultSet.getString("USERNAME") + " rating:" +
+//            resultSet.getDouble("RATING") + " description:" +
+//            resultSet.getString("DESCRIPTION") + " date:" +
+//            resultSet.getDate("DATE"));
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);
