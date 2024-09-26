@@ -830,19 +830,6 @@ public class DatabaseManager implements AutoCloseable {
       log.error("Failed to read wine reviews from the database", error);
     }
 
-    try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM WINE_REVIEW")) {
-      ResultSet resultSet = statement.executeQuery();
-      while (resultSet.next()) {
-        System.out.println("id:" + resultSet.getLong("ID") + " wine_id:" +
-            resultSet.getLong("WINE_ID") + " username:" +
-            resultSet.getString("USERNAME") + " rating:" +
-            resultSet.getDouble("RATING") + " description:" +
-            resultSet.getString("DESCRIPTION") + " date:" +
-            resultSet.getDate("DATE"));
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    }
     return wineReviews;
   }
 

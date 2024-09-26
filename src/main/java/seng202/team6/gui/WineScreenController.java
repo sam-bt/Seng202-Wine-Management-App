@@ -1,13 +1,9 @@
 package seng202.team6.gui;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -17,7 +13,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.FloatStringConverter;
@@ -29,7 +24,6 @@ import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
-import seng202.team6.service.AuthenticationService;
 
 /**
  * Controller for the screen that displays wines
@@ -38,7 +32,6 @@ import seng202.team6.service.AuthenticationService;
 public class WineScreenController extends Controller {
 
   private final Logger log = LogManager.getLogger(WineScreenController.class);
-  private final AuthenticationService authenticationService;
 
   @FXML
   TableView<Wine> tableView;
@@ -79,9 +72,8 @@ public class WineScreenController extends Controller {
    *
    * @param managerContext manager context
    */
-  public WineScreenController(ManagerContext managerContext, AuthenticationService authenticationService) {
+  public WineScreenController(ManagerContext managerContext) {
     super(managerContext);
-    this.authenticationService = authenticationService;
   }
 
   /**
@@ -231,7 +223,7 @@ public class WineScreenController extends Controller {
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
     // Enable editing if admin
-    if (authenticationService.isAdmin()) {
+    if (managerContext.authenticationManager.isAdmin()) {
       titleColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       varietyColumn.setCellFactory(

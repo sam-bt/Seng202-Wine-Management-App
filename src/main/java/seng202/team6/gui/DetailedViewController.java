@@ -1,6 +1,5 @@
 package seng202.team6.gui;
 
-import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,10 +10,10 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
-import seng202.team6.service.AuthenticationService;
 import seng202.team6.util.RegexProcessor;
 
 
@@ -24,7 +23,6 @@ import seng202.team6.util.RegexProcessor;
 public class DetailedViewController extends Controller {
 
     private final Logger log = LogManager.getLogger(getClass());
-    private final AuthenticationService authenticationService;
 
     @FXML
     private Label countryLabel;
@@ -69,19 +67,18 @@ public class DetailedViewController extends Controller {
     private RegexProcessor extractor = new RegexProcessor();
 
 
-    public DetailedViewController(ManagerContext context, AuthenticationService authenticationService) {
+    public DetailedViewController(ManagerContext context) {
         super(context);
-        this.authenticationService = authenticationService;
     }
 
     @FXML
     public void init() {
-        if(authenticationService.isAuthenticated()) {
+        if (managerContext.authenticationManager.isAuthenticated()) {
             addToListButton.setVisible(true);
             choiceBoxListSelector.setVisible(true);
             notesArea.setVisible(true);
             saveNoteButton.setVisible(true);
-            String user = authenticationService.getAuthenticatedUsername();
+            String user = managerContext.authenticationManager.getAuthenticatedUsername();
             ObservableList<WineList> list = FXCollections.observableList(managerContext.databaseManager.getUserLists(user));
             choiceBoxListSelector.setItems(list);
             choiceBoxListSelector.setValue(list.getFirst());
@@ -134,16 +131,16 @@ public class DetailedViewController extends Controller {
     void onSaveNoteClicked() {
 
         if (noteAlreadyExists) {
-            //managerContext.databaseManager.updateExistingNote(wine.getKey(), authenticationService.getAuthenticatedUsername(), notesArea.getText());
+            //managerContext.databaseManager.updateExistingNote(wine.getKey(), authenticationManager.getAuthenticatedUsername(), notesArea.getText());
 
         } else {
-            //managerContext.databaseManager.writeNewNoteToTable(notesArea.getText(), wine.getKey(), authenticationService.getAuthenticatedUsername());
+            //managerContext.databaseManager.writeNewNoteToTable(notesArea.getText(), wine.getKey(), authenticationManager.getAuthenticatedUsername());
             noteAlreadyExists = true;
         }
     }
 
     private String getNote(long wineID) {
-        String uname = authenticationService.getAuthenticatedUsername();
+        String uname = managerContext.authenticationManager.getAuthenticatedUsername();
         String output = "";
         output = managerContext.databaseManager.getNoteByUserAndWine(uname, wineID);
 
