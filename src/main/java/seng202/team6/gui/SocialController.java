@@ -61,7 +61,6 @@ public class SocialController extends Controller{
     ObservableList<Wine> wines;
 
     wines = managerContext.databaseManager.getWinesInRangeWithReviewInfo(begin, end);
-    System.out.println(wines);
     // Set fetched data to the table
     wineTableView.setItems(wines);
 
