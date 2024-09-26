@@ -20,7 +20,7 @@ ban_print_statements:
     - ./ban_print_statements.sh
 
 check_javafx_resource_path:
-  stage: check path
+  stage: test
   before_script:
     - cd scripts
   script:
