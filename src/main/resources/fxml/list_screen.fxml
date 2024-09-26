@@ -109,15 +109,15 @@
       </tabs>
     </TabPane>
     <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0"
-      stylesheets="@../../../../build/resources/main/css/titled_pane.css" text="Lists">
+      stylesheets="@../css/titled_pane.css" text="Lists">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="316.0"
-          styleClass="filters-pane" stylesheets="@../../../../build/resources/main/css/titled_pane.css"
+          styleClass="filters-pane" stylesheets="@../css/titled_pane.css"
           fx:id="filtersPane">
           <children>
             <Button layoutX="75.0" layoutY="598.0" mnemonicParsing="false"
               onAction="#onCreateListRequestButton" prefHeight="33.0" prefWidth="167.0"
-              styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css"
+              styleClass="secondary-button" stylesheets="@../css/global.css"
               text="Create List" fx:id="createListRequestButton">
               <font>
                 <Font name="System Bold" size="16.0"/>
@@ -165,7 +165,7 @@
             </Button>
             <Button layoutX="75.0" layoutY="644.0" mnemonicParsing="false"
               onAction="#onDeleteListRequestButton" prefHeight="33.0" prefWidth="167.0"
-              styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css"
+              styleClass="secondary-button" stylesheets="@../css/global.css"
               text="Delete List" fx:id="deleteListRequestButton">
               <font>
                 <Font name="System Bold" size="16.0"/>
