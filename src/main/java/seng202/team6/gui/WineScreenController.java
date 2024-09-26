@@ -1,13 +1,10 @@
 package seng202.team6.gui;
 
-import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -17,7 +14,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.FloatStringConverter;
@@ -29,8 +25,8 @@ import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
-import seng202.team6.service.AuthenticationService;
 import seng202.team6.service.PageService;
+import seng202.team6.util.YearStringConverter;
 
 /**
  * Controller for the screen that displays wines
@@ -39,7 +35,6 @@ import seng202.team6.service.PageService;
 public class WineScreenController extends Controller {
 
   private final Logger log = LogManager.getLogger(WineScreenController.class);
-  private final AuthenticationService authenticationService;
   private final PageService pageService = new PageService(100); // ← Number of wines per page = 100
   @FXML
   TableView<Wine> tableView;
@@ -78,10 +73,8 @@ public class WineScreenController extends Controller {
    *
    * @param managerContext manager context
    */
-  public WineScreenController(ManagerContext managerContext,
-      AuthenticationService authenticationService) {
+  public WineScreenController(ManagerContext managerContext) {
     super(managerContext);
-    this.authenticationService = authenticationService;
   }
 
   /**
@@ -149,7 +142,9 @@ public class WineScreenController extends Controller {
         }
 
         if (w.getVintage() < minVintage) {
-          minVintage = w.getVintage();
+          if (w.getVintage() != -1) {
+            minVintage = w.getVintage();
+          }
         }
 
         if (w.getPrice() > maxPrice) {
@@ -192,6 +187,12 @@ public class WineScreenController extends Controller {
       // Ensure the sliders display properly
       scoreSlider.setMajorTickUnit(1);
       vintageSlider.setMajorTickUnit(1);
+      vintageSlider.setMinorTickCount(0);
+
+      YearStringConverter yearStringConverter = new YearStringConverter();
+      vintageSlider.setLabelFormatter(yearStringConverter);
+
+
     }
 
   }
@@ -216,7 +217,7 @@ public class WineScreenController extends Controller {
     TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
     TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
     TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
-    TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
+    //TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
     TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
     TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
     TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
@@ -227,13 +228,13 @@ public class WineScreenController extends Controller {
     regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));
     colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
     vintageColumn.setCellValueFactory(new PropertyValueFactory<>("vintage"));
-    descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+    //descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
     scoreColumn.setCellValueFactory(new PropertyValueFactory<>("scorePercent"));
     abvColumn.setCellValueFactory(new PropertyValueFactory<>("abv"));
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
     // Enable editing if admin
-    if (authenticationService.isAdmin()) {
+    if (managerContext.authenticationManager.isAdmin()) {
       titleColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       varietyColumn.setCellFactory(
@@ -245,8 +246,8 @@ public class WineScreenController extends Controller {
       colorColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       vintageColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
-      descriptionColumn.setCellFactory(
-          wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      //descriptionColumn.setCellFactory(
+          //wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       scoreColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
       abvColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
       priceColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
@@ -258,7 +259,7 @@ public class WineScreenController extends Controller {
     tableView.getColumns().add(regionColumn);
     tableView.getColumns().add(colorColumn);
     tableView.getColumns().add(vintageColumn);
-    tableView.getColumns().add(descriptionColumn);
+    //tableView.getColumns().add(descriptionColumn);
     tableView.getColumns().add(scoreColumn);
     tableView.getColumns().add(abvColumn);
     tableView.getColumns().add(priceColumn);
@@ -272,16 +273,18 @@ public class WineScreenController extends Controller {
    */
   @Override
   public void init() {
+    // Create AutoCompleteBoxes
+    this.countryTextField = createAutoCompleteTextField(9.0, 105.0);
+    this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
+    this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
+
     // Create sliders
     this.vintageSlider = createSlider(11, 290, 0, 100, 10);
     this.scoreSlider = createSlider(11, 365, 0, 100, 10);
     this.abvSlider = createSlider(11, 445, 0, 100, 10);
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
 
-    // Create AutoCompleteBoxes
-    this.countryTextField = createAutoCompleteTextField(9.0, 105.0);
-    this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
-    this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
+
 
     // Set snap to ticks
     vintageSlider.setSnapToTicks(true);
@@ -402,34 +405,14 @@ public class WineScreenController extends Controller {
   @FXML
   public void openWineOnClick(MouseEvent event) {
     if (event.getClickCount() == 2) {
-      try {
-        createWineDialog(tableView.getSelectionModel().getSelectedItem());
-      } catch (IOException e) {
-        LogManager.getLogger().error("Unable to create wine dialog", e);
+
+      Wine wine = tableView.getSelectionModel().getSelectedItem();
+      if(wine != null) {
+
+        Runnable backAction = () -> managerContext.GUIManager.mainController.openWineScreen();
+        managerContext.GUIManager.mainController.openDetailedWineView(wine, backAction);
       }
     }
-  }
-
-  private void createWineDialog(Wine wine) throws IOException {
-
-    FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/detailed_view.fxml"));
-    baseLoader.setControllerFactory(
-        param -> new DetailedViewController(managerContext, authenticationService));
-
-    Parent root = baseLoader.load();
-    Stage stage = new Stage();
-    stage.setTitle(wine.getTitle());
-    Scene scene = new Scene(root, 500, 700);
-    stage.setScene(scene);
-    stage.setResizable(false);
-
-    DetailedViewController detailedViewController = baseLoader.getController();
-    detailedViewController.setWine(wine);
-    detailedViewController.init();
-
-    managerContext.GUIManager.mainController.setWholePageInteractable(false);
-    stage.showAndWait();
-    managerContext.GUIManager.mainController.setWholePageInteractable(true);
   }
 
   public void ensureValidPageNumber() {

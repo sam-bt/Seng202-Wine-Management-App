@@ -4,6 +4,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,17 +12,22 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Properties;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.model.Filters;
 import seng202.team6.model.GeoLocation;
+import seng202.team6.model.Note;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
+import seng202.team6.model.WineReview;
 import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.ProcessCSV;
+import seng202.team6.util.RegexProcessor;
 
 
 /**
@@ -33,6 +39,8 @@ public class DatabaseManager implements AutoCloseable {
    * Logger for the DatabaseManager class
    */
   private final Logger log = LogManager.getLogger(getClass());
+  private boolean getVintageFromTitle = true;
+  private RegexProcessor regexp = new RegexProcessor();
 
   /**
    * Database connection
@@ -68,13 +76,22 @@ public class DatabaseManager implements AutoCloseable {
     }
 
     String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + databaseFileName;
-    this.connection = DriverManager.getConnection(dbPath);
+    Properties properties = new Properties();
+    properties.setProperty("foreign_keys", "true");
+    connection = DriverManager.getConnection(dbPath, properties);
+    if (useWal) {
+      try (Statement statement = connection.createStatement()) {
+        statement.execute("pragma journal_mode=wal");
+      }
+    }
+
     createWinesTable();
     createUsersTable();
     createGeolocationTable();
     createNotesTable();
     addGeolocations();
     createWineListsTable();
+    createWineReviewTable();
 
     try (Statement statement = connection.createStatement()) {
       if (useWal) {
@@ -195,6 +212,76 @@ public class DatabaseManager implements AutoCloseable {
   }
 
   /**
+   * Gets a subset of the wines in the database
+   * <p>
+   * The order of elements should remain stable until a write operation occurs.
+   * </p>
+   *
+   * @param begin beginning element
+   * @param end   end element (begin + size)
+   * @return subset list of wines
+   */
+  public ObservableList<Wine> getWinesInRangeWithReviewInfo(int begin, int end) {
+    long milliseconds = System.currentTimeMillis();
+    ObservableList<Wine> wines = FXCollections.observableArrayList();
+    String query = "select WINE.ID, "
+        + "WINE.TITLE, "
+        + "WINE.VARIETY, "
+        + "WINE.COUNTRY, "
+        + "WINE.REGION, "
+        + "WINE.WINERY, "
+        + "WINE.COLOR, "
+        + "WINE.VINTAGE, "
+        + "WINE.DESCRIPTION, "
+        + "WINE.SCORE_PERCENT, "
+        + "WINE.ABV, "
+        + "WINE.PRICE, "
+        + "GEOLOCATION.LATITUDE, "
+        + "GEOLOCATION.LONGITUDE, "
+        + "COUNT(WINE_REVIEW.ID) AS review_count, "
+        + "AVG(WINE_REVIEW.RATING) AS average_rating from WINE "
+        + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+        + "LEFT JOIN WINE_REVIEW ON WINE.ID = WINE_REVIEW.WINE_ID "
+        + "order by WINE.ID "
+        + "limit ? "
+        + "offset ?;";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setInt(1, end - begin);
+      statement.setInt(2, begin);
+
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        GeoLocation geoLocation = createGeoLocation(set);
+        Wine wine = new Wine(
+            set.getLong("ID"),
+            this,
+            set.getString("TITLE"),
+            set.getString("VARIETY"),
+            set.getString("COUNTRY"),
+            set.getString("REGION"),
+            set.getString("WINERY"),
+            set.getString("COLOR"),
+            set.getInt("VINTAGE"),
+            set.getString("DESCRIPTION"),
+            set.getInt("SCORE_PERCENT"),
+            set.getFloat("ABV"),
+            set.getFloat("PRICE"),
+            geoLocation,
+            set.getInt("review_count"),
+            set.getDouble("average_rating")
+        );
+        wines.add(wine);
+      }
+
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    LogManager.getLogger(getClass())
+        .info("Time to process getWinesInRange: {}", System.currentTimeMillis() - milliseconds);
+    return wines;
+  }
+
+  /**
    * Gets a subset of the wines in the database with a Map for filtering
    * <p>
    * The order of elements should remain stable until a write operation occurs.
@@ -228,7 +315,7 @@ public class DatabaseManager implements AutoCloseable {
       statement.setString(paramIndex++,
           filters.getTitle().isEmpty() ? "%" : "%" + filters.getTitle() + "%");
       statement.setString(paramIndex++,
-          filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry());
+          filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry() + "%");
       statement.setString(paramIndex++,
           filters.getWinery().isEmpty() ? "%" : "%" + filters.getWinery() + "%");
       statement.setString(paramIndex++,
@@ -321,7 +408,7 @@ public class DatabaseManager implements AutoCloseable {
    * @throws SQLException if a database error occurs
    */
   public void removeWines() throws SQLException {
-    String delete = "delete from WINE;";
+    String delete = "DELETE FROM WINE;";
     try (Statement statement = connection.createStatement()) {
       statement.executeUpdate(delete);
     }
@@ -337,6 +424,9 @@ public class DatabaseManager implements AutoCloseable {
     long milliseconds = System.currentTimeMillis();
     // null key is auto generated
     String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    connection.setAutoCommit(false);
+    int i = 0;
+
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
       for (Wine wine : list) {
         insertStatement.setString(1, wine.getTitle());
@@ -345,14 +435,25 @@ public class DatabaseManager implements AutoCloseable {
         insertStatement.setString(4, wine.getRegion());
         insertStatement.setString(5, wine.getWinery());
         insertStatement.setString(6, wine.getColor());
-        insertStatement.setInt(7, wine.getVintage());
+        if (wine.getVintage() == 0) {
+          insertStatement.setInt(7, Integer.parseInt(regexp.extractYearFromString(wine.getTitle())));
+        } else {
+          insertStatement.setInt(7, wine.getVintage());
+        }
         insertStatement.setString(8, wine.getDescription());
         insertStatement.setInt(9, wine.getScorePercent());
         insertStatement.setFloat(10, wine.getAbv());
         insertStatement.setFloat(11, wine.getPrice());
         insertStatement.addBatch();
+        // Execute in batches to avoid building a massive string
+        if (i++ % 2048 == 0) {
+          insertStatement.executeBatch();
+        }
       }
       insertStatement.executeBatch();
+      connection.commit();
+    } finally {
+      connection.setAutoCommit(true);
     }
     LogManager.getLogger(getClass())
         .info("Time to process addWines: {}", System.currentTimeMillis() - milliseconds);
@@ -507,30 +608,26 @@ public class DatabaseManager implements AutoCloseable {
       log.error("Could not add geolocations to the database", error);
     }
 
-    try {
-      query = "INSERT INTO GEOLOCATION values (?, ?, ?);";
+    query = "INSERT INTO GEOLOCATION values (?, ?, ?);";
 
-      ArrayList<String[]> rows = ProcessCSV.getCSVRows(
-          getClass().getResourceAsStream("/nz_geolocations.csv"));
+    List<String[]> rows = ProcessCSV.getCSVRows(
+        getClass().getResourceAsStream("/nz_geolocations.csv"));
 
-      try (PreparedStatement statement = connection.prepareStatement(query)) {
-        for (int i = 1; i < rows.size(); i++) {
-          String[] row = rows.get(i);
-          String name = row[0];
-          double latitude = Double.parseDouble(row[1]);
-          double longitude = Double.parseDouble(row[2]);
-          int queryIndex = 1;
-          statement.setString(queryIndex++, name);
-          statement.setDouble(queryIndex++, latitude);
-          statement.setDouble(queryIndex++, longitude);
-          statement.addBatch();
-        }
-        statement.executeBatch();
-      } catch (SQLException error) {
-        log.error("Could not add geolocations to the database", error);
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      for (int i = 1; i < rows.size(); i++) {
+        String[] row = rows.get(i);
+        String name = row[0];
+        double latitude = Double.parseDouble(row[1]);
+        double longitude = Double.parseDouble(row[2]);
+        int queryIndex = 1;
+        statement.setString(queryIndex++, name);
+        statement.setDouble(queryIndex++, latitude);
+        statement.setDouble(queryIndex++, longitude);
+        statement.addBatch();
       }
-    } catch (CsvValidationException | IOException e) {
-      throw new RuntimeException(e);
+      statement.executeBatch();
+    } catch (SQLException error) {
+      log.error("Could not add geolocations to the database", error);
     }
   }
 
@@ -687,7 +784,10 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  private void createNotesTable() throws SQLException {
+  /**
+   * Initialises the NOTE table
+   */
+  private void createNotesTable() {
     String create = "create table if not exists NOTES (" +
             "ID INTEGER PRIMARY KEY," +
             "USERNAME varchar(64) NOT NULL," +
@@ -695,22 +795,71 @@ public class DatabaseManager implements AutoCloseable {
             "NOTE text);";
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
+    } catch (SQLException error) {
+      log.error("Failed to create NOTE table!");
+      log.error(error.getMessage());
     }
   }
 
-  public void writeNoteToTable(String note, long wineID, String user) throws SQLException {
-    String insert = "INSERT INTO NOTES VALUES (null, ?, ?, ?)";
-    try (PreparedStatement statement = connection.prepareStatement(insert)) {
-      statement.setString(1, user);
-      statement.setLong(2, wineID);
-      statement.setString(3, note);
-      statement.executeUpdate();
+
+  /**
+   * This function replaces the two that I had used earlier. It checks for an existing record and sends the correct query rather than requiring the controller to do the logic
+   * @param wineID the primary key of the wine associated with the note
+   * @param user the username of the user associated with the note
+   * @param note the text of the note itself.
+   */
+  public void saveNote(long wineID, String user, String note) {
+    String find = "SELECT * FROM NOTES WHERE WINE_ID = ? AND USERNAME = ?";
+    boolean noteExists = false;
+    try (PreparedStatement statement = connection.prepareStatement(find)) {
+      statement.setLong(1, wineID);
+      statement.setString(2, user);
+
+      ResultSet set = statement.executeQuery();
+      if (set.next()) {
+        noteExists = true;
+      } else {
+        noteExists = false;
+      }
     } catch (SQLException e) {
-      log.error("Failed to add note to table");
+      log.error("Checking for existing note failed!");
+      log.error(e.getMessage());
     }
+
+    if (noteExists) {
+      String update = "UPDATE NOTES SET NOTE = ? WHERE WINE_ID = ? AND USERNAME = ?";
+      try (PreparedStatement statement = connection.prepareStatement(update)) {
+        statement.setString(1, note);
+        statement.setLong(2, wineID);
+        statement.setString(3, user);
+      } catch (SQLException error) {
+        log.error("Could not update note table!");
+        log.error(error.getMessage());
+      }
+    } else {
+      String insert = "INSERT INTO NOTES VALUES (null, ?, ?, ?)";
+      try (PreparedStatement statement = connection.prepareStatement(insert)) {
+        statement.setString(1, user);
+        statement.setLong(2, wineID);
+        statement.setString(3, note);
+        statement.executeUpdate();
+      } catch (SQLException e) {
+        log.error("Failed to add new note to table");
+        log.error(e.getMessage());
+      }
+    }
+
+
   }
 
-  public String getNoteByUserAndWine(String user, long wineID) throws SQLException {
+
+  /**
+   * Retrieves a note from the NOTES table using their username and the primary key of the wine the note is associated with. TODO: Make this return a Note object instead
+   * @param user is a String of the username
+   * @param wineID is the primary key of the wine
+   * @return a String of the notes text.
+   */
+  public String getNoteByUserAndWine(String user, long wineID) {
     String find = "SELECT * FROM NOTES WHERE USERNAME = ? AND WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(find)) {
       statement.setString(1, user);
@@ -723,6 +872,285 @@ public class DatabaseManager implements AutoCloseable {
       return "";
 
     }
+  }
+
+  private void createWineReviewTable() {
+    String create = "CREATE TABLE IF NOT EXISTS WINE_REVIEW ("
+        + "ID INTEGER PRIMARY KEY,"
+        + "USERNAME varchar(64) NOT NULL,"
+        + "WINE_ID INTEGER NOT NULL,"
+        + "RATING DOUBLE NOT NULL,"
+        + "DESCRIPTION VARCHAR(256) NOT NULL,"
+        + "DATE DATE NOT NULL,"
+        + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE,"
+        + "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE"
+        + ")";
+    try (Statement statement = connection.createStatement()) {
+      statement.execute(create);
+    } catch (SQLException error) {
+      log.error("Could not create wine review table", error);
+    }
+  }
+
+  public ObservableList<WineReview> getWineReviews(Wine wine) {
+    ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
+    String query = "SELECT * FROM WINE_REVIEW "
+        + "WHERE WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setLong(1, wine.getKey());
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          WineReview wineReview = new WineReview(
+              resultSet.getLong("ID"),
+              resultSet.getLong("WINE_ID"),
+              resultSet.getString("USERNAME"),
+              resultSet.getDouble("RATING"),
+              resultSet.getString("DESCRIPTION"),
+              resultSet.getDate("DATE")
+          );
+          wineReviews.add(wineReview);
+        }
+      }
+    } catch (SQLException error) {
+      log.error("Failed to read wine reviews from the database", error);
+    }
+
+    try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM WINE_REVIEW")) {
+      ResultSet resultSet = statement.executeQuery();
+      while (resultSet.next()) {
+        // fixme EMPTY
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    return wineReviews;
+  }
+
+  public WineReview addWineReview(String username, long wineId, double rating, String description) {
+    String insert = "INSERT INTO WINE_REVIEW "
+        + "VALUES (null, ?, ?, ?, ?, ?)";
+    Date currentDate = new Date(System.currentTimeMillis());
+    try (PreparedStatement statement = connection.prepareStatement(insert)) {
+      statement.setString(1, username);
+      statement.setLong(2, wineId);
+      statement.setDouble(3, rating);
+      statement.setString(4, description);
+      statement.setDate(5, currentDate); // current date
+
+      int rowsChanged = statement.executeUpdate();
+      if (rowsChanged > 0) {
+        try (ResultSet resultSet = statement.getGeneratedKeys()) {
+          if (resultSet.next()) {
+            return new WineReview(
+                resultSet.getLong(1),
+                wineId,
+                username,
+                rating,
+                description,
+                currentDate
+            );
+          }
+        }
+      }
+    } catch (SQLException error) {
+      log.error("Failed to add a review to the database", error);
+      return null;
+    }
+    log.error("Failed to add a review to the database");
+    return null;
+  }
+
+  public void removeWineReview(WineReview wineReview) {
+    String remove = "DELETE FROM WINE_REVIEW "
+        + "WHERE USERNAME = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(remove)) {
+      statement.setString(1, wineReview.getUsername());
+      statement.setLong(2, wineReview.getWineID());
+      statement.execute();
+    } catch (SQLException error) {
+      log.error("Failed to remove a review from the database", error);
+    }
+  }
+
+  public void updateWineReview(String username, long wineId, double rating, String description) {
+    String update = "UPDATE WINE_REVIEW "
+        + "SET RATING = ?, DESCRIPTION = ?, DATE = ? "
+        + "WHERE USERNAME = ? AND WINE_ID = ?";
+    Date currentDate = new Date(System.currentTimeMillis());
+    try (PreparedStatement statement = connection.prepareStatement(update)) {
+      statement.setDouble(1, rating);
+      statement.setString(2, description);
+      statement.setDate(3, currentDate);
+      statement.setString(4, username);
+      statement.setLong(5, wineId);
+      statement.execute();
+    } catch (SQLException error) {
+      log.error("Failed to add a review to the database", error);
+    }
+  }
+
+  /**
+   * Gets a subset of the reviews in the database
+   * <p>
+   * The order of elements should remain stable until a write operation occurs.
+   * </p>
+   *
+   * @param begin beginning element
+   * @param end   end element (begin + size)
+   * @return subset list of reviews
+   */
+  public ObservableList<WineReview> getReviewsInRange(int begin, int end) {
+    long milliseconds = System.currentTimeMillis();
+    ObservableList<WineReview> reviews = FXCollections.observableArrayList();
+    String query = "SELECT WINE_REVIEW.ID, WINE_REVIEW.WINE_ID , WINE_REVIEW.USERNAME, WINE_REVIEW.RATING, WINE_REVIEW.DESCRIPTION, WINE_REVIEW.DATE, WINE.TITLE from WINE_REVIEW "
+        + "JOIN WINE ON WINE_REVIEW.WINE_ID = WINE.ID "
+        + "order by WINE_REVIEW.ID "
+        + "limit ? "
+        + "offset ?;";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setInt(1, end - begin);
+      statement.setInt(2, begin);
+
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        WineReview review = new WineReview(
+            set.getLong("ID"),
+            set.getLong("WINE_ID"),
+            set.getString("USERNAME"),
+            set.getDouble("RATING"),
+            set.getString("DESCRIPTION"),
+            set.getDate("DATE"),
+            set.getString("TITLE")
+        );
+        reviews.add(review);
+      }
+
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    LogManager.getLogger(getClass())
+        .info("Time to process getReviewsInRange: {}", System.currentTimeMillis() - milliseconds);
+    return reviews;
+  }
+
+  public Wine getWineWithReviewInfoById(long wineId) {
+    long milliseconds = System.currentTimeMillis();
+    Wine wine = null;
+    String query = "select WINE.ID, "
+        + "WINE.TITLE, "
+        + "WINE.VARIETY, "
+        + "WINE.COUNTRY, "
+        + "WINE.REGION, "
+        + "WINE.WINERY, "
+        + "WINE.COLOR, "
+        + "WINE.VINTAGE, "
+        + "WINE.DESCRIPTION, "
+        + "WINE.SCORE_PERCENT, "
+        + "WINE.ABV, "
+        + "WINE.PRICE, "
+        + "GEOLOCATION.LATITUDE, "
+        + "GEOLOCATION.LONGITUDE, "
+        + "COUNT(WINE_REVIEW.ID) AS review_count, "
+        + "AVG(WINE_REVIEW.RATING) AS average_rating from WINE "
+        + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+        + "LEFT JOIN WINE_REVIEW ON WINE.ID = WINE_REVIEW.WINE_ID "
+        + "WHERE WINE.ID = ?;";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setLong(1, wineId);
+
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        GeoLocation geoLocation = createGeoLocation(set);
+        wine = new Wine(
+            set.getLong("ID"),
+            this,
+            set.getString("TITLE"),
+            set.getString("VARIETY"),
+            set.getString("COUNTRY"),
+            set.getString("REGION"),
+            set.getString("WINERY"),
+            set.getString("COLOR"),
+            set.getInt("VINTAGE"),
+            set.getString("DESCRIPTION"),
+            set.getInt("SCORE_PERCENT"),
+            set.getFloat("ABV"),
+            set.getFloat("PRICE"),
+            geoLocation,
+            set.getInt("review_count"),
+            set.getDouble("average_rating")
+        );
+
+    }} catch (SQLException e){
+        throw new RuntimeException(e);
+      }
+      if (wine == null) {
+        throw new NoSuchElementException("No wine found with ID: " + wineId);
+      }
+
+    LogManager.getLogger(getClass())
+        .info("Time to process getReviewsInRange: {}", System.currentTimeMillis() - milliseconds);
+    return wine;
+  }
+
+  /**
+   * Deletes a note from the table
+   * @param wineID is the primary key of the wine, and
+   * @param user is a String of the username you want to remove a note for.
+   *             These two together uniquely identify a given note for deletion
+   */
+  public void deleteNote(long wineID, String user) {
+    String delete = "DELETE FROM NOTES WHERE USERNAME = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(delete)) {
+      statement.setString(1, user);
+      statement.setLong(2, wineID);
+      statement.executeUpdate();
+
+    } catch (SQLException error) {
+      log.error("Failed to delete note");
+      log.error(error.getMessage());
+    }
+  }
+
+  /**
+   * Gets a list of all notes created by the given user
+   * @param user is a String of the username you want to get notes for
+   * @return an ObservableList<String> of all notes created by a user
+   */
+  public ObservableList<Note> getNotesByUser(String user) {
+    ObservableList<Note> notes = FXCollections.observableArrayList();
+    String find = "SELECT * FROM NOTES WHERE USERNAME = ?";
+    try (PreparedStatement statement = connection.prepareStatement(find)) {
+      statement.setString(1, user);
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        notes.add(new Note(set.getString("NOTE"), set.getLong("WINE_ID"), user, this));
+      }
+    } catch (SQLException e) {
+      log.warn("Error fetching notes");
+    }
+
+    return notes;
+
+  }
+
+
+
+  /**
+   * Gets a wines title using its id. TODO: This will instead return a wine object
+   * @param wineID is the primary key of the wine you wish to retrieve
+   * @return the title of the wine as a string
+   */
+  public String getWineTitleByID(long wineID) {
+    String find = "SELECT * FROM WINE WHERE ID = ?";
+
+    try (PreparedStatement statement = connection.prepareStatement(find)) {
+      statement.setLong(1, wineID);
+      ResultSet set = statement.executeQuery();
+      return set.getString("TITLE");
+    } catch (SQLException error) {
+      log.error("Failed to retrieve wine from ID!");
+    }
+    return "Title Not Found";
   }
 
   /**

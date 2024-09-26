@@ -1,0 +1,8 @@
+.scroll-bar {
+  -fx-font-size: 12px;
+}
+
+.scroll-pane {
+   -fx-border-color: #FFFFFF;
+   -fx-background-color: white;
+}

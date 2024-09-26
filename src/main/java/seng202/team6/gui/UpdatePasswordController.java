@@ -6,7 +6,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.AuthenticationResponse;
-import seng202.team6.service.AuthenticationService;
 
 public class UpdatePasswordController extends Controller {
 
@@ -19,9 +18,7 @@ public class UpdatePasswordController extends Controller {
   @FXML
   private Label updateMessageLabel;
   @FXML
-  private TitledPane titlePane;
-
-  private final AuthenticationService authenticationService;
+  private TitledPane titledPane;
 
   private boolean disabled;
 
@@ -30,32 +27,31 @@ public class UpdatePasswordController extends Controller {
    *
    * @param managerContext manager context
    */
-  public UpdatePasswordController(ManagerContext managerContext,
-      AuthenticationService authenticationService) {
+  public UpdatePasswordController(ManagerContext managerContext) {
     super(managerContext);
-    this.authenticationService = authenticationService;
   }
 
   public void initialize() {
     disabled = managerContext.GUIManager.mainController.isDisabled();
     if (disabled) {
-      titlePane.setText("First time admin login, please change password");
+      titledPane.setText("First time admin login, please change password");
     }
   }
 
   @FXML
   private void onConfirm() {
-    String username = authenticationService.getAuthenticatedUsername();
+    String username = managerContext.authenticationManager.getAuthenticatedUsername();
     String oldPassword = oldPasswordField.getText();
     String newPassword = newPasswordField.getText();
     String confirmNewPassword = confirmNewPasswordField.getText();
-    AuthenticationResponse response = authenticationService.validateUpdate(username, oldPassword, newPassword, confirmNewPassword);
+    AuthenticationResponse response = managerContext.authenticationManager.validateUpdate(
+        username, oldPassword, newPassword, confirmNewPassword);
     if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
       managerContext.GUIManager.mainController.openWineScreen();
-      if (authenticationService.isAdminFirstLogin()) {
+      if (managerContext.authenticationManager.isAdminFirstLogin()) {
         managerContext.GUIManager.mainController.onLogin();
         managerContext.GUIManager.mainController.setDisable(false);
-        authenticationService.setAdminFirstLogin(false);
+        managerContext.authenticationManager.setAdminFirstLogin(false);
         disabled = true;
       }
     } else {
