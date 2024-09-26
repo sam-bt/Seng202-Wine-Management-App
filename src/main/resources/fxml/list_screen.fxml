@@ -21,7 +21,7 @@
   stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/21.0.1"
   fx:controller="seng202.team6.gui.ListScreenController">
   <children>
-    <TabPane layoutX="332.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../../../../build/resources/main/css/tabs_pane.css"
+    <TabPane layoutX="332.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css"
       tabClosingPolicy="UNAVAILABLE"
       tabMinHeight="50.0" fx:id="listScreenTabs">
       <tabs>
