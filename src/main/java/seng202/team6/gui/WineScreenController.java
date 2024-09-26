@@ -298,9 +298,11 @@ public class WineScreenController extends Controller {
     VBox wrapper = new VBox();
     wrapper.setPadding(new Insets(10));
     wrapper.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
-//    wrapper.setStyle("-fx-border-width: 1; "
-//        + "-fx-border-color: black; "
-//        + "-fx-border-insets: 10;");
+    wrapper.setOnMouseClicked(event -> {
+      if (event.getClickCount() == 2) {
+        openDetailedWineView(wine);
+      }
+    });
 
     Image wineImage = wineImages.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
     ImageView imageView = new ImageView(wineImage);
@@ -450,15 +452,16 @@ public class WineScreenController extends Controller {
 
   @FXML
   public void openWineOnClick(MouseEvent event) {
-    if (event.getClickCount() == 2) {
-
+    if (event.getClickCount() != 2) {
       Wine wine = tableView.getSelectionModel().getSelectedItem();
-      if(wine != null) {
-
-        Runnable backAction = () -> managerContext.GUIManager.mainController.openWineScreen();
-        managerContext.GUIManager.mainController.openDetailedWineView(wine, backAction);
+      if (wine != null) {
+        openDetailedWineView(wine);
       }
     }
   }
 
+  private void openDetailedWineView(Wine wine) {
+    Runnable backAction = () -> managerContext.GUIManager.mainController.openWineScreen();
+    managerContext.GUIManager.mainController.openDetailedWineView(wine, backAction);
+  }
 }
