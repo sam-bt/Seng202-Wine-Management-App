@@ -12,6 +12,13 @@ cucumber:
   script:
     - ./gradlew cucumber
 
+ban_print_statements:
+  stage: test
+  before_script:
+    - cd scripts
+  script:
+    - ./ban_print_statements.sh
+
 generate_artifacts:
   stage: deploy
   script:

@@ -12,6 +12,9 @@ import seng202.team6.managers.DatabaseManager;
 
 /**
  * Wine represents the wine record in the database
+ * <p>
+ *   There must only be one wine per id. This is assured by the database
+ * </p>
  */
 public class Wine {
 
