@@ -18,6 +18,7 @@ public class WineReview {
   private final DoubleProperty rating;
   private final StringProperty description;
   private final Property<Date> date;
+  private StringProperty wineName;
 
   public WineReview(
       long id,
@@ -33,6 +34,24 @@ public class WineReview {
     this.rating = new SimpleDoubleProperty(rating);
     this.description = new SimpleStringProperty(description);
     this.date = new SimpleObjectProperty<>(date);
+  }
+
+  public WineReview(
+      long id,
+      long wineId,
+      String username,
+      double rating,
+      String description,
+      Date date,
+      String wineName
+  ) {
+    this.id = new ReadOnlyLongWrapper(wineId);
+    this.wineId = new ReadOnlyLongWrapper(wineId);
+    this.username = new ReadOnlyStringWrapper(username);
+    this.rating = new SimpleDoubleProperty(rating);
+    this.description = new SimpleStringProperty(description);
+    this.date = new SimpleObjectProperty<>(date);
+    this.wineName = new SimpleStringProperty(wineName);
   }
 
   public long getID() {
@@ -90,4 +109,6 @@ public class WineReview {
   public Property<Date> dateProperty() {
     return date;
   }
+
+  public StringProperty getWineName() { return wineName; }
 }

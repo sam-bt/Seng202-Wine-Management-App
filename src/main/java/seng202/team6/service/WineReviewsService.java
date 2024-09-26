@@ -55,6 +55,10 @@ public class WineReviewsService {
     }
   }
 
+//  public WineReview getReviewByUsernameAndWineID(String username, long wineId) {
+//    return databaseManager.get
+//  }
+
   public void deleteUsersReview() {
     WineReview wineReview = getUsersReview();
     if (wineReview != null) {
