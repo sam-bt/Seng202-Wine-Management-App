@@ -10,14 +10,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import seng202.team6.gui.Controller;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
-import seng202.team6.service.AuthenticationService;
 import seng202.team6.service.WineListService;
 
 public class AddToListPopupController extends Controller {
@@ -28,11 +26,10 @@ public class AddToListPopupController extends Controller {
   private final ObservableMap<WineList, VBox> wineListWrappers = FXCollections.observableHashMap();
   private final Wine wine;
 
-  public AddToListPopupController(ManagerContext context, AuthenticationService authenticationService,
-      Wine wine) {
+  public AddToListPopupController(ManagerContext context, Wine wine) {
     super(context);
     this.wine = wine;
-    this.wineListService = new WineListService(authenticationService, context.databaseManager);
+    this.wineListService = new WineListService(context.authenticationManager, context.databaseManager);
     bindToWineListService();
   }
 

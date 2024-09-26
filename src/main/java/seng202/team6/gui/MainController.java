@@ -251,7 +251,7 @@ public class MainController extends Controller {
 
   public void openAddToListPopup(Wine wine) {
     openPopup("/fxml/popup/add_to_list_popup.fxml",
-        () -> new AddToListPopupController(managerContext, authenticationService, wine));
+        () -> new AddToListPopupController(managerContext, wine));
   }
 
 
