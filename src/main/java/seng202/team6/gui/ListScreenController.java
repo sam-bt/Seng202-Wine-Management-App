@@ -107,8 +107,10 @@ public class ListScreenController extends Controller {
 
       buttonList.getChildren().add(button);
     }
+
+    deleteListRequestButton.setDisable(!canRemoveWineList(wineLists.get(selected)));
+
     createListRequestButton.setDisable(false);
-    deleteListRequestButton.setDisable(wineLists.size() <= 2);
   }
 
   /**
