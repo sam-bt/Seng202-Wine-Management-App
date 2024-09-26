@@ -1,11 +1,13 @@
 package seng202.team6.gui;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.application.Platform.*;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.AuthenticationResponse;
 
@@ -50,6 +52,7 @@ public class LoginController extends Controller {
         login();
       }
     });
+    Platform.runLater(() -> usernameField.requestFocus());
   }
 
 
