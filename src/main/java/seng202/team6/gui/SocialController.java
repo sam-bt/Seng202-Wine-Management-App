@@ -165,7 +165,6 @@ public class SocialController extends Controller{
           setGraphic(null);
         } else {
           starBox.getChildren().clear();
-          System.out.println("Adding stars for rating: " + rating);
           Rating ratingStars = setRating(rating);
           starBox.getChildren().addFirst(ratingStars);
           setGraphic(starBox);

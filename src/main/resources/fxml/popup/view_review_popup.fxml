@@ -14,7 +14,7 @@
 
 <AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" styleClass="popup" stylesheets="@../../css/popup_pane_action_blocker.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.popup.ReviewViewPopupController">
   <children>
-    <TitledPane fx:id="createModifyReviewTitlePane" animated="false" collapsible="false" layoutX="457.0" layoutY="198.0" maxWidth="456.0" minWidth="456.0" prefHeight="384.0" prefWidth="456.0" stylesheets="@../../css/titled_pane.css" text="Review by {user} for {wine}">
+    <TitledPane fx:id="reviewTitlePane" animated="false" collapsible="false" layoutX="457.0" layoutY="198.0" maxWidth="456.0" minWidth="456.0" prefHeight="384.0" prefWidth="456.0" stylesheets="@../../css/titled_pane.css" text="Review by {user} for {wine}">
       <font>
         <Font name="System Bold" size="16.0" />
       </font>
@@ -24,16 +24,17 @@
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           </columnConstraints>
           <rowConstraints>
-                  <RowConstraints maxHeight="81.0" minHeight="50.0" prefHeight="66.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="66.0" minHeight="30.0" prefHeight="39.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="97.0" minHeight="50.0" prefHeight="61.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="29.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="97.0" minHeight="10.0" prefHeight="89.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="81.0" minHeight="26.0" prefHeight="41.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="82.0" minHeight="23.0" prefHeight="23.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="66.0" minHeight="30.0" prefHeight="47.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="97.0" minHeight="42.0" prefHeight="42.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="97.0" minHeight="10.0" prefHeight="84.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="63.0" vgrow="SOMETIMES" />
           </rowConstraints>
           <children>
-                  <Label fx:id="descriptionLabel" alignment="TOP_LEFT" ellipsisString="" prefHeight="80.0" prefWidth="428.0" wrapText="true" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
-            <Label text="Rating" GridPane.rowIndex="1">
+                  <Label fx:id="descriptionLabel" alignment="TOP_LEFT" ellipsisString="" prefHeight="80.0" prefWidth="428.0" wrapText="true" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+            <Label text="Rating" GridPane.rowIndex="2">
               <font>
                 <Font size="16.0" />
               </font>
@@ -41,8 +42,8 @@
                         <Insets />
                      </GridPane.margin>
             </Label>
-            <Pane fx:id="ratingPane" maxHeight="45.0" maxWidth="284.0" minHeight="45.0" minWidth="284.0" prefHeight="45.0" prefWidth="284.0" GridPane.rowIndex="2" />
-            <Label text="Description" GridPane.rowIndex="3">
+            <Pane fx:id="ratingPane" maxHeight="45.0" maxWidth="284.0" minHeight="45.0" minWidth="284.0" prefHeight="45.0" prefWidth="284.0" GridPane.rowIndex="3" GridPane.valignment="TOP" />
+            <Label text="Description" GridPane.rowIndex="4">
               <font>
                 <Font size="16.0" />
               </font>
@@ -50,7 +51,7 @@
                         <Insets />
                      </GridPane.margin>
             </Label>
-            <HBox fx:id="buttonsContainer" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="5">
+            <HBox fx:id="buttonsContainer" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="6">
               <children>
                 <Button fx:id="backButton" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onMouseClicked="#onBackButtonClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Back">
                   <font>
@@ -78,6 +79,17 @@
                 </Button>
               </children>
             </HBox>
+                  <Label prefHeight="20.0" prefWidth="112.0" text="Date Published">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="dateLabel" alignment="TOP_LEFT" ellipsisString="" prefHeight="23.0" prefWidth="185.0" wrapText="true" GridPane.rowIndex="1" />
+                  <Label alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="191.0" text="Likes" GridPane.halignment="CENTER">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
           </children>
         </GridPane>
       </content>

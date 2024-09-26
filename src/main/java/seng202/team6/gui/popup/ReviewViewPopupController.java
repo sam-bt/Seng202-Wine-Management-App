@@ -26,9 +26,14 @@ public class ReviewViewPopupController extends Controller {
   @FXML
   private Button wineButton;
 
+  @FXML
+  private TitledPane reviewTitlePane;
 
   @FXML
   private Label descriptionLabel;
+
+  @FXML
+  private Label dateLabel;
 
   private final WineReviewsService wineReviewsService;
   private final User reviewer;
@@ -43,6 +48,9 @@ public class ReviewViewPopupController extends Controller {
 
   @Override
   public void init() { // TODO add your personal rating to this screen
+
+    reviewTitlePane.setText("Review by "+reviewer.getUsername()+" for "+ selectedReview.getWineName().get());
+    dateLabel.setText(selectedReview.getDate().toString());
 
     Rating ratingStars = new Rating();
     ratingStars.setUpdateOnHover(false);
