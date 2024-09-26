@@ -61,8 +61,8 @@ public class UserManagementController extends Controller {
     private void onDeletePressed() {
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setTitle("Confirm Deletion");
-        confirmation.setHeaderText("Deleting: ");
-        confirmation.setContentText("Are you sure you want to delete this note?");
+        confirmation.setHeaderText("Deleting: " + workingUsername);
+        confirmation.setContentText("Are you sure you want to delete this user?");
 
         Optional<ButtonType> result = confirmation.showAndWait();
         if (result.get() == ButtonType.OK) {

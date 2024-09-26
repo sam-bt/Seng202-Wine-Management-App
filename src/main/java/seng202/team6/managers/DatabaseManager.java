@@ -741,7 +741,7 @@ public class DatabaseManager implements AutoCloseable {
             "USERNAME varchar(64) NOT NULL," +
             "WINE_ID int NOT NULL, " +
             "NOTE text, " +
-            "FOREIGN KEY USERNAME REFERENCES USER(USERNAME) ON DELETE CASCADE"
+            "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE"
             + ");";
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
