@@ -33,7 +33,6 @@ public class UserManagementController extends Controller {
 
     @FXML
     private void initialize() {
-        System.out.println("RUNNING");
         ObservableList<String> users = dbman.getUsernames();
         userList.setItems(users);
         userList.setOnMouseClicked(this::selectUser);
