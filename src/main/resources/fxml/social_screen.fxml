@@ -70,16 +70,16 @@
             </Tab>
          </tabs>
       </TabPane>
-      <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../../../../build/resources/main/css/titled_pane.css" text="Options">
+      <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Options">
          <content>
-            <AnchorPane fx:id="filtersPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="316.0" styleClass="filters-pane" stylesheets="@../../../../build/resources/main/css/titled_pane.css">
+            <AnchorPane fx:id="filtersPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="316.0" styleClass="filters-pane" stylesheets="@../css/titled_pane.css">
                <children>
-                  <Button fx:id="listOneButton" disable="true" layoutX="48.0" layoutY="84.0" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Search User">
+                  <Button fx:id="listOneButton" disable="true" layoutX="48.0" layoutY="84.0" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" stylesheets="@../css/global.css" text="Search User">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Button>
-                  <Button fx:id="deleteListRequestButton" disable="true" layoutX="75.0" layoutY="644.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Action">
+                  <Button fx:id="deleteListRequestButton" disable="true" layoutX="75.0" layoutY="644.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Action">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
