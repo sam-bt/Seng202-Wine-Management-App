@@ -26,16 +26,13 @@ public class SocialController extends Controller{
   @FXML
   TableView<WineReview> reviewTableView;
 
-  private final AuthenticationManager authenticationManager;
-
   /**
    * Constructor
    *
    * @param managerContext manager context
    */
-  public SocialController(ManagerContext managerContext, AuthenticationManager authenticationManager) {
-    super(managerContext);
-    this.authenticationManager = authenticationManager; // TODO allow upvotes/downvotes/user search/review search
+  public SocialController(ManagerContext managerContext) {
+    super(managerContext);// TODO allow upvotes/downvotes/user search/review search
   }
   public void init() {
     setupWineTableColumns();
@@ -208,7 +205,7 @@ public class SocialController extends Controller{
 
     Wine selectedWine = managerContext.databaseManager.getWineWithReviewInfoById(selectedReview.getWineID());
     User reviewer = managerContext.databaseManager.getUser(selectedReview.getUsername());
-    WineReviewsService wineReviewsService = new WineReviewsService(authenticationManager, managerContext.databaseManager, selectedWine);
+    WineReviewsService wineReviewsService = new WineReviewsService(managerContext.authenticationManager, managerContext.databaseManager, selectedWine);
     managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview);
   }
 

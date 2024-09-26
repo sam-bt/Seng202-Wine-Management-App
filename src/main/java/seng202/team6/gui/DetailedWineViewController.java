@@ -181,6 +181,11 @@ public class DetailedWineViewController extends Controller {
     managerContext.GUIManager.mainController.openPopupWineReview(wineReviewsService);
   }
 
+  @FXML
+  void onOpenListsButtonClick() {
+    managerContext.GUIManager.mainController.openAddToListPopup(viewedWine);
+  }
+
   private VBox createWineReviewElement(WineReview wineReview) {
     String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
     VBox wrapper = new VBox();

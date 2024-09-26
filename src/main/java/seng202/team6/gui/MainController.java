@@ -11,6 +11,7 @@ import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.gui.popup.ReviewViewPopupController;
+import seng202.team6.gui.popup.AddToListPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.ManagerContext;
@@ -64,7 +65,6 @@ public class MainController extends Controller {
   private final Logger log = LogManager.getLogger(getClass());
 
   private boolean disabled = false;
-  private final AuthenticationManager authenticationManager;
 
   /**
    * Constructor
@@ -76,7 +76,6 @@ public class MainController extends Controller {
 
     // This is an ugly circular dependency. It is easier to resolve here
     managerContext.GUIManager.setMainController(this);
-    authenticationManager = new AuthenticationManager(managerContext.databaseManager);
   }
 
   public void initialize() {
@@ -256,13 +255,19 @@ public class MainController extends Controller {
   @FXML
   public void openSocialScreen() {
     switchScene("/fxml/social_screen.fxml", "Social",
-        () -> new SocialController(managerContext, authenticationManager));
+        () -> new SocialController(managerContext));
   }
 
   public void openPopupWineReview(WineReviewsService wineReviewsService) {
     openPopup("/fxml/popup/review_popup.fxml",
         () -> new WineReviewPopupController(managerContext, wineReviewsService));
   }
+
+  public void openAddToListPopup(Wine wine) {
+    openPopup("/fxml/popup/add_to_list_popup.fxml",
+        () -> new AddToListPopupController(managerContext, wine));
+  }
+
 
   public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer, WineReview selectedReview) {
     openPopup("/fxml/popup/view_review_popup.fxml",
