@@ -13,12 +13,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.model.Filters;
 import seng202.team6.model.GeoLocation;
+import seng202.team6.model.Note;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
@@ -71,7 +73,15 @@ public class DatabaseManager implements AutoCloseable {
     }
 
     String dbPath = "jdbc:sqlite:sqlDatabase" + File.separator + databaseFileName;
-    this.connection = DriverManager.getConnection(dbPath);
+    Properties properties = new Properties();
+    properties.setProperty("foreign_keys", "true");
+    connection = DriverManager.getConnection(dbPath, properties);
+    if (useWal) {
+      try (Statement statement = connection.createStatement()) {
+        statement.execute("pragma journal_mode=wal");
+      }
+    }
+
     createWinesTable();
     createUsersTable();
     createGeolocationTable();
@@ -304,7 +314,7 @@ public class DatabaseManager implements AutoCloseable {
       statement.setString(paramIndex++,
           filters.getTitle().isEmpty() ? "%" : "%" + filters.getTitle() + "%");
       statement.setString(paramIndex++,
-          filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry());
+          filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry() + "%");
       statement.setString(paramIndex++,
           filters.getWinery().isEmpty() ? "%" : "%" + filters.getWinery() + "%");
       statement.setString(paramIndex++,
@@ -592,30 +602,26 @@ public class DatabaseManager implements AutoCloseable {
       log.error("Could not add geolocations to the database", error);
     }
 
-    try {
-      query = "INSERT INTO GEOLOCATION values (?, ?, ?);";
+    query = "INSERT INTO GEOLOCATION values (?, ?, ?);";
 
-      ArrayList<String[]> rows = ProcessCSV.getCSVRows(
-          getClass().getResourceAsStream("/nz_geolocations.csv"));
+    List<String[]> rows = ProcessCSV.getCSVRows(
+        getClass().getResourceAsStream("/nz_geolocations.csv"));
 
-      try (PreparedStatement statement = connection.prepareStatement(query)) {
-        for (int i = 1; i < rows.size(); i++) {
-          String[] row = rows.get(i);
-          String name = row[0];
-          double latitude = Double.parseDouble(row[1]);
-          double longitude = Double.parseDouble(row[2]);
-          int queryIndex = 1;
-          statement.setString(queryIndex++, name);
-          statement.setDouble(queryIndex++, latitude);
-          statement.setDouble(queryIndex++, longitude);
-          statement.addBatch();
-        }
-        statement.executeBatch();
-      } catch (SQLException error) {
-        log.error("Could not add geolocations to the database", error);
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      for (int i = 1; i < rows.size(); i++) {
+        String[] row = rows.get(i);
+        String name = row[0];
+        double latitude = Double.parseDouble(row[1]);
+        double longitude = Double.parseDouble(row[2]);
+        int queryIndex = 1;
+        statement.setString(queryIndex++, name);
+        statement.setDouble(queryIndex++, latitude);
+        statement.setDouble(queryIndex++, longitude);
+        statement.addBatch();
       }
-    } catch (CsvValidationException | IOException e) {
-      throw new RuntimeException(e);
+      statement.executeBatch();
+    } catch (SQLException error) {
+      log.error("Could not add geolocations to the database", error);
     }
   }
 
@@ -772,7 +778,10 @@ public class DatabaseManager implements AutoCloseable {
     }
   }
 
-  private void createNotesTable() throws SQLException {
+  /**
+   * Initialises the NOTE table
+   */
+  private void createNotesTable() {
     String create = "create table if not exists NOTES (" +
             "ID INTEGER PRIMARY KEY," +
             "USERNAME varchar(64) NOT NULL," +
@@ -780,22 +789,71 @@ public class DatabaseManager implements AutoCloseable {
             "NOTE text);";
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
+    } catch (SQLException error) {
+      log.error("Failed to create NOTE table!");
+      log.error(error.getMessage());
     }
   }
 
-  public void writeNoteToTable(String note, long wineID, String user) throws SQLException {
-    String insert = "INSERT INTO NOTES VALUES (null, ?, ?, ?)";
-    try (PreparedStatement statement = connection.prepareStatement(insert)) {
-      statement.setString(1, user);
-      statement.setLong(2, wineID);
-      statement.setString(3, note);
-      statement.executeUpdate();
+
+  /**
+   * This function replaces the two that I had used earlier. It checks for an existing record and sends the correct query rather than requiring the controller to do the logic
+   * @param wineID the primary key of the wine associated with the note
+   * @param user the username of the user associated with the note
+   * @param note the text of the note itself.
+   */
+  public void saveNote(long wineID, String user, String note) {
+    String find = "SELECT * FROM NOTES WHERE WINE_ID = ? AND USERNAME = ?";
+    boolean noteExists = false;
+    try (PreparedStatement statement = connection.prepareStatement(find)) {
+      statement.setLong(1, wineID);
+      statement.setString(2, user);
+
+      ResultSet set = statement.executeQuery();
+      if (set.next()) {
+        noteExists = true;
+      } else {
+        noteExists = false;
+      }
     } catch (SQLException e) {
-      log.error("Failed to add note to table");
+      log.error("Checking for existing note failed!");
+      log.error(e.getMessage());
     }
+
+    if (noteExists) {
+      String update = "UPDATE NOTES SET NOTE = ? WHERE WINE_ID = ? AND USERNAME = ?";
+      try (PreparedStatement statement = connection.prepareStatement(update)) {
+        statement.setString(1, note);
+        statement.setLong(2, wineID);
+        statement.setString(3, user);
+      } catch (SQLException error) {
+        log.error("Could not update note table!");
+        log.error(error.getMessage());
+      }
+    } else {
+      String insert = "INSERT INTO NOTES VALUES (null, ?, ?, ?)";
+      try (PreparedStatement statement = connection.prepareStatement(insert)) {
+        statement.setString(1, user);
+        statement.setLong(2, wineID);
+        statement.setString(3, note);
+        statement.executeUpdate();
+      } catch (SQLException e) {
+        log.error("Failed to add new note to table");
+        log.error(e.getMessage());
+      }
+    }
+
+
   }
 
-  public String getNoteByUserAndWine(String user, long wineID) throws SQLException {
+
+  /**
+   * Retrieves a note from the NOTES table using their username and the primary key of the wine the note is associated with. TODO: Make this return a Note object instead
+   * @param user is a String of the username
+   * @param wineID is the primary key of the wine
+   * @return a String of the notes text.
+   */
+  public String getNoteByUserAndWine(String user, long wineID) {
     String find = "SELECT * FROM NOTES WHERE USERNAME = ? AND WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(find)) {
       statement.setString(1, user);
@@ -1027,10 +1085,71 @@ public class DatabaseManager implements AutoCloseable {
       if (wine == null) {
         throw new NoSuchElementException("No wine found with ID: " + wineId);
       }
-      
+
     LogManager.getLogger(getClass())
         .info("Time to process getReviewsInRange: {}", System.currentTimeMillis() - milliseconds);
     return wine;
+  }
+
+  /**
+   * Deletes a note from the table
+   * @param wineID is the primary key of the wine, and
+   * @param user is a String of the username you want to remove a note for.
+   *             These two together uniquely identify a given note for deletion
+   */
+  public void deleteNote(long wineID, String user) {
+    String delete = "DELETE FROM NOTES WHERE USERNAME = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(delete)) {
+      statement.setString(1, user);
+      statement.setLong(2, wineID);
+      statement.executeUpdate();
+
+    } catch (SQLException error) {
+      log.error("Failed to delete note");
+      log.error(error.getMessage());
+    }
+  }
+
+  /**
+   * Gets a list of all notes created by the given user
+   * @param user is a String of the username you want to get notes for
+   * @return an ObservableList<String> of all notes created by a user
+   */
+  public ObservableList<Note> getNotesByUser(String user) {
+    ObservableList<Note> notes = FXCollections.observableArrayList();
+    String find = "SELECT * FROM NOTES WHERE USERNAME = ?";
+    try (PreparedStatement statement = connection.prepareStatement(find)) {
+      statement.setString(1, user);
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        notes.add(new Note(set.getString("NOTE"), set.getLong("WINE_ID"), user, this));
+      }
+    } catch (SQLException e) {
+      log.warn("Error fetching notes");
+    }
+
+    return notes;
+
+  }
+
+
+
+  /**
+   * Gets a wines title using its id. TODO: This will instead return a wine object
+   * @param wineID is the primary key of the wine you wish to retrieve
+   * @return the title of the wine as a string
+   */
+  public String getWineTitleByID(long wineID) {
+    String find = "SELECT * FROM WINE WHERE ID = ?";
+
+    try (PreparedStatement statement = connection.prepareStatement(find)) {
+      statement.setLong(1, wineID);
+      ResultSet set = statement.executeQuery();
+      return set.getString("TITLE");
+    } catch (SQLException error) {
+      log.error("Failed to retrieve wine from ID!");
+    }
+    return "Title Not Found";
   }
 
   /**

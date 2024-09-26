@@ -1,7 +1,6 @@
 package seng202.team6.gui;
 
 import java.util.Date;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -9,18 +8,15 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.Rating;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
-import seng202.team6.service.AuthenticationService;
 import seng202.team6.service.WineReviewsService;
-import seng202.team6.util.ImageReader;
 
 public class SocialController extends Controller{
 
@@ -30,16 +26,16 @@ public class SocialController extends Controller{
   @FXML
   TableView<WineReview> reviewTableView;
 
-  private final AuthenticationService authenticationService;
+  private final AuthenticationManager authenticationManager;
 
   /**
    * Constructor
    *
    * @param managerContext manager context
    */
-  public SocialController(ManagerContext managerContext, AuthenticationService authenticationService) {
+  public SocialController(ManagerContext managerContext, AuthenticationManager authenticationManager) {
     super(managerContext);
-    this.authenticationService = authenticationService; // TODO allow upvotes/downvotes/user search/review search
+    this.authenticationManager = authenticationManager; // TODO allow upvotes/downvotes/user search/review search
   }
   public void init() {
     setupWineTableColumns();
@@ -213,7 +209,7 @@ public class SocialController extends Controller{
 
     Wine selectedWine = managerContext.databaseManager.getWineWithReviewInfoById(selectedReview.getWineID());
     User reviewer = managerContext.databaseManager.getUser(selectedReview.getUsername());
-    WineReviewsService wineReviewsService = new WineReviewsService(authenticationService, managerContext.databaseManager, selectedWine);
+    WineReviewsService wineReviewsService = new WineReviewsService(authenticationManager, managerContext.databaseManager, selectedWine);
     managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview);
   }
 

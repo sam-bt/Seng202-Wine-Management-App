@@ -76,7 +76,7 @@ public class DatasetImportController extends Controller {
    * Might be null
    * </p>
    */
-  private ArrayList<String[]> selectedTable;
+  private List<String[]> selectedTable;
 
   /**
    * Constructor
@@ -320,8 +320,7 @@ public class DatasetImportController extends Controller {
     }
     try {
       // Should be first row on pretty much all files
-      ArrayList<String[]> rows = ProcessCSV.getCSVRows(selectedFile);
-
+      List<String[]> rows = ProcessCSV.getCSVRows(selectedFile);
       String[] columnNames = rows.getFirst();
       makeColumnRemapList(columnNames, rows.subList(1, Math.min(10, rows.size())));
       selectedTable = rows;

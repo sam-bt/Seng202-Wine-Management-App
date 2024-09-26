@@ -12,11 +12,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
-import seng202.team6.service.AuthenticationService;
 import seng202.team6.service.WineReviewsService;
 
 /**
@@ -43,7 +43,11 @@ public class MainController extends Controller {
   private Button adminScreenButton;
 
   @FXML
+  private Button noteScreenButton;
+
+  @FXML
   private Button loginButton;
+
 
   @FXML
   private Button registerButton;
@@ -59,9 +63,8 @@ public class MainController extends Controller {
 
   private final Logger log = LogManager.getLogger(getClass());
 
-  private final AuthenticationService authenticationService;
-
   private boolean disabled = false;
+  private final AuthenticationManager authenticationManager;
 
   /**
    * Constructor
@@ -70,10 +73,10 @@ public class MainController extends Controller {
    */
   public MainController(ManagerContext managerContext) {
     super(managerContext);
-    authenticationService = new AuthenticationService(managerContext.databaseManager);
 
     // This is an ugly circular dependency. It is easier to resolve here
     managerContext.GUIManager.setMainController(this);
+    authenticationManager = new AuthenticationManager(managerContext.databaseManager);
   }
 
   public void initialize() {
@@ -83,13 +86,15 @@ public class MainController extends Controller {
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
     dataSetsScreenButton.setVisible(false);
+    noteScreenButton.setVisible(false);
     openWineScreen();
   }
 
   public void onLogin() {
-    if (authenticationService.isAuthenticated()) {
-      adminScreenButton.setVisible(authenticationService.isAdmin());
-      dataSetsScreenButton.setVisible(authenticationService.isAdmin());
+    if (managerContext.authenticationManager.isAuthenticated()) {
+      adminScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
+      dataSetsScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
+      noteScreenButton.setVisible(true);
       loginButton.setText("Settings");
       registerButton.setText("Logout");
 
@@ -152,13 +157,14 @@ public class MainController extends Controller {
   }
 
   public void logout() {
-    authenticationService.logout();
+    managerContext.authenticationManager.logout();
     loginButton.setText("Login");
     registerButton.setText("Register");
     loginButton.setOnMouseClicked(event -> openLoginScreen());
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
     adminScreenButton.setVisible(false);
     dataSetsScreenButton.setVisible(false);
+    noteScreenButton.setVisible(false);
 
     navBarBox.getChildren().remove(listScreenButton);
     navBarBox.getChildren().add(3, listScreenButton);
@@ -186,7 +192,7 @@ public class MainController extends Controller {
   @FXML
   public void openWineScreen() {
     switchScene("/fxml/wine_screen.fxml", "Wine Information",
-        () -> new WineScreenController(managerContext, authenticationService));
+        () -> new WineScreenController(managerContext));
   }
 
   /**
@@ -195,7 +201,7 @@ public class MainController extends Controller {
   @FXML
   public void openListScreen() {
     switchScene("/fxml/list_screen.fxml", "My Lists",
-        () -> new ListScreenController(managerContext, authenticationService));
+        () -> new ListScreenController(managerContext));
   }
 
   /**
@@ -203,7 +209,7 @@ public class MainController extends Controller {
    */
   @FXML
   public void openLoginScreen() {
-    switchScene("/fxml/login_screen.fxml", "Login", () -> new LoginController(managerContext, authenticationService));
+    switchScene("/fxml/login_screen.fxml", "Login", () -> new LoginController(managerContext));
   }
 
   /**
@@ -212,7 +218,7 @@ public class MainController extends Controller {
   @FXML
   public void openRegisterScreen() {
     switchScene("/fxml/register_screen.fxml", "Register",
-        () -> new RegisterController(managerContext, authenticationService));
+        () -> new RegisterController(managerContext));
   }
 
   @FXML
@@ -229,12 +235,18 @@ public class MainController extends Controller {
   @FXML
   public void openUpdatePasswordScreen() {
     switchScene("/fxml/update_password_screen.fxml", "Register",
-        () -> new UpdatePasswordController(managerContext, authenticationService));
+        () -> new UpdatePasswordController(managerContext));
+  }
+
+  @FXML
+  void openNotesScreen() {
+    switchScene("/fxml/notes_screen.fxml", "Notes",
+        () -> new NotesController(managerContext));
   }
 
   public void openDetailedWineView(Wine wine, Runnable backButtonAction) {
     switchScene("/fxml/detailed_wine_view.fxml", "Detailed Wine View",
-        () -> new DetailedWineViewController(managerContext, authenticationService, wine, backButtonAction));
+        () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
   }
 
   /**
@@ -243,7 +255,7 @@ public class MainController extends Controller {
   @FXML
   public void openSocialScreen() {
     switchScene("/fxml/social_screen.fxml", "Social",
-        () -> new SocialController(managerContext, authenticationService));
+        () -> new SocialController(managerContext, authenticationManager));
   }
 
   public void openPopupWineReview(WineReviewsService wineReviewsService) {

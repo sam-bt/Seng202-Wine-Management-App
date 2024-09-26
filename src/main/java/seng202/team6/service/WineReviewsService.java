@@ -6,26 +6,29 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 
 public class WineReviewsService {
-  private final AuthenticationService authenticationService;
+
+  private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
   private final ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
   private final Wine wine;
   private final Property<WineReview> usersReview = new SimpleObjectProperty<>();
   private final DoubleProperty averageRating = new SimpleDoubleProperty();
 
-  public WineReviewsService(AuthenticationService authenticationService, DatabaseManager databaseManager, Wine wine) {
-    this.authenticationService = authenticationService;
+  public WineReviewsService(AuthenticationManager authenticationManager,
+      DatabaseManager databaseManager, Wine wine) {
+    this.authenticationManager = authenticationManager;
     this.databaseManager = databaseManager;
     this.wine = wine;
   }
 
   public void init() {
-    String username = authenticationService.getAuthenticatedUsername();
+    String username = authenticationManager.getAuthenticatedUsername();
     wineReviews.addAll(databaseManager.getWineReviews(wine));
     usersReview.setValue(wineReviews.stream()
         .filter(wineReview -> wineReview.getUsername().equals(username))
@@ -35,7 +38,7 @@ public class WineReviewsService {
   }
 
   public void addOrUpdateUserReview(double rating, String description) {
-    String username = authenticationService.getAuthenticatedUsername();
+    String username = authenticationManager.getAuthenticatedUsername();
     if (hasUserReviewed()) {
       WineReview usersReview = getUsersReview();
       usersReview.setRating(rating);

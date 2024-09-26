@@ -82,6 +82,8 @@ dependencies {
     implementation 'org.apache.poi:poi:5.2.0'
     implementation 'org.apache.poi:poi-ooxml:5.2.0'
 
+// https://mvnrepository.com/artifact/com.ibm.icu/icu4j
+    implementation 'com.ibm.icu:icu4j:75.1'
 }
 
 application {
