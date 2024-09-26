@@ -15,9 +15,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.Rating;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.AuthenticationService;
+import seng202.team6.service.WineReviewsService;
 import seng202.team6.util.ImageReader;
 
 public class SocialController extends Controller{
@@ -47,7 +49,7 @@ public class SocialController extends Controller{
     openReviewInRange(0, 100);
 
     reviewTableView.setOnMouseClicked(this::openReviewOnClick);
-    wineTableView.setOnMouseClicked(this::openReviewOnClick);
+    wineTableView.setOnMouseClicked(this::openWineOnClick);
   }
 
   /**
@@ -189,7 +191,7 @@ public class SocialController extends Controller{
   }
 
   @FXML
-  public void openReviewOnClick(MouseEvent event) { //TODO take to review screen (upvote/downvote reviews)
+  public void openWineOnClick(MouseEvent event) {
     if (event.getClickCount() != 2)
       return;
 
@@ -199,6 +201,21 @@ public class SocialController extends Controller{
 
     Runnable backAction = () -> managerContext.GUIManager.mainController.openSocialScreen();
     managerContext.GUIManager.mainController.openDetailedWineView(selectedWine, backAction);
+  }
+
+  @FXML
+  public void openReviewOnClick(MouseEvent event) { //TODO take to review screen (upvote/downvote reviews)
+    if (event.getClickCount() != 2)
+      return;
+
+    WineReview selectedReview = reviewTableView.getSelectionModel().getSelectedItem();
+    if (selectedReview == null)
+      return;
+
+    Wine selectedWine = managerContext.databaseManager.getWineWithReviewInfoById(selectedReview.getWineID());
+    User reviewer = managerContext.databaseManager.getUser(selectedReview.getUsername());
+    WineReviewsService wineReviewsService = new WineReviewsService(authenticationService, managerContext.databaseManager, selectedWine);
+    managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview);
   }
 
 }

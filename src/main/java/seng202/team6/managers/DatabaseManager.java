@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
@@ -973,6 +974,64 @@ public class DatabaseManager implements AutoCloseable {
     return reviews;
   }
 
+  public Wine getWineWithReviewInfoById(long wineId) {
+    long milliseconds = System.currentTimeMillis();
+    Wine wine = null;
+    String query = "select WINE.ID, "
+        + "WINE.TITLE, "
+        + "WINE.VARIETY, "
+        + "WINE.COUNTRY, "
+        + "WINE.REGION, "
+        + "WINE.WINERY, "
+        + "WINE.COLOR, "
+        + "WINE.VINTAGE, "
+        + "WINE.DESCRIPTION, "
+        + "WINE.SCORE_PERCENT, "
+        + "WINE.ABV, "
+        + "WINE.PRICE, "
+        + "GEOLOCATION.LATITUDE, "
+        + "GEOLOCATION.LONGITUDE, "
+        + "COUNT(WINE_REVIEW.ID) AS review_count, "
+        + "AVG(WINE_REVIEW.RATING) AS average_rating from WINE "
+        + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+        + "LEFT JOIN WINE_REVIEW ON WINE.ID = WINE_REVIEW.WINE_ID "
+        + "WHERE WINE.ID = ?;";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setLong(1, wineId);
+
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        GeoLocation geoLocation = createGeoLocation(set);
+        wine = new Wine(
+            set.getLong("ID"),
+            this,
+            set.getString("TITLE"),
+            set.getString("VARIETY"),
+            set.getString("COUNTRY"),
+            set.getString("REGION"),
+            set.getString("WINERY"),
+            set.getString("COLOR"),
+            set.getInt("VINTAGE"),
+            set.getString("DESCRIPTION"),
+            set.getInt("SCORE_PERCENT"),
+            set.getFloat("ABV"),
+            set.getFloat("PRICE"),
+            geoLocation,
+            set.getInt("review_count"),
+            set.getDouble("average_rating")
+        );
+
+    }} catch (SQLException e){
+        throw new RuntimeException(e);
+      }
+      if (wine == null) {
+        throw new NoSuchElementException("No wine found with ID: " + wineId);
+      }
+      
+    LogManager.getLogger(getClass())
+        .info("Time to process getReviewsInRange: {}", System.currentTimeMillis() - milliseconds);
+    return wine;
+  }
 
   /**
    * Closes the database connection

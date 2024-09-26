@@ -10,8 +10,10 @@ import javafx.scene.layout.HBox;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.AuthenticationService;
@@ -249,7 +251,13 @@ public class MainController extends Controller {
         () -> new WineReviewPopupController(managerContext, wineReviewsService));
   }
 
+  public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer, WineReview selectedReview) {
+    openPopup("/fxml/popup/view_review_popup.fxml",
+        () -> new ReviewViewPopupController(managerContext, wineReviewsService, reviewer, selectedReview));
+  }
+
   public void closePopup() {
+    System.out.println("closing popup");
     popupActionBlocker.setVisible(false);
     popupActionBlocker.setDisable(true);
     popupContent.setVisible(false);
