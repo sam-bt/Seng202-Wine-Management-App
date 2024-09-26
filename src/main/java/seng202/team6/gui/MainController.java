@@ -10,9 +10,13 @@ import javafx.scene.layout.HBox;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.User;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
 
 /**
@@ -60,6 +64,7 @@ public class MainController extends Controller {
   private final Logger log = LogManager.getLogger(getClass());
 
   private boolean disabled = false;
+  private final AuthenticationManager authenticationManager;
 
   /**
    * Constructor
@@ -71,6 +76,7 @@ public class MainController extends Controller {
 
     // This is an ugly circular dependency. It is easier to resolve here
     managerContext.GUIManager.setMainController(this);
+    authenticationManager = new AuthenticationManager(managerContext.databaseManager);
   }
 
   public void initialize() {
@@ -243,9 +249,23 @@ public class MainController extends Controller {
         () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
   }
 
+  /**
+   * Launches the social screen.
+   */
+  @FXML
+  public void openSocialScreen() {
+    switchScene("/fxml/social_screen.fxml", "Social",
+        () -> new SocialController(managerContext, authenticationManager));
+  }
+
   public void openPopupWineReview(WineReviewsService wineReviewsService) {
     openPopup("/fxml/popup/review_popup.fxml",
         () -> new WineReviewPopupController(managerContext, wineReviewsService));
+  }
+
+  public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer, WineReview selectedReview) {
+    openPopup("/fxml/popup/view_review_popup.fxml",
+        () -> new ReviewViewPopupController(managerContext, wineReviewsService, reviewer, selectedReview));
   }
 
   public void closePopup() {
