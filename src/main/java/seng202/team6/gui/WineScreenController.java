@@ -1,7 +1,5 @@
 package seng202.team6.gui;
 
-import java.text.DecimalFormat;
-import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -111,89 +109,13 @@ public class WineScreenController extends Controller {
     tableView.setItems(wines);
 
     // Only update autocomplete if NOT filtering
+    /*
+    Don't think we need to do this but commenting in case
+
     if (filters == null) {
-      // Auto Complete boxes and range sliders
-      // Update filter checkboxes
-      Set<String> winerySet = new HashSet<>();
-      Set<String> countrySet = new HashSet<>();
-      Set<String> colorSet = new HashSet<>();
-      int minVintage = 10000;
-      int maxVintage = 0;
-      double maxScore = 0;
-      double minScore = 100;
-      double minPrice = 10000;
-      double maxPrice = 0;
-      for (Wine w : wines) {
-        winerySet.add(w.getWinery());
-        countrySet.add(w.getCountry());
-        colorSet.add(w.getColor());
-
-        // Min and Max Values
-        if (w.getScorePercent() > maxScore) {
-          maxScore = w.getScorePercent();
-        }
-
-        if (w.getScorePercent() < minScore) {
-          minScore = w.getScorePercent();
-        }
-
-        if (w.getVintage() > maxVintage) {
-          maxVintage = w.getVintage();
-        }
-
-        if (w.getVintage() < minVintage) {
-          if (w.getVintage() != -1) {
-            minVintage = w.getVintage();
-          }
-        }
-
-        if (w.getPrice() > maxPrice) {
-          maxPrice = w.getPrice();
-        }
-
-        if (w.getPrice() < minPrice) {
-          minPrice = w.getPrice();
-        }
-      }
-
-      // Clear old list data
-      wineryTextField.getEntries().clear();
-      countryTextField.getEntries().clear();
-      colorTextField.getEntries().clear();
-
-      // Set data for auto complete
-      wineryTextField.getEntries().addAll(winerySet);
-      countryTextField.getEntries().addAll(countrySet);
-      colorTextField.getEntries().addAll(colorSet);
-
-      // Following entries are commented out as we currently don't have data for them
-      // Set min and max ranges
-      scoreSlider.setMin(minScore);
-      scoreSlider.setMax(maxScore);
-      vintageSlider.setMin(minVintage);
-      vintageSlider.setMax(maxVintage);
-      //priceSlider.setMin(minPrice);
-      //priceSlider.setMax(maxPrice);
-
-      // Set slider handles to min and max values
-      // Fixes a graphic issue where the slider values don't change with the min and max adjustments
-      scoreSlider.setHighValue(scoreSlider.getMax());
-      scoreSlider.setLowValue(scoreSlider.getMin());
-      vintageSlider.setHighValue(vintageSlider.getMax());
-      vintageSlider.setLowValue(vintageSlider.getMin());
-      //priceSlider.setHighValue(priceSlider.getMax());
-      //priceSlider.setLowValue(priceSlider.getMin());
-
-      // Ensure the sliders display properly
-      scoreSlider.setMajorTickUnit(1);
-      vintageSlider.setMajorTickUnit(1);
-      vintageSlider.setMinorTickCount(0);
-
-      YearStringConverter yearStringConverter = new YearStringConverter();
-      vintageSlider.setLabelFormatter(yearStringConverter);
-
-
+      setFilterValues();
     }
+    */
 
   }
 
@@ -247,7 +169,7 @@ public class WineScreenController extends Controller {
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       vintageColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
       //descriptionColumn.setCellFactory(
-          //wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      //wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       scoreColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
       abvColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
       priceColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
@@ -284,7 +206,9 @@ public class WineScreenController extends Controller {
     this.abvSlider = createSlider(11, 445, 0, 100, 10);
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
 
-
+    // Ensure uniques are up to date
+    managerContext.databaseManager.updateUniques();
+    setFilterValues();
 
     // Set snap to ticks
     vintageSlider.setSnapToTicks(true);
@@ -407,7 +331,7 @@ public class WineScreenController extends Controller {
     if (event.getClickCount() == 2) {
 
       Wine wine = tableView.getSelectionModel().getSelectedItem();
-      if(wine != null) {
+      if (wine != null) {
 
         Runnable backAction = () -> managerContext.GUIManager.mainController.openWineScreen();
         managerContext.GUIManager.mainController.openDetailedWineView(wine, backAction);
@@ -441,6 +365,57 @@ public class WineScreenController extends Controller {
    */
   public void setPage() {
     openWineRange(this.currentFilters);
+  }
+
+  public void setFilterValues() {
+    // Auto Complete boxes and range sliders
+    // Update filter checkboxes
+    Set<String> winerySet = managerContext.databaseManager.getUniqueWineries();
+    Set<String> countrySet = managerContext.databaseManager.getUniqueCountries();
+    Set<String> colorSet = managerContext.databaseManager.getUniqueColors();
+    int minVintage = managerContext.databaseManager.getMinVintage();
+    int maxVintage = managerContext.databaseManager.getMaxVintage();
+    double maxScore = managerContext.databaseManager.getMaxScore();
+    double minScore = managerContext.databaseManager.getMinScore();
+    double minPrice = managerContext.databaseManager.getMinPrice();
+    double maxPrice = managerContext.databaseManager.getMaxPrice();
+
+    // Clear old list data
+    wineryTextField.getEntries().clear();
+    countryTextField.getEntries().clear();
+    colorTextField.getEntries().clear();
+
+    // Set data for auto complete
+    wineryTextField.getEntries().addAll(winerySet);
+    countryTextField.getEntries().addAll(countrySet);
+    colorTextField.getEntries().addAll(colorSet);
+
+    // Following entries are commented out as we currently don't have data for them
+    // Set min and max ranges
+    scoreSlider.setMin(minScore);
+    scoreSlider.setMax(maxScore);
+    vintageSlider.setMin(minVintage);
+    vintageSlider.setMax(maxVintage);
+    //priceSlider.setMin(minPrice);
+    //priceSlider.setMax(maxPrice);
+
+    // Set slider handles to min and max values
+    // Fixes a graphic issue where the slider values don't change with the min and max adjustments
+    scoreSlider.setHighValue(scoreSlider.getMax());
+    scoreSlider.setLowValue(scoreSlider.getMin());
+    vintageSlider.setHighValue(vintageSlider.getMax());
+    vintageSlider.setLowValue(vintageSlider.getMin());
+    //priceSlider.setHighValue(priceSlider.getMax());
+    //priceSlider.setLowValue(priceSlider.getMin());
+
+    // Ensure the sliders display properly
+    scoreSlider.setMajorTickUnit(1);
+    vintageSlider.setMajorTickUnit(1);
+    vintageSlider.setMinorTickCount(0);
+
+    YearStringConverter yearStringConverter = new YearStringConverter();
+    vintageSlider.setLabelFormatter(yearStringConverter);
+
   }
 
   /**

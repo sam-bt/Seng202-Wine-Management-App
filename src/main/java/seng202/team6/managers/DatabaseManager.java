@@ -1,8 +1,6 @@
 package seng202.team6.managers;
 
-import com.opencsv.exceptions.CsvValidationException;
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -11,9 +9,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
@@ -39,8 +39,23 @@ public class DatabaseManager implements AutoCloseable {
    * Logger for the DatabaseManager class
    */
   private final Logger log = LogManager.getLogger(getClass());
-  private boolean getVintageFromTitle = true;
-  private RegexProcessor regexp = new RegexProcessor();
+  private final boolean getVintageFromTitle = true;
+  private final RegexProcessor regexp = new RegexProcessor();
+
+  // Uniques
+  private final Set<String> uniqueCountries = new HashSet<>();
+  private final Set<String> uniqueWineries = new HashSet<>();
+  private final Set<String> uniqueColors = new HashSet<>();
+
+  // Mins and Maxes
+  private int minVintage;
+  private int maxVintage;
+  private int minScore;
+  private int maxScore;
+  private float minAbv;
+  private float maxAbv;
+  private float minPrice;
+  private float maxPrice;
 
   /**
    * Database connection
@@ -172,11 +187,12 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
     long milliseconds = System.currentTimeMillis();
     ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query = "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE from WINE "
-        + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
-        + "order by WINE.ID "
-        + "limit ? "
-        + "offset ?;";
+    String query =
+        "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE from WINE "
+            + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
+            + "order by WINE.ID "
+            + "limit ? "
+            + "offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setInt(1, end - begin);
       statement.setInt(2, begin);
@@ -436,7 +452,8 @@ public class DatabaseManager implements AutoCloseable {
         insertStatement.setString(5, wine.getWinery());
         insertStatement.setString(6, wine.getColor());
         if (wine.getVintage() == 0) {
-          insertStatement.setInt(7, Integer.parseInt(regexp.extractYearFromString(wine.getTitle())));
+          insertStatement.setInt(7,
+              Integer.parseInt(regexp.extractYearFromString(wine.getTitle())));
         } else {
           insertStatement.setInt(7, wine.getVintage());
         }
@@ -457,6 +474,9 @@ public class DatabaseManager implements AutoCloseable {
     }
     LogManager.getLogger(getClass())
         .info("Time to process addWines: {}", System.currentTimeMillis() - milliseconds);
+
+    // Update uniques with new info
+    updateUniques();
   }
 
   /**
@@ -789,10 +809,10 @@ public class DatabaseManager implements AutoCloseable {
    */
   private void createNotesTable() {
     String create = "create table if not exists NOTES (" +
-            "ID INTEGER PRIMARY KEY," +
-            "USERNAME varchar(64) NOT NULL," +
-            "WINE_ID int NOT NULL, " +
-            "NOTE text);";
+        "ID INTEGER PRIMARY KEY," +
+        "USERNAME varchar(64) NOT NULL," +
+        "WINE_ID int NOT NULL, " +
+        "NOTE text);";
     try (Statement statement = connection.createStatement()) {
       statement.execute(create);
     } catch (SQLException error) {
@@ -803,10 +823,12 @@ public class DatabaseManager implements AutoCloseable {
 
 
   /**
-   * This function replaces the two that I had used earlier. It checks for an existing record and sends the correct query rather than requiring the controller to do the logic
+   * This function replaces the two that I had used earlier. It checks for an existing record and
+   * sends the correct query rather than requiring the controller to do the logic
+   *
    * @param wineID the primary key of the wine associated with the note
-   * @param user the username of the user associated with the note
-   * @param note the text of the note itself.
+   * @param user   the username of the user associated with the note
+   * @param note   the text of the note itself.
    */
   public void saveNote(long wineID, String user, String note) {
     String find = "SELECT * FROM NOTES WHERE WINE_ID = ? AND USERNAME = ?";
@@ -816,11 +838,7 @@ public class DatabaseManager implements AutoCloseable {
       statement.setString(2, user);
 
       ResultSet set = statement.executeQuery();
-      if (set.next()) {
-        noteExists = true;
-      } else {
-        noteExists = false;
-      }
+      noteExists = set.next();
     } catch (SQLException e) {
       log.error("Checking for existing note failed!");
       log.error(e.getMessage());
@@ -854,8 +872,10 @@ public class DatabaseManager implements AutoCloseable {
 
 
   /**
-   * Retrieves a note from the NOTES table using their username and the primary key of the wine the note is associated with. TODO: Make this return a Note object instead
-   * @param user is a String of the username
+   * Retrieves a note from the NOTES table using their username and the primary key of the wine the
+   * note is associated with. TODO: Make this return a Note object instead
+   *
+   * @param user   is a String of the username
    * @param wineID is the primary key of the wine
    * @return a String of the notes text.
    */
@@ -1002,11 +1022,12 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<WineReview> getReviewsInRange(int begin, int end) {
     long milliseconds = System.currentTimeMillis();
     ObservableList<WineReview> reviews = FXCollections.observableArrayList();
-    String query = "SELECT WINE_REVIEW.ID, WINE_REVIEW.WINE_ID , WINE_REVIEW.USERNAME, WINE_REVIEW.RATING, WINE_REVIEW.DESCRIPTION, WINE_REVIEW.DATE, WINE.TITLE from WINE_REVIEW "
-        + "JOIN WINE ON WINE_REVIEW.WINE_ID = WINE.ID "
-        + "order by WINE_REVIEW.ID "
-        + "limit ? "
-        + "offset ?;";
+    String query =
+        "SELECT WINE_REVIEW.ID, WINE_REVIEW.WINE_ID , WINE_REVIEW.USERNAME, WINE_REVIEW.RATING, WINE_REVIEW.DESCRIPTION, WINE_REVIEW.DATE, WINE.TITLE from WINE_REVIEW "
+            + "JOIN WINE ON WINE_REVIEW.WINE_ID = WINE.ID "
+            + "order by WINE_REVIEW.ID "
+            + "limit ? "
+            + "offset ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setInt(1, end - begin);
       statement.setInt(2, begin);
@@ -1080,12 +1101,13 @@ public class DatabaseManager implements AutoCloseable {
             set.getDouble("average_rating")
         );
 
-    }} catch (SQLException e){
-        throw new RuntimeException(e);
       }
-      if (wine == null) {
-        throw new NoSuchElementException("No wine found with ID: " + wineId);
-      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    if (wine == null) {
+      throw new NoSuchElementException("No wine found with ID: " + wineId);
+    }
 
     LogManager.getLogger(getClass())
         .info("Time to process getReviewsInRange: {}", System.currentTimeMillis() - milliseconds);
@@ -1094,9 +1116,10 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Deletes a note from the table
+   *
    * @param wineID is the primary key of the wine, and
-   * @param user is a String of the username you want to remove a note for.
-   *             These two together uniquely identify a given note for deletion
+   * @param user   is a String of the username you want to remove a note for. These two together
+   *               uniquely identify a given note for deletion
    */
   public void deleteNote(long wineID, String user) {
     String delete = "DELETE FROM NOTES WHERE USERNAME = ? AND WINE_ID = ?";
@@ -1113,6 +1136,7 @@ public class DatabaseManager implements AutoCloseable {
 
   /**
    * Gets a list of all notes created by the given user
+   *
    * @param user is a String of the username you want to get notes for
    * @return an ObservableList<String> of all notes created by a user
    */
@@ -1134,9 +1158,9 @@ public class DatabaseManager implements AutoCloseable {
   }
 
 
-
   /**
    * Gets a wines title using its id. TODO: This will instead return a wine object
+   *
    * @param wineID is the primary key of the wine you wish to retrieve
    * @return the title of the wine as a string
    */
@@ -1151,6 +1175,145 @@ public class DatabaseManager implements AutoCloseable {
       log.error("Failed to retrieve wine from ID!");
     }
     return "Title Not Found";
+  }
+
+  /**
+   * Updates a range of unique values:<br> Updates:
+   * <ul>
+   *   <li>uniqueCountries</li>
+   *   <li>uniqueWineries</li>
+   *   <li>uniqueColors</li>
+   *   <li>minVintage</li>
+   *   <li>maxVintage</li>
+   *   <li>minScore</li>
+   *   <li>maxScore</li>
+   *   <li>minAbv</li>
+   *   <li>maxAbv</li>
+   *   <li>minPrice</li>
+   *   <li>maxPrice</li>
+   * </ul>
+   */
+  public void updateUniques() {
+
+    // Reset old uniques
+    this.uniqueCountries.clear();
+    this.uniqueWineries.clear();
+    this.uniqueColors.clear();
+    this.minVintage = Integer.MAX_VALUE;
+    this.maxVintage = 0;
+    this.minScore = 100;
+    this.maxScore = 0;
+    this.minAbv = 100;
+    this.maxAbv = 0;
+    this.minPrice = Float.MAX_VALUE;
+    this.maxPrice = 0;
+
+    // Get unique items from database
+    String query = "SELECT country, winery, color, vintage, score_percent, abv, price FROM wine";
+
+    try (PreparedStatement statement = connection.prepareStatement(query);
+        ResultSet set = statement.executeQuery()) {
+
+      // Go through results and add to lists
+      while (set.next()) {
+        String country = set.getString("country");
+        String winery = set.getString("winery");
+        String color = set.getString("color");
+        int vintage = set.getInt("vintage");
+        int score = set.getInt("score_percent");
+        float abv = set.getFloat("abv");
+        float price = set.getFloat("price");
+
+        // Add to sets
+        this.uniqueCountries.add(country);
+        this.uniqueWineries.add(winery);
+        this.uniqueColors.add(color);
+
+        // Check mins and maxes
+        if (vintage > this.maxVintage) {
+          this.maxVintage = vintage;
+
+          // In decanter, some vintages are NV which defaults to 0
+        } else if (vintage < this.minVintage && vintage != 0) {
+          this.minVintage = vintage;
+
+        }
+
+        if (score > this.maxScore) {
+          this.maxScore = score;
+
+        } else if (score < this.minScore) {
+          this.minScore = score;
+
+        }
+
+        if (abv > this.maxAbv) {
+          this.maxAbv = abv;
+
+        } else if (abv < this.minAbv) {
+          this.minAbv = abv;
+
+        }
+
+        if (price > this.maxPrice) {
+          this.maxPrice = price;
+
+        } else if (price < this.minPrice) {
+          this.minPrice = price;
+
+        }
+
+      }
+
+    } catch (SQLException e) {
+      LogManager.getLogger(getClass()).error("Unable to update uniques", e);
+
+    }
+
+  }
+
+  public Set<String> getUniqueCountries() {
+    return uniqueCountries;
+  }
+
+  public Set<String> getUniqueWineries() {
+    return uniqueWineries;
+  }
+
+  public Set<String> getUniqueColors() {
+    return uniqueColors;
+  }
+
+  public int getMinVintage() {
+    return minVintage;
+  }
+
+  public int getMaxVintage() {
+    return maxVintage;
+  }
+
+  public int getMinScore() {
+    return minScore;
+  }
+
+  public int getMaxScore() {
+    return maxScore;
+  }
+
+  public float getMinAbv() {
+    return minAbv;
+  }
+
+  public float getMaxAbv() {
+    return maxAbv;
+  }
+
+  public float getMinPrice() {
+    return minPrice;
+  }
+
+  public float getMaxPrice() {
+    return maxPrice;
   }
 
   /**
