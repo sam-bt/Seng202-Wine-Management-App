@@ -90,7 +90,8 @@ public class WineScreenController extends Controller {
     tableView.getItems().clear();
 
     // Check if filters exist
-    ObservableList<Wine> wines = managerContext.databaseManager.getWineDAO().getAllInRange(begin, end);
+    ObservableList<Wine> wines = managerContext.databaseManager.getWineDAO()
+        .getAllInRange(begin, end, filters);
     // todo - find solution to this
 //    if (filters != null) {
 //      wines = managerContext.databaseManager.getWineDAO().getAllInRange(begin, end, filters);

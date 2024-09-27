@@ -9,6 +9,7 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;
+import seng202.team6.model.Filters;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
 import seng202.team6.util.DatabaseObjectUniquer;
@@ -102,6 +103,10 @@ public class WineDAO extends DAO {
     return FXCollections.emptyObservableList();
   }
 
+  public ObservableList<Wine> getAllInRange(int begin, int end) {
+    return getAllInRange(begin, end, null);
+  }
+
   /**
    * Retrieves a range of wines from the WINE table.
    *
@@ -109,16 +114,45 @@ public class WineDAO extends DAO {
    * @param end The end index of the range (exclusive)
    * @return An ObservableList of Wine objects within the specified range
    */
-  public ObservableList<Wine> getAllInRange(int begin, int end) {
+  public ObservableList<Wine> getAllInRange(int begin, int end, Filters filters) {
     Timer timer = new Timer();
     String sql = "SELECT * from WINE "
         + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME)"
+        + (filters == null ? "" :
+        "where TITLE like ? "
+        + "and COUNTRY like ? "
+        + "and WINERY like ? "
+        + "and COLOR like ? "
+        + "and VINTAGE between ? and ?"
+        + "and SCORE_PERCENT between ? and ? "
+        + "and ABV between ? and ? "
+        + "and PRICE between ? and ? ")
         + "ORDER BY WINE.ID "
         + "LIMIT ? "
         + "OFFSET ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
-      statement.setInt(1, end - begin);
-      statement.setInt(2, begin);
+      int paramIndex = 1;
+      if (filters != null) {
+        statement.setString(paramIndex++,
+            filters.getTitle().isEmpty() ? "%" : "%" + filters.getTitle() + "%");
+        statement.setString(paramIndex++,
+            filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry() + "%");
+        statement.setString(paramIndex++,
+            filters.getWinery().isEmpty() ? "%" : "%" + filters.getWinery() + "%");
+        statement.setString(paramIndex++,
+            filters.getColor().isEmpty() ? "%" : "%" + filters.getColor() + "%");
+        statement.setInt(paramIndex++, filters.getMinVintage());
+        statement.setInt(paramIndex++, filters.getMaxVintage());
+        statement.setDouble(paramIndex++, filters.getMinScore());
+        statement.setDouble(paramIndex++, filters.getMaxScore());
+        statement.setDouble(paramIndex++, filters.getMinAbv());
+        statement.setDouble(paramIndex++, filters.getMaxAbv());
+        statement.setDouble(paramIndex++, filters.getMinPrice());
+        statement.setDouble(paramIndex++, filters.getMaxPrice());
+
+      }
+      statement.setInt(paramIndex++, end - begin);
+      statement.setInt(paramIndex, begin);
 
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<Wine> wines = extractAllWinesFromResultSet(resultSet);

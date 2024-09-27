@@ -148,13 +148,11 @@ public class WineFilteringStepDefinitions {
   }
 
   private void applySearch() {
-    // todo - add filters back to this
-    filteredWines = databaseManager.getWineDAO().getAllInRange(0, Integer.MAX_VALUE);
+    filteredWines = databaseManager.getWineDAO().getAllInRange(0, Integer.MAX_VALUE, filters);
   }
 
   @And("the list of wines has size {int}")
   public void theListOfWinesHasSize(int size) {
-    // todo - get filters working again
-//    assertEquals(size, filteredWines.size());
+    assertEquals(size, filteredWines.size());
   }
 }
