@@ -44,6 +44,11 @@ public class UserDAO extends DAO {
     };
   }
 
+  /**
+   * Retrieves the total number of users in the database.
+   *
+   * @return The count of users in the USER table
+   */
   public int getCount() {
     Timer timer = new Timer();
     String sql = "SELECT COUNT(*) FROM USER";
