@@ -1234,7 +1234,8 @@ public class DatabaseManager implements AutoCloseable {
           this.maxVintage = vintage;
 
           // In decanter, some vintages are NV which defaults to 0
-        } else if (vintage < this.minVintage && vintage != 0) {
+          // In the 130k dataset, some values don't have vintage that defaults to -1
+        } else if (vintage < this.minVintage && vintage > 0) {
           this.minVintage = vintage;
 
         }
