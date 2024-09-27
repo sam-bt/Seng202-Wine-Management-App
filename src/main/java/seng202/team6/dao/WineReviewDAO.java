@@ -19,12 +19,6 @@ public class WineReviewDAO extends DAO {
   @Override
   public String[] getInitialiseStatements() {
     return new String[] {
-        "CREATE TABLE IF NOT EXISTS NOTES (" +
-            "ID             INTEGER       PRIMARY KEY," +
-            "USERNAME       VARCHAR(64)   NOT NULL," +
-            "WINE_ID        INTEGER       NOT NULL, " +
-            "NOTE           TEXT" +
-            ")",
         "CREATE TABLE IF NOT EXISTS WINE_REVIEW (" +
             "ID             INTEGER       PRIMARY KEY," +
             "USERNAME       varchar(64)   NOT NULL," +
