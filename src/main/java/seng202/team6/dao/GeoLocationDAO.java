@@ -17,7 +17,13 @@ public class GeoLocationDAO extends DAO {
   }
 
   @Override
-  void init() {
-
+  public String[] getInitialiseStatements() {
+    return new String[] {
+        "CREATE TABLE IF NOT EXISTS GEOLOCATION (" +
+            "NAME           VARCHAR(64)   PRIMARY KEY," +
+            "LATITUDE       DECIMAL       NOT NULL," +
+            "LONGITUDE      DECIMAL       NOT NULL"  +
+            ")"
+    };
   }
 }

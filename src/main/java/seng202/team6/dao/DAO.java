@@ -25,10 +25,7 @@ public abstract class DAO {
     this.log = LogManager.getLogger(implementationClass);
   }
 
-  /**
-   * Initialises the DAO.
-   * This method should be implemented to preform setup operations such as creating tables if
-   * they do not exist, or adding default values to a table.
-   */
-  abstract void init();
+  public String[] getInitialiseStatements() {
+    return null;
+  }
 }

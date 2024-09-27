@@ -17,7 +17,24 @@ public class WineReviewDAO extends DAO {
   }
 
   @Override
-  void init() {
-
+  public String[] getInitialiseStatements() {
+    return new String[] {
+        "CREATE TABLE IF NOT EXISTS NOTES (" +
+            "ID             INTEGER       PRIMARY KEY," +
+            "USERNAME       VARCHAR(64)   NOT NULL," +
+            "WINE_ID        INTEGER       NOT NULL, " +
+            "NOTE           TEXT" +
+            ")",
+        "CREATE TABLE IF NOT EXISTS WINE_REVIEW (" +
+            "ID             INTEGER       PRIMARY KEY," +
+            "USERNAME       varchar(64)   NOT NULL," +
+            "WINE_ID        INTEGER       NOT NULL," +
+            "RATING         DOUBLE        NOT NULL," +
+            "DESCRIPTION    VARCHAR(256)  NOT NULL," +
+            "DATE           DATE          NOT NULL," +
+            "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE," +
+            "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE" +
+            ")"
+    };
   }
 }

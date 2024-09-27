@@ -1,7 +1,6 @@
 package seng202.team6.dao;
 
 import java.sql.Connection;
-import java.sql.Statement;
 
 /**
  * Data Access Object (DAO) for handling wine related database operations.
@@ -18,7 +17,22 @@ public class WineDAO extends DAO {
   }
 
   @Override
-  void init() {
-
+  public String[] getInitialiseStatements() {
+    return new String[]{
+        "CREATE TABLE IF NOT EXISTS WINE (" +
+            "ID             INTEGER       PRIMARY KEY," +
+            "TITLE          VARCHAR(64)   NOT NULL," +
+            "VARIETY        VARCHAR(32)," +
+            "COUNTRY        VARCHAR(32)," +
+            "REGION         VARCHAR(32)," +
+            "WINERY         VARCHAR(64)," +
+            "COLOR          VARCHAR(32)," +
+            "VINTAGE        INTEGER," +
+            "DESCRIPTION    INTEGER," +
+            "SCORE_PERCENT  INTEGER," +
+            "ABV            FLOAT," +
+            "PRICE          FLOAT" +
+            ")"
+    };
   }
 }
