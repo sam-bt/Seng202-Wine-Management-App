@@ -3,19 +3,15 @@ package seng202.team6.unittests.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import seng202.team6.managers.OldDatabaseManager;
 import seng202.team6.model.Wine;
 
 /**
  * Tests wine class
  */
 class WineTest {
-
-  OldDatabaseManager database;
+  private Wine wine;
 
   /**
    * Creates a test database to test
@@ -24,44 +20,16 @@ class WineTest {
    */
   @BeforeEach
   void setUp() throws SQLException {
-    database = new OldDatabaseManager();
-    addWine();
+    wine = new Wine(-1, "", "", "", "", "", "", -1, "", 0, 0f, 0f, null);
   }
-
-  /**
-   * @throws SQLException if error
-   */
-  void addWine() throws SQLException {
-    ArrayList<Wine> list = new ArrayList<>();
-    list.add(new Wine(-1, database, "", "", "", "", "", "", -1, "", 0, 0f, 0f, null));
-    database.addWines(list);
-  }
-
-  /**
-   * Gets a test wine in the database
-   *
-   * @return test wine
-   */
-  Wine getTestWine() {
-    return database.getWinesInRange(0, 1).getFirst();
-  }
-
-  /**
-   * Frees the database
-   */
-  @AfterEach
-  void tearDown() {
-    database.close();
-  }
-
   /**
    * Tests setting the title
    */
   @Test
   void setTitle() {
-    assertEquals("", getTestWine().getTitle());
-    getTestWine().setTitle("test");
-    assertEquals("test", getTestWine().getTitle());
+    assertEquals("", wine.getTitle());
+    wine.setTitle("test");
+    assertEquals("test", wine.getTitle());
   }
 
   /**
@@ -69,9 +37,9 @@ class WineTest {
    */
   @Test
   void setVariety() {
-    assertEquals("", getTestWine().getVariety());
-    getTestWine().setVariety("test");
-    assertEquals("test", getTestWine().getVariety());
+    assertEquals("", wine.getVariety());
+    wine.setVariety("test");
+    assertEquals("test", wine.getVariety());
   }
 
   /**
@@ -79,9 +47,9 @@ class WineTest {
    */
   @Test
   void setCountry() {
-    assertEquals("", getTestWine().getCountry());
-    getTestWine().setCountry("test");
-    assertEquals("test", getTestWine().getCountry());
+    assertEquals("", wine.getCountry());
+    wine.setCountry("test");
+    assertEquals("test", wine.getCountry());
   }
 
   /**
@@ -89,9 +57,9 @@ class WineTest {
    */
   @Test
   void setColor() {
-    assertEquals("", getTestWine().getColor());
-    getTestWine().setColor("test");
-    assertEquals("test", getTestWine().getColor());
+    assertEquals("", wine.getColor());
+    wine.setColor("test");
+    assertEquals("test", wine.getColor());
   }
 
   /**
@@ -99,9 +67,9 @@ class WineTest {
    */
   @Test
   void setVintage() {
-    assertEquals(-1, getTestWine().getVintage());
-    getTestWine().setVintage(25);
-    assertEquals(25, getTestWine().getVintage());
+    assertEquals(-1, wine.getVintage());
+    wine.setVintage(25);
+    assertEquals(25, wine.getVintage());
   }
 
   /**
@@ -109,9 +77,9 @@ class WineTest {
    */
   @Test
   void setRegion() {
-    assertEquals("", getTestWine().getRegion());
-    getTestWine().setRegion("test");
-    assertEquals("test", getTestWine().getRegion());
+    assertEquals("", wine.getRegion());
+    wine.setRegion("test");
+    assertEquals("test", wine.getRegion());
   }
 
   /**
@@ -119,9 +87,9 @@ class WineTest {
    */
   @Test
   void setWinery() {
-    assertEquals("", getTestWine().getWinery());
-    getTestWine().setWinery("test");
-    assertEquals("test", getTestWine().getWinery());
+    assertEquals("", wine.getWinery());
+    wine.setWinery("test");
+    assertEquals("test", wine.getWinery());
   }
 
   /**
@@ -129,9 +97,9 @@ class WineTest {
    */
   @Test
   void setDescription() {
-    assertEquals("", getTestWine().getDescription());
-    getTestWine().setDescription("test");
-    assertEquals("test", getTestWine().getDescription());
+    assertEquals("", wine.getDescription());
+    wine.setDescription("test");
+    assertEquals("test", wine.getDescription());
   }
 
   /**
@@ -139,9 +107,9 @@ class WineTest {
    */
   @Test
   void setScorePercent() {
-    assertEquals(0, getTestWine().getScorePercent());
-    getTestWine().setScorePercent(20);
-    assertEquals(20, getTestWine().getScorePercent());
+    assertEquals(0, wine.getScorePercent());
+    wine.setScorePercent(20);
+    assertEquals(20, wine.getScorePercent());
   }
 
   /**
@@ -149,9 +117,9 @@ class WineTest {
    */
   @Test
   void setAbv() {
-    assertEquals(0f, getTestWine().getAbv());
-    getTestWine().setAbv(21f);
-    assertEquals(21f, getTestWine().getAbv());
+    assertEquals(0f, wine.getAbv());
+    wine.setAbv(21f);
+    assertEquals(21f, wine.getAbv());
   }
 
   /**
@@ -159,8 +127,8 @@ class WineTest {
    */
   @Test
   void setPrice() {
-    assertEquals(0f, getTestWine().getPrice());
-    getTestWine().setPrice(22f);
-    assertEquals(22f, getTestWine().getPrice());
+    assertEquals(0f, wine.getPrice());
+    wine.setPrice(22f);
+    assertEquals(22f, wine.getPrice());
   }
 }

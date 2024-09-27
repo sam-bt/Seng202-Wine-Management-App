@@ -10,11 +10,12 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
-import seng202.team6.managers.OldDatabaseManager;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.model.User;
 
 public class UserRegistrationStepDefinitions {
-  private OldDatabaseManager databaseManager;
+  private DatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private String username;
   private String password;
@@ -22,18 +23,18 @@ public class UserRegistrationStepDefinitions {
 
   @Before
   public void setup() throws SQLException {
-    databaseManager = new OldDatabaseManager();
+    databaseManager = new DatabaseManager();
     authenticationManager = new AuthenticationManager(databaseManager);
   }
 
   @After
   public void close() {
-    databaseManager.close();
+    databaseManager.teardown();
   }
 
   @Given("the user is not authenticated and is registering")
   public void the_user_is_not_authenticated_and_is_registering() {
-    authenticationManager.setAuthenticatedUsername(null);
+    authenticationManager.setAuthenticatedUser(null);
   }
 
   @When("the user enters a valid username, password, and confirmed password")
@@ -48,7 +49,8 @@ public class UserRegistrationStepDefinitions {
     // Write code here that turns the phrase above into concrete actions
     String existingUsername = "MyAccount";
     String existingPassword = "MyPassword";
-    databaseManager.addUser(existingUsername, existingPassword, existingPassword);
+    User user = new User(username, password, "user", "salt");
+    databaseManager.getUserDAO().add(user);
     username = existingUsername;
     password = "AnotherPassword";
     confirmedPassword = password;
@@ -79,6 +81,6 @@ public class UserRegistrationStepDefinitions {
   public void the_account_is_not_created() {
     AuthenticationResponse response = authenticationManager.validateRegistration(username, password,
         confirmedPassword);
-    assertNotEquals(AuthenticationResponse.REGISTER_SUCCESS, response);
+    assertNotEquals(AuthenticationResponse.USERNAME_ALREADY_REGISTERED, response);
   }
 }

@@ -122,14 +122,10 @@ public class AuthenticationManager {
         return AuthenticationResponse.INVALID_PASSWORD;
       }
 
-      // todo - migrate this to use bindings
-//      String salt = EncryptionUtil.generateSalt();
-//      String hashedPassword = EncryptionUtil.hashPassword(newPassword, salt);
-//      boolean passwordUpdated = databaseManager.updatePassword(username, hashedPassword,
-//          salt);
-//      if (passwordUpdated) {
-//        return PASSWORD_CHANGED_SUCCESS;
-//      }
+      String salt = EncryptionUtil.generateSalt();
+      String hashedPassword = EncryptionUtil.hashPassword(newPassword, salt);
+      user.setPassword(hashedPassword);
+      user.setSalt(salt);
       return PASSWORD_CHANGED_SUCCESS;
     }
     return AuthenticationResponse.UNEXPECTED_ERROR;
@@ -153,7 +149,7 @@ public class AuthenticationManager {
   }
 
   public String getAuthenticatedUsername() {
-    return authenticatedUser.getUsername();
+    return authenticatedUser == null ? null : authenticatedUser.getUsername();
   }
 
   public void setAuthenticatedUser(User authenticatedUser) {

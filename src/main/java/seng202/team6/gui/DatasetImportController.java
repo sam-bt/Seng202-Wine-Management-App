@@ -163,7 +163,6 @@ public class DatasetImportController extends Controller {
       String[] tuple = selectedTable.get(row);
 
       wines.add(WineValidator.parseWine(
-          managerContext.databaseManager,
           title != -1 ? tuple[title] : "",
           variety != -1 ? tuple[variety] : "",
           country != -1 ? tuple[country] : "",

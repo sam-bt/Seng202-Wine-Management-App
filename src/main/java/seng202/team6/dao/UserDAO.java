@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;
+import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.Timer;
 
 /**
@@ -30,6 +32,8 @@ public class UserDAO extends DAO {
    */
   @Override
   public String[] getInitialiseStatements() {
+    String salt = EncryptionUtil.generateSalt();
+    String hashedAdminPassword = EncryptionUtil.hashPassword("admin", salt);
     return new String[] {
         "CREATE TABLE IF NOT EXISTS USER (" +
             "USERNAME       VARCHAR(64)   PRIMARY KEY," +
@@ -38,7 +42,7 @@ public class UserDAO extends DAO {
             "SALT           VARCHAR(32)" +
             ")",
         "INSERT INTO USER (USERNAME, PASSWORD, ROLE, SALT) " +
-            "SELECT 'admin', 'admin', 'admin', 'admin' " +
+            "SELECT 'admin', '" + hashedAdminPassword + "', 'admin', '" + salt + "' " +
             "WHERE NOT EXISTS (" +
             "SELECT 1 FROM USER WHERE USERNAME = 'admin')"
     };
@@ -81,12 +85,14 @@ public class UserDAO extends DAO {
       try (ResultSet resultSet = statement.executeQuery()) {
         if (resultSet.next()) {
           log.info("Successfully found user '{}' in {}ms", username, timer.stop());
-          return new User(
+          User user =  new User(
               resultSet.getString("USERNAME"),
               resultSet.getString("PASSWORD"),
               resultSet.getString("ROLE"),
               resultSet.getString("SALT")
           );
+          bindUpdater(user);
+          return user;
         } else {
           log.warn("Could not find user '{}' in {}ms", username, timer.stop());
         }
@@ -117,6 +123,7 @@ public class UserDAO extends DAO {
       } else {
         log.warn("Failed to add user '{}' in {}ms", user.getUsername(), timer.stop());
       }
+      bindUpdater(user);
     } catch (SQLException error) {
       log.error("Failed to add a user", error);
     }
@@ -156,6 +163,52 @@ public class UserDAO extends DAO {
       log.info("Successfully deleted {} users in {}ms", rowsAffected, timer.stop());
     } catch (SQLException error) {
       log.error("Unable to delete all users in the USER table", error);
+    }
+  }
+
+  private void bindUpdater(User user) {
+    user.passwordProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(user.getUsername(), "PASSWORD", update -> {
+        update.setString(1, after);
+      });
+    });
+    user.roleProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(user.getUsername(), "ROLE", update -> {
+        update.setString(1, after);
+      });
+    });
+    user.saltProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(user.getUsername(), "SALT", update -> {
+        update.setString(1, after);
+      });
+    });
+  }
+
+  /**
+   * Helper to set an attribute
+   *
+   * @param attributeName name of attribute
+   * @param attributeSetter callback to set attribute
+   */
+  private void updateAttribute(String username, String attributeName,
+      DatabaseManager.AttributeSetter attributeSetter) {
+    Timer timer = new Timer();
+    String sql = "UPDATE USER set " + attributeName + " = ? where USERNAME = ?";
+    try (PreparedStatement update = connection.prepareStatement(sql)) {
+      attributeSetter.setAttribute(update);
+      update.setString(2, username);
+
+      int rowsAffected = update.executeUpdate();
+      if (rowsAffected == 1) {
+        log.info("Successfully updated attribute '{}' for user '{}' in {}ms",
+            attributeName, username, timer.stop());
+      } else {
+        log.info("Could not update attribute '{}' for user '{}' in {}ms",
+            attributeName, username, timer.stop());
+      }
+    } catch (SQLException error) {
+      log.error("Failed to update attribute '{}' for user '{}' in {}ms",
+          attributeName, username, timer.stop(), error);
     }
   }
 }

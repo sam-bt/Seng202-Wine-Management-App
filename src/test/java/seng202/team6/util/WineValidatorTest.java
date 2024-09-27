@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import seng202.team6.managers.OldDatabaseManager;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
 import seng202.team6.util.Exceptions.ValidationException;
@@ -18,27 +17,7 @@ import seng202.team6.util.Exceptions.ValidationException;
  * This class contains unit tests to verify the functionality of the WineValidator
  */
 class WineValidatorTest {
-  private OldDatabaseManager databaseManager;
   private GeoLocation mockGeoLocation;
-
-  /**
-   * Sets up the test environment before each test method.
-   * Initializes a new DatabaseManager for each test.
-   *
-   * @throws SQLException if there's an error setting up the database connection
-   */
-  @BeforeEach
-  void setup() throws SQLException {
-    databaseManager = new OldDatabaseManager();
-  }
-
-  /**
-   * Closes the database after every test method
-   */
-  @AfterEach
-  void close() {
-    databaseManager.close();
-  }
 
   /**
    * Tests the parseWine method with valid input for all fields.
@@ -48,7 +27,7 @@ class WineValidatorTest {
   @Test
   void testParseWineValidInput() throws ValidationException {
     Wine wine = WineValidator.parseWine(
-        databaseManager, "Test Wine", "Merlot", "France", "Bordeaux",
+        "Test Wine", "Merlot", "France", "Bordeaux",
         "Test Winery", "Red", "2020", "A fine wine", "95", "14.5", "50.0", mockGeoLocation
     );
 
@@ -74,7 +53,7 @@ class WineValidatorTest {
   @Test
   void testParseWineEmptyOptionalFields() throws ValidationException {
     Wine wine = WineValidator.parseWine(
-        databaseManager, "Test Wine", "Merlot", "France", "Bordeaux",
+        "Test Wine", "Merlot", "France", "Bordeaux",
         "Test Winery", "Red", "2020", "A fine wine", "", "", "", mockGeoLocation
     );
 
@@ -92,7 +71,7 @@ class WineValidatorTest {
   @Test
   void testParseWineInvalidVintage() throws ValidationException {
     Wine wine = WineValidator.parseWine(
-        databaseManager, "Test Wine", "Merlot", "France", "Bordeaux",
+        "Test Wine", "Merlot", "France", "Bordeaux",
         "Test Winery", "Red", "Not a year", "A fine wine", "95", "14.5", "50.0", mockGeoLocation
     );
 
@@ -108,7 +87,7 @@ class WineValidatorTest {
   void testParseWineInvalidNumericFields() {
     assertThrows(ValidationException.class, () -> {
       WineValidator.parseWine(
-          databaseManager, "Test Wine", "Merlot", "France", "Bordeaux",
+          "Test Wine", "Merlot", "France", "Bordeaux",
           "Test Winery", "Red", "2020", "A fine wine", "Not a number", "Not a number", "Not a number", mockGeoLocation
       );
     });
@@ -122,7 +101,7 @@ class WineValidatorTest {
   void testParseWineNullFields() {
     assertThrows(ValidationException.class, () -> {
       WineValidator.parseWine(
-          databaseManager, null, null, null, null,
+          null, null, null, null,
           null, null, null, null, null, null, null, null
       );
     });

@@ -11,14 +11,14 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
-import seng202.team6.managers.OldDatabaseManager;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 
 public class UserLogoutStepDefinitions {
   private AuthenticationManager authenticationManager;
   @Before
   public void setup() throws SQLException {
-    authenticationManager = new AuthenticationManager(new OldDatabaseManager());
+    authenticationManager = new AuthenticationManager(new DatabaseManager());
   }
 
   @Given("the user is authenticated and wants to logout")

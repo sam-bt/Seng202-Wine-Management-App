@@ -49,7 +49,6 @@ public class WineValidator {
    * @return wine
    */
   public static Wine parseWine(
-      DatabaseManager databaseManager,
       String title,
       String variety,
       String country,

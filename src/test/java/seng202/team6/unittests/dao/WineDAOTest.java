@@ -54,7 +54,7 @@ public class WineDAOTest {
     List<Wine> wines = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
       wines.add(
-          new Wine(-1, null, "wine", "blue", "nz", "christchurch", "", "", 1024, "na", 99, 25.0f,
+          new Wine(-1, "wine", "blue", "nz", "christchurch", "", "", 1024, "na", 99, 25.0f,
               50f, null));
     }
 
@@ -66,7 +66,7 @@ public class WineDAOTest {
     List<Wine> wines = new ArrayList<>();
     for (int i = 0; i < num; i++) {
       wines.add(
-          new Wine(-1, null, "wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011,
+          new Wine(-1, "wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011,
               "na", 99, 25f,
               (float) i, null));
     }

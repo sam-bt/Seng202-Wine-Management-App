@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team6.managers.DatabaseManager;
 
-public class NewDatabaseManagerTest {
+public class DatabaseManagerTest {
   private DatabaseManager databaseManager;
 
   @BeforeEach
