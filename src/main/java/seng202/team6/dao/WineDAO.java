@@ -17,6 +17,10 @@ import seng202.team6.util.Timer;
  * Data Access Object (DAO) for handling wine related database operations.
  */
 public class WineDAO extends DAO {
+
+  /**
+   * Cache to store and reuse Wine objects to avoid duplication
+   */
   private final DatabaseObjectUniquer<Wine> wineCache = new DatabaseObjectUniquer<>();
 
   /**
@@ -28,6 +32,11 @@ public class WineDAO extends DAO {
     super(connection, WineDAO.class);
   }
 
+  /**
+   * Returns the SQL statements required to initialise the WINE table.
+   *
+   * @return Array of SQL statements for initialising the WINE table
+   */
   @Override
   public String[] getInitialiseStatements() {
     return new String[]{
@@ -48,6 +57,11 @@ public class WineDAO extends DAO {
     };
   }
 
+  /**
+   * Retrieves the total number of wines in the database.
+   *
+   * @return The count of wines in the WINE table
+   */
   public int getCount() {
     Timer timer = new Timer();
     String sql = "SELECT COUNT(*) FROM WINE";
@@ -65,6 +79,35 @@ public class WineDAO extends DAO {
     return 0;
   }
 
+  /**
+   * Retrieves all wines from the WINE table.
+   *
+   * @return An ObservableList of all Wine objects in the database
+   */
+  public ObservableList<Wine> getAll() {
+    Timer timer = new Timer();
+    String sql = "SELECT * from WINE "
+        + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME)"
+        + "ORDER BY WINE.ID ";
+    try (Statement statement = connection.createStatement()) {
+      try (ResultSet resultSet = statement.executeQuery(sql)) {
+        ObservableList<Wine> wines = extractAllWinesFromResultSet(resultSet);
+        log.info("Successfully retrieved all {} wines in {}ms", wines.size(), timer.stop());
+        return wines;
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve wines in range", error);
+    }
+    return FXCollections.emptyObservableList();
+  }
+
+  /**
+   * Retrieves a range of wines from the WINE table.
+   *
+   * @param begin The start index of the range (inclusive)
+   * @param end The end index of the range (exclusive)
+   * @return An ObservableList of Wine objects within the specified range
+   */
   public ObservableList<Wine> getRange(int begin, int end) {
     Timer timer = new Timer();
     String sql = "SELECT * from WINE "
@@ -86,11 +129,23 @@ public class WineDAO extends DAO {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Replaces all wines in the WINE table by first removing all existing wines and then adding
+   * the provided lists of wines.
+   *
+   * @param wines The list of wines to be added to the table
+   */
   public void replaceAll(List<Wine> wines) {
     removeAll();
     addAll(wines);
   }
 
+  /**
+   * Adds a list of wines to the WINE table in match mode to improve performance.
+   * The batch is executed every 2048 wines to prevent excessive memory usage.
+   *
+   * @param wines The list of wines to be added to the table
+   */
   public void addAll(List<Wine> wines) {
     Timer timer = new Timer();
     String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -100,24 +155,34 @@ public class WineDAO extends DAO {
       log.error("Failed to disable database auto committing", error);
     }
 
+    int rowsAffected = 0;
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       for (int i = 0; i < wines.size(); i++) {
         setWineParameters(statement, wines.get(i), 1);
-        if (i % 2048 == 0) {
-          statement.executeBatch();
+        statement.addBatch();
+
+        if (i > 0 && i % 2048 == 0) {
+          for (int rowsAffectedInBatch : statement.executeBatch()) {
+            rowsAffected += rowsAffectedInBatch;
+          }
         }
       }
-      statement.executeBatch();
+      for (int rowsAffectedInBatch : statement.executeBatch()) {
+        rowsAffected += rowsAffectedInBatch;
+      }
       connection.commit();
     } catch (SQLException error) {
       log.error("Failed to add a batch of wines to the WINE table", error);
     }
-    log.info("Successfully added {} wines to the WINE table in {}ms", wines.size(), timer.stop());
+    log.info("Successfully added {} out of {} wines to the WINE table in {}ms", rowsAffected, wines.size(), timer.stop());
   }
 
+  /**
+   * Removes all wines from the WINE table.
+   */
   public void removeAll() {
     Timer timer = new Timer();
-    String sql = "REMOVE FROM WINE";
+    String sql = "DELETE FROM WINE";
     try (Statement statement = connection.createStatement()) {
       int rowsAffected = statement.executeUpdate(sql);
       log.info("Successfully removed {} wines from the WINE table in {}ms", rowsAffected, timer.stop());
@@ -126,6 +191,13 @@ public class WineDAO extends DAO {
     }
   }
 
+  /**
+   * Extracts all wines from the provided ResultSet and stores them in an ObservableList.
+   *
+   * @param resultSet The ResultSet from which wines are to be extracted
+   * @return An ObservableList of Wine objects
+   * @throws SQLException If an error occurs while processing the ResultSet
+   */
   private ObservableList<Wine> extractAllWinesFromResultSet(ResultSet resultSet)
       throws SQLException {
     ObservableList<Wine> wines = FXCollections.observableArrayList();
@@ -135,6 +207,14 @@ public class WineDAO extends DAO {
     return wines;
   }
 
+  /**
+   * Extracts a Wine object from the provided ResultSet. The wine cache is checked before creating
+   * a new Wine instance
+   *
+   * @param resultSet The ResultSet from which wines are to be extracted
+   * @return The extracted Wine object
+   * @throws SQLException If an error occurs while processing the ResultSet
+   */
   private Wine extractWineFromResultSet(ResultSet resultSet) throws SQLException {
     long id =  resultSet.getLong("ID");
     Wine cachedWine = wineCache.tryGetObject(id);
@@ -161,6 +241,14 @@ public class WineDAO extends DAO {
     );
   }
 
+  /**
+   * Sets the parameters for the PreparedStatement with the Wine objects data.
+   *
+   * @param statement The PreparedStatement to set the parameters for
+   * @param wine The wine whose data will be used to set
+   * @param startIndex The starting param index
+   * @throws SQLException If an error occurs while setting the PreparedStatement's parameters
+   */
   private void setWineParameters(PreparedStatement statement, Wine wine, int startIndex) throws SQLException {
     statement.setString(startIndex++, wine.getTitle());
     statement.setString(startIndex++, wine.getVariety());

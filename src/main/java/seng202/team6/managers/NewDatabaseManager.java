@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.InvalidParameterException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -64,7 +65,11 @@ public class NewDatabaseManager {
    *
    * @param connection the database connection to use
    */
-  private NewDatabaseManager(Connection connection) {
+  private NewDatabaseManager(Connection connection) throws SQLException {
+    if (connection == null || connection.isClosed()) {
+      throw new InvalidParameterException("The provided connection was invalid or closed");
+    }
+    log.info("Successfully opened a connection to the database");
     this.connection = connection;
     this.userDAO = new UserDAO(connection);
     this.wineDAO = new WineDAO(connection);
@@ -108,6 +113,30 @@ public class NewDatabaseManager {
     } catch (SQLException error) {
       log.error("Failed to close the database connection", error);
     }
+  }
+
+  public UserDAO getUserDAO() {
+    return userDAO;
+  }
+
+  public WineDAO getWineDAO() {
+    return wineDAO;
+  }
+
+  public WineListDAO getWineListDAO() {
+    return wineListDAO;
+  }
+
+  public WineNotesDAO getWineNotesDAO() {
+    return wineNotesDAO;
+  }
+
+  public WineReviewDAO getWineReviewDAO() {
+    return wineReviewDAO;
+  }
+
+  public GeoLocationDAO getGeoLocationDAO() {
+    return geoLocationDAO;
   }
 
   /**

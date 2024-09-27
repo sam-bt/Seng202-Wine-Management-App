@@ -10,18 +10,18 @@ public class NewDatabaseManagerTest {
   private NewDatabaseManager databaseManager;
 
   @BeforeEach
-  public void setup() throws SQLException {
+  void setup() throws SQLException {
     databaseManager = new NewDatabaseManager();
     databaseManager.init();
   }
 
   @AfterEach
-  public void teardown() throws SQLException {
+  void teardown() throws SQLException {
     databaseManager.teardown();
   }
 
   @Test
-  public void testTableCreation() {
+  void testTableCreation() {
 
   }
 }
