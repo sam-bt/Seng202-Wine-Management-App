@@ -124,6 +124,7 @@ public class WineDAO extends DAO {
         ObservableList<Wine> wines = extractAllWinesFromResultSet(resultSet);
         log.info("Successfully retrieved {} wines in range {}-{} in {}ms", wines.size(),
             begin, end, timer.stop());
+        return wines;
       }
     } catch (SQLException error) {
       log.info("Failed to retrieve wines in range {}-{}", begin, end, error);
