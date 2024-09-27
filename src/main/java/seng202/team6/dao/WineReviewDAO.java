@@ -51,7 +51,7 @@ public class WineReviewDAO extends DAO {
 
   public ObservableList<WineReview> getAll(Wine wine) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE_REVIEW WHERE WIND_ID = ?";
+    String sql = "SELECT * FROM WINE_REVIEW WHERE WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setLong(1, wine.getKey());
 
@@ -177,7 +177,7 @@ public class WineReviewDAO extends DAO {
 
     return new WineReview(
         id,
-        resultSet.getLong("WIND_ID"),
+        resultSet.getLong("WINE_ID"),
         resultSet.getString("USERNAME"),
         resultSet.getDouble("RATING"),
         resultSet.getString("DESCRIPTION"),
