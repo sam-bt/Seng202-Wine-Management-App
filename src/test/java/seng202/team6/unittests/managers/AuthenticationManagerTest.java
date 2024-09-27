@@ -7,7 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team6.managers.AuthenticationManager;
-import seng202.team6.managers.DatabaseManager;
+import seng202.team6.managers.OldDatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 
 /**
@@ -16,7 +16,7 @@ import seng202.team6.model.AuthenticationResponse;
  */
 public class AuthenticationManagerTest {
   private AuthenticationManager authenticationManager;
-  private DatabaseManager databaseManager;
+  private OldDatabaseManager databaseManager;
 
   /**
    * Sets up the test environment before each test method.
@@ -26,7 +26,7 @@ public class AuthenticationManagerTest {
    */
   @BeforeEach
   public void setup() throws SQLException {
-    databaseManager = new DatabaseManager();
+    databaseManager = new OldDatabaseManager();
     authenticationManager = new AuthenticationManager(databaseManager);
   }
 

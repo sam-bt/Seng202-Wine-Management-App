@@ -9,9 +9,8 @@ import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
 import org.apache.logging.log4j.LogManager;
-import seng202.team6.managers.DatabaseManager;
+import seng202.team6.managers.OldDatabaseManager;
 
 /**
  * Wine represents the wine record in the database
@@ -95,7 +94,7 @@ public class Wine {
   private DoubleProperty rating;
 
 
-  private DatabaseManager databaseManager;
+  private OldDatabaseManager databaseManager;
   /**
    * GeoLocation which holds the coordinates of the region name
    * <p>
@@ -122,7 +121,7 @@ public class Wine {
    */
   public Wine(
       long key,
-      DatabaseManager databaseManager,
+      OldDatabaseManager databaseManager,
       String title,
       String variety,
       String country,
@@ -172,7 +171,7 @@ public class Wine {
    */
   public Wine(
       long key,
-      DatabaseManager databaseManager,
+      OldDatabaseManager databaseManager,
       String title,
       String variety,
       String country,
@@ -310,7 +309,7 @@ public class Wine {
    * @param callback      callback to set attribute
    */
   private void setAttribute(String attributeName,
-      DatabaseManager.AttributeSetterCallBack callback) {
+      OldDatabaseManager.AttributeSetterCallBack callback) {
     if (key == -1) {
       return;
     }
@@ -349,7 +348,7 @@ public class Wine {
    *
    * @return database
    */
-  public DatabaseManager getDatabaseManager() {
+  public OldDatabaseManager getDatabaseManager() {
     return databaseManager;
   }
 
@@ -358,7 +357,7 @@ public class Wine {
    *
    * @param databaseManager database
    */
-  public void setDatabaseManager(DatabaseManager databaseManager) {
+  public void setDatabaseManager(OldDatabaseManager databaseManager) {
     this.databaseManager = databaseManager;
   }
 

@@ -9,16 +9,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team6.dao.UserDAO;
-import seng202.team6.managers.NewDatabaseManager;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;
 
 public class UserDAOTest {
-  private NewDatabaseManager databaseManager;
+  private DatabaseManager databaseManager;
   private UserDAO userDAO;
 
   @BeforeEach
   void setup() throws SQLException {
-    databaseManager = new NewDatabaseManager();
+    databaseManager = new DatabaseManager();
     databaseManager.init();
     userDAO = databaseManager.getUserDAO();
   }

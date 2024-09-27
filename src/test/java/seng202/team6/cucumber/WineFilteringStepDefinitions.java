@@ -12,18 +12,18 @@ import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import seng202.team6.managers.DatabaseManager;
+import seng202.team6.managers.OldDatabaseManager;
 import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
 
 public class WineFilteringStepDefinitions {
-  private DatabaseManager databaseManager;
+  private OldDatabaseManager databaseManager;
   private Filters filters;
   private List<Wine> filteredWines;
 
   @Before
   public void setup() throws SQLException {
-    databaseManager = new DatabaseManager();
+    databaseManager = new OldDatabaseManager();
   }
 
   @After

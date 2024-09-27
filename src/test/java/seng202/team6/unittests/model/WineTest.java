@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import seng202.team6.managers.DatabaseManager;
+import seng202.team6.managers.OldDatabaseManager;
 import seng202.team6.model.Wine;
 
 /**
@@ -15,7 +15,7 @@ import seng202.team6.model.Wine;
  */
 class WineTest {
 
-  DatabaseManager database;
+  OldDatabaseManager database;
 
   /**
    * Creates a test database to test
@@ -24,7 +24,7 @@ class WineTest {
    */
   @BeforeEach
   void setUp() throws SQLException {
-    database = new DatabaseManager();
+    database = new OldDatabaseManager();
     addWine();
   }
 

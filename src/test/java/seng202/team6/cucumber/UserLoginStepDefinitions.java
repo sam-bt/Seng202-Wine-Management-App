@@ -12,18 +12,18 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
-import seng202.team6.managers.DatabaseManager;
+import seng202.team6.managers.OldDatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 
 public class UserLoginStepDefinitions {
-  private DatabaseManager databaseManager;
+  private OldDatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private String username;
   private String password;
 
   @Before
   public void setup() throws SQLException {
-    databaseManager = new DatabaseManager();
+    databaseManager = new OldDatabaseManager();
     authenticationManager = new AuthenticationManager(databaseManager);
   }
 

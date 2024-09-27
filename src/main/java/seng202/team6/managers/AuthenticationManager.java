@@ -2,7 +2,9 @@ package seng202.team6.managers;
 
 import static seng202.team6.model.AuthenticationResponse.PASSWORD_CHANGED_SUCCESS;
 import static seng202.team6.model.AuthenticationResponse.UNEXPECTED_ERROR;
+import static seng202.team6.model.AuthenticationResponse.USERNAME_ALREADY_REGISTERED;
 
+import seng202.team6.dao.UserDAO;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.model.User;
 import seng202.team6.util.EncryptionUtil;
@@ -12,7 +14,7 @@ import seng202.team6.util.EncryptionUtil;
  * This class provides methods for user registration, login, password update, and logout.
  */
 public class AuthenticationManager {
-  private String authenticatedUsername;
+  private User authenticatedUser;
   private boolean admin;
   private boolean adminFirstLogin;
   private final DatabaseManager databaseManager;
@@ -46,13 +48,14 @@ public class AuthenticationManager {
         "[a-zA-Z0-9]+")) {
       return AuthenticationResponse.INVALID_PASSWORD;
     }
+    UserDAO userDAO = databaseManager.getUserDAO();
+    if (userDAO.get(username) != null)
+      return USERNAME_ALREADY_REGISTERED;
+
     String salt = EncryptionUtil.generateSalt();
     String hashedPassword = EncryptionUtil.hashPassword(password, salt);
-    boolean userAdded = databaseManager.addUser(username, hashedPassword, salt);
-    if (userAdded) {
-      return AuthenticationResponse.REGISTER_SUCCESS;
-    }
-    return AuthenticationResponse.USERNAME_ALREADY_REGISTERED;
+    userDAO.add(new User(username, hashedPassword, "user", salt));
+    return AuthenticationResponse.REGISTER_SUCCESS;
   }
 
   /**
@@ -68,15 +71,15 @@ public class AuthenticationManager {
       return AuthenticationResponse.MISSING_FIELDS;
     }
 
-    User userInfo = databaseManager.getUser(username);
-    if (userInfo == null) {
+    User user = databaseManager.getUserDAO().get(username);
+    if (user == null) {
       return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
     }
 
-    boolean validPassword = EncryptionUtil.verifyPassword(password, userInfo.getPassword(),
-        userInfo.getSalt());
+    boolean validPassword = EncryptionUtil.verifyPassword(password, user.getPassword(),
+        user.getSalt());
     if (validPassword) {
-      setAuthenticatedUsername(username);
+      setAuthenticatedUser(user);
       setAdmin(username.equals("admin"));
       setAdminFirstLogin(isAdmin() && password.equals("admin"));
       return AuthenticationResponse.LOGIN_SUCCESS;
@@ -101,7 +104,7 @@ public class AuthenticationManager {
       return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
     }
 
-    User user = databaseManager.getUser(username);
+    User user = databaseManager.getUserDAO().get(username);
     if (user != null) {
       boolean validPassword = EncryptionUtil.verifyPassword(oldPassword, user.getPassword(),
           user.getSalt());
@@ -119,42 +122,42 @@ public class AuthenticationManager {
         return AuthenticationResponse.INVALID_PASSWORD;
       }
 
-      String salt = EncryptionUtil.generateSalt();
-      String hashedPassword = EncryptionUtil.hashPassword(newPassword, salt);
-      boolean passwordUpdated = databaseManager.updatePassword(username, hashedPassword,
-          salt);
-      if (passwordUpdated) {
-        return PASSWORD_CHANGED_SUCCESS;
-      }
+      // todo - migrate this to use bindings
+//      String salt = EncryptionUtil.generateSalt();
+//      String hashedPassword = EncryptionUtil.hashPassword(newPassword, salt);
+//      boolean passwordUpdated = databaseManager.updatePassword(username, hashedPassword,
+//          salt);
+//      if (passwordUpdated) {
+//        return PASSWORD_CHANGED_SUCCESS;
+//      }
+      return PASSWORD_CHANGED_SUCCESS;
     }
     return AuthenticationResponse.UNEXPECTED_ERROR;
   }
 
   /**
    * Processes a user logout request.
-   *
-   * @return An AuthenticationResponse indicating the result of the logout attempt.
    */
-  public AuthenticationResponse logout() {
-    if (isAuthenticated()) {
-      setAuthenticatedUsername(null);
-      setAdmin(false);
-      setAdminFirstLogin(false);
-      return AuthenticationResponse.LOGOUT_SUCCESS;
-    }
-    return UNEXPECTED_ERROR;
+  public void logout() {
+    setAuthenticatedUser(null);
+    setAdmin(false);
+    setAdminFirstLogin(false);
+  }
+
+  public User getAuthenticatedUser() {
+    return authenticatedUser;
   }
 
   public boolean isAuthenticated() {
-    return authenticatedUsername != null;
+    return authenticatedUser != null;
   }
 
   public String getAuthenticatedUsername() {
-    return authenticatedUsername;
+    return authenticatedUser.getUsername();
   }
 
-  public void setAuthenticatedUsername(String authenticatedUsername) {
-    this.authenticatedUsername = authenticatedUsername;
+  public void setAuthenticatedUser(User authenticatedUser) {
+    this.authenticatedUser = authenticatedUser;
   }
 
   public boolean isAdmin() {

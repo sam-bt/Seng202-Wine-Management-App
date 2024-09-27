@@ -9,16 +9,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team6.dao.WineDAO;
-import seng202.team6.managers.NewDatabaseManager;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Wine;
 
 public class WineDAOTest {
-  private NewDatabaseManager databaseManager;
+  private DatabaseManager databaseManager;
   private WineDAO wineDAO;
 
   @BeforeEach
   void setup() throws SQLException {
-    databaseManager = new NewDatabaseManager();
+    databaseManager = new DatabaseManager();
     databaseManager.init();
     wineDAO = databaseManager.getWineDAO();
   }

@@ -7,21 +7,21 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.AuthenticationManager;
-import seng202.team6.managers.DatabaseManager;
+import seng202.team6.managers.OldDatabaseManager;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 
 public class WineReviewsService {
 
   private final AuthenticationManager authenticationManager;
-  private final DatabaseManager databaseManager;
+  private final OldDatabaseManager databaseManager;
   private final ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
   private final Wine wine;
   private final Property<WineReview> usersReview = new SimpleObjectProperty<>();
   private final DoubleProperty averageRating = new SimpleDoubleProperty();
 
   public WineReviewsService(AuthenticationManager authenticationManager,
-      DatabaseManager databaseManager, Wine wine) {
+      OldDatabaseManager databaseManager, Wine wine) {
     this.authenticationManager = authenticationManager;
     this.databaseManager = databaseManager;
     this.wine = wine;

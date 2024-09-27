@@ -4,11 +4,6 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.fxml.FXML;
-import javafx.scene.input.MouseEvent;
-import seng202.team6.managers.DatabaseManager;
-
-import java.io.IOException;
 
 public class Note {
   private final LongProperty id;

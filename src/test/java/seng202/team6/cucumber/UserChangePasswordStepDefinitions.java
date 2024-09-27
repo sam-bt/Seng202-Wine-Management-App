@@ -12,13 +12,13 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
-import seng202.team6.managers.DatabaseManager;
+import seng202.team6.managers.OldDatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.model.User;
 import seng202.team6.util.EncryptionUtil;
 
 public class UserChangePasswordStepDefinitions {
-  private DatabaseManager databaseManager;
+  private OldDatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private String username;
   private String password;
@@ -28,7 +28,7 @@ public class UserChangePasswordStepDefinitions {
 
   @Before
   public void setup() throws SQLException {
-    databaseManager = new DatabaseManager();
+    databaseManager = new OldDatabaseManager();
     authenticationManager = new AuthenticationManager(databaseManager);
   }
 

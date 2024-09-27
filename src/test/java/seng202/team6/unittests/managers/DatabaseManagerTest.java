@@ -12,14 +12,14 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import seng202.team6.managers.DatabaseManager;
+import seng202.team6.managers.OldDatabaseManager;
 import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 
 class DatabaseManagerTest {
 
-  private DatabaseManager manager;
+  private OldDatabaseManager manager;
 
   /**
    * Initializes the database
@@ -27,7 +27,7 @@ class DatabaseManagerTest {
   @BeforeEach
   void setup() {
     assertDoesNotThrow(() -> {
-      manager = new DatabaseManager();
+      manager = new OldDatabaseManager();
     });
   }
 
