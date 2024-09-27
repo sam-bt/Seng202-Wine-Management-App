@@ -56,12 +56,12 @@ public class UserDAO extends DAO {
       try (ResultSet resultSet = statement.executeQuery(sql)) {
         if (resultSet.next()) {
           int count = resultSet.getInt(1);
-          log.info("Counted {} elements in the USER table in {}ms", count, timer.stop());
+          log.info("Counted {} users in {}ms", count, timer.stop());
           return count;
         }
       }
     } catch (SQLException error) {
-      log.error("Failed to count the number of elements in USER table", error);
+      log.error("Failed to count the number of users", error);
     }
     return 0;
   }
@@ -73,24 +73,26 @@ public class UserDAO extends DAO {
    * @return A User object if the user is found, null otherwise
    */
   public User get(String username) {
+    Timer timer = new Timer();
     String sql = "SELECT * FROM USER WHERE USERNAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setString(1, username);
 
       try (ResultSet resultSet = statement.executeQuery()) {
         if (resultSet.next()) {
-          log.info("Successfully found user '{}' in table USER", username);
+          log.info("Successfully found user '{}' in {}ms", username, timer.stop());
           return new User(
               resultSet.getString("USERNAME"),
               resultSet.getString("PASSWORD"),
               resultSet.getString("ROLE"),
               resultSet.getString("SALT")
           );
+        } else {
+          log.warn("Could not find user '{}' in {}ms", username, timer.stop());
         }
       }
-      log.info("Failed to find user '{}' in table USER", username);
     } catch (SQLException error) {
-      log.error("Failed to get user {} from the USER table", username, error);
+      log.error("Failed to retrieve user {}", username, error);
     }
     return null;
   }
@@ -101,6 +103,7 @@ public class UserDAO extends DAO {
    * @param user The user to be added
    */
   public void add(User user) {
+    Timer timer = new Timer();
     String sql = "INSERT INTO USER VALUES (?, ?, 'user', ?)";
     try (PreparedStatement statement = connection.prepareStatement(sql,
         Statement.RETURN_GENERATED_KEYS)) {
@@ -110,14 +113,12 @@ public class UserDAO extends DAO {
 
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
-        log.info("Successfully added user '{}' to the USER table", user.getUsername());
+        log.info("Successfully added user '{}' in {}ms", user.getUsername(), timer.stop());
       } else {
-        log.warn("Failed to add user '{}' to the USER table", user.getUsername());
+        log.warn("Failed to add user '{}' in {}ms", user.getUsername(), timer.stop());
       }
     } catch (SQLException error) {
-      if (!error.getMessage().contains("A PRIMARY KEY constraint failed")) {
-        log.error("Failed to add a user to the USER table", error);
-      }
+      log.error("Failed to add a user", error);
     }
   }
 
@@ -127,18 +128,19 @@ public class UserDAO extends DAO {
    * @param user The user to be removed
    */
   public void delete(User user) {
+    Timer timer = new Timer();
     String sql = "DELETE FROM USER WHERE USERNAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setString(1, user.getUsername());
 
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
-        log.info("Successfully deleted user '{}' from the USER table", user.getUsername());
+        log.info("Successfully deleted user '{}' in {}ms", user.getUsername(), timer.stop());
       } else {
-        log.warn("Failed to delete user '{}' from the USER table", user.getUsername());
+        log.warn("Failed to delete user '{}' in {}ms", user.getUsername(), timer.stop());
       }
     } catch (SQLException error) {
-      log.error("Unable to delete user {} in the USER table", user.getUsername(), error);
+      log.error("Unable to delete user '{}'", user.getUsername(), error);
     }
   }
 
@@ -146,9 +148,12 @@ public class UserDAO extends DAO {
    * Deletes all the users in the USER table except the default admin account.
    */
   public void deleteAll() {
+    Timer timer = new Timer();
     String sql = "DELETE FROM USER WHERE USERNAME != 'admin'";
     try (Statement statement = connection.createStatement()) {
-      statement.executeUpdate(sql);
+      int rowsAffected = statement.executeUpdate(sql);
+
+      log.info("Successfully deleted {} users in {}ms", rowsAffected, timer.stop());
     } catch (SQLException error) {
       log.error("Unable to delete all users in the USER table", error);
     }

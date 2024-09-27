@@ -69,12 +69,12 @@ public class WineDAO extends DAO {
       try (ResultSet resultSet = statement.executeQuery(sql)) {
         if (resultSet.next()) {
           int count = resultSet.getInt(1);
-          log.info("Counted {} elements in the WINE table in {}ms", count, timer.stop());
+          log.info("Counted {} wines in {}ms", count, timer.stop());
           return count;
         }
       }
     } catch (SQLException error) {
-      log.error("Failed to count the number of elements in WINE table", error);
+      log.error("Failed to count the number of wines", error);
     }
     return 0;
   }
@@ -121,10 +121,11 @@ public class WineDAO extends DAO {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<Wine> wines = extractAllWinesFromResultSet(resultSet);
-        log.info("Successfully retrieved {} wines in {}ms", wines.size(), timer.stop());
+        log.info("Successfully retrieved {} wines in range {}-{} in {}ms", wines.size(),
+            begin, end, timer.stop());
       }
     } catch (SQLException error) {
-      log.info("Failed to retrieve wines in range", error);
+      log.info("Failed to retrieve wines in range {}-{}", begin, end, error);
     }
     return FXCollections.emptyObservableList();
   }
@@ -156,6 +157,7 @@ public class WineDAO extends DAO {
     }
 
     int rowsAffected = 0;
+    int numberOfBatches = 1;
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       for (int i = 0; i < wines.size(); i++) {
         setWineParameters(statement, wines.get(i), 1);
@@ -165,16 +167,19 @@ public class WineDAO extends DAO {
           for (int rowsAffectedInBatch : statement.executeBatch()) {
             rowsAffected += rowsAffectedInBatch;
           }
+          numberOfBatches++;
         }
       }
       for (int rowsAffectedInBatch : statement.executeBatch()) {
         rowsAffected += rowsAffectedInBatch;
       }
       connection.commit();
+      connection.setAutoCommit(true);
     } catch (SQLException error) {
-      log.error("Failed to add a batch of wines to the WINE table", error);
+      log.error("Failed to add a batch of wines", error);
     }
-    log.info("Successfully added {} out of {} wines to the WINE table in {}ms", rowsAffected, wines.size(), timer.stop());
+    log.info("Successfully added {} out of {} wines using {} batches in {}ms", rowsAffected,
+        wines.size(), numberOfBatches, timer.stop());
   }
 
   /**
@@ -185,9 +190,9 @@ public class WineDAO extends DAO {
     String sql = "DELETE FROM WINE";
     try (Statement statement = connection.createStatement()) {
       int rowsAffected = statement.executeUpdate(sql);
-      log.info("Successfully removed {} wines from the WINE table in {}ms", rowsAffected, timer.stop());
+      log.info("Successfully removed {} wines in {}ms", rowsAffected, timer.stop());
     } catch (SQLException error) {
-      log.error("Failed to remove all wines from the WINE table", error);
+      log.error("Failed to remove all wines", error);
     }
   }
 
