@@ -108,7 +108,7 @@ public class WineDAO extends DAO {
    * @param end The end index of the range (exclusive)
    * @return An ObservableList of Wine objects within the specified range
    */
-  public ObservableList<Wine> getRange(int begin, int end) {
+  public ObservableList<Wine> getAllInRange(int begin, int end) {
     Timer timer = new Timer();
     String sql = "SELECT * from WINE "
         + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME)"
