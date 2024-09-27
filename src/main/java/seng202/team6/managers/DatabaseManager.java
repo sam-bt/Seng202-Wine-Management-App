@@ -69,14 +69,15 @@ public class DatabaseManager {
     if (connection == null || connection.isClosed()) {
       throw new InvalidParameterException("The provided connection was invalid or closed");
     }
-    log.info("Successfully opened a connection to the database");
     this.connection = connection;
+    log.info("Successfully opened a connection to the database");
     this.userDAO = new UserDAO(connection);
     this.wineDAO = new WineDAO(connection);
     this.wineListDAO = new WineListDAO(connection);
     this.wineNotesDAO = new WineNotesDAO(connection);
     this.wineReviewDAO = new WineReviewDAO(connection);
     this.geoLocationDAO = new GeoLocationDAO(connection);
+    init();
   }
 
   /**
@@ -86,12 +87,13 @@ public class DatabaseManager {
    * @throws RuntimeException if any SQL execution fails
    */
   public void init() {
-    List<String> sqlStatements = Stream.of(userDAO, wineDAO, wineListDAO, wineNotesDAO, wineReviewDAO,
-            geoLocationDAO)
+    List<String> sqlStatements = Stream.of(userDAO, wineDAO, wineListDAO, wineNotesDAO, wineReviewDAO, geoLocationDAO)
+        .filter(Objects::nonNull)  // Filter out null DAOs
         .map(DAO::getInitialiseStatements)
-        .filter(Objects::nonNull)
+        .filter(Objects::nonNull)  // Filter out null statements
         .flatMap(Arrays::stream)
         .toList();
+
     try (Statement statement = connection.createStatement()) {
       for (String sql : sqlStatements) {
         statement.execute(sql);
@@ -100,6 +102,7 @@ public class DatabaseManager {
       log.error("Failed to initialise a Data Access Object", e);
       throw new RuntimeException(e);
     }
+    log.info("Successfully executed {} initialise statements", sqlStatements.size());
   }
 
   /**

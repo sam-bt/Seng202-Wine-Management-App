@@ -51,12 +51,14 @@ public class AddToListPopupController extends Controller {
 
   private void onAddButtonClick(WineList wineList, Button button) {
     updateWineListButton(button, wineList, true);
-    managerContext.databaseManager.addWineToList(wineList, wine);
+    // todo - do this using beans
+//    managerContext.databaseManager.addWineToList(wineList, wine);
   }
 
   private void onRemoveButtonClick(WineList wineList, Button button) {
     updateWineListButton(button, wineList, false);
-    managerContext.databaseManager.deleteWineFromList(wineList, wine);
+    // todo - using beans
+//    managerContext.databaseManager.deleteWineFromList(wineList, wine);
   }
 
   private void bindToWineListService() {

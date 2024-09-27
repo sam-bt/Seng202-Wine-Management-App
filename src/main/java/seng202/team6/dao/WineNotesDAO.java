@@ -50,7 +50,20 @@ public class WineNotesDAO extends DAO {
   public ObservableList<Note> getAll(User user) {
     Timer timer = new Timer();
     String sql = "SELECT ID, NOTE FROM NOTES " +
-        "WHERE USERNAME = ? AND WINE_ID = ?";
+        "WHERE USERNAME = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setString(1, user.getUsername());
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        ObservableList<Note> notes = extractAllNotesFromResultSet(resultSet);
+        log.info("Successfully retrieved all {} notes for user '{}' in {}ms",
+            notes.size(), user.getUsername(), timer.stop());
+        return notes;
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve notes for user '{}'", user.getUsername(), error);
+    }
+    return FXCollections.emptyObservableList();
   }
 
   public Note get(User user, Wine wine) {

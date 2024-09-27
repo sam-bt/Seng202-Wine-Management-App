@@ -245,8 +245,9 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   public void onSaveClicked() {
-    managerContext.databaseManager.saveNote(viewedWine.getKey(),
-        managerContext.authenticationManager.getAuthenticatedUsername(), notesTextbox.getText());
+    // todo - save this using beans
+//    managerContext.databaseManager.saveNote(viewedWine.getKey(),
+//        managerContext.authenticationManager.getAuthenticatedUsername(), notesTextbox.getText());
   }
 
   private String getOrDefault(String property) {

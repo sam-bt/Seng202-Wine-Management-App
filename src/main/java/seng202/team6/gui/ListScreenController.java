@@ -172,8 +172,8 @@ public class ListScreenController extends Controller {
   public void updateListOptions() {
     Button[] buttons = {listOneButton, listTwoButton, listThreeButton, listFourButton,
         listFiveButton};
-    String user = managerContext.authenticationManager.getAuthenticatedUsername();
-    wineLists = managerContext.databaseManager.getUserLists(user);
+    User user = managerContext.authenticationManager.getAuthenticatedUser();
+    wineLists = managerContext.databaseManager.getWineListDAO().getAll(user);
     for (int i = 0; i < buttons.length; i++) {
       if (i < wineLists.size()) {
         buttons[i].setText(wineLists.get(i).name());
@@ -247,13 +247,14 @@ public class ListScreenController extends Controller {
     tabViewing.setText("VIEWING: " + wineLists.get(selected - 1).name());
     tableView.getItems().clear();
 
-    String user = managerContext.authenticationManager.getAuthenticatedUsername();
-    List<WineList> userLists = managerContext.databaseManager.getUserLists(user);
-    WineList fromUserLists = userLists.get(selected-1);
-    List<Wine> list = managerContext.databaseManager.getWinesInList(fromUserLists);
-    ObservableList<Wine> observableList = FXCollections.observableList(list);
+    // todo - fix this
+//    String user = managerContext.authenticationManager.getAuthenticatedUsername();
+//    List<WineList> userLists = managerContext.databaseManager.getUserLists(user);
+//    WineList fromUserLists = userLists.get(selected-1);
+//    List<Wine> list = managerContext.databaseManager.getWinesInList(fromUserLists);
+//    ObservableList<Wine> observableList = FXCollections.observableList(list);
     setupTableView();
-    tableView.setItems(observableList);
+//    tableView.setItems(observableList);
   }
 
   @FXML
@@ -329,7 +330,8 @@ public class ListScreenController extends Controller {
     ButtonType buttonType = alert.showAndWait().orElse(null);
     if (buttonType == ButtonType.OK) {
       WineList selectedList = wineLists.get(selected - 1);
-      managerContext.databaseManager.deleteWineFromList(selectedList, wine);
+      // todo - use beans
+//      managerContext.databaseManager.deleteWineFromList(selectedList, wine);
       tableView.getItems().remove(wine);
     }
   }

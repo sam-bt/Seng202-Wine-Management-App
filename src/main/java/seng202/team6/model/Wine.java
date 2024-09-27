@@ -10,7 +10,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import org.apache.logging.log4j.LogManager;
-import seng202.team6.managers.OldDatabaseManager;
+import seng202.team6.managers.DatabaseManager;
 
 /**
  * Wine represents the wine record in the database
@@ -94,7 +94,7 @@ public class Wine {
   private DoubleProperty rating;
 
 
-  private OldDatabaseManager databaseManager;
+  private DatabaseManager databaseManager;
   /**
    * GeoLocation which holds the coordinates of the region name
    * <p>
@@ -121,7 +121,7 @@ public class Wine {
    */
   public Wine(
       long key,
-      OldDatabaseManager databaseManager,
+      DatabaseManager databaseManager,
       String title,
       String variety,
       String country,
@@ -171,7 +171,7 @@ public class Wine {
    */
   public Wine(
       long key,
-      OldDatabaseManager databaseManager,
+      DatabaseManager databaseManager,
       String title,
       String variety,
       String country,
@@ -234,93 +234,94 @@ public class Wine {
    */
   public void setupSetters() {
     // This might be mem leaky but that is too hard to think about
-    titleProperty().addListener((observableValue, before, after) -> {
-      setAttribute("TITLE", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    varietyProperty().addListener((observableValue, before, after) -> {
-      setAttribute("VARIETY", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    countryProperty().addListener((observableValue, before, after) -> {
-      setAttribute("COUNTRY", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    regionProperty().addListener((observableValue, before, after) -> {
-      setAttribute("REGION", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    wineryProperty().addListener((observableValue, before, after) -> {
-      setAttribute("WINERY", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    colorProperty().addListener((observableValue, before, after) -> {
-      setAttribute("COLOR", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    vintageProperty().addListener((observableValue, before, after) -> {
-      setAttribute("VINTAGE", update -> {
-        update.setInt(1, (Integer) after);
-      });
-    });
-
-    descriptionProperty().addListener((observableValue, before, after) -> {
-      setAttribute("DESCRIPTION", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    scorePercentProperty().addListener((observableValue, before, after) -> {
-      setAttribute("SCORE_PERCENT", update -> {
-        update.setInt(1, (Integer) after);
-      });
-    });
-
-    abvProperty().addListener((observableValue, before, after) -> {
-      setAttribute("ABV", update -> {
-        update.setFloat(1, (Float) after);
-      });
-    });
-
-    priceProperty().addListener((observableValue, before, after) -> {
-      setAttribute("PRICE", update -> {
-        update.setFloat(1, (Float) after);
-      });
-    });
+    // todo - find solution to this
+//    titleProperty().addListener((observableValue, before, after) -> {
+//      setAttribute("TITLE", update -> {
+//        update.setString(1, after);
+//      });
+//    });
+//
+//    varietyProperty().addListener((observableValue, before, after) -> {
+//      setAttribute("VARIETY", update -> {
+//        update.setString(1, after);
+//      });
+//    });
+//
+//    countryProperty().addListener((observableValue, before, after) -> {
+//      setAttribute("COUNTRY", update -> {
+//        update.setString(1, after);
+//      });
+//    });
+//
+//    regionProperty().addListener((observableValue, before, after) -> {
+//      setAttribute("REGION", update -> {
+//        update.setString(1, after);
+//      });
+//    });
+//
+//    wineryProperty().addListener((observableValue, before, after) -> {
+//      setAttribute("WINERY", update -> {
+//        update.setString(1, after);
+//      });
+//    });
+//
+//    colorProperty().addListener((observableValue, before, after) -> {
+//      setAttribute("COLOR", update -> {
+//        update.setString(1, after);
+//      });
+//    });
+//
+//    vintageProperty().addListener((observableValue, before, after) -> {
+//      setAttribute("VINTAGE", update -> {
+//        update.setInt(1, (Integer) after);
+//      });
+//    });
+//
+//    descriptionProperty().addListener((observableValue, before, after) -> {
+//      setAttribute("DESCRIPTION", update -> {
+//        update.setString(1, after);
+//      });
+//    });
+//
+//    scorePercentProperty().addListener((observableValue, before, after) -> {
+//      setAttribute("SCORE_PERCENT", update -> {
+//        update.setInt(1, (Integer) after);
+//      });
+//    });
+//
+//    abvProperty().addListener((observableValue, before, after) -> {
+//      setAttribute("ABV", update -> {
+//        update.setFloat(1, (Float) after);
+//      });
+//    });
+//
+//    priceProperty().addListener((observableValue, before, after) -> {
+//      setAttribute("PRICE", update -> {
+//        update.setFloat(1, (Float) after);
+//      });
+//    });
   }
 
 
-  /**
-   * Helper to set an attribute
-   *
-   * @param attributeName name of attribute
-   * @param callback      callback to set attribute
-   */
-  private void setAttribute(String attributeName,
-      OldDatabaseManager.AttributeSetterCallBack callback) {
-    if (key == -1) {
-      return;
-    }
-    try {
-      databaseManager.setWineAttribute(key, attributeName, callback);
-    } catch (SQLException exception) {
-      LogManager.getLogger(getClass())
-          .error("Failed to set attribute when updating database: {}", attributeName, exception);
-    }
-
-  }
+//  /**
+//   * Helper to set an attribute
+//   *
+//   * @param attributeName name of attribute
+//   * @param callback      callback to set attribute
+//   */
+//  private void setAttribute(String attributeName,
+//      DatabaseManager.AttributeSetterCallBack callback) {
+//    if (key == -1) {
+//      return;
+//    }
+//    try {
+//      databaseManager.setWineAttribute(key, attributeName, callback);
+//    } catch (SQLException exception) {
+//      LogManager.getLogger(getClass())
+//          .error("Failed to set attribute when updating database: {}", attributeName, exception);
+//    }
+//
+//  }
 
   /**
    * Gets the key
@@ -348,7 +349,7 @@ public class Wine {
    *
    * @return database
    */
-  public OldDatabaseManager getDatabaseManager() {
+  public DatabaseManager getDatabaseManager() {
     return databaseManager;
   }
 
@@ -357,7 +358,7 @@ public class Wine {
    *
    * @param databaseManager database
    */
-  public void setDatabaseManager(OldDatabaseManager databaseManager) {
+  public void setDatabaseManager(DatabaseManager databaseManager) {
     this.databaseManager = databaseManager;
   }
 

@@ -12,7 +12,6 @@ import seng202.team6.gui.Controller;
 import seng202.team6.gui.MainController;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.managers.OldDatabaseManager;
 import seng202.team6.managers.GUIManager;
 import seng202.team6.managers.ManagerContext;
 

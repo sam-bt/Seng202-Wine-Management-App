@@ -57,9 +57,10 @@ public class SocialController extends Controller{
 
     ObservableList<Wine> wines;
 
-    wines = managerContext.databaseManager.getWinesInRangeWithReviewInfo(begin, end);
+    // todo - find solution to this
+//    wines = managerContext.databaseManager.getWinesInRangeWithReviewInfo(begin, end);
     // Set fetched data to the table
-    wineTableView.setItems(wines);
+//    wineTableView.setItems(wines);
 
     }
 
@@ -75,7 +76,7 @@ public class SocialController extends Controller{
 
     ObservableList<WineReview> reviews;
 
-    reviews = managerContext.databaseManager.getReviewsInRange(begin, end);
+    reviews = managerContext.databaseManager.getWineReviewDAO().getAllInRange(begin, end);
 
     // Set fetched data to the table
     reviewTableView.setItems(reviews);

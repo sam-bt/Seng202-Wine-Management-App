@@ -5,14 +5,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import seng202.team6.model.Note;
 import seng202.team6.model.User;
+import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
+import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
 /**
  * Data Access Object (DAO) for handling wine list related database operations.
  */
 public class WineListDAO extends DAO {
+
+  /**
+   * Cache to store and reuse WineList objects to avoid duplication
+   */
+  private final DatabaseObjectUniquer<WineList> wineListCache = new DatabaseObjectUniquer<>();
+
 
   /**
    * Constructs a new WineListDAO with the given database connection.
@@ -41,6 +52,24 @@ public class WineListDAO extends DAO {
             "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE" +
             ")"
     };
+  }
+
+  public ObservableList<WineList> getAll(User user) {
+    Timer timer = new Timer();
+    String sql = "SELECT ID, NAME FROM LIST_NAME WHERE USERNAME = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setString(1, user.getUsername());
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        ObservableList<WineList> wineLists = extractAllWineListsFromResultSet(resultSet);
+        log.info("Successfully retrieved all {} wine lists for user '{}' in {}ms",
+            wineLists.size(), user.getUsername(), timer.stop());
+        return wineLists;
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve wine lists for user '{}'", user.getUsername(), error);
+    }
+    return FXCollections.emptyObservableList();
   }
 
   public WineList create(User user, String listName) {
@@ -84,5 +113,44 @@ public class WineListDAO extends DAO {
       log.error("Failed to delete list with ID '{}' and name '{}'", wineList.id(),
           wineList.name(), error);
     }
+  }
+
+  public boolean isWineInList(WineList wineList, Wine wine) {
+    Timer timer = new Timer();
+    String sql = "SELECT 1 FROM LIST_ITEMS WHERE LIST_ID = ? AND WINE_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setLong(1, wineList.id());
+      statement.setLong(1, wine.getKey());
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        return resultSet.next();
+      }
+    } catch (SQLException error) {
+      log.error("Failed to check if wine with ID {} is in list '{}'", wineList.id(),
+          wineList.name(), error);
+    }
+    return false;
+  }
+
+  private ObservableList<WineList> extractAllWineListsFromResultSet(ResultSet resultSet)
+      throws SQLException {
+    ObservableList<WineList> wineLists = FXCollections.observableArrayList();
+    while (resultSet.next()) {
+      wineLists.add(extractWineListFromResultSet(resultSet));
+    }
+    return wineLists;
+  }
+
+  private WineList extractWineListFromResultSet(ResultSet resultSet) throws SQLException {
+    long id = resultSet.getLong("ID");
+    WineList cachedWineList = wineListCache.tryGetObject(id);
+    if (cachedWineList != null) {
+      return cachedWineList;
+    }
+
+    return new WineList(
+        id,
+        resultSet.getString("NAME")
+    );
   }
 }
