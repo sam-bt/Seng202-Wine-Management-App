@@ -1,6 +1,11 @@
 package seng202.team6.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import seng202.team6.model.GeoLocation;
+import seng202.team6.model.Wine;
 
 /**
  * Data Access Object (DAO) for handling wine related database operations.
@@ -15,8 +20,6 @@ public class WineDAO extends DAO {
   public WineDAO(Connection connection) {
     super(connection, WineDAO.class);
   }
-
-
 
   @Override
   public String[] getInitialiseStatements() {
@@ -36,5 +39,39 @@ public class WineDAO extends DAO {
             "PRICE          FLOAT" +
             ")"
     };
+  }
+
+  private Wine extractWineFromResultSet(ResultSet resultSet, boolean requireGeolocation) throws SQLException {
+    GeoLocation geoLocation = null; // todo - change this to grab the geolocation when required
+    return new Wine(
+        resultSet.getLong("ID"),
+        null, // null DatabaseManager for now as this will be replaced
+        resultSet.getString("TITLE"),
+        resultSet.getString("VARIETY"),
+        resultSet.getString("COUNTRY"),
+        resultSet.getString("REGION"),
+        resultSet.getString("WINERY"),
+        resultSet.getString("COLOR"),
+        resultSet.getInt("VINTAGE"),
+        resultSet.getString("DESCRIPTION"),
+        resultSet.getInt("SCORE_PERCENT"),
+        resultSet.getFloat("ABV"),
+        resultSet.getFloat("PRICE"),
+        geoLocation
+    );
+  }
+
+  private void setWineParameters(PreparedStatement statement, Wine wine, int paramIndex) throws SQLException {
+    statement.setString(paramIndex++, wine.getTitle());
+    statement.setString(paramIndex++, wine.getVariety());
+    statement.setString(paramIndex++, wine.getCountry());
+    statement.setString(paramIndex++, wine.getRegion());
+    statement.setString(paramIndex++, wine.getWinery());
+    statement.setString(paramIndex++, wine.getColor());
+    statement.setInt(paramIndex++, wine.getVintage());
+    statement.setString(paramIndex++, wine.getDescription());
+    statement.setInt(paramIndex++, wine.getScorePercent());
+    statement.setFloat(paramIndex++, wine.getAbv());
+    statement.setFloat(paramIndex++, wine.getPrice());
   }
 }
