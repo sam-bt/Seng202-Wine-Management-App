@@ -63,7 +63,7 @@ public class WineDAOTest {
   }
 
   private void addWines(int num) {
-    ArrayList<Wine> wines = new ArrayList<>();
+    List<Wine> wines = new ArrayList<>();
     for (int i = 0; i < num; i++) {
       wines.add(
           new Wine(-1, null, "wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011,
@@ -71,12 +71,5 @@ public class WineDAOTest {
               (float) i, null));
     }
     wineDAO.addAll(wines);
-  }
-
-  public static void main(String[] args) throws SQLException {
-    WineDAOTest wineDAOTest = new WineDAOTest();
-    wineDAOTest.setup();
-    wineDAOTest.testRemoveAllWines();
-    wineDAOTest.teardown();
   }
 }

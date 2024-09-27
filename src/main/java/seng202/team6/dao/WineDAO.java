@@ -141,7 +141,7 @@ public class WineDAO extends DAO {
   }
 
   /**
-   * Adds a list of wines to the WINE table in match mode to improve performance.
+   * Adds a list of wines to the WINE table in batch mode to improve performance.
    * The batch is executed every 2048 wines to prevent excessive memory usage.
    *
    * @param wines The list of wines to be added to the table
