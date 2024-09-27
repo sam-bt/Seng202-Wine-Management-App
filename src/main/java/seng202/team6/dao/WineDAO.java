@@ -239,7 +239,7 @@ public class WineDAO extends DAO {
    * @return An ObservableList of Wine objects
    * @throws SQLException If an error occurs while processing the ResultSet
    */
-  private ObservableList<Wine> extractAllWinesFromResultSet(ResultSet resultSet)
+  ObservableList<Wine> extractAllWinesFromResultSet(ResultSet resultSet)
       throws SQLException {
     ObservableList<Wine> wines = FXCollections.observableArrayList();
     while (resultSet.next()) {
@@ -264,8 +264,8 @@ public class WineDAO extends DAO {
     }
 
     GeoLocation geoLocation = null; // todo - change this to grab the geolocation when required
-    return new Wine(
-        resultSet.getLong("ID"),
+    Wine wine =  new Wine(
+        id,
         resultSet.getString("TITLE"),
         resultSet.getString("VARIETY"),
         resultSet.getString("COUNTRY"),
@@ -279,6 +279,9 @@ public class WineDAO extends DAO {
         resultSet.getFloat("PRICE"),
         geoLocation
     );
+    wineCache.addObject(id, wine);
+    bindUpdater(wine);
+    return wine;
   }
 
   /**

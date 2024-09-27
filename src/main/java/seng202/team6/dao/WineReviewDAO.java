@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
@@ -175,7 +176,7 @@ public class WineReviewDAO extends DAO {
       return cachedWineReview;
     }
 
-    return new WineReview(
+    WineReview wineReview = new WineReview(
         id,
         resultSet.getLong("WINE_ID"),
         resultSet.getString("USERNAME"),
@@ -183,5 +184,49 @@ public class WineReviewDAO extends DAO {
         resultSet.getString("DESCRIPTION"),
         resultSet.getDate("DATE")
     );
+    wineReviewCache.addObject(id, wineReview);
+    bindUpdater(wineReview);
+    return wineReview;
+  }
+
+  private void bindUpdater(WineReview wineReview) {
+    wineReview.ratingProperty().addListener(((observableValue, before, after) -> {
+      updateAttribute(wineReview.getID(), "RATING", update -> {
+        update.setDouble(1, after.doubleValue());
+      });
+    }));
+    wineReview.descriptionProperty().addListener(((observableValue, before, after) -> {
+      updateAttribute(wineReview.getID(), "DESCRIPTION", update -> {
+        update.setString(1, after);
+      });
+    }));
+  }
+
+  /**
+   * Helper to set an attribute
+   *
+   * @param attributeName name of attribute
+   * @param attributeSetter callback to set attribute
+   */
+  private void updateAttribute(long id, String attributeName,
+      DatabaseManager.AttributeSetter attributeSetter) {
+    Timer timer = new Timer();
+    String sql = "UPDATE WINE_REVIEW set " + attributeName + " = ? where ID = ?";
+    try (PreparedStatement update = connection.prepareStatement(sql)) {
+      attributeSetter.setAttribute(update);
+      update.setLong(2, id);
+
+      int rowsAffected = update.executeUpdate();
+      if (rowsAffected == 1) {
+        log.info("Successfully updated attribute '{}' for wine review with ID {} in {}ms",
+            attributeName, id, timer.stop());
+      } else {
+        log.info("Could not update attribute '{}' for wine review with ID {} in {}ms",
+            attributeName, id, timer.stop());
+      }
+    } catch (SQLException error) {
+      log.error("Failed to update attribute '{}' for wine review with ID {} in {}ms",
+          attributeName, id, timer.stop(), error);
+    }
   }
 }

@@ -96,7 +96,6 @@ public class UserChangePasswordStepDefinitions {
 
     User user = databaseManager.getUserDAO().get(username);
     String storedHash = user.getPassword();
-    // todo - figure our why this is failing
-//    assertTrue(EncryptionUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
+    assertTrue(EncryptionUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
   }
 }

@@ -45,8 +45,6 @@ public class WineReviewsService {
       WineReview usersReview = getUsersReview();
       usersReview.setRating(rating);
       usersReview.setDescription(description);
-      // todo - do this via beans
-//      databaseManager.updateWineReview(username, wine.getKey(), rating, description);
       calculateAverageReview();
       return;
     }

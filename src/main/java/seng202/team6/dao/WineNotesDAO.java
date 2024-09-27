@@ -85,8 +85,8 @@ public class WineNotesDAO extends DAO {
               resultSet.getString("NOTE")
           );
         } else {
-          log.warn("Could not find note for user '{}' and wine with ID {} in {}ms"
-              + "in {}ms", user.getUsername(), wine.getKey(), timer.stop());
+          log.warn("Could not find note for user '{}' and wine with ID {} in {}ms",
+              user.getUsername(), wine.getKey(), timer.stop());
         }
       }
     } catch (SQLException error) {

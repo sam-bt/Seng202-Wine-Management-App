@@ -24,6 +24,7 @@ import seng202.team6.dao.WineDAO;
 import seng202.team6.dao.WineListDAO;
 import seng202.team6.dao.WineNotesDAO;
 import seng202.team6.dao.WineReviewDAO;
+import seng202.team6.util.EncryptionUtil;
 
 /**
  * Manages the creation, initialization, and teardown of a database.
@@ -95,8 +96,27 @@ public class DatabaseManager {
         .flatMap(Arrays::stream)
         .toList();
 
+    String salt = EncryptionUtil.generateSalt();
+    String hashedAdminPassword = EncryptionUtil.hashPassword("admin", salt);
+    List<String> triggersAndDefaultStatements = List.of(
+        "CREATE TRIGGER IF NOT EXISTS FAVOURITES_LIST" +
+            "AFTER INSERT ON USER " +
+            "FOR EACH ROW " +
+            "BEGIN " +
+            "INSERT INTO LIST_NAME (USERNAME, NAME) " +
+            "VALUES (NEW.USERNAME, 'Favourites'); " +
+            "END",
+        "INSERT INTO USER (USERNAME, PASSWORD, ROLE, SALT) " +
+            "SELECT 'admin', '" + hashedAdminPassword + "', 'admin', '" + salt + "' " +
+            "WHERE NOT EXISTS (" +
+            "SELECT 1 FROM USER WHERE USERNAME = 'admin')"
+    );
+
     try (Statement statement = connection.createStatement()) {
       for (String sql : sqlStatements) {
+        statement.execute(sql);
+      }
+      for (String sql : triggersAndDefaultStatements) {
         statement.execute(sql);
       }
     } catch (SQLException e) {

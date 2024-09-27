@@ -40,11 +40,7 @@ public class UserDAO extends DAO {
             "PASSWORD       VARCHAR(64)   NOT NULL," +
             "ROLE           VARCHAR(8)    NOT NULL," +
             "SALT           VARCHAR(32)" +
-            ")",
-        "INSERT INTO USER (USERNAME, PASSWORD, ROLE, SALT) " +
-            "SELECT 'admin', '" + hashedAdminPassword + "', 'admin', '" + salt + "' " +
-            "WHERE NOT EXISTS (" +
-            "SELECT 1 FROM USER WHERE USERNAME = 'admin')"
+            ")"
     };
   }
 
