@@ -4,15 +4,25 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineReview;
+import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
 /**
  * Data Access Object (DAO) for handling wine notes related database operations.
  */
 public class WineNotesDAO extends DAO {
+
+  /**
+   * Cache to store and reuse Note objects to avoid duplication
+   */
+  private final DatabaseObjectUniquer<Note> wineReviewCache = new DatabaseObjectUniquer<>();
+
 
   /**
    * Constructs a new WineNotesDAO with the given database connection.
@@ -35,6 +45,12 @@ public class WineNotesDAO extends DAO {
             "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE" +
             ")"
     };
+  }
+
+  public ObservableList<Note> getAll(User user) {
+    Timer timer = new Timer();
+    String sql = "SELECT ID, NOTE FROM NOTES " +
+        "WHERE USERNAME = ? AND WINE_ID = ?";
   }
 
   public Note get(User user, Wine wine) {
@@ -82,5 +98,28 @@ public class WineNotesDAO extends DAO {
     } catch (SQLException error) {
       log.error("Failed to delete note with ID {}", note.getID(), error);
     }
+  }
+
+  private ObservableList<Note> extractAllNotesFromResultSet(ResultSet resultSet)
+      throws SQLException {
+    ObservableList<Note> notes = FXCollections.observableArrayList();
+    while (resultSet.next()) {
+      notes.add(extractNoteFromResultSet(resultSet));
+    }
+    return notes;
+  }
+
+  private Note extractNoteFromResultSet(ResultSet resultSet) throws SQLException {
+    long id = resultSet.getLong("ID");
+    Note cachedNote = wineReviewCache.tryGetObject(id);
+    if (cachedNote != null) {
+      return cachedNote;
+    }
+
+    return new Note(
+        id,
+        resultSet.getLong("WINE_ID"),
+        resultSet.getString("NOTE")
+    );
   }
 }

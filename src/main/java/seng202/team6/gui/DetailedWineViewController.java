@@ -21,6 +21,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.Rating;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.Note;
+import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
@@ -109,13 +111,13 @@ public class DetailedWineViewController extends Controller {
     descriptionArea.setText(getOrDefault(viewedWine.getDescription()));
     if (managerContext.authenticationManager.isAuthenticated()) {
       setNotesVisible(true);
-      notesTextbox.setText(managerContext.databaseManager.getNoteByUserAndWine(
-          managerContext.authenticationManager.getAuthenticatedUsername(), viewedWine.getKey()));
+      User user = managerContext.authenticationManager.getAuthenticatedUser();
+      Note note = managerContext.databaseManager.getWineNotesDAO().get(user, viewedWine);
+      notesTextbox.setText(note == null ? "" : note.getNote());
     } else {
       setNotesVisible(false);
     }
 
-    // todo - add a default image
     Image wineImage = wineImages.getOrDefault(colourTextbox.getText().toLowerCase(),
         DEFAULT_WINE_IMAGE);
     imageView.setImage(wineImage);

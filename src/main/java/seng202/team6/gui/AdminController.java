@@ -38,7 +38,7 @@ public class AdminController extends Controller {
 
   @FXML
   private void onYes() {
-    managerContext.databaseManager.deleteAllUsers();
+    managerContext.databaseManager.getUserDAO().deleteAll();
     managerContext.GUIManager.mainController.openWineScreen();
   }
 

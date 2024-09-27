@@ -203,10 +203,11 @@ public class SocialController extends Controller{
     if (selectedReview == null)
       return;
 
-    Wine selectedWine = managerContext.databaseManager.getWineWithReviewInfoById(selectedReview.getWineID());
-    User reviewer = managerContext.databaseManager.getUser(selectedReview.getUsername());
-    WineReviewsService wineReviewsService = new WineReviewsService(managerContext.authenticationManager, managerContext.databaseManager, selectedWine);
-    managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview);
+    // todo - find solution to this
+//    Wine selectedWine = managerContext.databaseManager.getWineWithReviewInfoById(selectedReview.getWineID());
+//    User reviewer = managerContext.databaseManager.getUser(selectedReview.getUsername());
+//    WineReviewsService wineReviewsService = new WineReviewsService(managerContext.authenticationManager, managerContext.databaseManager, selectedWine);
+//    managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview);
   }
 
 }

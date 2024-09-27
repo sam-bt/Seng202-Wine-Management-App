@@ -22,6 +22,7 @@ import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.FloatStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 
@@ -131,9 +132,8 @@ public class ListScreenController extends Controller {
       } else {
         errorText.setVisible(false);
 
-        String user = managerContext.authenticationManager.getAuthenticatedUsername();
-
-        managerContext.databaseManager.createList(user, name);
+        User user = managerContext.authenticationManager.getAuthenticatedUser();
+        managerContext.databaseManager.getWineListDAO().create(user, name);
 
         listName.setText("");
         updateListOptions();
@@ -142,8 +142,6 @@ public class ListScreenController extends Controller {
         selected = wineLists.size();
         changeSelected();
       }
-
-
     }
   }
 
@@ -155,7 +153,7 @@ public class ListScreenController extends Controller {
   public void onDeleteListRequestButton(ActionEvent actionEvent) {
     if (selected != 1) {
       WineList wineList = wineLists.get(selected - 1);
-      managerContext.databaseManager.deleteList(wineList);
+      managerContext.databaseManager.getWineListDAO().delete(wineList);
       updateListOptions();
       selected -= 1;
       changeSelected();

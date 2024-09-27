@@ -14,6 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
+import seng202.team6.model.User;
 
 
 public class NotesController extends Controller{
@@ -49,8 +50,8 @@ public class NotesController extends Controller{
      * Populates table columns using the wineTitle string property in the Note object. Called to refresh the notes in the table.
      */
     private void populateTable() {
-        ObservableList<Note> noteList = managerContext.databaseManager.getNotesByUser(
-            managerContext.authenticationManager.getAuthenticatedUsername());
+        User user = managerContext.authenticationManager.getAuthenticatedUser();
+        ObservableList<Note> noteList = managerContext.databaseManager.getWineNotesDAO().getAll(user);
         setupColumns();
         notesTable.getItems().clear();
         notesTable.setItems(noteList);
@@ -91,7 +92,8 @@ public class NotesController extends Controller{
             note = notesTable.getSelectionModel().getSelectedItem();
             if (note == null)
                 return;
-            wineTitle.setText(note.getWineTitle());
+            // todo - come up with a solution to this
+//            wineTitle.setText(note.getWineTitle());
             noteArea.setText(note.getNote());
             saveButton.setDisable(false);
             deleteButton.setDisable(false);
@@ -100,8 +102,9 @@ public class NotesController extends Controller{
 
     @FXML
     public void onSaveClicked() {
-        managerContext.databaseManager.saveNote(note.getWineID(),
-            managerContext.authenticationManager.getAuthenticatedUsername(), noteArea.getText());
+        // todo - save using beans
+//        managerContext.databaseManager.saveNote(note.getWineID(),
+//            managerContext.authenticationManager.getAuthenticatedUsername(), noteArea.getText());
         populateTable();
 
     }
@@ -110,16 +113,15 @@ public class NotesController extends Controller{
     public void onDeleteClicked() {
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setTitle("Confirm Deletion");
-        confirmation.setHeaderText("Deleting: " + note.getWineTitle());
+        // todo - come up with a solution to this
+//        confirmation.setHeaderText("Deleting: " + note.getWineTitle());
         confirmation.setContentText("Are you sure you want to delete this note?");
 
         Optional<ButtonType> result = confirmation.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            managerContext.databaseManager.deleteNote(note.getWineID(),
-                managerContext.authenticationManager.getAuthenticatedUsername());
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            managerContext.databaseManager.getWineNotesDAO().delete(note);
             populateTable();
             clearNotesPanel();
         }
-
     }
 }

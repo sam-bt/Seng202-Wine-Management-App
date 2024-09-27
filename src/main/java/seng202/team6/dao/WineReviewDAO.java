@@ -143,6 +143,23 @@ public class WineReviewDAO extends DAO {
     return null;
   }
 
+  public void delete(WineReview wineReview) {
+    Timer timer = new Timer();
+    String sql = "DELETE FROM WINE_REVIEW WHERE ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setLong(1, wineReview.getID());
+
+      int rowsAffected = statement.executeUpdate();
+      if (rowsAffected == 1) {
+        log.info("Successfully deleted wine review with ID {} in {}ms", wineReview.getID(), timer.stop());
+      } else {
+        log.warn("Could not delete wine review with ID {} in {}ms", wineReview.getID(), timer.stop());
+      }
+    } catch (SQLException error) {
+      log.error("Failed to delete wine review with ID {}", wineReview.getID(), error);
+    }
+  }
+
   private ObservableList<WineReview> extractAllWineReviewsFromResultSet(ResultSet resultSet) throws SQLException {
     ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
     while (resultSet.next()) {

@@ -39,7 +39,8 @@ public class RegisterController extends Controller {
         username, password, confirmPassword);
     if (response == AuthenticationResponse.REGISTER_SUCCESS) {
       managerContext.GUIManager.mainController.openLoginScreen();
-      managerContext.databaseManager.createList(username, "Favourites");
+      // todo - find solution to this
+//      managerContext.databaseManager.getWineListDAO().createList(username, "Favourites");
     } else {
       registerMessageLabel.setStyle("-fx-text-fill: red");
       registerMessageLabel.setText(response.getMessage());

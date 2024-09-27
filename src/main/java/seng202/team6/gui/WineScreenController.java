@@ -90,12 +90,13 @@ public class WineScreenController extends Controller {
     tableView.getItems().clear();
 
     // Check if filters exist
-    ObservableList<Wine> wines;
-    if (filters != null) {
-      wines = managerContext.databaseManager.getWinesInRange(begin, end, filters);
-    } else {
-      wines = managerContext.databaseManager.getWinesInRange(begin, end);
-    }
+    ObservableList<Wine> wines = managerContext.databaseManager.getWineDAO().getAllInRange(begin, end);
+    // todo - find solution to this
+//    if (filters != null) {
+//      wines = managerContext.databaseManager.getWineDAO().getAllInRange(begin, end, filters);
+//    } else {
+//      wines = managerContext.databaseManager.getWineDAO().getAllInRange(begin, end);
+//    }
 
     // send the wines to the map if they have a geo location
     mapController.setOnReadyAction(() -> {
