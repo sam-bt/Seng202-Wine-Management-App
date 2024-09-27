@@ -13,7 +13,7 @@ public class GeoLocationDAO extends DAO {
    * @param connection The database connection to be used for geolocation operations.
    */
   public GeoLocationDAO(Connection connection) {
-    super(connection);
+    super(connection, GeoLocationDAO.class);
   }
 
   @Override

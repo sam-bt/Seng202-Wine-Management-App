@@ -1,6 +1,8 @@
 package seng202.team6.dao;
 
 import java.sql.Connection;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Abstract base class for Data Access Objects (DAO).
@@ -12,12 +14,15 @@ public abstract class DAO {
    */
   protected final Connection connection;
 
+  protected final Logger log;
+
   /**
    * Constructs a new DAO with the given database connection
    * @param connection The database connected to be used by this DAO
    */
-  public DAO(Connection connection) {
+  public DAO(Connection connection, Class<?> implementationClass) {
     this.connection = connection;
+    this.log = LogManager.getLogger(implementationClass);
   }
 
   /**

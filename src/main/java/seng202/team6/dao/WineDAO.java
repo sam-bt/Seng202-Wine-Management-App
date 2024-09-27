@@ -1,6 +1,7 @@
 package seng202.team6.dao;
 
 import java.sql.Connection;
+import java.sql.Statement;
 
 /**
  * Data Access Object (DAO) for handling wine related database operations.
@@ -13,7 +14,7 @@ public class WineDAO extends DAO {
    * @param connection The database connection to be used for wine operations.
    */
   public WineDAO(Connection connection) {
-    super(connection);
+    super(connection, WineDAO.class);
   }
 
   @Override

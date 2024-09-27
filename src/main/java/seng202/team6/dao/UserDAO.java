@@ -13,7 +13,7 @@ public class UserDAO extends DAO {
    * @param connection The database connection to be used for user operations.
    */
   public UserDAO(Connection connection) {
-    super(connection);
+    super(connection, UserDAO.class);
   }
 
   @Override

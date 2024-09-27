@@ -13,7 +13,7 @@ public class WineListDAO extends DAO {
    * @param connection The database connection to be used for wine list operations.
    */
   public WineListDAO(Connection connection) {
-    super(connection);
+    super(connection, WineListDAO.class);
   }
 
   @Override
