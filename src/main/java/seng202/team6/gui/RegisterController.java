@@ -53,8 +53,10 @@ public class RegisterController extends Controller {
     AuthenticationResponse response = managerContext.authenticationManager.validateRegistration(
         username, password, confirmPassword);
     if (response == AuthenticationResponse.REGISTER_SUCCESS) {
-      managerContext.GUIManager.mainController.openLoginScreen();
       managerContext.databaseManager.createList(username, "Favourites");
+      managerContext.authenticationManager.validateLogin(username, password);
+      managerContext.GUIManager.mainController.openWineScreen();
+      managerContext.GUIManager.mainController.onLogin();
     } else {
       registerMessageLabel.setStyle("-fx-text-fill: red");
       registerMessageLabel.setText(response.getMessage());
