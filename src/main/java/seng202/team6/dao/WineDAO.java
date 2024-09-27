@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
 import seng202.team6.util.DatabaseObjectUniquer;
@@ -230,7 +231,6 @@ public class WineDAO extends DAO {
     GeoLocation geoLocation = null; // todo - change this to grab the geolocation when required
     return new Wine(
         resultSet.getLong("ID"),
-        null, // null DatabaseManager for now as this will be replaced
         resultSet.getString("TITLE"),
         resultSet.getString("VARIETY"),
         resultSet.getString("COUNTRY"),
@@ -266,5 +266,98 @@ public class WineDAO extends DAO {
     statement.setInt(startIndex++, wine.getScorePercent());
     statement.setFloat(startIndex++, wine.getAbv());
     statement.setFloat(startIndex++, wine.getPrice());
+  }
+
+  private void bindUpdater(Wine wine) {
+    wine.titleProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "TITLE", update -> {
+        update.setString(1, after);
+      });
+    });
+    wine.varietyProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "VARIETY", update -> {
+        update.setString(1, after);
+      });
+    });
+
+    wine.countryProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "COUNTRY", update -> {
+        update.setString(1, after);
+      });
+    });
+    wine.regionProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "REGION", update -> {
+        update.setString(1, after);
+      });
+    });
+    wine.wineryProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "WINERY", update -> {
+        update.setString(1, after);
+      });
+    });
+    wine.colorProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "COLOR", update -> {
+        update.setString(1, after);
+      });
+    });
+    wine.vintageProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "VINTAGE", update -> {
+        update.setInt(1, (Integer) after);
+      });
+    });
+    wine.descriptionProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "DESCRIPTION", update -> {
+        update.setString(1, after);
+      });
+    });
+    wine.scorePercentProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "SCORE_PERCENT", update -> {
+        update.setInt(1, (Integer) after);
+      });
+    });
+    wine.abvProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "ABV", update -> {
+        update.setFloat(1, (Float) after);
+      });
+    });
+    wine.priceProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "PRICE", update -> {
+        update.setFloat(1, (Float) after);
+      });
+    });
+  }
+
+    /**
+   * Helper to set an attribute
+   *
+   * @param attributeName name of attribute
+   * @param attributeSetter callback to set attribute
+   */
+  private void updateAttribute(long id, String attributeName,
+      DatabaseManager.AttributeSetter attributeSetter) {
+    if (id == -1) {
+      log.warn("Skipping attribute update '{}' for wine with ID -1",
+          attributeName);
+      return;
+    }
+
+    Timer timer = new Timer();
+    String sql = "UPDATE WINE set " + attributeName + " = ? where ID = ?";
+    try (PreparedStatement update = connection.prepareStatement(sql)) {
+      attributeSetter.setAttribute(update);
+      update.setLong(2, id);
+
+      int rowsAffected = update.executeUpdate();
+      if (rowsAffected == 1) {
+        log.info("Successfully updated attribute '{}' for wine with ID {} in {}ms",
+            attributeName, id, timer.stop());
+      } else {
+        log.info("Could not update attribute '{}' for wine with ID {} in {}ms",
+            attributeName, id, timer.stop());
+      }
+    } catch (SQLException error) {
+      log.error("Failed to update attribute '{}' for wine with ID {} in {}ms",
+          attributeName, id, timer.stop(), error);
+    }
   }
 }

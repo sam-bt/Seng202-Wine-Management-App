@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.security.InvalidParameterException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -187,4 +188,19 @@ public class DatabaseManager {
     }
     return setupConnection("jdbc:sqlite:" + directoryName + File.separator + fileName);
   }
+
+  /**
+   * Callback to set the attribute to update
+   */
+  public interface AttributeSetter {
+
+    /**
+     * Updates the prepared statement with the value to set
+     * <p>
+     * Attribute must be index 1 in prepared statement
+     * </p>
+     */
+    void setAttribute(PreparedStatement statement) throws SQLException;
+  }
+
 }

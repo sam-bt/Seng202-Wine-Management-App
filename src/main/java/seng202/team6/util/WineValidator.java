@@ -67,7 +67,6 @@ public class WineValidator {
 
       return new Wine(
           -1,
-          databaseManager,
           title,
           variety,
           country,
