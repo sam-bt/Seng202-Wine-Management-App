@@ -86,6 +86,4 @@ public class WineReviewPopupController extends Controller {
     wineReviewsService.addOrUpdateUserReview(rating, description);
     managerContext.GUIManager.mainController.closePopup();
   }
-
-
 }
