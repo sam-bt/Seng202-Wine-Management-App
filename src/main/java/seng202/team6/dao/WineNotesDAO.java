@@ -5,15 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
-import seng202.team6.model.WineReview;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
@@ -51,6 +48,11 @@ public class WineNotesDAO extends DAO {
     };
   }
 
+  /**
+   * Retrieves all notes from the NOTES table.
+   *
+   * @return An ObservableList of all Note objects in the database
+   */
   public ObservableList<Note> getAll() {
     Timer timer = new Timer();
     String sql = "SELECT * FROM NOTES";
@@ -67,6 +69,12 @@ public class WineNotesDAO extends DAO {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Retrieves all notes owned by the provided user from the NOTES table.
+   *
+   * @param user The user whose notes are being retrieved
+   * @return ObservableList of Note objects owned by the user
+   */
   public ObservableList<Note> getAll(User user) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM NOTES " +
@@ -86,6 +94,15 @@ public class WineNotesDAO extends DAO {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Retrieves a note belonging to the specified wine and user. If the note does not exist
+   * for the given parameters, a new Note object is created. Listeners are binded to the object
+   * to ensure any changes or updates are reflected in the database.
+   *
+   * @param user The user the note belongs to
+   * @param wine The wine the note belongs to
+   * @return The note object belonging to the specified User and Wine
+   */
   public Note get(User user, Wine wine) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM NOTES " +
@@ -116,7 +133,17 @@ public class WineNotesDAO extends DAO {
     return null;
   }
 
-  public void add(Note note) {
+  /**
+   * Adds a note to the database
+   * <p>
+   *   Upon successful insertion, the note's ID is set to the generated ID. This is to ensure any
+   *   classes holding a reference to this note can still be used and will update the database as
+   *   attributes are changed.
+   * </p>
+   *
+   * @param note The note to be added to the database
+   */
+  private void add(Note note) {
     if (note.getID() != -1) {
       log.error("Failed to add note for user '{}' as the note has a valid ID indicating it is in the database already");
       return;
@@ -145,6 +172,15 @@ public class WineNotesDAO extends DAO {
     }
   }
 
+  /**
+   * Deletes a note from the database.
+   * <p>
+   *   Upon successful removal, the note's ID is set to -1 to indicate that the note is not in the
+   *   database.
+   * </p>
+   *
+   * @param note The note to be deleted.
+   */
   public void delete(Note note) {
     if (note.getID() == -1) {
       log.error("Failed to add note for user '{}' as the note has an invalid ID indicating it is not in the database already");
@@ -170,6 +206,13 @@ public class WineNotesDAO extends DAO {
     }
   }
 
+  /**
+   * Extracts all notes from the provided ResultSet and stores them in an ObservableList
+   *
+   * @param resultSet The ResultSet containing note data
+   * @return ObservableList of Note objects extracted from the ResultSet
+   * @throws SQLException if a database access error occurs
+   */
   private ObservableList<Note> extractAllNotesFromResultSet(ResultSet resultSet)
       throws SQLException {
     ObservableList<Note> notes = FXCollections.observableArrayList();
@@ -179,6 +222,14 @@ public class WineNotesDAO extends DAO {
     return notes;
   }
 
+  /**
+   * Extracts a Note object from the provided ResultSet. The note cache is check before creating a
+   * new note instance.
+   *
+   * @param resultSet The ResultSet containing note data
+   * @return The Note object extracted from the ResultSet
+   * @throws SQLException if a database access error occurs
+   */
   Note extractNoteFromResultSet(ResultSet resultSet) throws SQLException {
     long id = resultSet.getLong("ID");
     Note cachedNote = notesCache.tryGetObject(id);
@@ -198,6 +249,22 @@ public class WineNotesDAO extends DAO {
     return note;
   }
 
+  /**
+   * Binds listeners to the Note object to ensure that any changes to the users properties
+   * are automatically reflected in the database.
+   * <ul>
+   *   <li>If the provided note is empty and the ID is -1, the note is not in the database and is
+   *   empty so no action is required</li>
+   *   <li>If the provided note is empty and the ID is not -1, the note is not in the database and
+   *   must be deleted.</li>
+   *   <li>If the provided note is not empty and the ID is -1, the note is not in the database and
+   *   must be added.</li>
+   *   <li>If the provided note is not empty and the ID is not -1, the note is in the database and
+   *   must be updated.</li>
+   * </ul>
+   *
+   * @param note The Note object to bind listeners to
+   */
   private void bindUpdater(Note note) {
     note.noteProperty().addListener((observableValue, before, after) -> {
       if (after.isEmpty()) { // if the new note is empty
@@ -220,7 +287,7 @@ public class WineNotesDAO extends DAO {
   }
 
   /**
-   * Helper to set an attribute
+   * Updates a specific attribute of the note in the NOTES table
    *
    * @param attributeName name of attribute
    * @param attributeSetter callback to set attribute

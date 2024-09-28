@@ -34,6 +34,11 @@ public class WineReviewDAO extends DAO {
     super(connection, WineReviewDAO.class);
   }
 
+  /**
+   * Returns the SQL statements required to initialise the WINE_REVIEW table.
+   *
+   * @return Array of SQL statements for initialising the WINE_REVIEW table
+   */
   @Override
   public String[] getInitialiseStatements() {
     return new String[] {
@@ -50,6 +55,13 @@ public class WineReviewDAO extends DAO {
     };
   }
 
+  /**
+   * Retrieves all wine reviews from the WINE_REVIEW table belonging to the specified wine.
+   *
+   * @param wine The wine whose wine reviews should be returned
+   * @return An ObservableList of all WineReview objects in the database belonging to the specified
+   * wine
+   */
   public ObservableList<WineReview> getAll(Wine wine) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM WINE_REVIEW WHERE WINE_ID = ?";
@@ -68,6 +80,13 @@ public class WineReviewDAO extends DAO {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Retrieves all wine reviews from the WINE_REVIEW table belonging to the specified user.
+   *
+   * @param user The user whose wine reviews should be returned
+   * @return An ObservableList of all WineReview objects in the database belonging to the specified
+   * user
+   */
   public ObservableList<WineReview> getAll(User user) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM WINE_REVIEW WHERE USERNAME = ?";
@@ -86,6 +105,13 @@ public class WineReviewDAO extends DAO {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Retrieves a range of reviews from the WINE_REVIEW table.
+   *
+   * @param begin The start index of the range (inclusive)
+   * @param end The end index of the range (exclusive)
+   * @return An ObservableList of WineReview objects within the specified range
+   */
   public ObservableList<WineReview> getAllInRange(int begin, int end) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM WINE_REVIEW " +
@@ -107,6 +133,16 @@ public class WineReviewDAO extends DAO {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Creates a new wine review and adds it to the WINE_REVIEW table.
+   *
+   * @param user The user creating the wine review
+   * @param wine The wine that is being reviewed
+   * @param rating The rating the wine received
+   * @param description The description of the rating
+   * @param date The date the wine was reviewed
+   * @return The WineReview object with the specified parameters
+   */
   public WineReview add(User user, Wine wine, double rating, String description, Date date) {
     Timer timer = new Timer();
     String insert = "INSERT INTO WINE_REVIEW VALUES (null, ?, ?, ?, ?, ?)";
@@ -148,6 +184,11 @@ public class WineReviewDAO extends DAO {
     return null;
   }
 
+  /**
+   * Deletes the specified wine review from the database.
+   *
+   * @param wineReview The wine review to be deleted
+   */
   public void delete(WineReview wineReview) {
     Timer timer = new Timer();
     String sql = "DELETE FROM WINE_REVIEW WHERE ID = ?";
@@ -165,6 +206,13 @@ public class WineReviewDAO extends DAO {
     }
   }
 
+  /**
+   * Extracts all wine reviews from the provided ResultSet and stores them in an ObservableList.
+   *
+   * @param resultSet The ResultSet containing wine review data
+   * @return ObservableList of WineReview objects extracted from the ResultSet
+   * @throws SQLException if a database access error occurs
+   */
   private ObservableList<WineReview> extractAllWineReviewsFromResultSet(ResultSet resultSet) throws SQLException {
     ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
     while (resultSet.next()) {
@@ -173,6 +221,14 @@ public class WineReviewDAO extends DAO {
     return wineReviews;
   }
 
+  /**
+   * Extracts a WineReview object from the provided ResultSet. The wine review cache is checked
+   * before creating a new wine list instance.
+   *
+   * @param resultSet The ResultSet containing wine review data
+   * @return The WineReview object extracted from the ResultSet
+   * @throws SQLException if a database access error occurs
+   */
   private WineReview extractWineReviewFromResultSet(ResultSet resultSet) throws SQLException {
     long id = resultSet.getLong("ID");
     WineReview cachedWineReview = wineReviewCache.tryGetObject(id);
@@ -193,6 +249,12 @@ public class WineReviewDAO extends DAO {
     return wineReview;
   }
 
+  /**
+   * Binds listeners to the WineReview object to ensure that any changes to the wine reviews
+   * properties are automatically reflected in the database.
+   *
+   * @param wineReview The WineReview object to bind listeners to
+   */
   private void bindUpdater(WineReview wineReview) {
     wineReview.ratingProperty().addListener(((observableValue, before, after) -> {
       updateAttribute(wineReview.getID(), "RATING", update -> {
@@ -207,7 +269,7 @@ public class WineReviewDAO extends DAO {
   }
 
   /**
-   * Helper to set an attribute
+   * Updates a specific attribute of the wine review in the WINE_REVIEW table
    *
    * @param attributeName name of attribute
    * @param attributeSetter callback to set attribute

@@ -33,6 +33,17 @@ public class WineListDAO extends DAO {
     super(connection, WineListDAO.class);
   }
 
+  /**
+   * Returns the SQL statements required to initialise the LIST_NAME and LIST_ITEMS table.
+   * <p>
+   * The LIST_NAME table is responsible for holding the username of who owns the list and the name
+   * of the list.
+   * <p>
+   * The LIST_ITEMS table is responsible for holding the WINE_ID of a wine which belongs to a list
+   * from LIST_NAME with ID
+   *
+   * @return Array of SQL statements for initialising the USER table
+   */
   @Override
   public String[] getInitialiseStatements() {
     return new String[] {
@@ -53,6 +64,12 @@ public class WineListDAO extends DAO {
     };
   }
 
+  /**
+   * Retrieves all wine lists owned by the provided user from the LIST_NAME table.
+   *
+   * @param user The user whose wine lists are being retrieved
+   * @return ObservableList of WineList objects owned by the user
+   */
   public ObservableList<WineList> getAll(User user) {
     Timer timer = new Timer();
     String sql = "SELECT ID, NAME FROM LIST_NAME WHERE USERNAME = ?";
@@ -71,6 +88,13 @@ public class WineListDAO extends DAO {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Creates a new wine list for the specified user with the given name.
+   *
+   * @param user The user who owns the list.
+   * @param listName The name of the new wine list.
+   * @return The created WineList object, or null if creation failed.
+   */
   public WineList create(User user, String listName) {
     Timer timer = new Timer();
     String sql = "INSERT INTO LIST_NAME VALUES (NULL, ?, ?)";
@@ -94,6 +118,11 @@ public class WineListDAO extends DAO {
     return null;
   }
 
+  /**
+   * Deletes the specified wine list from the database.
+   *
+   * @param wineList The wine list to be deleted
+   */
   public void delete(WineList wineList) {
     Timer timer = new Timer();
     String sql = "DELETE FROM LIST_NAME WHERE ID = ?";
@@ -114,6 +143,13 @@ public class WineListDAO extends DAO {
     }
   }
 
+  /**
+   * Checks if a wine is part of a specific wine list.
+   *
+   * @param wineList The wine list to check
+   * @param wine The wine to check
+   * @return true if the wine is in the list, false otherwise
+   */
   public boolean isWineInList(WineList wineList, Wine wine) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM LIST_ITEMS WHERE LIST_ID = ? AND WINE_ID = ?";
@@ -134,6 +170,12 @@ public class WineListDAO extends DAO {
     return false;
   }
 
+  /**
+   * Adds a wine to the specified wine list.
+   *
+   * @param wineList The wine list to add the wine to
+   * @param wine The wine to be added
+   */
   public void addWine(WineList wineList, Wine wine) {
     Timer timer = new Timer();
     String sql = "INSERT INTO LIST_ITEMS VALUES (null, ?, ?)";
@@ -155,6 +197,12 @@ public class WineListDAO extends DAO {
     }
   }
 
+  /**
+   * Removes a wine from the specified wine list.
+   *
+   * @param wineList The wine list to remove the wine from.
+   * @param wine The wine to be removed.
+   */
   public void removeWine(WineList wineList, Wine wine) {
     Timer timer = new Timer();
     String sql = "DELETE FROM LIST_ITEMS WHERE LIST_ID = ? AND WINE_ID = ?";
@@ -176,6 +224,13 @@ public class WineListDAO extends DAO {
     }
   }
 
+  /**
+   * Extracts all wine lists from the provided ResultSet and stores them in an ObservableList.
+   *
+   * @param resultSet The ResultSet containing wine list data
+   * @return ObservableList of WineList objects extracted from the ResultSet
+   * @throws SQLException if a database access error occurs
+   */
   private ObservableList<WineList> extractAllWineListsFromResultSet(ResultSet resultSet)
       throws SQLException {
     ObservableList<WineList> wineLists = FXCollections.observableArrayList();
@@ -185,6 +240,14 @@ public class WineListDAO extends DAO {
     return wineLists;
   }
 
+  /**
+   * Extracts a WineList object from the provided ResultSet. The wine list cache is checked before
+   * creating a new wine list instance.
+   *
+   * @param resultSet The ResultSet containing wine list data
+   * @return The WineList object extracted from the ResultSet
+   * @throws SQLException if a database access error occurs
+   */
   private WineList extractWineListFromResultSet(ResultSet resultSet) throws SQLException {
     long id = resultSet.getLong("ID");
     WineList cachedWineList = wineListCache.tryGetObject(id);
