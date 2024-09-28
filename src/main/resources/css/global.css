@@ -42,6 +42,12 @@
   -fx-background-color: #DC2626;
 }
 
+.secondary-button:focused {
+  -fx-border-color: skyblue;
+  -fx-border-width: 2px;
+  -fx-border-radius: 10px;
+}
+
 .table-view {
   -fx-background-color: #FEF0F0;
 }
