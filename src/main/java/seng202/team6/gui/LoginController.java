@@ -3,6 +3,7 @@ package seng202.team6.gui;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -22,6 +23,8 @@ public class LoginController extends Controller {
   private TextField passwordField;
   @FXML
   private Label loginMessageLabel;
+  @FXML
+  private Button loginButton;
 
 
   /**
@@ -50,6 +53,12 @@ public class LoginController extends Controller {
     usernameField.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.ENTER) {
         login();
+      }
+    });
+    loginButton.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.TAB && !event.isShiftDown()) {
+        usernameField.requestFocus();
+        event.consume();
       }
     });
     Platform.runLater(() -> usernameField.requestFocus());

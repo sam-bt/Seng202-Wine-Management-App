@@ -61,13 +61,9 @@ class DatabaseManagerTest {
     assertEquals(2, manager.getWinesSize());
     long id = manager.getWinesInRange(1, 2).getFirst().getKey();
     assertNotEquals(id, -1);
-    manager.setWineAttribute(id, "TITLE", statement -> {
-      statement.setString(1, "TEST_TITLE");
-    });
+    manager.getWinesInRange(1, 2).getFirst().setTitle("TEST_TITLE");
     // ordering dependant
     assertEquals("TEST_TITLE", manager.getWinesInRange(1, 2).getFirst().getTitle());
-
-
   }
 
 
