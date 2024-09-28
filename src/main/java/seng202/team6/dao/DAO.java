@@ -19,6 +19,10 @@ public abstract class DAO {
    */
   protected final Logger log;
 
+  /**
+   * Flag to indication whether the DAO should use caching. The implementing class is responsible
+   * for utilizing this flag.
+   */
   private boolean useCache = true;
 
 
@@ -43,10 +47,20 @@ public abstract class DAO {
     return null;
   }
 
+  /**
+   * Returns whether this DAO should use caching.
+   *
+   * @return true if caching is enabled, otherwise false
+   */
   public boolean useCache() {
     return useCache;
   }
 
+  /**
+   * Configures whether this DAO should use caching.
+   *
+   * @param useCache {@code true} to enable caching, {@code false} to disable it.
+   */
   public void setUseCache(boolean useCache) {
     this.useCache = useCache;
   }
