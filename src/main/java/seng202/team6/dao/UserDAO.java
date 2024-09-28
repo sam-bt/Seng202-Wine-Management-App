@@ -26,7 +26,6 @@ public class UserDAO extends DAO {
 
   /**
    * Returns the SQL statements required to initialise the WINE table.
-   * If the default admin account does not exist in the table, it will be inserted.
    *
    * @return Array of SQL statements for initialising the USER table
    */
@@ -162,6 +161,12 @@ public class UserDAO extends DAO {
     }
   }
 
+  /**
+   * Binds listeners to the User object to ensure that any changes to the users properties
+   * are automatically reflected in the database.
+   *
+   * @param user The User object to bind listeners to
+   */
   private void bindUpdater(User user) {
     user.passwordProperty().addListener((observableValue, before, after) -> {
       updateAttribute(user.getUsername(), "PASSWORD", update -> {
@@ -181,7 +186,7 @@ public class UserDAO extends DAO {
   }
 
   /**
-   * Helper to set an attribute
+   * Updates a specific attribute of the user in the USER table
    *
    * @param attributeName name of attribute
    * @param attributeSetter callback to set attribute

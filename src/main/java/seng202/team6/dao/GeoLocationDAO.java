@@ -86,7 +86,6 @@ public class GeoLocationDAO extends DAO {
   private int batchInsertGeoLocations(String sql, List<String[]> rows) {
     int rowsAffected = 0;
     int batchSize = 2048;
-    int numberOfBatches = 1;
 
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       for (int i = 1; i < rows.size(); i++) {
@@ -102,7 +101,6 @@ public class GeoLocationDAO extends DAO {
 
         if (i > 1 && i % batchSize == 0) {
           rowsAffected += executeBatch(statement);
-          numberOfBatches++;
         }
       }
       rowsAffected += executeBatch(statement);
