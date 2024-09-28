@@ -1,7 +1,6 @@
 package seng202.team6.unittests.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

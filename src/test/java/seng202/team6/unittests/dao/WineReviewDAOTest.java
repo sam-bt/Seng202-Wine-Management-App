@@ -37,11 +37,10 @@ public class WineReviewDAOTest {
     wine = new Wine(-1, "wine", "blue", "nz", "christchurch", "", "", 1024, "na", 99, 25.0f,
         50f, null);
     wineDAO.add(wine);
-    wine = wineDAO.getAll().getFirst();
   }
 
   @AfterEach
-  void teardown() throws SQLException {
+  void teardown() {
     databaseManager.teardown();
   }
 
@@ -69,12 +68,5 @@ public class WineReviewDAOTest {
 
   private WineReview createWineReview(double rating, String description) {
     return wineReviewDAO.add(user, wine, rating, description, new Date(System.currentTimeMillis()));
-  }
-
-  public static void main(String[] args) throws SQLException {
-    WineReviewDAOTest wineReviewDAOTest = new WineReviewDAOTest();
-    wineReviewDAOTest.setup();
-    wineReviewDAOTest.testDescriptionUpdatesInDatabase();
-    wineReviewDAOTest.teardown();
   }
 }

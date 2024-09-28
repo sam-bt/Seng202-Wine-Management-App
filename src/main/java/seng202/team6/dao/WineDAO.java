@@ -180,14 +180,20 @@ public class WineDAO extends DAO {
   public void add(Wine wine) {
     Timer timer = new Timer();
     String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+    try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
       setWineParameters(statement, wine, 1);
+      statement.executeUpdate();
 
-      int rowsAffected = statement.executeUpdate();
-      if (rowsAffected == 1) {
-        log.info("Successfully added wine with ID {} in {}ms", wine.getKey(), timer.stop());
-      } else {
-        log.info("Could not add wine with ID {} in {}ms", wine.getKey(), timer.stop());
+      try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+        if (generatedKeys.next()) {
+          wine.setKey(generatedKeys.getLong(1));
+          log.info("Successfully added wine with ID {} in {}ms", wine.getKey(), timer.stop());
+          if (useCache())
+            wineCache.addObject(wine.getKey(), wine);
+          bindUpdater(wine);
+        } else {
+          log.info("Could not add wine with ID {} in {}ms", wine.getKey(), timer.stop());
+        }
       }
     } catch (SQLException error) {
       log.error("Failed to add a batch of wines", error);
@@ -197,7 +203,11 @@ public class WineDAO extends DAO {
   /**
    * Adds a list of wines to the WINE table in batch mode to improve performance.
    * The batch is executed every 2048 wines to prevent excessive memory usage.
-   *
+   * <p>
+   *  SQL Lite does not support batch generated key returning so all the wines in the specified
+   *  list are considered invalid. After calling this method, you must then use getAll or
+   *  getAllInRange in order to fetch new wine objects with valid ID's.
+   * </p>
    * @param wines The list of wines to be added to the table
    */
   public void addAll(List<Wine> wines) {
