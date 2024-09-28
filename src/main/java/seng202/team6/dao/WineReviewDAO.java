@@ -125,7 +125,7 @@ public class WineReviewDAO extends DAO {
           log.info(
               "Successfully created wine review with ID {} for user '{}' and wine with ID {} in {}ms",
               id, user.getUsername(), wine.getKey(), timer.stop());
-          return new WineReview(
+          WineReview wineReview = new WineReview(
               id,
               wine.getKey(),
               user.getUsername(),
@@ -133,6 +133,10 @@ public class WineReviewDAO extends DAO {
               description,
               date
           );
+          if (useCache())
+            wineReviewCache.addObject(id, wineReview);
+          bindUpdater(wineReview);
+          return wineReview;
         }
         log.warn("Could not create wine review for user '{}' and wine with ID {} in {}ms",
             user.getUsername(), wine.getKey(), timer.stop());

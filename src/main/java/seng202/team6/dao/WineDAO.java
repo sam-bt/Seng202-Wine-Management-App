@@ -341,9 +341,7 @@ public class WineDAO extends DAO {
   }
 
   private void bindUpdater(Wine wine) {
-    System.out.println("bind updater called");
     wine.titleProperty().addListener((observableValue, before, after) -> {
-      System.out.println("bind updater title");
       updateAttribute(wine.getKey(), "TITLE", update -> {
         update.setString(1, after);
       });
