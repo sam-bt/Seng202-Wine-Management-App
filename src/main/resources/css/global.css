@@ -48,6 +48,11 @@
   -fx-border-radius: 10px;
 }
 
+.text-field:focused {
+  -fx-focus-color: #F87171;
+  -fx-faint-focus-color: #F8717122; /* transparent shadow around text field */
+}
+
 .table-view {
   -fx-background-color: #FEF0F0;
 }
