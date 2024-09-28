@@ -87,10 +87,42 @@ public class UserDAOTest {
     assertEquals(1, userDAO.getCount());
   }
 
-  public static void main(String[] args) throws SQLException {
-    UserDAOTest userDAOTest = new UserDAOTest();
-    userDAOTest.setup();
-    userDAOTest.testAddMultipleUsers();
-    userDAOTest.teardown();
+  @Test
+  void testPasswordUpdatesInDatabase() {
+    String initial = "initialPassword123";
+    String changed = "changedPassword456";
+    User initialUser = createUser("testUser", initial, "USER", "salt123");
+    initialUser.setPassword(changed);
+
+    User updatedUser = userDAO.get("testUser");
+    assertEquals(changed, updatedUser.getPassword());
+  }
+
+  @Test
+  void testRoleUpdatesInDatabase() {
+    String initial = "USER";
+    String changed = "ADMIN";
+    User initialUser = createUser("testUser", "password123", initial, "salt123");
+    initialUser.setRole(changed);
+
+    User updatedUser = userDAO.get("testUser");
+    assertEquals(changed, updatedUser.getRole());
+  }
+
+  @Test
+  void testSaltUpdatesInDatabase() {
+    String initial = "initialSalt123";
+    String changed = "changedSalt456";
+    User initialUser = createUser("testUser", "password123", "USER", initial);
+    initialUser.setSalt(changed);
+
+    User updatedUser = userDAO.get("testUser");
+    assertEquals(changed, updatedUser.getSalt());
+  }
+
+  private User createUser(String username, String password, String role, String salt) {
+    User user = new User(username, password, role, salt);
+    userDAO.add(user);
+    return user;
   }
 }
