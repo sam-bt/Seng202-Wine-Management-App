@@ -1,15 +1,8 @@
 package seng202.team6.model;
 
 import java.sql.Date;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.Property;
-import javafx.beans.property.ReadOnlyLongProperty;
-import javafx.beans.property.ReadOnlyLongWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+
+import javafx.beans.property.*;
 
 public class WineReview {
   private final ReadOnlyLongProperty id;
@@ -19,6 +12,7 @@ public class WineReview {
   private final StringProperty description;
   private final Property<Date> date;
   private StringProperty wineName;
+  private BooleanProperty isFlagged;
 
   public WineReview(
       long id,
@@ -34,6 +28,7 @@ public class WineReview {
     this.rating = new SimpleDoubleProperty(rating);
     this.description = new SimpleStringProperty(description);
     this.date = new SimpleObjectProperty<>(date);
+    this.isFlagged = new SimpleBooleanProperty(false, "flagged");
   }
 
   public WineReview(
@@ -52,6 +47,7 @@ public class WineReview {
     this.description = new SimpleStringProperty(description);
     this.date = new SimpleObjectProperty<>(date);
     this.wineName = new SimpleStringProperty(wineName);
+    this.isFlagged = new SimpleBooleanProperty(false);
   }
 
   public long getID() {
@@ -111,4 +107,10 @@ public class WineReview {
   }
 
   public StringProperty getWineName() { return wineName; }
+
+  public void setIsFlagged(boolean isFlagged) {
+    this.isFlagged.set(isFlagged);
+  }
+  public BooleanProperty isFlaggedProperty() {return isFlagged;}
+  public Boolean isFlagged() {return isFlagged.get();}
 }
