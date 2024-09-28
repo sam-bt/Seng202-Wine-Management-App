@@ -124,6 +124,8 @@ public class DatabaseManager {
       throw new RuntimeException(e);
     }
     log.info("Successfully executed {} initialise statements", sqlStatements.size());
+
+    geoLocationDAO.addDefaultGeoLocations();
   }
 
   /**

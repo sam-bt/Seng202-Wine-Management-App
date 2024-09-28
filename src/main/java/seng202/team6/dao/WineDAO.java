@@ -213,6 +213,7 @@ public class WineDAO extends DAO {
       connection.setAutoCommit(true);
     } catch (SQLException error) {
       log.error("Failed to add a batch of wines", error);
+      return;
     }
     log.info("Successfully added {} out of {} wines using {} batches in {}ms", rowsAffected,
         wines.size(), numberOfBatches, timer.stop());
@@ -263,7 +264,7 @@ public class WineDAO extends DAO {
       return cachedWine;
     }
 
-    GeoLocation geoLocation = null; // todo - change this to grab the geolocation when required
+    GeoLocation geoLocation = createGeoLocation(resultSet); // todo - change this to grab the geolocation when required
     Wine wine =  new Wine(
         id,
         resultSet.getString("TITLE"),
@@ -283,6 +284,19 @@ public class WineDAO extends DAO {
     bindUpdater(wine);
     return wine;
   }
+
+  private GeoLocation createGeoLocation(ResultSet set) throws SQLException {
+    double latitude = set.getDouble("LATITUDE");
+    if (set.wasNull()) {
+      return null;
+    }
+    double longitude = set.getDouble("LONGITUDE");
+    if (set.wasNull()) {
+      return null;
+    }
+    return new GeoLocation(latitude, longitude);
+  }
+
 
   /**
    * Sets the parameters for the PreparedStatement with the Wine objects data.
