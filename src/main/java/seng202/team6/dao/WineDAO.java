@@ -417,7 +417,6 @@ public class WineDAO extends DAO {
    */
   private void updateAttribute(long id, String attributeName,
       DatabaseManager.AttributeSetter attributeSetter) {
-    System.out.println("called update attribute");
     if (id == -1) {
       log.warn("Skipping attribute update '{}' for wine with ID -1",
           attributeName);
