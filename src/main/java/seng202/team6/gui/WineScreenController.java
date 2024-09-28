@@ -405,6 +405,7 @@ public class WineScreenController extends Controller {
     rangeSlider.setSnapToPixel(true);
     // by default the font size matches the parent font size which is the filters title
     rangeSlider.setStyle("-fx-font-size: 15px;");
+    rangeSlider.getStylesheets().add("css/range_slider.css");
     filtersPane.getChildren().add(rangeSlider);
     return rangeSlider;
   }
