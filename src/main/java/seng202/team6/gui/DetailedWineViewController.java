@@ -3,11 +3,14 @@ package seng202.team6.gui;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -17,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.Rating;
@@ -118,6 +122,12 @@ public class DetailedWineViewController extends Controller {
       User user = managerContext.authenticationManager.getAuthenticatedUser();
       Note note = wineNoteService.loadUsersNote(user);
       notesTextbox.setText(note.getNote());
+
+      // disables the save not button if the note is not changed
+      saveNotes.setDisable(true);
+      notesTextbox.textProperty().addListener((observableValue, before, after) -> {
+        saveNotes.setDisable(after.equals(note.getNote()));
+      });
     } else {
       setNotesVisible(false);
     }
