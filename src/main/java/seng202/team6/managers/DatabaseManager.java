@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,8 +25,10 @@ import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
+import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.ProcessCSV;
+import seng202.team6.util.RegexProcessor;
 
 
 /**
@@ -37,6 +40,8 @@ public class DatabaseManager implements AutoCloseable {
    * Logger for the DatabaseManager class
    */
   private final Logger log = LogManager.getLogger(getClass());
+  private boolean getVintageFromTitle = true;
+  private RegexProcessor regexp = new RegexProcessor();
 
   /**
    * Database connection
@@ -45,6 +50,10 @@ public class DatabaseManager implements AutoCloseable {
    * </p>
    */
   private Connection connection;
+  /**
+   * Cache of alive wines to unique
+   */
+  DatabaseObjectUniquer<Wine> wineCache = new DatabaseObjectUniquer<>();
 
   /**
    * Connects to a db file for management. The path to the file is specified by dbpath
@@ -88,6 +97,12 @@ public class DatabaseManager implements AutoCloseable {
     addGeolocations();
     createWineListsTable();
     createWineReviewTable();
+
+    try (Statement statement = connection.createStatement()) {
+      if (useWal) {
+        statement.execute("pragma journal_mode=wal");
+      }
+    }
   }
 
 
@@ -104,6 +119,52 @@ public class DatabaseManager implements AutoCloseable {
     createGeolocationTable();
     addGeolocations();
   }
+
+  /**
+   * Unpacks a result set into a list of wines
+   * <p>
+   * Wines are also uniqued by id to prevent inconsistencies if an object is changed
+   * </p>
+   *
+   * @param resultSet result set from jdbc
+   * @return list of wines
+   * @throws SQLException if underlying JDBC error
+   */
+  private ObservableList<Wine> resultSetToList(ResultSet resultSet) throws SQLException {
+    ObservableList<Wine> wines = FXCollections.observableArrayList();
+
+    while (resultSet.next()) {
+      long id = resultSet.getLong("ID");
+      // If wine already exists use that reference instead
+      Wine maybeWine = wineCache.tryGetObject(id);
+      if (maybeWine != null) {
+        wines.add(maybeWine);
+      } else {
+
+        GeoLocation geoLocation = createGeoLocation(resultSet);
+        Wine wine = new Wine(
+            id,
+            this,
+            resultSet.getString("TITLE"),
+            resultSet.getString("VARIETY"),
+            resultSet.getString("COUNTRY"),
+            resultSet.getString("REGION"),
+            resultSet.getString("WINERY"),
+            resultSet.getString("COLOR"),
+            resultSet.getInt("VINTAGE"),
+            resultSet.getString("DESCRIPTION"),
+            resultSet.getInt("SCORE_PERCENT"),
+            resultSet.getFloat("ABV"),
+            resultSet.getFloat("PRICE"),
+            geoLocation
+        );
+        wines.add(wine);
+        wineCache.addObject(id, wine);
+      }
+    }
+    return wines;
+  }
+
 
   /**
    * Creates the WINE table if it does not exist
@@ -161,9 +222,55 @@ public class DatabaseManager implements AutoCloseable {
    */
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
     long milliseconds = System.currentTimeMillis();
-    ObservableList<Wine> wines = FXCollections.observableArrayList();
-    String query = "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE from WINE "
+    String query = "select * from WINE "
         + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
+        + "order by WINE.ID "
+        + "limit ? "
+        + "offset ?;";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setInt(1, end - begin);
+      statement.setInt(2, begin);
+
+      ObservableList<Wine> wines = resultSetToList(statement.executeQuery());
+      LogManager.getLogger(getClass())
+          .info("Time to process getWinesInRange: {}", System.currentTimeMillis() - milliseconds);
+      return wines;
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Gets a subset of the wines in the database
+   * <p>
+   * The order of elements should remain stable until a write operation occurs.
+   * </p>
+   *
+   * @param begin beginning element
+   * @param end   end element (begin + size)
+   * @return subset list of wines
+   */
+  public ObservableList<Wine> getWinesInRangeWithReviewInfo(int begin, int end) {
+    long milliseconds = System.currentTimeMillis();
+    ObservableList<Wine> wines = FXCollections.observableArrayList();
+    String query = "select WINE.ID, "
+        + "WINE.TITLE, "
+        + "WINE.VARIETY, "
+        + "WINE.COUNTRY, "
+        + "WINE.REGION, "
+        + "WINE.WINERY, "
+        + "WINE.COLOR, "
+        + "WINE.VINTAGE, "
+        + "WINE.DESCRIPTION, "
+        + "WINE.SCORE_PERCENT, "
+        + "WINE.ABV, "
+        + "WINE.PRICE, "
+        + "GEOLOCATION.LATITUDE, "
+        + "GEOLOCATION.LONGITUDE, "
+        + "COUNT(WINE_REVIEW.ID) AS review_count, "
+        + "AVG(WINE_REVIEW.RATING) AS average_rating from WINE "
+        + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+        + "LEFT JOIN WINE_REVIEW ON WINE.ID = WINE_REVIEW.WINE_ID "
         + "order by WINE.ID "
         + "limit ? "
         + "offset ?;";
@@ -188,7 +295,9 @@ public class DatabaseManager implements AutoCloseable {
             set.getInt("SCORE_PERCENT"),
             set.getFloat("ABV"),
             set.getFloat("PRICE"),
-            geoLocation
+            geoLocation,
+            set.getInt("review_count"),
+            set.getDouble("average_rating")
         );
         wines.add(wine);
       }
@@ -214,9 +323,8 @@ public class DatabaseManager implements AutoCloseable {
    */
   public ObservableList<Wine> getWinesInRange(int begin, int end, Filters filters) {
     long milliseconds = System.currentTimeMillis();
-    ObservableList<Wine> wines = FXCollections.observableArrayList();
     String query =
-        "select ID, TITLE, VARIETY, COUNTRY, REGION, WINERY, COLOR, VINTAGE, DESCRIPTION, SCORE_PERCENT, ABV, PRICE, LATITUDE, LONGITUDE "
+        "select * "
             + "from WINE "
             + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
             + "where WINE.TITLE like ? "
@@ -251,36 +359,14 @@ public class DatabaseManager implements AutoCloseable {
       statement.setInt(paramIndex++, end - begin);
       statement.setInt(paramIndex, begin);
 
-      // Add filtered wines to list
-      ResultSet set = statement.executeQuery();
-      while (set.next()) {
-        GeoLocation geoLocation = createGeoLocation(set);
-        Wine wine = new Wine(
-            set.getLong("ID"),
-            this,
-            set.getString("TITLE"),
-            set.getString("VARIETY"),
-            set.getString("COUNTRY"),
-            set.getString("REGION"),
-            set.getString("WINERY"),
-            set.getString("COLOR"),
-            set.getInt("VINTAGE"),
-            set.getString("DESCRIPTION"),
-            set.getInt("SCORE_PERCENT"),
-            set.getFloat("ABV"),
-            set.getFloat("PRICE"),
-            geoLocation
-        );
-        wines.add(wine);
-      }
-
+      ObservableList<Wine> wines = resultSetToList(statement.executeQuery());
+      LogManager.getLogger(getClass()).info("Time to process getWinesInRange with filter: {}",
+          System.currentTimeMillis() - milliseconds);
+      return wines;
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
 
-    LogManager.getLogger(getClass()).info("Time to process getWinesInRange with filter: {}",
-        System.currentTimeMillis() - milliseconds);
-    return wines;
   }
 
   private GeoLocation createGeoLocation(ResultSet set) throws SQLException {
@@ -328,7 +414,7 @@ public class DatabaseManager implements AutoCloseable {
    * @throws SQLException if a database error occurs
    */
   public void removeWines() throws SQLException {
-    String delete = "delete from WINE;";
+    String delete = "DELETE FROM WINE;";
     try (Statement statement = connection.createStatement()) {
       statement.executeUpdate(delete);
     }
@@ -346,6 +432,7 @@ public class DatabaseManager implements AutoCloseable {
     String insert = "insert into WINE values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     connection.setAutoCommit(false);
     int i = 0;
+
     try (PreparedStatement insertStatement = connection.prepareStatement(insert)) {
       for (Wine wine : list) {
         insertStatement.setString(1, wine.getTitle());
@@ -354,7 +441,11 @@ public class DatabaseManager implements AutoCloseable {
         insertStatement.setString(4, wine.getRegion());
         insertStatement.setString(5, wine.getWinery());
         insertStatement.setString(6, wine.getColor());
-        insertStatement.setInt(7, wine.getVintage());
+        if (wine.getVintage() == 0) {
+          insertStatement.setInt(7, Integer.parseInt(regexp.extractYearFromString(wine.getTitle())));
+        } else {
+          insertStatement.setInt(7, wine.getVintage());
+        }
         insertStatement.setString(8, wine.getDescription());
         insertStatement.setInt(9, wine.getScorePercent());
         insertStatement.setFloat(10, wine.getAbv());
@@ -661,36 +752,17 @@ public class DatabaseManager implements AutoCloseable {
   }
 
   public List<Wine> getWinesInList(WineList wineList) {
-    List<Wine> wines = new ArrayList<>();
-    String query = "SELECT WINE.* FROM WINE " +
+    String query = "SELECT * FROM WINE " +
         "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID " +
         "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID " +
+        "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) " +
         "WHERE LIST_NAME.ID = ?";
 
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setLong(1, wineList.id());
 
-      ResultSet set = statement.executeQuery();
-      while (set.next()) {
-        Wine wine = new Wine(
-            set.getLong("ID"),
-            this,
-            set.getString("TITLE"),
-            set.getString("VARIETY"),
-            set.getString("COUNTRY"),
-            set.getString("REGION"),
-            set.getString("WINERY"),
-            set.getString("COLOR"),
-            set.getInt("VINTAGE"),
-            set.getString("DESCRIPTION"),
-            set.getInt("SCORE_PERCENT"),
-            set.getFloat("ABV"),
-            set.getFloat("PRICE"),
-            null
-        );
-        wines.add(wine);
-      }
-      return wines;
+      return resultSetToList(statement.executeQuery());
+
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
@@ -865,6 +937,14 @@ public class DatabaseManager implements AutoCloseable {
       log.error("Failed to read wine reviews from the database", error);
     }
 
+    try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM WINE_REVIEW")) {
+      ResultSet resultSet = statement.executeQuery();
+      while (resultSet.next()) {
+        // fixme EMPTY
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     return wineReviews;
   }
 
@@ -929,6 +1009,109 @@ public class DatabaseManager implements AutoCloseable {
     } catch (SQLException error) {
       log.error("Failed to add a review to the database", error);
     }
+  }
+
+  /**
+   * Gets a subset of the reviews in the database
+   * <p>
+   * The order of elements should remain stable until a write operation occurs.
+   * </p>
+   *
+   * @param begin beginning element
+   * @param end   end element (begin + size)
+   * @return subset list of reviews
+   */
+  public ObservableList<WineReview> getReviewsInRange(int begin, int end) {
+    long milliseconds = System.currentTimeMillis();
+    ObservableList<WineReview> reviews = FXCollections.observableArrayList();
+    String query = "SELECT WINE_REVIEW.ID, WINE_REVIEW.WINE_ID , WINE_REVIEW.USERNAME, WINE_REVIEW.RATING, WINE_REVIEW.DESCRIPTION, WINE_REVIEW.DATE, WINE.TITLE from WINE_REVIEW "
+        + "JOIN WINE ON WINE_REVIEW.WINE_ID = WINE.ID "
+        + "order by WINE_REVIEW.ID "
+        + "limit ? "
+        + "offset ?;";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setInt(1, end - begin);
+      statement.setInt(2, begin);
+
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        WineReview review = new WineReview(
+            set.getLong("ID"),
+            set.getLong("WINE_ID"),
+            set.getString("USERNAME"),
+            set.getDouble("RATING"),
+            set.getString("DESCRIPTION"),
+            set.getDate("DATE"),
+            set.getString("TITLE")
+        );
+        reviews.add(review);
+      }
+
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    LogManager.getLogger(getClass())
+        .info("Time to process getReviewsInRange: {}", System.currentTimeMillis() - milliseconds);
+    return reviews;
+  }
+
+  public Wine getWineWithReviewInfoById(long wineId) {
+    long milliseconds = System.currentTimeMillis();
+    Wine wine = null;
+    String query = "select WINE.ID, "
+        + "WINE.TITLE, "
+        + "WINE.VARIETY, "
+        + "WINE.COUNTRY, "
+        + "WINE.REGION, "
+        + "WINE.WINERY, "
+        + "WINE.COLOR, "
+        + "WINE.VINTAGE, "
+        + "WINE.DESCRIPTION, "
+        + "WINE.SCORE_PERCENT, "
+        + "WINE.ABV, "
+        + "WINE.PRICE, "
+        + "GEOLOCATION.LATITUDE, "
+        + "GEOLOCATION.LONGITUDE, "
+        + "COUNT(WINE_REVIEW.ID) AS review_count, "
+        + "AVG(WINE_REVIEW.RATING) AS average_rating from WINE "
+        + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+        + "LEFT JOIN WINE_REVIEW ON WINE.ID = WINE_REVIEW.WINE_ID "
+        + "WHERE WINE.ID = ?;";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setLong(1, wineId);
+
+      ResultSet set = statement.executeQuery();
+      while (set.next()) {
+        GeoLocation geoLocation = createGeoLocation(set);
+        wine = new Wine(
+            set.getLong("ID"),
+            this,
+            set.getString("TITLE"),
+            set.getString("VARIETY"),
+            set.getString("COUNTRY"),
+            set.getString("REGION"),
+            set.getString("WINERY"),
+            set.getString("COLOR"),
+            set.getInt("VINTAGE"),
+            set.getString("DESCRIPTION"),
+            set.getInt("SCORE_PERCENT"),
+            set.getFloat("ABV"),
+            set.getFloat("PRICE"),
+            geoLocation,
+            set.getInt("review_count"),
+            set.getDouble("average_rating")
+        );
+
+    }} catch (SQLException e){
+        throw new RuntimeException(e);
+      }
+      if (wine == null) {
+        throw new NoSuchElementException("No wine found with ID: " + wineId);
+      }
+
+    LogManager.getLogger(getClass())
+        .info("Time to process getReviewsInRange: {}", System.currentTimeMillis() - milliseconds);
+    return wine;
   }
 
   /**

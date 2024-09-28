@@ -1,17 +1,23 @@
 package seng202.team6.model;
 
 import java.sql.SQLException;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import org.apache.logging.log4j.LogManager;
 import seng202.team6.managers.DatabaseManager;
 
 /**
  * Wine represents the wine record in the database
+ * <p>
+ *   There must only be one wine per id. This is assured by the database
+ * </p>
  */
 public class Wine {
 
@@ -77,6 +83,18 @@ public class Wine {
    * We need to maintain this for JavaBean compliance with the setters and getters
    * </p>
    */
+
+  /**
+   * number of reviews the wine has
+   */
+  private IntegerProperty reviewCount;
+
+  /**
+   * Average rating of the wine
+   */
+  private DoubleProperty rating;
+
+
   private DatabaseManager databaseManager;
   /**
    * GeoLocation which holds the coordinates of the region name
@@ -133,6 +151,60 @@ public class Wine {
     this.price = new SimpleFloatProperty(this, "price", price);
     this.geoLocation = geoLocation;
     setupSetters();
+  }
+
+  /**
+   * Constructs a new Wine with the given attributes
+   *
+   * @param key          database key, -1 if no record attached
+   * @param title        title
+   * @param variety      variety
+   * @param country      country
+   * @param region       region
+   * @param winery       winery
+   * @param description  description of wine
+   * @param scorePercent score from 0-100
+   * @param abv          alcohol by volume
+   * @param price        NZD price
+   * @param geoLocation  geographical location
+   * @param reviewCount  number of reviews that wine has
+   * @param rating  average rating of the wine
+   */
+  public Wine(
+      long key,
+      DatabaseManager databaseManager,
+      String title,
+      String variety,
+      String country,
+      String region,
+      String winery,
+      String color,
+      Integer vintage,
+      String description,
+      Integer scorePercent,
+      Float abv,
+      Float price,
+      GeoLocation geoLocation,
+      Integer reviewCount,
+      Double rating
+  ) {
+    this.key = key;
+    this.databaseManager = databaseManager;
+    this.title = new SimpleStringProperty(this, "title", title);
+    this.variety = new SimpleStringProperty(this, "variety", variety);
+    this.country = new SimpleStringProperty(this, "country", country);
+    this.region = new SimpleStringProperty(this, "region", region);
+    this.winery = new SimpleStringProperty(this, "winery", winery);
+    this.color = new SimpleStringProperty(this, "color", color);
+    this.vintage = new SimpleIntegerProperty(this, "vintage", vintage);
+    this.description = new SimpleStringProperty(this, "description", description);
+    this.scorePercent = new SimpleIntegerProperty(this, "scorePercent", scorePercent);
+    this.abv = new SimpleFloatProperty(this, "abv", abv);
+    this.price = new SimpleFloatProperty(this, "price", price);
+    this.geoLocation = geoLocation;
+    this.reviewCount = new SimpleIntegerProperty(this, "reviewCount", reviewCount);
+    this.rating = new SimpleDoubleProperty(this, "rating", rating);
+
   }
 
   /**
@@ -228,7 +300,6 @@ public class Wine {
         update.setFloat(1, (Float) after);
       });
     });
-
   }
 
 
@@ -617,5 +688,14 @@ public class Wine {
     }
     Wine wine = (Wine) o;
     return key == wine.key;
+  }
+
+  public IntegerProperty getReviewCount() {
+    return reviewCount;
+  }
+
+
+  public DoubleProperty getRating() {
+    return rating;
   }
 }
