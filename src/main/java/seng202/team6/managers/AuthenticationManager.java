@@ -41,11 +41,14 @@ public class AuthenticationManager {
     if (!password.equals(confirmedPassword)) {
       return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
     }
+    if (password.equals(username)) {
+      return AuthenticationResponse.SAME_AS_USERNAME;
+    }
     if (username.length() < 3 || username.length() > 15 || !username.matches("[a-zA-Z0-9_]+")) {
       return AuthenticationResponse.INVALID_USERNAME;
     }
     if (password.length() < 3 || password.length() > 15 || !password.matches(
-        "[a-zA-Z0-9]+")) {
+        AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())) {
       return AuthenticationResponse.INVALID_PASSWORD;
     }
     UserDAO userDAO = databaseManager.getUserDAO();
@@ -117,8 +120,11 @@ public class AuthenticationManager {
       if (oldPassword.equals(newPassword)) {
         return AuthenticationResponse.OLD_PASSWORD_SAME_AS_NEW;
       }
-      if (newPassword.length() < 3 || newPassword.length() > 15 || !newPassword.matches(
-          "[a-zA-Z0-9]+")) {
+      if (newPassword.equals(username)) {
+        return AuthenticationResponse.SAME_AS_USERNAME;
+      }
+      if (!newPassword.matches(
+          AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())) {
         return AuthenticationResponse.INVALID_PASSWORD;
       }
 

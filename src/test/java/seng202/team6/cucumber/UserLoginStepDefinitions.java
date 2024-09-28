@@ -40,13 +40,13 @@ public class UserLoginStepDefinitions {
   @When("the user enters an invalid username or password combination")
   public void theUserEntersAnInvalidUsernameOrPasswordCombination() {
     username = "MyAccount";
-    password = "MyPassword";
+    password = "invalidpass";
   }
 
   @When("the user enters a correct username and password combination")
   public void theUserEntersACorrectUsernameAndPasswordCombination() {
     username = "MyAccount";
-    password = "MyPassword";
+    password = "ValidPassword1!";
     authenticationManager.validateRegistration(username, password, password);
   }
 
