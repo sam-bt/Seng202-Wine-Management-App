@@ -51,6 +51,22 @@ public class WineNotesDAO extends DAO {
     };
   }
 
+  public ObservableList<Note> getAll() {
+    Timer timer = new Timer();
+    String sql = "SELECT * FROM NOTES";
+    try (Statement statement = connection.createStatement()) {
+      try (ResultSet resultSet = statement.executeQuery(sql)) {
+        ObservableList<Note> notes = extractAllNotesFromResultSet(resultSet);
+        log.info("Successfully retrieved all {} notes in {}ms",
+            notes.size(), timer.stop());
+        return notes;
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve all notes", error);
+    }
+    return FXCollections.emptyObservableList();
+  }
+
   public ObservableList<Note> getAll(User user) {
     Timer timer = new Timer();
     String sql = "SELECT ID, NOTE FROM NOTES " +
