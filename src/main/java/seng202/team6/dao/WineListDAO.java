@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import seng202.team6.model.Note;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
@@ -117,10 +116,10 @@ public class WineListDAO extends DAO {
 
   public boolean isWineInList(WineList wineList, Wine wine) {
     Timer timer = new Timer();
-    String sql = "SELECT 1 FROM LIST_ITEMS WHERE LIST_ID = ? AND WINE_ID = ?";
+    String sql = "SELECT * FROM LIST_ITEMS WHERE LIST_ID = ? AND WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setLong(1, wineList.id());
-      statement.setLong(1, wine.getKey());
+      statement.setLong(2, wine.getKey());
 
       try (ResultSet resultSet = statement.executeQuery()) {
         boolean found = resultSet.next();
