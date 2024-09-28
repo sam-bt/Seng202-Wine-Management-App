@@ -69,7 +69,7 @@ public class WineNotesDAO extends DAO {
 
   public ObservableList<Note> getAll(User user) {
     Timer timer = new Timer();
-    String sql = "SELECT ID, NOTE FROM NOTES " +
+    String sql = "SELECT * FROM NOTES " +
         "WHERE USERNAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setString(1, user.getUsername());
