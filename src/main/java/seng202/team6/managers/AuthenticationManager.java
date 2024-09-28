@@ -45,7 +45,6 @@ public class AuthenticationManager {
     if (username.length() < 3 || username.length() > 15 || !username.matches("[a-zA-Z0-9_]+")) {
       return AuthenticationResponse.INVALID_USERNAME;
     }
-    System.out.println((AuthenticationResponse.SAME_AS_USERNAME));
     if (password.length() < 3 || password.length() > 15 || !password.matches(
         AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())) {
       return AuthenticationResponse.INVALID_PASSWORD;
