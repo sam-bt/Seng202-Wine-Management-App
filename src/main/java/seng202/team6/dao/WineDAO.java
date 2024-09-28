@@ -259,9 +259,11 @@ public class WineDAO extends DAO {
    */
   private Wine extractWineFromResultSet(ResultSet resultSet) throws SQLException {
     long id =  resultSet.getLong("ID");
-    Wine cachedWine = wineCache.tryGetObject(id);
-    if (cachedWine != null) {
-      return cachedWine;
+    if (useCache()) {
+      Wine cachedWine = wineCache.tryGetObject(id);
+      if (cachedWine != null) {
+        return cachedWine;
+      }
     }
 
     GeoLocation geoLocation = createGeoLocation(resultSet); // todo - change this to grab the geolocation when required
@@ -280,7 +282,8 @@ public class WineDAO extends DAO {
         resultSet.getFloat("PRICE"),
         geoLocation
     );
-    wineCache.addObject(id, wine);
+    if (useCache())
+      wineCache.addObject(id, wine);
     bindUpdater(wine);
     return wine;
   }

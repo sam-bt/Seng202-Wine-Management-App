@@ -19,6 +19,8 @@ public abstract class DAO {
    */
   protected final Logger log;
 
+  private boolean useCache = true;
+
 
   /**
    * Constructs a new DAO with the given database connection and initializes logging.
@@ -39,5 +41,13 @@ public abstract class DAO {
    */
   public String[] getInitialiseStatements() {
     return null;
+  }
+
+  public boolean useCache() {
+    return useCache;
+  }
+
+  public void setUseCache(boolean useCache) {
+    this.useCache = useCache;
   }
 }
