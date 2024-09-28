@@ -177,6 +177,23 @@ public class WineDAO extends DAO {
     addAll(wines);
   }
 
+  public void add(Wine wine) {
+    Timer timer = new Timer();
+    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      setWineParameters(statement, wine, 1);
+
+      int rowsAffected = statement.executeUpdate();
+      if (rowsAffected == 1) {
+        log.info("Successfully added wine with ID {} in {}ms", wine.getKey(), timer.stop());
+      } else {
+        log.info("Could not add wine with ID {} in {}ms", wine.getKey(), timer.stop());
+      }
+    } catch (SQLException error) {
+      log.error("Failed to add a batch of wines", error);
+    }
+  }
+
   /**
    * Adds a list of wines to the WINE table in batch mode to improve performance.
    * The batch is executed every 2048 wines to prevent excessive memory usage.
@@ -324,7 +341,9 @@ public class WineDAO extends DAO {
   }
 
   private void bindUpdater(Wine wine) {
+    System.out.println("bind updater called");
     wine.titleProperty().addListener((observableValue, before, after) -> {
+      System.out.println("bind updater title");
       updateAttribute(wine.getKey(), "TITLE", update -> {
         update.setString(1, after);
       });
@@ -390,12 +409,12 @@ public class WineDAO extends DAO {
    */
   private void updateAttribute(long id, String attributeName,
       DatabaseManager.AttributeSetter attributeSetter) {
+    System.out.println("called update attribute");
     if (id == -1) {
       log.warn("Skipping attribute update '{}' for wine with ID -1",
           attributeName);
       return;
     }
-
     Timer timer = new Timer();
     String sql = "UPDATE WINE set " + attributeName + " = ? where ID = ?";
     try (PreparedStatement update = connection.prepareStatement(sql)) {
