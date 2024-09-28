@@ -24,7 +24,7 @@ public class UserLogoutStepDefinitions {
   @Given("the user is authenticated and wants to logout")
   public void theUserIsAuthenticatedAndWantsToLogout() {
     String username = "MyAccount";
-    String password = "MyPassword";
+    String password = "ValidPassword1!";
 
     AuthenticationResponse registrationResponse = authenticationManager.validateRegistration(
         username, password, password);
