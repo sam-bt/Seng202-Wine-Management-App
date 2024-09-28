@@ -8,6 +8,7 @@ import java.security.InvalidParameterException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -15,15 +16,21 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Stream;
+import javafx.collections.ObservableMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.dao.DAO;
 import seng202.team6.dao.GeoLocationDAO;
+import seng202.team6.dao.MultiDAO;
 import seng202.team6.dao.UserDAO;
 import seng202.team6.dao.WineDAO;
 import seng202.team6.dao.WineListDAO;
 import seng202.team6.dao.WineNotesDAO;
 import seng202.team6.dao.WineReviewDAO;
+import seng202.team6.model.Note;
+import seng202.team6.model.User;
+import seng202.team6.model.Wine;
+import seng202.team6.model.WineReview;
 import seng202.team6.util.EncryptionUtil;
 
 /**
@@ -40,6 +47,7 @@ public class DatabaseManager {
   private final WineNotesDAO wineNotesDAO;
   private final WineReviewDAO wineReviewDAO;
   private final GeoLocationDAO geoLocationDAO;
+  private final MultiDAO multiDAO;
 
   /**
    * Constructs a NewDatabaseManager with an in-memory SQLite database connection.
@@ -79,6 +87,7 @@ public class DatabaseManager {
     this.wineNotesDAO = new WineNotesDAO(connection);
     this.wineReviewDAO = new WineReviewDAO(connection);
     this.geoLocationDAO = new GeoLocationDAO(connection);
+    this.multiDAO = new MultiDAO(connection, wineNotesDAO, wineDAO);
     init();
   }
 
@@ -162,6 +171,10 @@ public class DatabaseManager {
 
   public GeoLocationDAO getGeoLocationDAO() {
     return geoLocationDAO;
+  }
+
+  public MultiDAO getMultiDAO() {
+    return multiDAO;
   }
 
   /**

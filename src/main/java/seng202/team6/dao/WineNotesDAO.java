@@ -179,7 +179,7 @@ public class WineNotesDAO extends DAO {
     return notes;
   }
 
-  private Note extractNoteFromResultSet(ResultSet resultSet) throws SQLException {
+  Note extractNoteFromResultSet(ResultSet resultSet) throws SQLException {
     long id = resultSet.getLong("ID");
     Note cachedNote = notesCache.tryGetObject(id);
     if (cachedNote != null) {

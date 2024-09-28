@@ -284,7 +284,7 @@ public class WineDAO extends DAO {
    * @return The extracted Wine object
    * @throws SQLException If an error occurs while processing the ResultSet
    */
-  private Wine extractWineFromResultSet(ResultSet resultSet) throws SQLException {
+  Wine extractWineFromResultSet(ResultSet resultSet) throws SQLException {
     long id =  resultSet.getLong("ID");
     if (useCache()) {
       Wine cachedWine = wineCache.tryGetObject(id);
