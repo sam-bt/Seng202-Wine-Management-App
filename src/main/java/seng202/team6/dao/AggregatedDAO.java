@@ -12,7 +12,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.util.Timer;
 
 // todo - idk what to call this but pre much is just uses methods between different DAOS
-public class MultiDAO extends DAO {
+public class AggregatedDAO extends DAO {
   private final WineNotesDAO wineNotesDAO;
   private final WineDAO wineDAO;
 
@@ -21,8 +21,8 @@ public class MultiDAO extends DAO {
    *
    * @param connection          The database connection to be used by this DAO.
    */
-  public MultiDAO(Connection connection, WineNotesDAO wineNotesDAO, WineDAO wineDAO) {
-    super(connection, MultiDAO.class);
+  public AggregatedDAO(Connection connection, WineNotesDAO wineNotesDAO, WineDAO wineDAO) {
+    super(connection, AggregatedDAO.class);
     this.wineNotesDAO = wineNotesDAO;
     this.wineDAO = wineDAO;
   }
