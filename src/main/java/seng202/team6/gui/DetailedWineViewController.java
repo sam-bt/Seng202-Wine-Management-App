@@ -25,6 +25,7 @@ import seng202.team6.model.Note;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
+import seng202.team6.service.WineNoteService;
 import seng202.team6.service.WineReviewsService;
 import seng202.team6.util.DateFormatter;
 import seng202.team6.util.ImageReader;
@@ -81,6 +82,7 @@ public class DetailedWineViewController extends Controller {
     put("rosé", ROSE_WINE_IMAGE);
   }};
   private final WineReviewsService wineReviewsService;
+  private final WineNoteService wineNoteService;
   private final Wine viewedWine;
   private final Runnable backButtonAction;
   private final ObservableMap<WineReview, VBox> wineReviewWrappers = FXCollections.observableHashMap();
@@ -89,6 +91,8 @@ public class DetailedWineViewController extends Controller {
       Runnable backButtonAction) {
     super(managerContext);
     this.wineReviewsService = new WineReviewsService(managerContext.authenticationManager,
+        managerContext.databaseManager, viewedWine);
+    this.wineNoteService = new WineNoteService(managerContext.authenticationManager,
         managerContext.databaseManager, viewedWine);
     this.viewedWine = viewedWine;
     this.backButtonAction = backButtonAction;
@@ -112,8 +116,8 @@ public class DetailedWineViewController extends Controller {
     if (managerContext.authenticationManager.isAuthenticated()) {
       setNotesVisible(true);
       User user = managerContext.authenticationManager.getAuthenticatedUser();
-      Note note = managerContext.databaseManager.getWineNotesDAO().get(user, viewedWine);
-      notesTextbox.setText(note == null ? "" : note.getNote());
+      Note note = wineNoteService.loadUsersNote(user);
+      notesTextbox.setText(note.getNote());
     } else {
       setNotesVisible(false);
     }
@@ -245,10 +249,11 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   public void onSaveClicked() {
-
-    // todo - save this using beans
-//    managerContext.databaseManager.saveNote(viewedWine.getKey(),
-//        managerContext.authenticationManager.getAuthenticatedUsername(), notesTextbox.getText());
+    Note note = wineNoteService.getNote();
+    // if the note is null the user is not authenticated
+    if (note != null) {
+      note.setNote(notesTextbox.getText());
+    }
   }
 
   private String getOrDefault(String property) {
