@@ -315,6 +315,15 @@ public class WineDAO extends DAO {
     return wine;
   }
 
+  /**
+   * Extracts the latitude and longitude from the provided ResultSet and creates a new GeoLocation
+   * object
+   *
+   * @param set The ResultSet from which geolocations are to be extracted
+   * @return The extract Geolocation if available, otherwise null if either the latitude or
+   * longitude were null
+   * @throws SQLException If an error occurs while processing the ResultSet
+   */
   private GeoLocation createGeoLocation(ResultSet set) throws SQLException {
     double latitude = set.getDouble("LATITUDE");
     if (set.wasNull()) {
@@ -350,6 +359,12 @@ public class WineDAO extends DAO {
     statement.setFloat(startIndex++, wine.getPrice());
   }
 
+  /**
+   * Binds listeners to the Wine object to ensure that any changes to the wines properties
+   * are automatically reflected in the database.
+   *
+   * @param wine The Wine object to bind listeners to
+   */
   private void bindUpdater(Wine wine) {
     wine.titleProperty().addListener((observableValue, before, after) -> {
       updateAttribute(wine.getKey(), "TITLE", update -> {
@@ -409,8 +424,8 @@ public class WineDAO extends DAO {
     });
   }
 
-    /**
-   * Helper to set an attribute
+  /**
+   * Updates a specific attribute of the user in the WINE table
    *
    * @param attributeName name of attribute
    * @param attributeSetter callback to set attribute
