@@ -76,6 +76,16 @@ public class UserChangePasswordStepDefinitions {
     newPassword = "invalidpass";
   }
 
+  @And("the user enters their username as a password")
+  public void theUserEntersUsernameAsPassword() {
+    newPassword = "MyAccount";
+  }
+
+  @And("the user enters the same password of their username to confirm")
+  public void theUserEntersUsernameAsConfirmPassword() {
+    confirmNewPassword = "MyAccount";
+  }
+
   @Then("the accounts password is not changed")
   public void theAccountsPasswordIsNotChanged() {
     AuthenticationResponse response = authenticationManager.validateUpdate(username, oldPassword,

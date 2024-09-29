@@ -2,6 +2,7 @@ package seng202.team6.cucumber;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -63,12 +64,28 @@ public class UserRegistrationStepDefinitions {
     confirmedPassword = password;
   }
 
+  @When("the user enters an invalid password")
+  public void the_user_enters_an_invalid_password() {
+    username = "MyUsername";
+    password = "invalid";
+    confirmedPassword = password;
+  }
+
+  @When("the user enters the same password as their username")
+  public void the_user_enters_same_pass_as_user() {
+    username = "MyUsername";
+    password = "MyUsername!";
+    confirmedPassword = password;
+  }
+
   @When("the user enters a different password and confirmed password")
   public void the_user_enters_a_different_password_and_confirmed_password() {
     username = "MyAccount";
     password = "ValidPassword1!";
     confirmedPassword = "notValidPassword1!";
   }
+
+
 
   @Then("a new account for the user is created")
   public void a_new_account_for_the_user_is_created() {
