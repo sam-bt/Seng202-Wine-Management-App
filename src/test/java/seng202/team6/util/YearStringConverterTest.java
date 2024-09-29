@@ -13,19 +13,19 @@ public class YearStringConverterTest {
   private final YearStringConverter converter = new YearStringConverter();
 
   @Test
-  public void testToString_withValidNumbers() {
+  public void testToStringWithValidNumbers() {
     assertEquals("0005", converter.toString(5));
     assertEquals("1985", converter.toString(1985));
     assertEquals("0000", converter.toString(0));
   }
 
   @Test
-  public void testToString_withNull() {
+  public void testToStringWithNull() {
     assertEquals("", converter.toString(null));
   }
 
   @Test
-  public void testFromString_withValidStrings() {
+  public void testFromStringWithValidStrings() {
     assertEquals(1985, converter.fromString("1985"));
     assertEquals(0, converter.fromString("0000"));
     assertEquals(5, converter.fromString("0005"));
