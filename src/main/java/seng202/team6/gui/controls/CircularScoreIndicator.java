@@ -15,32 +15,89 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/**
+ * A custom JavaFX control which displays a circular score indicator.
+ */
 public class CircularScoreIndicator extends Control {
+
+  /**
+   * The score property representing the current score value
+   */
   private final DoubleProperty score = new SimpleDoubleProperty(0);
 
+  /**
+   * Constructs a new CircularScoreIndicator with a default skin which is used for styling the
+   * control.
+   */
   public CircularScoreIndicator() {
     setSkin(new CircularWineScoreIndicatorSkin(this));
   }
 
+  /**
+   * Gets the current score
+   *
+   * @return The current score
+   */
   public double getScore() {
     return score.get();
   }
 
+  /**
+   * Sets the score value. The score is clamped between 0 and 100
+   *
+   * @param score The new score value to set
+   */
   public void setScore(double score) {
     this.score.set(Math.min(100, Math.max(0, score)));
   }
 
+  /**
+   * Gets the score property
+   *
+   * @return The DoubleProperty representing the score
+   */
   public DoubleProperty scoreProperty() {
     return score;
   }
 
+  /**
+   * The skin for the CircularScoreIndicator which is responsible for the UI elements of the score
+   * indicator.
+   */
   private static class CircularWineScoreIndicatorSkin extends SkinBase<CircularScoreIndicator> {
+
+    /**
+     * The main pane which contains the elements which make up the circular wine score indicator
+     */
     private final Pane pane;
+
+    /**
+     * A circle which is used as the background of the score indicator. The circle has a transparent
+     * background with a light gray stroke.
+     */
     private final Circle background;
+
+    /**
+     * An arc which is used to display a coloured arc on top of the circle background
+     */
     private final Arc arc;
+
+    /**
+     * A vertical box which wraps the score text and the max score text
+     */
     private final VBox scoreTextWrapper;
+
+    /**
+     * Text which shows the score
+     */
     private final Text scoreText;
 
+    /**
+     * Constructs a new CircularWineScoreIndicatorSkin for the specified CircularScoreIndicator and
+     * set up the styling for the control.
+     *
+     * @param control The CircularScoreIndicator control this skin is associated with
+     */
     public CircularWineScoreIndicatorSkin(CircularScoreIndicator control) {
       super(control);
 
@@ -79,6 +136,9 @@ public class CircularScoreIndicator extends Control {
       updateScore(control.getScore());
     }
 
+    /**
+     * Resizes the controls elements based on the current size of the control.
+     */
     private void resize() {
       // maintain aspect ratio of 1
       double size = Math.min(getSkinnable().getWidth(), getSkinnable().getHeight());
@@ -104,6 +164,12 @@ public class CircularScoreIndicator extends Control {
       updateScore(getSkinnable().getScore());
     }
 
+    /**
+     * Updates the UI of the score when the score is changed. The text, arc length, and arc colour
+     * is adjusted depending on the provided score.
+     *
+     * @param score The new score value to display
+     */
     private void updateScore(double score) {
       double angle = score * 3.6; // convert percentage to degrees (100% = 360 degrees)
       scoreText.setText(String.format("%.0f", score)); // don't show decimal place of score
