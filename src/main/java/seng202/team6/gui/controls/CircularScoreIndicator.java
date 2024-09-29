@@ -9,6 +9,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -35,6 +37,7 @@ public class CircularScoreIndicator extends Control {
   private static class CircularWineScoreIndicatorSkin extends SkinBase<CircularScoreIndicator> {
     private final Pane pane;
     private final Circle background;
+    private final Arc arc;
     private final VBox scoreTextWrapper;
     private final Text scoreText;
 
@@ -50,6 +53,12 @@ public class CircularScoreIndicator extends Control {
       background.setFill(Color.TRANSPARENT);
       background.setStroke(Color.LIGHTGRAY);
 
+      // create the arc which will be used to display the score on top of the circle with a stroke
+      arc = new Arc();
+      arc.setFill(Color.TRANSPARENT);
+      arc.setStroke(Color.GREEN);
+      arc.setType(ArcType.OPEN);
+
       scoreText = new Text();
       scoreText.setFill(Color.BLACK);
       scoreText.setFont(Font.font(28));
@@ -60,7 +69,7 @@ public class CircularScoreIndicator extends Control {
       scoreTextWrapper = new VBox(scoreText, scoreMax);
       scoreTextWrapper.setAlignment(Pos.CENTER);
 
-      pane.getChildren().addAll(background, scoreTextWrapper);
+      pane.getChildren().addAll(background, arc, scoreTextWrapper);
       getChildren().add(pane);
 
       control.scoreProperty().addListener((obs, oldVal, newVal) -> updateScore(newVal.doubleValue()));
@@ -74,7 +83,6 @@ public class CircularScoreIndicator extends Control {
       // maintain aspect ratio of 1
       double size = Math.min(getSkinnable().getWidth(), getSkinnable().getHeight());
       pane.setPrefSize(size, size);
-
       scoreTextWrapper.setPrefSize(size, size);
 
       double centerX = size / 2;
@@ -86,18 +94,20 @@ public class CircularScoreIndicator extends Control {
       background.setRadius(radius);
       background.setStrokeWidth(radius * 0.1);
 
+      arc.setStartAngle(90); // starts the arc at the top
+      arc.setCenterX(centerX);
+      arc.setCenterY(centerY);
+      arc.setRadiusX(radius);
+      arc.setRadiusY(radius);
+      arc.setStrokeWidth(radius * 0.1);
+
       updateScore(getSkinnable().getScore());
     }
 
     private void updateScore(double score) {
+      double angle = score * 3.6; // convert percentage to degrees (100% = 360 degrees)
       scoreText.setText(String.format("%.0f", score)); // don't show decimal place of score
-
-      // calculate the center (x, y coordinate) of the circle which is half the diameter
-//      double size = Math.min(getSkinnable().getWidth(), getSkinnable().getHeight());
-//      double centerX = size / 2;
-//      double centerY = size / 2;
-//      scoreTextWrapper.setLayoutX(centerX - scoreText.getBoundsInLocal().getWidth() / 2);
-//      scoreTextWrapper.setLayoutY(centerY + scoreText.getBoundsInLocal().getHeight() / 4);
+      arc.setLength(-angle);
     }
   }
 }
