@@ -150,6 +150,8 @@ public class CircularScoreIndicator extends Control {
       double centerY = size / 2;
       double radius = size / 2 - 5; // 5 pixels padding
 
+      setArcPositionAndSize(arc, centerX, centerY, radius);
+      setArcPositionAndSize(arc, centerX, centerY, radius);
       backgroundArc.setCenterX(centerX);
       backgroundArc.setCenterY(centerY);
       backgroundArc.setRadiusX(radius);
@@ -164,6 +166,14 @@ public class CircularScoreIndicator extends Control {
       arc.setStrokeWidth(radius * 0.1);
 
       updateScore(getSkinnable().getScore());
+    }
+
+    private void setArcPositionAndSize(Arc arc, double centerX, double centerY, double radius) {
+      arc.setCenterX(centerX);
+      arc.setCenterY(centerY);
+      arc.setRadiusX(radius);
+      arc.setRadiusY(radius);
+      arc.setStrokeWidth(radius * 0.1);
     }
 
     /**
