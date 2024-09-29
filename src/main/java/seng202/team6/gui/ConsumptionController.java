@@ -45,7 +45,14 @@ public class ConsumptionController extends Controller {
         wineList.name(), "History")).findFirst().orElse(null);
   }
 
-
+  /**
+   * Gets the std drinks for a wine assuming 750 bottles and 12.7 ml for
+   * @param wineDatePair wine
+   * @return std drinks for wine
+   */
+  private float getStdDrinks(WineDatePair wineDatePair) {
+    return wineDatePair.wine().getAbv() / 100f * 750f / 12.7f;
+  }
   /**
    * Creates a wine widget
    * @param pair wine-date pair to display
@@ -58,10 +65,9 @@ public class ConsumptionController extends Controller {
     separator.getChildren().add(new Button());
     // anything above 20 is full strength
     double abvProgress = Math.min(1f, pair.wine().getAbv() / 20f);
-
     VBox abvSegment = new VBox();
     ProgressBar progressBar = new ProgressBar(abvProgress);
-    abvSegment.getChildren().add(new Label(pair.wine().getAbv() + "%"));
+    abvSegment.getChildren().add(new Label(pair.wine().getAbv() + "% ABV | " + (int)getStdDrinks(pair) + " Drinks"));
     abvSegment.getChildren().add(progressBar);
     abvSegment.setAlignment(Pos.CENTER);
 
@@ -96,7 +102,7 @@ public class ConsumptionController extends Controller {
     // A std drink for nz is 12.7 ml of ethanol
     // Assume 750 ml wine bottle
     for (WineDatePair pair : pastWeekConsumption) {
-      drinks += (pair.wine().getAbv() / 100f) * 750f / 12.7f;
+      drinks += getStdDrinks(pair);
     }
     // Recommended alcohol intakes are made up for the most part
     // WHO sets 0
