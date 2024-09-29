@@ -7,6 +7,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -28,6 +33,18 @@ public class ConsumptionController extends Controller {
 
   @FXML
   Label winesInPastWeekLabel;
+
+
+  /**
+   * Chart for consumption.
+   * <p>
+   *   The generic parameters for LineChart are checked at runtime and don't seem to be documented...
+   *   - X seems to be either Number or string
+   *   - Y seems to be only Number
+   * </p>
+   */
+  @FXML
+  LineChart<String, Number> consumptionChart;
 
 
 
@@ -124,6 +141,25 @@ public class ConsumptionController extends Controller {
   }
 
   /**
+   * Updates the graph with a list of wines
+   * @param pastConsumption list of wines
+   */
+  private void updateConsumptionGraph(ObservableList<WineDatePair> pastConsumption){
+    consumptionChart.getData().clear();
+    XYChart.Series<String, Number> series = new XYChart.Series<>();
+    consumptionChart.getXAxis().setLabel("Date");
+    consumptionChart.getYAxis().setLabel("Standard Drinks");
+
+    for(WineDatePair pair : pastConsumption) {
+      series.getData().add(new Data<>(pair.date() + "", getStdDrinks(pair)));
+    }
+
+    consumptionChart.getData().add(series);
+  }
+
+
+
+  /**
    * Initialize lists
    */
   @Override
@@ -131,5 +167,6 @@ public class ConsumptionController extends Controller {
     ObservableList<WineDatePair> observableList = getPastWeekConsumption();
     updateHistoryList(observableList);
     updateTotalConsumptionBar(observableList);
+    updateConsumptionGraph(managerContext.databaseManager.getWineDatesInList(getHistoryList()));
   }
 }

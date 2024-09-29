@@ -34,7 +34,7 @@
                   </TitledPane>
                </children>
             </VBox>
-            <LineChart>
+            <LineChart fx:id="consumptionChart" HBox.hgrow="ALWAYS">
               <xAxis>
                 <CategoryAxis side="BOTTOM" />
               </xAxis>
@@ -44,7 +44,7 @@
             </LineChart>
          </children>
       </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
          <children>
             <ListView prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
          </children></HBox>
