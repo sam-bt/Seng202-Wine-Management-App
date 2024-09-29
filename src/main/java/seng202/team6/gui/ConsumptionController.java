@@ -34,6 +34,8 @@ public class ConsumptionController extends Controller {
   @FXML
   Label winesInPastWeekLabel;
 
+  @FXML
+  VBox rootBox;
 
   /**
    * Chart for consumption.
@@ -149,7 +151,7 @@ public class ConsumptionController extends Controller {
     XYChart.Series<String, Number> series = new XYChart.Series<>();
     consumptionChart.getXAxis().setLabel("Date");
     consumptionChart.getYAxis().setLabel("Standard Drinks");
-
+    series.setName("Drinks per day");
     for(WineDatePair pair : pastConsumption) {
       series.getData().add(new Data<>(pair.date() + "", getStdDrinks(pair)));
     }
