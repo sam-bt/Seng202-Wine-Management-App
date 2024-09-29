@@ -61,6 +61,13 @@ public class UserRegistrationStepDefinitions {
     confirmedPassword = password;
   }
 
+  @When("the user enters the same password as their username")
+  public void the_user_enters_same_pass_as_user() {
+    username = "MyUsername";
+    password = "ValidPassword1!";
+    confirmedPassword = password;
+  }
+
   @When("the user enters a different password and confirmed password")
   public void the_user_enters_a_different_password_and_confirmed_password() {
     username = "MyAccount";
