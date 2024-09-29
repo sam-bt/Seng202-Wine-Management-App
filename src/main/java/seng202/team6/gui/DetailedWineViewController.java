@@ -3,14 +3,11 @@ package seng202.team6.gui;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -20,10 +17,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.InputMethodEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.Rating;
+import seng202.team6.gui.controls.CircularScoreIndicator;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
@@ -75,7 +73,10 @@ public class DetailedWineViewController extends Controller {
   private Label ratingsLabel;
   @FXML
   private Label loginToReviewLabel;
+  @FXML
+  private GridPane descriptionScoreNotesGridPane;
   private Rating ratingStars;
+  private CircularScoreIndicator scoreIndicator;
 
   private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine.png");
   private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage("/img/white_wine.png");
@@ -111,6 +112,7 @@ public class DetailedWineViewController extends Controller {
     this.viewedWine = viewedWine;
     this.backButtonAction = backButtonAction;
     this.ratingStars = new Rating();
+    this.scoreIndicator = new CircularScoreIndicator();
     bindToWineReviewsService();
   }
 
@@ -158,6 +160,9 @@ public class DetailedWineViewController extends Controller {
     ratingStars.setOnMouseDragEntered(Event::consume);
     ratingStars.setPartialRating(true);
     ratingsContainer.getChildren().addFirst(ratingStars);
+
+    scoreIndicator.setScore(viewedWine.getScorePercent());
+    descriptionScoreNotesGridPane.add(scoreIndicator, 2, 1);
 
     if (!managerContext.authenticationManager.isAuthenticated()) {
       addReviewButton.setDisable(true);
