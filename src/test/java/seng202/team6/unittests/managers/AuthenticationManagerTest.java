@@ -96,6 +96,18 @@ public class AuthenticationManagerTest {
   }
 
   /**
+   * Tests registration with the password the same as the username.
+   */
+  @Test
+  public void testRegistrationPassEqualUsername() {
+    String username = "MyAccount";
+    AuthenticationResponse response = authenticationManager.validateRegistration(username, username,
+        username);
+    assertEquals(AuthenticationResponse.SAME_AS_USERNAME, response);
+  }
+
+
+  /**
    * Tests registration attempts with empty fields.
    * Verifies that the service correctly identifies missing username, password, or confirmed password.
    */
@@ -165,6 +177,20 @@ public class AuthenticationManagerTest {
 
     AuthenticationResponse response = authenticationManager.validateLogin(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, response);
+  }
+
+  /**
+   * Tests a valid user registration scenario.
+   */
+  @Test
+  public void testUpdatePassEqualUsername() {
+    String username = "MyAccount";
+    String password = validPass;
+    registerAccount(username, password);
+
+    AuthenticationResponse response = authenticationManager.validateUpdate(username, password,
+        username, username);
+    assertEquals(AuthenticationResponse.SAME_AS_USERNAME, response);
   }
 
   /**
