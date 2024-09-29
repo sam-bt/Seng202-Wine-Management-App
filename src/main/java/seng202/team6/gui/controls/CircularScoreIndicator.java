@@ -75,7 +75,7 @@ public class CircularScoreIndicator extends Control {
      * A circle which is used as the background of the score indicator. The circle has a transparent
      * background with a light gray stroke.
      */
-    private final Circle background;
+    private final Arc backgroundArc;
 
     /**
      * An arc which is used to display a coloured arc on top of the circle background
@@ -106,9 +106,10 @@ public class CircularScoreIndicator extends Control {
 
       // make the circle transparent but give it a light gray stoke, so it appears
       // as a circle outline
-      background = new Circle();
-      background.setFill(Color.TRANSPARENT);
-      background.setStroke(Color.LIGHTGRAY);
+      backgroundArc = new Arc();
+      backgroundArc.setFill(Color.TRANSPARENT);
+      backgroundArc.setStroke(Color.LIGHTGRAY);
+      backgroundArc.setLength(360);
 
       // create the arc which will be used to display the score on top of the circle with a stroke
       arc = new Arc();
@@ -126,7 +127,7 @@ public class CircularScoreIndicator extends Control {
       scoreTextWrapper = new VBox(scoreText, scoreMax);
       scoreTextWrapper.setAlignment(Pos.CENTER);
 
-      pane.getChildren().addAll(background, arc, scoreTextWrapper);
+      pane.getChildren().addAll(backgroundArc, arc, scoreTextWrapper);
       getChildren().add(pane);
 
       control.scoreProperty().addListener((obs, oldVal, newVal) -> updateScore(newVal.doubleValue()));
@@ -149,10 +150,11 @@ public class CircularScoreIndicator extends Control {
       double centerY = size / 2;
       double radius = size / 2 - 5; // 5 pixels padding
 
-      background.setCenterX(centerX);
-      background.setCenterY(centerY);
-      background.setRadius(radius);
-      background.setStrokeWidth(radius * 0.1);
+      backgroundArc.setCenterX(centerX);
+      backgroundArc.setCenterY(centerY);
+      backgroundArc.setRadiusX(radius);
+      backgroundArc.setRadiusY(radius);
+      backgroundArc.setStrokeWidth(radius * 0.1);
 
       arc.setStartAngle(90); // starts the arc at the top
       arc.setCenterX(centerX);
