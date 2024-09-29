@@ -90,3 +90,14 @@
   -fx-background-color: #f68585;
   -fx-text-background-color: black;
 }
+
+.rating > .container > .button {
+    -fx-background-color: transparent;
+    -fx-background-image: url("/img/unselected_star.png");
+    -fx-padding: 16 16;
+    -fx-background-image-repeat: no-repeat;
+}
+
+.rating > .container > .button.strong {
+    -fx-background-image: url("/img/selected_star.png");
+}
