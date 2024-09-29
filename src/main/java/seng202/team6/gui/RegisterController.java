@@ -1,8 +1,11 @@
 package seng202.team6.gui;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.AuthenticationResponse;
 
@@ -19,6 +22,8 @@ public class RegisterController extends Controller {
   private TextField confirmPasswordField;
   @FXML
   private Label registerMessageLabel;
+  @FXML
+  private Button createAccountButton;
 
   /**
    * Constructor
@@ -30,6 +35,17 @@ public class RegisterController extends Controller {
   }
 
   @FXML
+  private void initialize() {
+    createAccountButton.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.TAB && !event.isShiftDown()) {
+        usernameField.requestFocus();
+        event.consume();
+      }
+    });
+    Platform.runLater(() -> usernameField.requestFocus());
+  }
+
+  @FXML
   private void onConfirm() {
 
     String username = usernameField.getText();
@@ -38,8 +54,10 @@ public class RegisterController extends Controller {
     AuthenticationResponse response = managerContext.authenticationManager.validateRegistration(
         username, password, confirmPassword);
     if (response == AuthenticationResponse.REGISTER_SUCCESS) {
-      managerContext.GUIManager.mainController.openLoginScreen();
       managerContext.databaseManager.createList(username, "Favourites");
+      managerContext.authenticationManager.validateLogin(username, password);
+      managerContext.GUIManager.mainController.openWineScreen();
+      managerContext.GUIManager.mainController.onLogin();
     } else {
       registerMessageLabel.setStyle("-fx-text-fill: red");
       registerMessageLabel.setText(response.getMessage());

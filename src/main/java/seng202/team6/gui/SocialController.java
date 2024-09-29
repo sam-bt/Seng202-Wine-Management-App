@@ -11,14 +11,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.Rating;
-import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
 
-public class SocialController extends Controller{
+public class SocialController extends Controller {
 
   @FXML
   TableView<Wine> wineTableView;
@@ -34,6 +33,7 @@ public class SocialController extends Controller{
   public SocialController(ManagerContext managerContext) {
     super(managerContext);// TODO allow upvotes/downvotes/user search/review search
   }
+
   public void init() {
     setupWineTableColumns();
     openWineRange(0, 100);
@@ -48,8 +48,8 @@ public class SocialController extends Controller{
   /**
    * Opens a page of wines from the database according to filters
    *
-   * @param begin   first element
-   * @param end     last element + 1
+   * @param begin first element
+   * @param end   last element + 1
    */
   private void openWineRange(int begin, int end) { // TODO, add filtering by num reviews/rating
     // Clear existing data
@@ -61,13 +61,13 @@ public class SocialController extends Controller{
     // Set fetched data to the table
     wineTableView.setItems(wines);
 
-    }
+  }
 
   /**
    * Opens a page of reviews from the database according to filters
    *
-   * @param begin   first element
-   * @param end     last element + 1
+   * @param begin first element
+   * @param end   last element + 1
    */
   private void openReviewInRange(int begin, int end) { // TODO, add filtering
     // Clear existing data
@@ -183,30 +183,38 @@ public class SocialController extends Controller{
 
   @FXML
   public void openWineOnClick(MouseEvent event) {
-    if (event.getClickCount() != 2)
+    if (event.getClickCount() != 2) {
       return;
+    }
 
     Wine selectedWine = wineTableView.getSelectionModel().getSelectedItem();
-    if (selectedWine == null)
+    if (selectedWine == null) {
       return;
+    }
 
     Runnable backAction = () -> managerContext.GUIManager.mainController.openSocialScreen();
     managerContext.GUIManager.mainController.openDetailedWineView(selectedWine, backAction);
   }
 
   @FXML
-  public void openReviewOnClick(MouseEvent event) { //TODO take to review screen (upvote/downvote reviews)
-    if (event.getClickCount() != 2)
+  public void openReviewOnClick(
+      MouseEvent event) { //TODO take to review screen (upvote/downvote reviews)
+    if (event.getClickCount() != 2) {
       return;
+    }
 
     WineReview selectedReview = reviewTableView.getSelectionModel().getSelectedItem();
-    if (selectedReview == null)
+    if (selectedReview == null) {
       return;
+    }
 
-    Wine selectedWine = managerContext.databaseManager.getWineWithReviewInfoById(selectedReview.getWineID());
+    Wine selectedWine = managerContext.databaseManager.getWineWithReviewInfoById(
+        selectedReview.getWineID());
     User reviewer = managerContext.databaseManager.getUser(selectedReview.getUsername());
-    WineReviewsService wineReviewsService = new WineReviewsService(managerContext.authenticationManager, managerContext.databaseManager, selectedWine);
-    managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview);
+    WineReviewsService wineReviewsService = new WineReviewsService(
+        managerContext.authenticationManager, managerContext.databaseManager, selectedWine);
+    managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer,
+        selectedReview);
   }
 
 }

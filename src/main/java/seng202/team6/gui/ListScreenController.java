@@ -251,7 +251,7 @@ public class ListScreenController extends Controller {
 
     String user = managerContext.authenticationManager.getAuthenticatedUsername();
     List<WineList> userLists = managerContext.databaseManager.getUserLists(user);
-    WineList fromUserLists = userLists.get(selected-1);
+    WineList fromUserLists = userLists.get(selected - 1);
     List<Wine> list = managerContext.databaseManager.getWinesInList(fromUserLists);
     ObservableList<Wine> observableList = FXCollections.observableList(list);
     setupTableView();
@@ -265,7 +265,6 @@ public class ListScreenController extends Controller {
     StringConverter<String> stringConverter = new DefaultStringConverter();
     StringConverter<Integer> intConverter = new IntegerStringConverter();
     StringConverter<Float> floatConverter = new FloatStringConverter();
-
 
     tableView.setEditable(true);
 
@@ -289,8 +288,7 @@ public class ListScreenController extends Controller {
 
     TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
 
-
-    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title") );
+    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
     varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));
     wineryColumn.setCellValueFactory(new PropertyValueFactory<>("winery"));
     regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));

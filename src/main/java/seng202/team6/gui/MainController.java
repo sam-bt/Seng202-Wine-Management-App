@@ -10,10 +10,9 @@ import javafx.scene.layout.HBox;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.AddToListPopupController;
+import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
-import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
@@ -25,45 +24,31 @@ import seng202.team6.service.WineReviewsService;
  */
 public class MainController extends Controller {
 
+  private final Logger log = LogManager.getLogger(getClass());
   @FXML
   private AnchorPane page;
-
   @FXML
   private AnchorPane pageContent;
-
   @FXML
   private Button wineScreenButton;
-
   @FXML
   private Button listScreenButton;
-
   @FXML
   private Button dataSetsScreenButton;
-
   @FXML
   private Button adminScreenButton;
-
   @FXML
   private Button noteScreenButton;
-
   @FXML
   private Button loginButton;
-
-
   @FXML
   private Button registerButton;
-
   @FXML
   private HBox navBarBox;
-
   @FXML
   private AnchorPane popupActionBlocker;
-
   @FXML
   private AnchorPane popupContent;
-
-  private final Logger log = LogManager.getLogger(getClass());
-
   private boolean disabled = false;
 
   /**
@@ -269,9 +254,11 @@ public class MainController extends Controller {
   }
 
 
-  public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer, WineReview selectedReview) {
+  public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer,
+      WineReview selectedReview) {
     openPopup("/fxml/popup/view_review_popup.fxml",
-        () -> new ReviewViewPopupController(managerContext, wineReviewsService, reviewer, selectedReview));
+        () -> new ReviewViewPopupController(managerContext, wineReviewsService, reviewer,
+            selectedReview));
   }
 
   public void closePopup() {

@@ -1,16 +1,28 @@
 package seng202.team6.gui;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
@@ -24,6 +36,7 @@ import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
 import seng202.team6.service.PageService;
+import seng202.team6.util.ImageReader;
 import seng202.team6.util.YearStringConverter;
 
 /**
@@ -32,6 +45,18 @@ import seng202.team6.util.YearStringConverter;
 
 public class WineScreenController extends Controller {
 
+  private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine_cropped.png");
+  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage(
+      "/img/white_wine_cropped.png");
+  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine_cropped.png");
+  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage(
+      "/img/default_wine_cropped.png");
+  private static final Map<String, Image> wineImages = new HashMap<>() {{
+    put("red", RED_WINE_IMAGE);
+    put("white", WHITE_WINE_IMAGE);
+    put("rose", ROSE_WINE_IMAGE);
+    put("rosé", ROSE_WINE_IMAGE);
+  }};
   private final Logger log = LogManager.getLogger(WineScreenController.class);
   private final PageService pageService = new PageService(100); // ← Number of wines per page = 100
   @FXML
@@ -55,6 +80,8 @@ public class WineScreenController extends Controller {
   AutoCompletionTextField colorTextField;
   @FXML
   TextField titleTextField;
+  @FXML
+  private TilePane winesViewContainer;
   private Filters currentFilters;
   private RangeSlider scoreSlider;
 
@@ -65,6 +92,7 @@ public class WineScreenController extends Controller {
   private RangeSlider vintageSlider;
 
   private LeafletOSMController mapController;
+
 
   /**
    * Constructor
@@ -104,6 +132,9 @@ public class WineScreenController extends Controller {
           .filter(wine -> wine.getGeoLocation() != null)
           .forEach(mapController::addWineMarker);
     });
+
+    winesViewContainer.getChildren().clear();
+    wines.forEach(this::createWineCard);
 
     // Set fetched data to the table
     tableView.setItems(wines);
@@ -187,6 +218,45 @@ public class WineScreenController extends Controller {
     tableView.getColumns().add(priceColumn);
   }
 
+  public void createWineCard(Wine wine) {
+    // todo use same styling as detailed wine view review cards
+    VBox wrapper = new VBox();
+    wrapper.setPadding(new Insets(10));
+    wrapper.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
+    wrapper.setOnMouseClicked(event -> {
+      if (event.getClickCount() == 2) {
+        openDetailedWineView(wine);
+      }
+    });
+
+    // when the page is loaded, the width of the container is not set immediately, so we have to
+    // listen to the width property changing. But, after it is loaded, and we add a new wine card,
+    // the wine property will not change, so we need to take this into account
+    if (winesViewContainer.getWidth() != 0) {
+      double totalWidth = winesViewContainer.getWidth();
+      // minus 10 for insets
+      double tileWidth = (totalWidth - winesViewContainer.getHgap() * 2) / 3 - 10;
+      wrapper.setPrefWidth(tileWidth);
+    }
+
+    Image wineImage = wineImages.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
+    ImageView imageView = new ImageView(wineImage);
+    imageView.setFitHeight(100);
+    imageView.setPreserveRatio(true);
+    HBox.setHgrow(imageView, Priority.NEVER);
+
+    Label wineTitle = new Label();
+    wineTitle.textProperty().bind(wine.titleProperty());
+    wineTitle.setStyle("-fx-font-size: 16px;");
+    wineTitle.setWrapText(true);
+
+    HBox header = new HBox(imageView, wineTitle);
+    header.setAlignment(Pos.CENTER_LEFT);
+    header.setSpacing(20);
+    wrapper.getChildren().add(header);
+    winesViewContainer.getChildren().add(wrapper);
+  }
+
   /**
    * Called after the constructor for when fxml is loaded
    * <p>
@@ -206,6 +276,18 @@ public class WineScreenController extends Controller {
     this.abvSlider = createSlider(11, 445, 0, 100, 10);
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
 
+    // we need to listen to the width property
+    // because in the init() method, the winesViewContainer does not yet have a width
+    winesViewContainer.widthProperty().addListener((obs, oldVal, newVal) -> {
+      double totalWidth = newVal.doubleValue();
+      // minus 10 for insets
+      double tileWidth = (totalWidth - winesViewContainer.getHgap() * 2) / 3 - 10;
+      for (Node child : winesViewContainer.getChildren()) {
+        if (child instanceof VBox) {
+          ((VBox) child).setPrefWidth(tileWidth);
+        }
+      }
+    });
     // Ensure uniques are up to date
     managerContext.databaseManager.updateUniques();
     setFilterValues();
@@ -265,6 +347,7 @@ public class WineScreenController extends Controller {
     rangeSlider.setSnapToPixel(true);
     // by default the font size matches the parent font size which is the filters title
     rangeSlider.setStyle("-fx-font-size: 15px;");
+    rangeSlider.getStylesheets().add("css/range_slider.css");
     filtersPane.getChildren().add(rangeSlider);
     return rangeSlider;
   }
@@ -328,15 +411,17 @@ public class WineScreenController extends Controller {
 
   @FXML
   public void openWineOnClick(MouseEvent event) {
-    if (event.getClickCount() == 2) {
-
+    if (event.getClickCount() != 2) {
       Wine wine = tableView.getSelectionModel().getSelectedItem();
       if (wine != null) {
-
-        Runnable backAction = () -> managerContext.GUIManager.mainController.openWineScreen();
-        managerContext.GUIManager.mainController.openDetailedWineView(wine, backAction);
+        openDetailedWineView(wine);
       }
     }
+  }
+
+  private void openDetailedWineView(Wine wine) {
+    Runnable backAction = () -> managerContext.GUIManager.mainController.openWineScreen();
+    managerContext.GUIManager.mainController.openDetailedWineView(wine, backAction);
   }
 
   public void ensureValidPageNumber() {

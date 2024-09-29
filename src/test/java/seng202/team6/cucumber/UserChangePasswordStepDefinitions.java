@@ -35,7 +35,7 @@ public class UserChangePasswordStepDefinitions {
   @Given("the user is authenticated and changing their password")
   public void theUserIsAuthenticatedAndChangingTheirPassword() {
     username = "MyAccount";
-    password = "MyPassword";
+    password = "ValidPassword1!";
 
     AuthenticationResponse registrationResponse = authenticationManager.validateRegistration(
         username, password, password);
@@ -48,7 +48,7 @@ public class UserChangePasswordStepDefinitions {
 
   @When("the user enters an incorrect old password")
   public void theUserEntersAnIncorrectOldPassword() {
-    oldPassword = "MyOtherPassword";
+    oldPassword = "OtherValidPass1!";
   }
 
   @When("the user enters in the correct old password")
@@ -58,22 +58,32 @@ public class UserChangePasswordStepDefinitions {
 
   @And("the user enters a valid new password")
   public void theUserEntersAValidNewPassword() {
-    newPassword = "MyNewPassword";
+    newPassword = "NewValidPass1!";
   }
 
   @And("the user enters the same valid password to confirm")
   public void theUserEntersAValidConfirmPassword() {
-    confirmNewPassword = "MyNewPassword";
+    confirmNewPassword = "NewValidPass1!";
   }
 
   @And("the user enters an invalid new password")
   public void theUserEntersAnInvalidNewPassword() {
-    newPassword = "My&New%Password";
+    newPassword = "invalidpass";
   }
 
   @And("the user enters the same invalid new confirm password")
   public void theUserEntersAnInvalidNewConfirmPassword() {
-    newPassword = "My&New%Password";
+    newPassword = "invalidpass";
+  }
+
+  @And("the user enters their username as a password")
+  public void theUserEntersUsernameAsPassword() {
+    newPassword = "MyAccount";
+  }
+
+  @And("the user enters the same password of their username to confirm")
+  public void theUserEntersUsernameAsConfirmPassword() {
+    confirmNewPassword = "MyAccount";
   }
 
   @Then("the accounts password is not changed")

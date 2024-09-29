@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -13,6 +15,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
@@ -21,6 +24,35 @@
   <children>
     <TabPane layoutX="332.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
       <tabs>
+            <Tab text="Wines">
+               <content>
+                  <VBox minHeight="720.0" prefHeight="720.0" prefWidth="1014.0">
+                     <children>
+                        <GridPane prefHeight="729.0" prefWidth="1229.0">
+                           <children>
+                              <HBox prefHeight="28.0" prefWidth="914.0" />
+                              <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="705.0" prefWidth="789.0" stylesheets="@../css/scroll_pane.css" GridPane.rowIndex="1">
+                                 <content>
+                                    <TilePane fx:id="winesViewContainer" hgap="10.0" prefColumns="3" prefHeight="200.0" prefWidth="200.0" vgap="10.0">
+                                       <padding>
+                                          <Insets left="10.0" right="10.0" />
+                                       </padding>
+                                    </TilePane>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
         <Tab text="Raw Data Viewer">
           <content>
           </content>
@@ -29,12 +61,7 @@
               <children>
                 <GridPane prefHeight="729.0" prefWidth="1229.0">
                   <children>
-                    <HBox alignment="CENTER" prefHeight="28.0" prefWidth="914.0">
-                                 <children>
-                          <Button fx:id="prevPageButton" text="&lt;" stylesheets="@../css/global.css" styleClass="secondary-button"/>
-                                    <TextField fx:id="pageNumberTextField" alignment="CENTER" prefHeight="25.0" prefWidth="45.0" promptText="Page" text="1" />
-                          <Button fx:id="nextPageButton" alignment="CENTER" text="&gt;" stylesheets="@../css/global.css" styleClass="secondary-button"/>
-                                 </children></HBox>
+
                     <TableView fx:id="tableView" prefHeight="696.0" prefWidth="1040.0" GridPane.rowIndex="1">
                       <columns>
                         <TableColumn minWidth="-1.0" prefWidth="-1.0" />
@@ -49,6 +76,12 @@
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                   </rowConstraints>
                 </GridPane>
+                <HBox alignment="CENTER" prefHeight="28.0" prefWidth="914.0">
+                  <children>
+                    <Button fx:id="prevPageButton" text="&lt;" stylesheets="@../css/global.css" styleClass="secondary-button"/>
+                    <TextField fx:id="pageNumberTextField" alignment="CENTER" prefHeight="25.0" prefWidth="45.0" promptText="Page" text="1" />
+                    <Button fx:id="nextPageButton" alignment="CENTER" text="&gt;" stylesheets="@../css/global.css" styleClass="secondary-button"/>
+                  </children></HBox>
               </children>
             </VBox>
           </content>
