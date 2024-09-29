@@ -1,6 +1,7 @@
 package seng202.team6.gui;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Objects;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,10 +10,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javax.swing.GroupLayout.Alignment;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.WineDatePair;
 import seng202.team6.model.WineList;
@@ -23,6 +22,13 @@ import seng202.team6.model.WineList;
 public class ConsumptionController extends Controller {
   @FXML
   VBox wineHistoryList;
+
+  @FXML
+  ProgressBar winesInPastWeekBar;
+
+  @FXML
+  Label winesInPastWeekLabel;
+
 
 
   public ConsumptionController(ManagerContext managerContext) {
@@ -40,7 +46,12 @@ public class ConsumptionController extends Controller {
   }
 
 
-  private Node createWineView(WineDatePair pair) {
+  /**
+   * Creates a wine widget
+   * @param pair wine-date pair to display
+   * @return widget
+   */
+  private Node createWineWidget(WineDatePair pair) {
     HBox separator = new HBox();
     Label date = new Label(pair.date().toString());
 
@@ -64,22 +75,55 @@ public class ConsumptionController extends Controller {
     return separator;
   }
 
-  private void updateHistoryList() {
-    wineHistoryList.getChildren().clear();
+  /**
+   * Gets all the wines consumed in the past week
+   * @return all wines consumed in the past week
+   */
+  private ObservableList<WineDatePair> getPastWeekConsumption() {
     ObservableList<WineDatePair> wineHistory = managerContext.databaseManager.getWineDatesInList(getHistoryList());
     wineHistory.sort(Comparator.comparing(WineDatePair::date));
-    for(WineDatePair pair : wineHistory) {
-      wineHistoryList.getChildren().add(createWineView(pair));
-    }
+    long oneWeek = 1000 * 60 * 60 * 24 * 7;
+    Date weekAgo = new Date(System.currentTimeMillis() - oneWeek);
+    wineHistory.removeIf(wineDatePair -> wineDatePair.date().before(weekAgo));
+    return wineHistory;
   }
 
+  /**
+   * Update the total consumption bar with std drinks for the past week
+   */
+  private void updateTotalConsumptionBar(ObservableList<WineDatePair> pastWeekConsumption) {
+    float drinks = 0;
+    // A std drink for nz is 12.7 ml of ethanol
+    // Assume 750 ml wine bottle
+    for (WineDatePair pair : pastWeekConsumption) {
+      drinks += (pair.wine().getAbv() / 100f) * 750f / 12.7f;
+    }
+    // Recommended alcohol intakes are made up for the most part
+    // WHO sets 0
+    // We make up 10 std drinks a week
+    float normalizedProgress = Math.min(1f, drinks / 10f);
+    winesInPastWeekBar.setProgress(normalizedProgress);
+    winesInPastWeekLabel.setText((drinks > 10f ? "10+" : (int)drinks) + " Drinks");
+  }
 
+  /**
+   * Updates the history list with a given list
+   * @param pastWeekConsumption list of wine-date pairs to update
+   */
+  private void updateHistoryList(ObservableList<WineDatePair> pastWeekConsumption) {
+    wineHistoryList.getChildren().clear();
+    for(WineDatePair pair : pastWeekConsumption) {
+      wineHistoryList.getChildren().add(createWineWidget(pair));
+    }
+  }
 
   /**
    * Initialize lists
    */
   @Override
   public void init() {
-    updateHistoryList();
+    ObservableList<WineDatePair> observableList = getPastWeekConsumption();
+    updateHistoryList(observableList);
+    updateTotalConsumptionBar(observableList);
   }
 }

@@ -26,8 +26,8 @@
                      <graphic>
                         <VBox alignment="CENTER">
                            <children>
-                              <Label text="10 Drinks" />
-                              <ProgressBar prefWidth="200.0" progress="0.0" />
+                              <Label fx:id="winesInPastWeekLabel" text="10 Drinks" />
+                              <ProgressBar fx:id="winesInPastWeekBar" prefWidth="200.0" progress="0.0" />
                            </children>
                         </VBox>
                      </graphic>
