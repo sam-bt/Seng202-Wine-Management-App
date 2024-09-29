@@ -108,6 +108,17 @@ public class CircularScoreIndicator extends Control {
       double angle = score * 3.6; // convert percentage to degrees (100% = 360 degrees)
       scoreText.setText(String.format("%.0f", score)); // don't show decimal place of score
       arc.setLength(-angle);
+
+      // change the colour of the arc depending on the score of the wine
+      if (score >= 90) {
+        arc.setStroke(Color.GREEN);
+      } else if (score >= 70) {
+        arc.setStroke(Color.YELLOWGREEN);
+      } else if (score >= 50) {
+        arc.setStroke(Color.ORANGE);
+      } else {
+        arc.setStroke(Color.RED);
+      }
     }
   }
 }
