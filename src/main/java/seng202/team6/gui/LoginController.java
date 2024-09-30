@@ -23,9 +23,6 @@ public class LoginController extends Controller {
   private TextField passwordField;
   @FXML
   private Label loginMessageLabel;
-  @FXML
-  private Button loginButton;
-
 
   /**
    * Constructor
@@ -56,7 +53,6 @@ public class LoginController extends Controller {
         login();
       }
     });
-
   }
 
   /**
