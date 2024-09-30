@@ -16,7 +16,7 @@
 
 <HBox spacing="15.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.ListScreenController">
    <children>
-    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../../../../build/resources/main/css/titled_pane.css" text="Lists">
+    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Lists">
       <font>
         <Font name="System Bold" size="24.0" />
       </font>
