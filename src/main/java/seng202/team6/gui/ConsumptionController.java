@@ -25,6 +25,7 @@ import seng202.team6.model.WineList;
  * Controller for the scene that shows wine consumption
  */
 public class ConsumptionController extends Controller {
+
   @FXML
   VBox wineHistoryList;
 
@@ -37,18 +38,17 @@ public class ConsumptionController extends Controller {
   @FXML
   VBox rootBox;
 
+  static final float STD_DRINK_ETHANOL_VOLUME = 12.7f;
+
   /**
    * Chart for consumption.
    * <p>
-   *   The generic parameters for LineChart are checked at runtime and don't seem to be documented...
-   *   - X seems to be either Number or string
-   *   - Y seems to be only Number
+   * The generic parameters for LineChart are checked at runtime and don't seem to be documented...
+   * - X seems to be either Number or string - Y seems to be only Number
    * </p>
    */
   @FXML
   LineChart<String, Number> consumptionChart;
-
-
 
   public ConsumptionController(ManagerContext managerContext) {
     super(managerContext);
@@ -57,23 +57,29 @@ public class ConsumptionController extends Controller {
 
   /**
    * Gets the history list for the current user
+   *
    * @return history list
    */
   private WineList getHistoryList() {
-    return managerContext.databaseManager.getUserLists(managerContext.authenticationManager.getAuthenticatedUsername()).stream().filter(wineList -> Objects.equals(
-        wineList.name(), "History")).findFirst().orElse(null);
+    return managerContext.databaseManager.getUserLists(
+            managerContext.authenticationManager.getAuthenticatedUsername()).stream()
+        .filter(wineList -> Objects.equals(
+            wineList.name(), "History")).findFirst().orElse(null);
   }
 
   /**
    * Gets the std drinks for a wine assuming 750 bottles and 12.7 ml for
+   *
    * @param wineDatePair wine
    * @return std drinks for wine
    */
   private float getStdDrinks(WineDatePair wineDatePair) {
-    return wineDatePair.wine().getAbv() / 100f * 750f / 12.7f;
+    return wineDatePair.wine().getAbv() / 100f * 750f / STD_DRINK_ETHANOL_VOLUME;
   }
+
   /**
    * Creates a wine widget
+   *
    * @param pair wine-date pair to display
    * @return widget
    */
@@ -86,7 +92,8 @@ public class ConsumptionController extends Controller {
     double abvProgress = Math.min(1f, pair.wine().getAbv() / 20f);
     VBox abvSegment = new VBox();
     ProgressBar progressBar = new ProgressBar(abvProgress);
-    abvSegment.getChildren().add(new Label(pair.wine().getAbv() + "% ABV | " + (int)getStdDrinks(pair) + " Drinks"));
+    abvSegment.getChildren()
+        .add(new Label(pair.wine().getAbv() + "% ABV | " + (int) getStdDrinks(pair) + " Drinks"));
     abvSegment.getChildren().add(progressBar);
     abvSegment.setAlignment(Pos.CENTER);
 
@@ -96,16 +103,17 @@ public class ConsumptionController extends Controller {
     separator.setMinWidth(250);
     separator.setMaxHeight(50);
 
-    separator.setStyle("@../css/global.css");
     return separator;
   }
 
   /**
    * Gets all the wines consumed in the past week
+   *
    * @return all wines consumed in the past week
    */
   private ObservableList<WineDatePair> getPastWeekConsumption() {
-    ObservableList<WineDatePair> wineHistory = managerContext.databaseManager.getWineDatesInList(getHistoryList());
+    ObservableList<WineDatePair> wineHistory = managerContext.databaseManager.getWineDatesInList(
+        getHistoryList());
     wineHistory.sort(Comparator.comparing(WineDatePair::date));
     long oneWeek = 1000 * 60 * 60 * 24 * 7;
     Date weekAgo = new Date(System.currentTimeMillis() - oneWeek);
@@ -118,8 +126,6 @@ public class ConsumptionController extends Controller {
    */
   private void updateTotalConsumptionBar(ObservableList<WineDatePair> pastWeekConsumption) {
     float drinks = 0;
-    // A std drink for nz is 12.7 ml of ethanol
-    // Assume 750 ml wine bottle
     for (WineDatePair pair : pastWeekConsumption) {
       drinks += getStdDrinks(pair);
     }
@@ -128,37 +134,38 @@ public class ConsumptionController extends Controller {
     // We make up 10 std drinks a week
     float normalizedProgress = Math.min(1f, drinks / 10f);
     winesInPastWeekBar.setProgress(normalizedProgress);
-    winesInPastWeekLabel.setText((drinks > 10f ? "10+" : (int)drinks) + " Drinks");
+    winesInPastWeekLabel.setText((drinks > 10f ? "10+" : (int) drinks) + " Drinks");
   }
 
   /**
    * Updates the history list with a given list
+   *
    * @param pastWeekConsumption list of wine-date pairs to update
    */
   private void updateHistoryList(ObservableList<WineDatePair> pastWeekConsumption) {
     wineHistoryList.getChildren().clear();
-    for(WineDatePair pair : pastWeekConsumption) {
+    for (WineDatePair pair : pastWeekConsumption) {
       wineHistoryList.getChildren().add(createWineWidget(pair));
     }
   }
 
   /**
    * Updates the graph with a list of wines
+   *
    * @param pastConsumption list of wines
    */
-  private void updateConsumptionGraph(ObservableList<WineDatePair> pastConsumption){
+  private void updateConsumptionGraph(ObservableList<WineDatePair> pastConsumption) {
     consumptionChart.getData().clear();
     XYChart.Series<String, Number> series = new XYChart.Series<>();
     consumptionChart.getXAxis().setLabel("Date");
     consumptionChart.getYAxis().setLabel("Standard Drinks");
     series.setName("Drinks per day");
-    for(WineDatePair pair : pastConsumption) {
+    for (WineDatePair pair : pastConsumption) {
       series.getData().add(new Data<>(pair.date() + "", getStdDrinks(pair)));
     }
 
     consumptionChart.getData().add(series);
   }
-
 
 
   /**
