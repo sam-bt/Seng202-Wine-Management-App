@@ -1,6 +1,8 @@
 package seng202.team6.gui;
 
 import java.io.File;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,9 +30,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import seng202.team6.enums.WinePropertyName;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.Wine;
+import seng202.team6.util.Exceptions.ValidationException;
 import seng202.team6.util.ProcessCSV;
+import seng202.team6.util.WineValidator;
 
 public class WineImportController extends Controller {
   @FXML
@@ -39,7 +46,11 @@ public class WineImportController extends Controller {
   @FXML
   private CheckBox extractVintageFromTitleCheckbox;
 
+  private final Logger log = LogManager.getLogger(getClass());
+
   private final Map<Integer, WinePropertyName> selectedWineProperties = new HashMap<>();
+
+  private List<String[]> currentFileRows;
 
   public WineImportController(ManagerContext context) {
     super(context);
@@ -64,10 +75,10 @@ public class WineImportController extends Controller {
       return;
     }
 
-    List<String[]> rows = ProcessCSV.getCSVRows(selectedFile);
-    String[] columnNames = rows.removeFirst();
+    currentFileRows = ProcessCSV.getCSVRows(selectedFile);
+    String[] columnNames = currentFileRows.removeFirst();
     selectedWineProperties.clear();
-    makeColumnRemapList(columnNames, rows);
+    makeColumnRemapList(columnNames, currentFileRows);
   }
 
 
@@ -75,12 +86,70 @@ public class WineImportController extends Controller {
   void onAppendDataButtonClick() {
     if (!validate())
       return;
+    parseWines(false);
   }
 
   @FXML
   void onReplaceDataButtonClick() {
     if (!validate())
       return;
+    parseWines(true);
+  }
+
+  private void reset() {
+    dataColumnsContainer.getChildren().clear();
+    dataColumnsContainer.getRowConstraints().clear();
+    dataColumnsContainer.getColumnConstraints().clear();
+    extractVintageFromTitleCheckbox.setSelected(false);
+    selectedWineProperties.clear();
+    currentFileRows = null;
+  }
+
+  private void parseWines(boolean replace) {
+    List<Wine> parsedWines = new ArrayList<>();
+    Map<WinePropertyName, Integer> valid = new HashMap<>() {{
+      selectedWineProperties.forEach(((integer, winePropertyName) ->
+          put(winePropertyName, integer)));
+    }};
+    currentFileRows.forEach(row -> {
+      try {
+        parsedWines.add(WineValidator.parseWine(
+            managerContext.databaseManager,
+            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.TITLE),
+            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VARIETY),
+            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COUNTRY),
+            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.REGION),
+            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.WINERY),
+            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COLOUR),
+            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VINTAGE),
+            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.DESCRIPTION),
+            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.SCORE),
+            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.ABV),
+            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.NZD),
+            null
+        ));
+      } catch (ValidationException e) {
+        log.error("Could not parse a wine: {}", e.getMessage());
+      }
+    });
+    log.info("Successfully parsed {} out of {} wines", parsedWines.size(),
+        currentFileRows.size());
+
+      try {
+        if (replace) {
+          managerContext.databaseManager.replaceAllWines(parsedWines);
+        } else {
+          managerContext.databaseManager.addWines(parsedWines);
+        }
+        reset();
+      } catch (SQLException e) {
+        // when we merge with dao this will be handed by the dao
+      }
+  }
+
+  private String extractPropertyFromRowOrDefault(Map<WinePropertyName, Integer> valid, String[] row,
+      WinePropertyName winePropertyName) {
+    return valid.containsKey(winePropertyName) ? row[valid.get(winePropertyName)] : "";
   }
 
   private boolean validate() {
@@ -94,9 +163,9 @@ public class WineImportController extends Controller {
       alert.setHeaderText("Missing Mandatory Property");
       alert.setContentText("The property TITLE is required but has not been selected");
       alert.showAndWait();
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   private boolean checkDuplicateProperties() {
@@ -117,9 +186,9 @@ public class WineImportController extends Controller {
           .collect(Collectors.joining(", ")) +
           " have been selected more than once.");
       alert.showAndWait();
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   private void makeColumnRemapList(String[] columnNames, List<String[]> rows) {
