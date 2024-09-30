@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
@@ -23,6 +25,7 @@ import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineDatePair;
 import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
 import seng202.team6.util.DatabaseObjectUniquer;
@@ -120,6 +123,41 @@ public class DatabaseManager implements AutoCloseable {
     addGeolocations();
   }
 
+
+  /**
+   * Unpacks a result set into a wine or returns an already live wine
+   * @param set ResultSet
+   * @return new wine or deduplicated wine
+   * @throws SQLException if sql error
+   */
+  private Wine getWineFromCurrentResultSet(ResultSet set) throws SQLException {
+
+    long id = set.getLong("ID");
+    // If wine already exists use that reference instead
+    Wine maybeWine = wineCache.tryGetObject(id);
+    if (maybeWine != null) {
+      return maybeWine;
+    }
+    GeoLocation geoLocation = createGeoLocation(set);
+    Wine wine = new Wine(
+        id,
+        this,
+        set.getString("TITLE"),
+        set.getString("VARIETY"),
+        set.getString("COUNTRY"),
+        set.getString("REGION"),
+        set.getString("WINERY"),
+        set.getString("COLOR"),
+        set.getInt("VINTAGE"),
+        set.getString("DESCRIPTION"),
+        set.getInt("SCORE_PERCENT"),
+        set.getFloat("ABV"),
+        set.getFloat("PRICE"),
+        geoLocation
+    );
+    wineCache.addObject(id, wine);
+    return wine;
+  }
   /**
    * Unpacks a result set into a list of wines
    * <p>
@@ -130,40 +168,24 @@ public class DatabaseManager implements AutoCloseable {
    * @return list of wines
    * @throws SQLException if underlying JDBC error
    */
-  private ObservableList<Wine> resultSetToList(ResultSet resultSet) throws SQLException {
+  private ObservableList<Wine> resultSetToWineList(ResultSet resultSet) throws SQLException {
     ObservableList<Wine> wines = FXCollections.observableArrayList();
 
     while (resultSet.next()) {
-      long id = resultSet.getLong("ID");
-      // If wine already exists use that reference instead
-      Wine maybeWine = wineCache.tryGetObject(id);
-      if (maybeWine != null) {
-        wines.add(maybeWine);
-      } else {
-
-        GeoLocation geoLocation = createGeoLocation(resultSet);
-        Wine wine = new Wine(
-            id,
-            this,
-            resultSet.getString("TITLE"),
-            resultSet.getString("VARIETY"),
-            resultSet.getString("COUNTRY"),
-            resultSet.getString("REGION"),
-            resultSet.getString("WINERY"),
-            resultSet.getString("COLOR"),
-            resultSet.getInt("VINTAGE"),
-            resultSet.getString("DESCRIPTION"),
-            resultSet.getInt("SCORE_PERCENT"),
-            resultSet.getFloat("ABV"),
-            resultSet.getFloat("PRICE"),
-            geoLocation
-        );
-        wines.add(wine);
-        wineCache.addObject(id, wine);
-      }
+      wines.add(getWineFromCurrentResultSet(resultSet));
     }
     return wines;
   }
+
+  private ObservableList<WineDatePair> resultSetToWineDateList(ResultSet resultSet) throws SQLException {
+    ObservableList<WineDatePair> wines = FXCollections.observableArrayList();
+
+    while (resultSet.next()) {
+      wines.add(new WineDatePair(getWineFromCurrentResultSet(resultSet), resultSet.getDate("DATE_ADDED")));
+    }
+    return wines;
+  }
+
 
 
   /**
@@ -231,7 +253,7 @@ public class DatabaseManager implements AutoCloseable {
       statement.setInt(1, end - begin);
       statement.setInt(2, begin);
 
-      ObservableList<Wine> wines = resultSetToList(statement.executeQuery());
+      ObservableList<Wine> wines = resultSetToWineList(statement.executeQuery());
       LogManager.getLogger(getClass())
           .info("Time to process getWinesInRange: {}", System.currentTimeMillis() - milliseconds);
       return wines;
@@ -359,7 +381,7 @@ public class DatabaseManager implements AutoCloseable {
       statement.setInt(paramIndex++, end - begin);
       statement.setInt(paramIndex, begin);
 
-      ObservableList<Wine> wines = resultSetToList(statement.executeQuery());
+      ObservableList<Wine> wines = resultSetToWineList(statement.executeQuery());
       LogManager.getLogger(getClass()).info("Time to process getWinesInRange with filter: {}",
           System.currentTimeMillis() - milliseconds);
       return wines;
@@ -645,7 +667,8 @@ public class DatabaseManager implements AutoCloseable {
     String listItemsTable = "CREATE TABLE IF NOT EXISTS LIST_ITEMS (" +
         "ID INTEGER PRIMARY KEY," +
         "LIST_ID INT NOT NULL," +
-        "WINE_ID INT NOT NULL);";
+        "WINE_ID INT NOT NULL," +
+        "DATE_ADDED DATE NOT NULL);";
     try (Statement statement = connection.createStatement()) {
       statement.execute(listNameTable);
     }
@@ -653,15 +676,22 @@ public class DatabaseManager implements AutoCloseable {
     try (Statement statement = connection.createStatement()) {
       statement.execute(listItemsTable);
     }
-    createAdminFavouritesList();
+    createAdminListIfNotExists("Favourites");
+    createAdminListIfNotExists("History");
   }
 
-  private void createAdminFavouritesList() {
+  /**
+   * Creates a list as admin if it does not already exist
+   * @param listName name of list
+   */
+  private void createAdminListIfNotExists(String listName) {
     String checkAndInsert = "INSERT INTO LIST_NAME (ID, USERNAME, NAME) " +
-        "SELECT null, 'admin', 'Favourites'" +
-        "WHERE NOT EXISTS (SELECT 1 FROM LIST_NAME WHERE username = 'admin')";
-    try (Statement statement = connection.createStatement()) {
-      statement.execute(checkAndInsert);
+        "SELECT null, 'admin', ? " +
+        "WHERE NOT EXISTS (SELECT 1 FROM LIST_NAME WHERE username = 'admin' and name = ?)";
+    try (PreparedStatement statement = connection.prepareStatement(checkAndInsert)) {
+      statement.setString(1, listName);
+      statement.setString(2, listName);
+      statement.execute();
     } catch (SQLException error) {
       log.error("Could not add list to the database", error);
     }
@@ -718,7 +748,7 @@ public class DatabaseManager implements AutoCloseable {
     return listNames;
   }
 
-  public List<Wine> getWinesInList(WineList wineList) {
+  public ObservableList<WineDatePair> getWineDatesInList(WineList wineList) {
     String query = "SELECT * FROM WINE " +
         "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID " +
         "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID " +
@@ -728,12 +758,31 @@ public class DatabaseManager implements AutoCloseable {
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setLong(1, wineList.id());
 
-      return resultSetToList(statement.executeQuery());
+      return resultSetToWineDateList(statement.executeQuery());
 
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
   }
+  public ObservableList<Wine> getWinesInList(WineList wineList) {
+    String query = "SELECT * FROM WINE " +
+        "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID " +
+        "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID " +
+        "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) " +
+        "WHERE LIST_NAME.ID = ?";
+
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      statement.setLong(1, wineList.id());
+
+      return resultSetToWineList(statement.executeQuery());
+
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+
+
 
   public boolean isWineInList(WineList wineList, Wine wine) {
     String query = "SELECT * FROM LIST_ITEMS WHERE LIST_ID = ? AND WINE_ID = ?";
@@ -749,11 +798,12 @@ public class DatabaseManager implements AutoCloseable {
     return false;
   }
 
-  public void addWineToList(WineList wineList, Wine wine) {
-    String insert = "INSERT INTO LIST_ITEMS VALUES (null, ?, ?)";
+  public void addWineToList(WineList wineList, Wine wine, java.util.Date date) {
+    String insert = "INSERT INTO LIST_ITEMS VALUES (null, ?, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(insert)) {
       statement.setLong(1, wineList.id());
       statement.setLong(2, wine.getKey());
+      statement.setDate(3, new java.sql.Date(date.getTime()), new GregorianCalendar());
       statement.executeUpdate();
     } catch (SQLException error) {
       log.error("Could not add a wine to a list", error);
