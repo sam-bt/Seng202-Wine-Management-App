@@ -38,14 +38,17 @@ public class AuthenticationManagerTest {
     databaseManager.close();
   }
 
+  // A valid password needs upper and lowercase letters, a symbol, and a number, and is 8-30 chars long.
+  String validPass = "testPassword1!";
+
   /**
    * Tests a valid user registration scenario.
    */
   @Test
   public void testRegistrationValid() {
     String username = "MyAccount";
-    String password = "MyPassword";
-    String confirmedPassword = "MyPassword";
+    String password = validPass;
+    String confirmedPassword = validPass;
     AuthenticationResponse response = authenticationManager.validateRegistration(username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.REGISTER_SUCCESS, response);
@@ -58,21 +61,21 @@ public class AuthenticationManagerTest {
   @Test
   public void testRegistrationEmptyFields() {
     String username = "";
-    String password = "MyPassword";
-    String confirmedPassword = "MyPassword";
+    String password = validPass;
+    String confirmedPassword = validPass;
     AuthenticationResponse response = authenticationManager.validateRegistration(username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
 
     username = "MyAccount";
     password = "";
-    confirmedPassword = "MyPassword";
+    confirmedPassword = validPass;
     response = authenticationManager.validateRegistration(username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
 
     username = "MyAccount";
-    password = "MyPassword";
+    password = validPass;
     confirmedPassword = "";
     response = authenticationManager.validateRegistration(username, password,
         confirmedPassword);
@@ -85,12 +88,24 @@ public class AuthenticationManagerTest {
   @Test
   public void testRegistrationMismatchingConfirmedPassword() {
     String username = "MyAccount";
-    String password = "MyPassword";
-    String confirmedPassword = "MyOtherPassword";
+    String password = validPass;
+    String confirmedPassword = "OtherValidPass2024!";
     AuthenticationResponse response = authenticationManager.validateRegistration(username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD, response);
   }
+
+  /**
+   * Tests registration with the password the same as the username.
+   */
+  @Test
+  public void testRegistrationPassEqualUsername() {
+    String username = "MyAccount";
+    AuthenticationResponse response = authenticationManager.validateRegistration(username, username,
+        username);
+    assertEquals(AuthenticationResponse.SAME_AS_USERNAME, response);
+  }
+
 
   /**
    * Tests registration attempts with empty fields.
@@ -99,7 +114,7 @@ public class AuthenticationManagerTest {
   @Test
   public void testLoginEmptyFields() {
     String username = "";
-    String password = "MyPassword";
+    String password = validPass;
     AuthenticationResponse response = authenticationManager.validateLogin(username, password);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
 
@@ -115,8 +130,8 @@ public class AuthenticationManagerTest {
   @Test
   public void testRegistrationInvalidUsername() {
     String username = "My$Account";
-    String password = "MyPassword";
-    String confirmedPassword = "MyPassword";
+    String password = validPass;
+    String confirmedPassword = validPass;
     AuthenticationResponse response = authenticationManager.validateRegistration(username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.INVALID_USERNAME, response);
@@ -128,8 +143,8 @@ public class AuthenticationManagerTest {
   @Test
   public void testRegistrationInvalidPassword() {
     String username = "MyAccount";
-    String password = "My$Password";
-    String confirmedPassword = "My$Password";
+    String password = "invalidpass";
+    String confirmedPassword = "invalidpass";
     AuthenticationResponse response = authenticationManager.validateRegistration(username, password,
         confirmedPassword);
     assertEquals(AuthenticationResponse.INVALID_PASSWORD, response);
@@ -141,8 +156,8 @@ public class AuthenticationManagerTest {
   @Test
   public void testRegistrationUsernameAlreadyRegistered() {
     String username = "MyAccount";
-    String password = "MyPassword";
-    String confirmedPassword = "MyPassword";
+    String password = validPass;
+    String confirmedPassword = validPass;
     registerAccount(username, password);
 
     // try to register the account again
@@ -157,11 +172,25 @@ public class AuthenticationManagerTest {
   @Test
   public void testLoginValid() {
     String username = "MyAccount";
-    String password = "MyPassword";
+    String password = validPass;
     registerAccount(username, password);
 
     AuthenticationResponse response = authenticationManager.validateLogin(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, response);
+  }
+
+  /**
+   * Tests a valid user registration scenario.
+   */
+  @Test
+  public void testUpdatePassEqualUsername() {
+    String username = "MyAccount";
+    String password = validPass;
+    registerAccount(username, password);
+
+    AuthenticationResponse response = authenticationManager.validateUpdate(username, password,
+        username, username);
+    assertEquals(AuthenticationResponse.SAME_AS_USERNAME, response);
   }
 
   /**
@@ -170,7 +199,7 @@ public class AuthenticationManagerTest {
   @Test
   public void testLoginInvalidUsernamePasswordCombination() {
     String username = "MyAccount";
-    String password = "MyPassword";
+    String password = validPass;
     AuthenticationResponse response = authenticationManager.validateLogin(username, password);
     assertEquals(AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION, response);
   }
@@ -181,10 +210,10 @@ public class AuthenticationManagerTest {
   @Test
   public void testLoginCorrectUsernameIncorrectPassword() {
     String username = "MyAccount";
-    String password = "MyPassword";
+    String password = validPass;
     registerAccount(username, password);
 
-    password = "MyOtherPassword";
+    password = "OtherValidPass2024!";
     AuthenticationResponse response = authenticationManager.validateLogin(username, password);
     assertEquals(AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION, response);
   }
@@ -195,25 +224,25 @@ public class AuthenticationManagerTest {
   @Test
   public void testUpdateMissingFields() {
     String username = "MyAccount";
-    String password = "MyPassword";
+    String password = validPass;
     registerAccount(username, password);
 
     username = "";
-    String oldPassword = "MyPassword";
-    String newPassword = "MyNewPassword";
-    String confirmNewPassword = "MyNewPassword";
+    String oldPassword = validPass;
+    String newPassword = validPass;
+    String confirmNewPassword = "OtherValidPass2024!";
     AuthenticationResponse response = authenticationManager.validateUpdate(username, oldPassword,
         newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
 
     username = "MyAccount";
     oldPassword = "";
-    newPassword = "MyNewPassword";
+    newPassword = "OtherValidPass2024!";
     response = authenticationManager.validateRegistration(username, oldPassword, newPassword);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
 
     username = "MyAccount";
-    oldPassword = "MyPassword";
+    oldPassword = validPass;
     newPassword = "";
     response = authenticationManager.validateRegistration(username, oldPassword, newPassword);
     assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
@@ -225,12 +254,12 @@ public class AuthenticationManagerTest {
   @Test
   public void testUpdateIncorrectOldPassword() {
     String username = "MyAccount";
-    String password = "MyPassword";
+    String password = validPass;
     registerAccount(username, password);
 
-    String oldPassword = "MyOtherPassword";
-    String newPassword = "MyNewPassword";
-    String confirmNewPassword = "MyNewPassword";
+    String oldPassword = "OtherValidPass2024!";
+    String newPassword = "NewValidPass2024!";
+    String confirmNewPassword = "NewValidPass2024!";
     AuthenticationResponse response = authenticationManager.validateUpdate(username, oldPassword,
         newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.INCORRECT_OLD_PASSWORD, response);
@@ -243,8 +272,8 @@ public class AuthenticationManagerTest {
   public void testUpdateAdminPasswordToAdmin() {
     String username = "admin";
     String oldPassword = "admin";
-    String newPassword = "MyNewPassword";
-    String confirmNewPassword = "MyNewPassword";
+    String newPassword = validPass;
+    String confirmNewPassword = validPass;
     AuthenticationResponse response = authenticationManager.validateUpdate(username, oldPassword,
         newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
@@ -263,8 +292,8 @@ public class AuthenticationManagerTest {
   @Test
   public void testUpdateOldPasswordSameAsNew() {
     String username = "MyAccount";
-    String password = "MyPassword";
-    String confirmNewPassword = "MyPassword";
+    String password = validPass;
+    String confirmNewPassword = validPass;
     registerAccount(username, password);
 
     AuthenticationResponse response = authenticationManager.validateUpdate(username, password,
@@ -273,16 +302,16 @@ public class AuthenticationManagerTest {
   }
 
   /**
-   * Tests password update with an invalid new password (containing special characters).
+   * Tests password update with an invalid new password (does not meet requirements)
    */
   @Test
   public void testUpdateInvalidNewPassword() {
     String username = "MyAccount";
-    String password = "MyPassword";
+    String password = validPass;
     registerAccount(username, password);
 
-    String newPassword = "My$Password";
-    String confirmNewPassword = "My$Password";
+    String newPassword = "invalidpass";
+    String confirmNewPassword = "invalidpass";
     AuthenticationResponse response = authenticationManager.validateUpdate(username, password,
         newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.INVALID_PASSWORD, response);
@@ -294,11 +323,11 @@ public class AuthenticationManagerTest {
   @Test
   public void testUpdateWrongConfirmPassword() {
     String username = "MyAccount";
-    String password = "MyPassword";
+    String password = validPass;
     registerAccount(username, password);
 
-    String newPassword = "MyPassword";
-    String confirmNewPassword = "NotMyPassword";
+    String newPassword = "OtherValidPass2024!";
+    String confirmNewPassword = "NotOtherValidPass2024!";
     AuthenticationResponse response = authenticationManager.validateUpdate(username, password,
         newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD, response);

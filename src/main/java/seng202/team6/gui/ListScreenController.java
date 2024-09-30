@@ -31,17 +31,19 @@ public class ListScreenController extends Controller {
   @FXML
   public Button createListRequestButton;
   @FXML
-  public Button backButton;
-  @FXML
   public TabPane listScreenTabs;
   @FXML
   public Tab tabViewing;
   @FXML
   public Tab tabCreating;
   @FXML
+  private Tab tabDeleting;
+  @FXML
   public TextField listName;
   @FXML
   public Label errorText;
+  @FXML
+  private Label deleteListLabel;
   @FXML
   public VBox buttonList;
   @FXML
@@ -147,6 +149,14 @@ public class ListScreenController extends Controller {
     listScreenTabs.getTabs().remove(tabViewing);
     createListRequestButton.setDisable(true);
     deleteListRequestButton.setDisable(true);
+  }
+  @FXML
+  public void onDeleteListRequestButton(ActionEvent actionEvent) {
+    listScreenTabs.getTabs().add(tabDeleting);
+    listScreenTabs.getTabs().remove(tabViewing);
+    createListRequestButton.setDisable(true);
+    deleteListRequestButton.setDisable(true);
+    deleteListLabel.setText("Are you sure you want to delete: \n" + wineLists.get(selected-1).name() + "?\nThis action cannot be undone.");
   }
 
   /**

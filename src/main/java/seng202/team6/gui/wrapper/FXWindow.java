@@ -42,6 +42,9 @@ public class FXWindow extends Application {
     Scene scene = new Scene(root);
     primaryStage.setResizable(false);
     primaryStage.setScene(scene);
+    primaryStage.sizeToScene();
+    primaryStage.setMinHeight(900);
+    primaryStage.setMinWidth(1400);
     primaryStage.show();
   }
 
