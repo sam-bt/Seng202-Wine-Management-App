@@ -30,12 +30,12 @@
                   </ScrollPane>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                      <children>
-                  <Button fx:id="createListRequestButton" mnemonicParsing="false" onAction="#onCreateListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Create List">
+                  <Button fx:id="createListRequestButton" mnemonicParsing="false" onAction="#onCreateListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Create List">
                     <font>
                       <Font name="System Bold" size="16.0" />
                     </font>
                   </Button>
-                  <Button fx:id="deleteListRequestButton" mnemonicParsing="false" onAction="#onDeleteListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../../../../build/resources/main/css/global.css" text="Delete List">
+                  <Button fx:id="deleteListRequestButton" mnemonicParsing="false" onAction="#onDeleteListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Delete List">
                     <font>
                       <Font name="System Bold" size="16.0" />
                     </font>
