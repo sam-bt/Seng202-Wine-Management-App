@@ -12,7 +12,6 @@
 
 <AnchorPane fx:id="page" maxHeight="900.0" maxWidth="1400.0" minHeight="900.0" minWidth="1400.0" prefHeight="900.0" prefWidth="1400.0" styleClass="application-background" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.MainController">
   <children>
-    <AnchorPane maxWidth="1400.0" minWidth="1400.0" prefHeight="80.0" prefWidth="1400.0" styleClass="primary-background" stylesheets="@../css/global.css" />
     <AnchorPane fx:id="pageContent" layoutX="15.0" layoutY="98.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" />
     <GridPane gridLinesVisible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="75.0" prefWidth="1370.0">
       <children>
@@ -66,7 +65,6 @@
                         <Font name="System Bold" size="20.0" />
                      </font>
                   </Button>
-            <Button fx:id="dataSetsScreenButton" minWidth="140.0" mnemonicParsing="false" onAction="#openDataSetsScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Datasets">
             <Button fx:id="noteScreenButton" focusTraversable="false" mnemonicParsing="false" onAction="#openNotesScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Notes">
               <font>
                 <Font name="System Bold" size="20.0" />

@@ -150,14 +150,6 @@ public class ListScreenController extends Controller {
     createListRequestButton.setDisable(true);
     deleteListRequestButton.setDisable(true);
   }
-  @FXML
-  public void onDeleteListRequestButton(ActionEvent actionEvent) {
-    listScreenTabs.getTabs().add(tabDeleting);
-    listScreenTabs.getTabs().remove(tabViewing);
-    createListRequestButton.setDisable(true);
-    deleteListRequestButton.setDisable(true);
-    deleteListLabel.setText("Are you sure you want to delete: \n" + wineLists.get(selected-1).name() + "?\nThis action cannot be undone.");
-  }
 
   /**
    * opens the tab for viewing lists and hides the tab for creating lists.
@@ -205,7 +197,7 @@ public class ListScreenController extends Controller {
   }
 
   /**
-   * deletes the selected list. Cannot delete the favourites or history list.
+   * Deletes the selected list. Cannot delete the favourites or history list.
    *
    * @param actionEvent triggers this function when on action.
    */

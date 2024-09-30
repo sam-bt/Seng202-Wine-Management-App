@@ -37,7 +37,6 @@ public class AddToListPopupController extends Controller {
     super(context);
     this.wine = wine;
     this.wineListService = new WineListService(managerContext.authenticationManager, context.databaseManager);
-    this.wineListService = new WineListService(context.authenticationManager, context.databaseManager);
     bindToWineListService();
   }
 
