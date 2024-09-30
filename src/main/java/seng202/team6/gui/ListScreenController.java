@@ -34,17 +34,19 @@ public class ListScreenController extends Controller {
   @FXML
   public Button createListRequestButton;
   @FXML
-  public Button backButton;
-  @FXML
   public TabPane listScreenTabs;
   @FXML
   public Tab tabViewing;
   @FXML
   public Tab tabCreating;
   @FXML
+  private Tab tabDeleting;
+  @FXML
   public TextField listName;
   @FXML
   public Label errorText;
+  @FXML
+  private Label deleteListLabel;
   @FXML
   public Button listOneButton, listTwoButton, listThreeButton, listFourButton, listFiveButton;
   @FXML
@@ -69,6 +71,7 @@ public class ListScreenController extends Controller {
    */
   public void initialize() {
     listScreenTabs.getTabs().remove(tabCreating);
+    listScreenTabs.getTabs().remove(tabDeleting);
     updateListOptions();
     tabViewing.setText("VIEWING: " + wineLists.getFirst());
     selected = 1;
@@ -90,6 +93,14 @@ public class ListScreenController extends Controller {
     createListRequestButton.setDisable(true);
     deleteListRequestButton.setDisable(true);
   }
+  @FXML
+  public void onDeleteListRequestButton(ActionEvent actionEvent) {
+    listScreenTabs.getTabs().add(tabDeleting);
+    listScreenTabs.getTabs().remove(tabViewing);
+    createListRequestButton.setDisable(true);
+    deleteListRequestButton.setDisable(true);
+    deleteListLabel.setText("Are you sure you want to delete: \n" + wineLists.get(selected-1).name() + "?\nThis action cannot be undone.");
+  }
 
   /**
    * opens the tab for viewing lists and hides the tab for creating lists.
@@ -100,6 +111,7 @@ public class ListScreenController extends Controller {
   public void onBackButton(ActionEvent actionEvent) {
     listScreenTabs.getTabs().add(tabViewing);
     listScreenTabs.getTabs().remove(tabCreating);
+    listScreenTabs.getTabs().remove(tabDeleting);
     createListRequestButton.setDisable(false);
     deleteListRequestButton.setDisable(false);
     if (wineLists.size() == 5) {
@@ -126,7 +138,7 @@ public class ListScreenController extends Controller {
     } else {
 
       if (name.length() < 3 || name.length() > 10 || !name.matches("[a-zA-Z0-9_]+")) {
-        errorText.setText("Invalid List Name");
+        errorText.setText("List name must be between 3 and 10\nalphanumerical characters");
         errorText.setVisible(true);
       } else {
         errorText.setVisible(false);
@@ -142,8 +154,6 @@ public class ListScreenController extends Controller {
         selected = wineLists.size();
         changeSelected();
       }
-
-
     }
   }
 
@@ -152,7 +162,8 @@ public class ListScreenController extends Controller {
    *
    * @param actionEvent triggers this function when on action.
    */
-  public void onDeleteListRequestButton(ActionEvent actionEvent) {
+  @FXML
+  public void onDeleteListConfirmButton(ActionEvent actionEvent) {
     if (selected != 1) {
       WineList wineList = wineLists.get(selected - 1);
       managerContext.databaseManager.deleteList(wineList);
@@ -163,6 +174,7 @@ public class ListScreenController extends Controller {
       if (wineLists.size() == 1) {
         deleteListRequestButton.setDisable(true);
       }
+      onBackButton(actionEvent);
     }
   }
 
@@ -256,6 +268,7 @@ public class ListScreenController extends Controller {
     ObservableList<Wine> observableList = FXCollections.observableList(list);
     setupTableView();
     tableView.setItems(observableList);
+    deleteListRequestButton.setDisable(selected == 1);
   }
 
   @FXML
