@@ -28,6 +28,20 @@ public class WineListService {
     return databaseManager.getWineListDAO().isWineInList(wineList, wine);
   }
 
+  public void createWineList(User user, String name) {
+    WineList wineList = databaseManager.getWineListDAO().create(user, name);
+    wineLists.add(wineList);
+  }
+
+  public void deleteWineList(WineList wineList) {
+    wineLists.remove(wineList);
+    databaseManager.getWineListDAO().delete(wineList);
+  }
+
+  public boolean canRemove(WineList wineList) {
+    return !wineList.name().equals("Favourites") && !wineList.name().equals("History");
+  }
+
   public ObservableList<WineList> getWineLists() {
     return wineLists;
   }

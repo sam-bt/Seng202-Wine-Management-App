@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.KeyCode;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.AuthenticationResponse;
 
@@ -36,6 +37,23 @@ public class UpdatePasswordController extends Controller {
     if (disabled) {
       titledPane.setText("First time admin login, please change password");
     }
+    oldPasswordField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        onConfirm();
+      }
+    });
+    newPasswordField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        onConfirm();
+      }
+    });
+    confirmNewPasswordField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        onConfirm();
+      }
+    });
+
+
   }
 
   @FXML

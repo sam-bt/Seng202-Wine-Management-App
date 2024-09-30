@@ -1,6 +1,7 @@
 package seng202.team6.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -58,6 +59,7 @@ public class WineListDAO extends DAO {
             "ID             INTEGER       PRIMARY KEY," +
             "LIST_ID        INTEGER       NOT NULL," +
             "WINE_ID        INTEGER       NOT NULL," +
+            "DATE_ADDED     DATE          NOT NULL," +
             "FOREIGN KEY (LIST_ID) REFERENCES LIST_NAME(ID) ON DELETE CASCADE," +
             "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE" +
             ")",
@@ -178,10 +180,12 @@ public class WineListDAO extends DAO {
    */
   public void addWine(WineList wineList, Wine wine) {
     Timer timer = new Timer();
-    String sql = "INSERT INTO LIST_ITEMS VALUES (null, ?, ?)";
+    String sql = "INSERT INTO LIST_ITEMS VALUES (null, ?, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setLong(1, wineList.id());
       statement.setLong(2, wine.getKey());
+      // todo - remove date from wine list
+      statement.setDate(3, new Date(System.currentTimeMillis()));
 
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {

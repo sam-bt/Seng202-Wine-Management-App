@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,6 +20,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -342,11 +344,18 @@ public class WineScreenController extends Controller {
     this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
     this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
 
+
     // Create sliders
     this.vintageSlider = createSlider(11, 290, 0, 100, 10);
     this.scoreSlider = createSlider(11, 365, 0, 100, 10);
     this.abvSlider = createSlider(11, 445, 0, 100, 10);
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
+
+    colorTextField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.TAB) {
+        applyFiltersButton.requestFocus();
+      }
+    });
 
     // we need to listen to the width property
     // because in the init() method, the winesViewContainer does not yet have a width
