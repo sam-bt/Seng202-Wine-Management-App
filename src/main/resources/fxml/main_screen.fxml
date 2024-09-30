@@ -56,7 +56,7 @@
                 <Font name="System Bold" size="20.0" />
               </font>
             </Button>
-                  <Button fx:id="consumptionScreenButton" focusTraversable="false" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="175.0" styleClass="primary-button" text="Consumption" textOverrun="CLIP">
+                  <Button fx:id="consumptionScreenButton" onAction="#openConsumptionScreen" focusTraversable="false" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="175.0" styleClass="primary-button" text="Consumption" textOverrun="CLIP">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
