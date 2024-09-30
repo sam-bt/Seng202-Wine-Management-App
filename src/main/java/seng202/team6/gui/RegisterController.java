@@ -22,8 +22,6 @@ public class RegisterController extends Controller {
   private TextField confirmPasswordField;
   @FXML
   private Label registerMessageLabel;
-  @FXML
-  private Button createAccountButton;
 
   /**
    * Constructor
@@ -34,16 +32,28 @@ public class RegisterController extends Controller {
     super(managerContext);
   }
 
-  @FXML
-  private void initialize() {
-    createAccountButton.setOnKeyPressed(event -> {
-      if (event.getCode() == KeyCode.TAB && !event.isShiftDown()) {
-        usernameField.requestFocus();
-        event.consume();
+  @Override
+  public void init() {
+    usernameField.requestFocus();
+    //set key handlers for ENTER to attempt login on keypress
+    usernameField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        onConfirm();
       }
     });
-    Platform.runLater(() -> usernameField.requestFocus());
+    passwordField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        onConfirm();
+      }
+    });
+    confirmPasswordField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        onConfirm();
+      }
+    });
+
   }
+
   @FXML
   private void onConfirm() {
 
