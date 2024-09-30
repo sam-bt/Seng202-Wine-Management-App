@@ -63,6 +63,7 @@ public class WineReviewsService {
       databaseManager.getWineReviewDAO().delete(wineReview);
       usersReview.setValue(null);
       wineReviews.remove(wineReview);
+      calculateAverageReview();
     }
   }
 

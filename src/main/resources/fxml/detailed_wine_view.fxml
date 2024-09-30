@@ -113,7 +113,7 @@
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Button>
-                  <HBox fx:id="ratingsContainer" alignment="CENTER_LEFT" layoutX="381.0" layoutY="25.0" maxHeight="45.0" minHeight="30.0" prefHeight="30.0" prefWidth="372.0">
+                  <HBox fx:id="ratingsContainer" alignment="CENTER_LEFT" layoutX="381.0" layoutY="25.0" maxHeight="45.0" minHeight="30.0" prefHeight="30.0" prefWidth="616.0">
                      <children>
                         <Label fx:id="ratingsLabel" text="Label">
                            <HBox.margin>
