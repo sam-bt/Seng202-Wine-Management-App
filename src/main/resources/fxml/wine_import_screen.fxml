@@ -2,15 +2,16 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.WineImportController" >
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.WineImportController">
 <children>
 <GridPane prefWidth="1374.0">
   <columnConstraints>
@@ -27,12 +28,12 @@
         <Font name="System Bold" size="16.0" />
       </font>
     </Button>
-    <Button fx:id="applyFiltersButton" mnemonicParsing="false" prefHeight="33.0" prefWidth="200.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Append Data" GridPane.columnIndex="2">
+    <Button mnemonicParsing="false" onMouseClicked="#onAppendDataButtonClick" prefHeight="33.0" prefWidth="200.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Append Data" GridPane.columnIndex="2">
       <font>
         <Font name="System Bold" size="16.0" />
       </font>
     </Button>
-    <Button fx:id="applyFiltersButton1" mnemonicParsing="false" prefHeight="33.0" prefWidth="200.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Replace Data" GridPane.columnIndex="1">
+    <Button mnemonicParsing="false" onMouseClicked="#onReplaceDataButtonClick" prefHeight="33.0" prefWidth="200.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Replace Data" GridPane.columnIndex="1">
       <font>
         <Font name="System Bold" size="16.0" />
       </font>
@@ -45,6 +46,21 @@
     <Insets bottom="20.0" left="10.0" right="10.0" top="20.0" />
   </padding>
 </GridPane>
+      <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+         <children>
+            <CheckBox fx:id="extractVintageFromTitleCheckbox" mnemonicParsing="false" text="Extract Vintage from Title Property">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </CheckBox>
+         </children>
+         <opaqueInsets>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
 <ScrollPane fitToWidth="true" prefHeight="685.0" prefWidth="1370.0" stylesheets="@../css/scroll_pane.css">
   <content>
     <GridPane fx:id="dataColumnsContainer" prefWidth="1368.0">

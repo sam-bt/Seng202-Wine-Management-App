@@ -1,13 +1,21 @@
 package seng202.team6.gui;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -27,6 +35,11 @@ import seng202.team6.util.ProcessCSV;
 public class WineImportController extends Controller {
   @FXML
   private GridPane dataColumnsContainer;
+
+  @FXML
+  private CheckBox extractVintageFromTitleCheckbox;
+
+  private final Map<Integer, WinePropertyName> selectedWineProperties = new HashMap<>();
 
   public WineImportController(ManagerContext context) {
     super(context);
@@ -53,18 +66,74 @@ public class WineImportController extends Controller {
 
     List<String[]> rows = ProcessCSV.getCSVRows(selectedFile);
     String[] columnNames = rows.removeFirst();
+    selectedWineProperties.clear();
     makeColumnRemapList(columnNames, rows);
+  }
+
+
+  @FXML
+  void onAppendDataButtonClick() {
+    if (!validate())
+      return;
+  }
+
+  @FXML
+  void onReplaceDataButtonClick() {
+    if (!validate())
+      return;
+  }
+
+  private boolean validate() {
+    return checkContainsTitleProperty() && checkDuplicateProperties();
+  }
+
+  private boolean checkContainsTitleProperty() {
+    if (!selectedWineProperties.containsValue(WinePropertyName.TITLE)) {
+      Alert alert = new Alert(AlertType.ERROR);
+      alert.setTitle("Invalid Selections");
+      alert.setHeaderText("Missing Mandatory Property");
+      alert.setContentText("The property TITLE is required but has not been selected");
+      alert.showAndWait();
+      return true;
+    }
+    return false;
+  }
+
+  private boolean checkDuplicateProperties() {
+    Set<WinePropertyName> duplicatedProperties = new HashSet<>();
+    Set<WinePropertyName> selectedProperties = new HashSet<>();
+    selectedWineProperties.forEach((index, winePropertyName) -> {
+      if (!selectedProperties.add(winePropertyName)) { // returns false if the set already contained
+        duplicatedProperties.add(winePropertyName);
+      }
+    });
+
+    if (!duplicatedProperties.isEmpty()) {
+      Alert alert = new Alert(AlertType.ERROR);
+      alert.setTitle("Invalid Selections");
+      alert.setHeaderText("Duplicate Properties Selected");
+      alert.setContentText("The property field(s) " + duplicatedProperties.stream()
+          .map(WinePropertyName::name)
+          .collect(Collectors.joining(", ")) +
+          " have been selected more than once.");
+      alert.showAndWait();
+      return true;
+    }
+    return false;
   }
 
   private void makeColumnRemapList(String[] columnNames, List<String[]> rows) {
     int columns = 4;
     int row = 0;
+    int column = 0;
     for (int i = 0; i < columnNames.length; i++) {
       String columnName = columnNames[i];
-      int column = i % columns;
-      if (i % columns == 0) {
+      if (columnName.isBlank()) // skip if the column name is empty
+        continue;
+      if (column >= columns) {
         addRow();
         row++;
+        column = 0;
       }
 
       ObservableList<String> sampleValues = FXCollections.observableArrayList();
@@ -73,8 +142,9 @@ public class WineImportController extends Controller {
       }
 
       WinePropertyName possiblePropertyName = WinePropertyName.tryMatch(columnName);
-      GridPane wrapper = createSomeElement(columnName, possiblePropertyName, sampleValues);
+      GridPane wrapper = createSomeElement(i, columnName, possiblePropertyName, sampleValues);
       dataColumnsContainer.add(wrapper, column, row);
+      column++;
     }
   }
 
@@ -85,7 +155,7 @@ public class WineImportController extends Controller {
   }
 
   // idk what to call this
-  private GridPane createSomeElement(String columnName, WinePropertyName possiblePropertyName,
+  private GridPane createSomeElement(int index, String columnName, WinePropertyName possiblePropertyName,
       ObservableList<String> sampleValues) {
     GridPane gridPane = new GridPane();
     RowConstraints firstRow = new RowConstraints();
@@ -110,6 +180,8 @@ public class WineImportController extends Controller {
     gridPane.add(choiceBox, 1, 1);
     choiceBox.setOpaqueInsets(new Insets(0, 10, 0, 10));
     choiceBox.setPrefWidth(Double.MAX_VALUE);
+    choiceBox.getSelectionModel().selectedItemProperty().addListener(
+        (observableValue, before, after) -> selectedWineProperties.put(index, after));
     if (possiblePropertyName != null) {
       choiceBox.getSelectionModel().select(possiblePropertyName);
     }
