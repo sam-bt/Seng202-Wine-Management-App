@@ -16,7 +16,7 @@ public enum AuthenticationResponse {
   INVALID_USERNAME("Invalid username, Please make sure that your name is between 3 and 15 characters long and only contains letters, numbers or underscores."),
 
   /** Indicates that the provided password is invalid. */
-  INVALID_PASSWORD("Invalid password, Please make sure that your password is between 8 and 40 characters long and only contains letters, numbers or special characters."),
+  INVALID_PASSWORD("Password must be between 8 and 30 characters long. Password must contain a lowercase letter, an uppercase letter, a number and a special character."),
 
   /** Indicates that the given username is already registered. */
   USERNAME_ALREADY_REGISTERED("The given username is already registered to an account."),

@@ -1,5 +1,6 @@
 package seng202.team6.gui.popup;
 
+import java.util.Date;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableMap;
@@ -35,7 +36,7 @@ public class AddToListPopupController extends Controller {
   public AddToListPopupController(ManagerContext context, Wine wine) {
     super(context);
     this.wine = wine;
-    this.wineListService = new WineListService(context.authenticationManager, context.databaseManager);
+    this.wineListService = new WineListService(managerContext.authenticationManager, context.databaseManager);
     bindToWineListService();
   }
 
@@ -51,7 +52,7 @@ public class AddToListPopupController extends Controller {
 
   private void onAddButtonClick(WineList wineList, Button button) {
     updateWineListButton(button, wineList, true);
-    managerContext.databaseManager.addWineToList(wineList, wine);
+    managerContext.databaseManager.addWineToList(wineList, wine, new Date());
   }
 
   private void onRemoveButtonClick(WineList wineList, Button button) {
