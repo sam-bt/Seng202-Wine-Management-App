@@ -42,9 +42,9 @@ public class LoginController extends Controller {
   private void onConfirm() {
     login();
   }
-
-  @FXML
-  private void initialize() {
+  @Override
+  public void init() {
+    usernameField.requestFocus();
     //set key handlers for ENTER to attempt login on keypress
     passwordField.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.ENTER) {
@@ -56,14 +56,7 @@ public class LoginController extends Controller {
         login();
       }
     });
-    // Shift focus back to the username field
-    loginButton.setOnKeyPressed(event -> {
-      if (event.getCode() == KeyCode.TAB && !event.isShiftDown()) {
-        usernameField.requestFocus();
-        event.consume();
-      }
-    });
-    Platform.runLater(() -> usernameField.requestFocus());
+
   }
 
   /**
