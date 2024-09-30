@@ -33,7 +33,7 @@ public class UserDAO extends DAO {
   public String[] getInitialiseStatements() {
     String salt = EncryptionUtil.generateSalt();
     String hashedAdminPassword = EncryptionUtil.hashPassword("admin", salt);
-    return new String[] {
+    return new String[]{
         "CREATE TABLE IF NOT EXISTS USER (" +
             "USERNAME       VARCHAR(64)   PRIMARY KEY," +
             "PASSWORD       VARCHAR(64)   NOT NULL," +
@@ -80,7 +80,7 @@ public class UserDAO extends DAO {
       try (ResultSet resultSet = statement.executeQuery()) {
         if (resultSet.next()) {
           log.info("Successfully found user '{}' in {}ms", username, timer.stop());
-          User user =  new User(
+          User user = new User(
               resultSet.getString("USERNAME"),
               resultSet.getString("PASSWORD"),
               resultSet.getString("ROLE"),
@@ -162,8 +162,8 @@ public class UserDAO extends DAO {
   }
 
   /**
-   * Binds listeners to the User object to ensure that any changes to the users properties
-   * are automatically reflected in the database.
+   * Binds listeners to the User object to ensure that any changes to the users properties are
+   * automatically reflected in the database.
    *
    * @param user The User object to bind listeners to
    */
@@ -188,7 +188,7 @@ public class UserDAO extends DAO {
   /**
    * Updates a specific attribute of the user in the USER table
    *
-   * @param attributeName name of attribute
+   * @param attributeName   name of attribute
    * @param attributeSetter callback to set attribute
    */
   private void updateAttribute(String username, String attributeName,

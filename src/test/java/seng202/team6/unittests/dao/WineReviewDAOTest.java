@@ -16,6 +16,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 
 public class WineReviewDAOTest {
+
   private DatabaseManager databaseManager;
   private WineReviewDAO wineReviewDAO;
   private WineDAO wineDAO;

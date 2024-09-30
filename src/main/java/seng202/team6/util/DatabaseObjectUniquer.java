@@ -8,9 +8,10 @@ import java.util.HashMap;
 /**
  * Database objects are required to be unique in memory to assure consistency
  * <p>
- *   This class implements a simple weak cache to resolve that problem.
- *   Objects are stored with weak references to prevent memory leaks. Map is auto cleared by java
+ * This class implements a simple weak cache to resolve that problem. Objects are stored with weak
+ * references to prevent memory leaks. Map is auto cleared by java
  * </p>
+ *
  * @param <T> Object type
  */
 public class DatabaseObjectUniquer<T> {
@@ -34,15 +35,17 @@ public class DatabaseObjectUniquer<T> {
 
   /**
    * Tries to get an object from the cache
+   *
    * @param id id
    * @return stored object or null
    */
   public T tryGetObject(long id) {
     WeakReference<T> ref = objects.get(id);
-    if(ref == null)
+    if (ref == null) {
       return null;
+    }
     T strongRef = ref.get();
-    if(strongRef == null) {
+    if (strongRef == null) {
       objects.remove(id);
     }
     return strongRef;
@@ -50,21 +53,25 @@ public class DatabaseObjectUniquer<T> {
 
   /**
    * Adds an object to the cache
-   * @param id id
+   *
+   * @param id     id
    * @param object object
    */
   public void addObject(long id, T object) {
-    if(garbageCollectionTimer++ == 4096) {
+    if (garbageCollectionTimer++ == 4096) {
       tryGarbageCollect();
       garbageCollectionTimer = 0;
     }
-    if(objects.containsKey(id))
-      throw new IllegalStateException("Duplicate keys are not allowed and attempting indicates a leak");
+    if (objects.containsKey(id)) {
+      throw new IllegalStateException(
+          "Duplicate keys are not allowed and attempting indicates a leak");
+    }
     objects.put(id, new WeakReference<>(object));
   }
 
   /**
    * Removes an object from the cache
+   *
    * @param id id
    */
   public void removeObject(long id) {
@@ -73,6 +80,7 @@ public class DatabaseObjectUniquer<T> {
 
   /**
    * Returns an upper bound for alive objects.
+   *
    * @return number of objects in map
    */
   int size() {

@@ -95,9 +95,9 @@ public class WineNotesDAO extends DAO {
   }
 
   /**
-   * Retrieves a note belonging to the specified wine and user. If the note does not exist
-   * for the given parameters, a new Note object is created. Listeners are binded to the object
-   * to ensure any changes or updates are reflected in the database.
+   * Retrieves a note belonging to the specified wine and user. If the note does not exist for the
+   * given parameters, a new Note object is created. Listeners are binded to the object to ensure
+   * any changes or updates are reflected in the database.
    *
    * @param user The user the note belongs to
    * @param wine The wine the note belongs to
@@ -118,7 +118,8 @@ public class WineNotesDAO extends DAO {
               + "in {}ms", id, user.getUsername(), wine.getKey(), timer.stop());
           return extractNoteFromResultSet(resultSet);
         } else {
-          log.warn("Could not find note for user '{}' and wine with ID {} so returning blank note in {}ms",
+          log.warn(
+              "Could not find note for user '{}' and wine with ID {} so returning blank note in {}ms",
               user.getUsername(), wine.getKey(), timer.stop());
           // do not add to cache as it has common -1 key which indicates it's not in the database
           Note note = new Note(-1, user.getUsername(), wine.getKey(), "");
@@ -136,21 +137,23 @@ public class WineNotesDAO extends DAO {
   /**
    * Adds a note to the database
    * <p>
-   *   Upon successful insertion, the note's ID is set to the generated ID. This is to ensure any
-   *   classes holding a reference to this note can still be used and will update the database as
-   *   attributes are changed.
+   * Upon successful insertion, the note's ID is set to the generated ID. This is to ensure any
+   * classes holding a reference to this note can still be used and will update the database as
+   * attributes are changed.
    * </p>
    *
    * @param note The note to be added to the database
    */
   private void add(Note note) {
     if (note.getID() != -1) {
-      log.error("Failed to add note for user '{}' as the note has a valid ID indicating it is in the database already");
+      log.error(
+          "Failed to add note for user '{}' as the note has a valid ID indicating it is in the database already");
       return;
     }
     Timer timer = new Timer();
     String sql = "INSERT INTO NOTES VALUES (null, ?, ?, ?)";
-    try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    try (PreparedStatement statement = connection.prepareStatement(sql,
+        Statement.RETURN_GENERATED_KEYS)) {
       statement.setString(1, note.getUsername());
       statement.setLong(2, note.getWineID());
       statement.setString(3, note.getNote());
@@ -160,30 +163,35 @@ public class WineNotesDAO extends DAO {
         if (generatedKeys.next()) {
           long id = generatedKeys.getLong(1);
           note.setID(id);
-          if (useCache())
+          if (useCache()) {
             notesCache.addObject(id, note);
-          log.info("Successfully added note with ID '{}' for user {} and wine with ID {} in {}ms", id, note.getUsername(), note.getWineID(), timer.stop());
+          }
+          log.info("Successfully added note with ID '{}' for user {} and wine with ID {} in {}ms",
+              id, note.getUsername(), note.getWineID(), timer.stop());
         } else {
-          log.warn("Could not add note for user {} and wine with ID {} in {}ms", note.getUsername(), note.getWineID(), timer.stop());
+          log.warn("Could not add note for user {} and wine with ID {} in {}ms", note.getUsername(),
+              note.getWineID(), timer.stop());
         }
       }
     } catch (SQLException error) {
-      log.warn("Failed to add note for user {} and wine with ID {}", note.getUsername(), note.getWineID(), error);
+      log.warn("Failed to add note for user {} and wine with ID {}", note.getUsername(),
+          note.getWineID(), error);
     }
   }
 
   /**
    * Deletes a note from the database.
    * <p>
-   *   Upon successful removal, the note's ID is set to -1 to indicate that the note is not in the
-   *   database.
+   * Upon successful removal, the note's ID is set to -1 to indicate that the note is not in the
+   * database.
    * </p>
    *
    * @param note The note to be deleted.
    */
   public void delete(Note note) {
     if (note.getID() == -1) {
-      log.error("Failed to add note for user '{}' as the note has an invalid ID indicating it is not in the database already");
+      log.error(
+          "Failed to add note for user '{}' as the note has an invalid ID indicating it is not in the database already");
       return;
     }
     Timer timer = new Timer();
@@ -237,21 +245,22 @@ public class WineNotesDAO extends DAO {
       return cachedNote;
     }
 
-    Note note =  new Note(
+    Note note = new Note(
         id,
         resultSet.getString("USERNAME"),
         resultSet.getLong("WINE_ID"),
         resultSet.getString("NOTE")
     );
-    if (useCache())
+    if (useCache()) {
       notesCache.addObject(id, note);
+    }
     bindUpdater(note);
     return note;
   }
 
   /**
-   * Binds listeners to the Note object to ensure that any changes to the users properties
-   * are automatically reflected in the database.
+   * Binds listeners to the Note object to ensure that any changes to the users properties are
+   * automatically reflected in the database.
    * <ul>
    *   <li>If the provided note is empty and the ID is -1, the note is not in the database and is
    *   empty so no action is required</li>
@@ -289,7 +298,7 @@ public class WineNotesDAO extends DAO {
   /**
    * Updates a specific attribute of the note in the NOTES table
    *
-   * @param attributeName name of attribute
+   * @param attributeName   name of attribute
    * @param attributeSetter callback to set attribute
    */
   private void updateAttribute(long id, String attributeName,

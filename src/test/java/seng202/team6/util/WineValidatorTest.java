@@ -4,19 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.sql.SQLException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
 import seng202.team6.util.Exceptions.ValidationException;
 
 /**
- * Test class for the WineValidator utility.
- * This class contains unit tests to verify the functionality of the WineValidator
+ * Test class for the WineValidator utility. This class contains unit tests to verify the
+ * functionality of the WineValidator
  */
 class WineValidatorTest {
+
   private GeoLocation mockGeoLocation;
 
   /**
@@ -80,22 +78,23 @@ class WineValidatorTest {
   }
 
   /**
-   * Tests the parseWine method with invalid strings for numeric fields.
-   * Verifies that a ValidationException is thrown when non-numeric strings are provided for numeric fields.
+   * Tests the parseWine method with invalid strings for numeric fields. Verifies that a
+   * ValidationException is thrown when non-numeric strings are provided for numeric fields.
    */
   @Test
   void testParseWineInvalidNumericFields() {
     assertThrows(ValidationException.class, () -> {
       WineValidator.parseWine(
           "Test Wine", "Merlot", "France", "Bordeaux",
-          "Test Winery", "Red", "2020", "A fine wine", "Not a number", "Not a number", "Not a number", mockGeoLocation
+          "Test Winery", "Red", "2020", "A fine wine", "Not a number", "Not a number",
+          "Not a number", mockGeoLocation
       );
     });
   }
 
   /**
-   * Tests the parseWine method with null values for all fields.
-   * Verifies that a ValidationException is thrown when null values are provided.
+   * Tests the parseWine method with null values for all fields. Verifies that a ValidationException
+   * is thrown when null values are provided.
    */
   @Test
   void testParseWineNullFields() {

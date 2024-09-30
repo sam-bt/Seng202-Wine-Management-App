@@ -1,14 +1,10 @@
 package seng202.team6.gui;
 
 import java.util.List;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -30,6 +26,7 @@ import seng202.team6.service.WineListService;
  */
 public class ListScreenController extends Controller {
 
+  private final WineListService wineListService;
   @FXML
   public Button createListRequestButton;
   @FXML
@@ -39,21 +36,19 @@ public class ListScreenController extends Controller {
   @FXML
   public Tab tabCreating;
   @FXML
-  private Tab tabDeleting;
-  @FXML
   public TextField listName;
   @FXML
   public Label errorText;
-  @FXML
-  private Label deleteListLabel;
   @FXML
   public VBox buttonList;
   @FXML
   public Button deleteListRequestButton;
   @FXML
   public TableView<Wine> tableView;
-
-  private final WineListService wineListService;
+  @FXML
+  private Tab tabDeleting;
+  @FXML
+  private Label deleteListLabel;
   private int selected = 0;
 
   /**
@@ -63,17 +58,19 @@ public class ListScreenController extends Controller {
    */
   public ListScreenController(ManagerContext managerContext) {
     super(managerContext);
-    this.wineListService = new WineListService(managerContext.authenticationManager, managerContext.databaseManager);
+    this.wineListService = new WineListService(managerContext.authenticationManager,
+        managerContext.databaseManager);
   }
 
   /**
    * Updates all the buttons
+   *
    * @param wineLists list of wine lists
    */
   public void updateButtons(List<WineList> wineLists) {
     buttonList.getChildren().clear();
-    int i=0;
-    for(WineList wineList : wineLists) {
+    int i = 0;
+    for (WineList wineList : wineLists) {
       Button button = new Button();
       button.setText(wineList.name());
       button.setMinSize(220, 70);
@@ -182,8 +179,9 @@ public class ListScreenController extends Controller {
    */
   public void onDeleteListRequestButton(ActionEvent actionEvent) {
     WineList wineList = wineListService.getWineLists().get(selected);
-    if (!wineListService.canRemove(wineList))
+    if (!wineListService.canRemove(wineList)) {
       return;
+    }
 
     wineListService.deleteWineList(wineList);
     managerContext.databaseManager.getWineListDAO().delete(wineList);
@@ -202,6 +200,7 @@ public class ListScreenController extends Controller {
 
   /**
    * Sets up the table of wines
+   *
    * @param wines list of wines
    */
   @FXML
@@ -230,8 +229,7 @@ public class ListScreenController extends Controller {
 
     TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
 
-
-    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title") );
+    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
     varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));
     wineryColumn.setCellValueFactory(new PropertyValueFactory<>("winery"));
     regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));
@@ -270,6 +268,7 @@ public class ListScreenController extends Controller {
 
   /**
    * Handler to warn on deletion of wine from a list
+   *
    * @param wine wine
    */
   public void onWineInListClick(Wine wine) {

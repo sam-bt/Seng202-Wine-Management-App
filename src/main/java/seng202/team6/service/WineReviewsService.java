@@ -49,7 +49,8 @@ public class WineReviewsService {
       return;
     }
     Date currentDate = new Date(System.currentTimeMillis());
-    WineReview wineReview = databaseManager.getWineReviewDAO().add(user, wine, rating, description, currentDate);
+    WineReview wineReview = databaseManager.getWineReviewDAO()
+        .add(user, wine, rating, description, currentDate);
     if (wineReview != null) {
       wineReviews.add(wineReview);
       usersReview.setValue(wineReview);
@@ -100,8 +101,9 @@ public class WineReviewsService {
   }
 
   private void calculateAverageReview() {
-    if (!hasReviews())
+    if (!hasReviews()) {
       averageRating.set(0);
+    }
 
     double sum = wineReviews.stream()
         .mapToDouble(WineReview::getRating)

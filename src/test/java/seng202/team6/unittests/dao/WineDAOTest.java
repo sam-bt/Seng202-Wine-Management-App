@@ -13,6 +13,7 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Wine;
 
 public class WineDAOTest {
+
   private DatabaseManager databaseManager;
   private WineDAO wineDAO;
 

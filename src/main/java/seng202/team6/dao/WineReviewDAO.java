@@ -41,7 +41,7 @@ public class WineReviewDAO extends DAO {
    */
   @Override
   public String[] getInitialiseStatements() {
-    return new String[] {
+    return new String[]{
         "CREATE TABLE IF NOT EXISTS WINE_REVIEW (" +
             "ID             INTEGER       PRIMARY KEY," +
             "USERNAME       varchar(64)   NOT NULL," +
@@ -109,7 +109,7 @@ public class WineReviewDAO extends DAO {
    * Retrieves a range of reviews from the WINE_REVIEW table.
    *
    * @param begin The start index of the range (inclusive)
-   * @param end The end index of the range (exclusive)
+   * @param end   The end index of the range (exclusive)
    * @return An ObservableList of WineReview objects within the specified range
    */
   public ObservableList<WineReview> getAllInRange(int begin, int end) {
@@ -136,11 +136,11 @@ public class WineReviewDAO extends DAO {
   /**
    * Creates a new wine review and adds it to the WINE_REVIEW table.
    *
-   * @param user The user creating the wine review
-   * @param wine The wine that is being reviewed
-   * @param rating The rating the wine received
+   * @param user        The user creating the wine review
+   * @param wine        The wine that is being reviewed
+   * @param rating      The rating the wine received
    * @param description The description of the rating
-   * @param date The date the wine was reviewed
+   * @param date        The date the wine was reviewed
    * @return The WineReview object with the specified parameters
    */
   public WineReview add(User user, Wine wine, double rating, String description, Date date) {
@@ -169,8 +169,9 @@ public class WineReviewDAO extends DAO {
               description,
               date
           );
-          if (useCache())
+          if (useCache()) {
             wineReviewCache.addObject(id, wineReview);
+          }
           bindUpdater(wineReview);
           return wineReview;
         }
@@ -197,9 +198,11 @@ public class WineReviewDAO extends DAO {
 
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
-        log.info("Successfully deleted wine review with ID {} in {}ms", wineReview.getID(), timer.stop());
+        log.info("Successfully deleted wine review with ID {} in {}ms", wineReview.getID(),
+            timer.stop());
       } else {
-        log.warn("Could not delete wine review with ID {} in {}ms", wineReview.getID(), timer.stop());
+        log.warn("Could not delete wine review with ID {} in {}ms", wineReview.getID(),
+            timer.stop());
       }
     } catch (SQLException error) {
       log.error("Failed to delete wine review with ID {}", wineReview.getID(), error);
@@ -213,7 +216,8 @@ public class WineReviewDAO extends DAO {
    * @return ObservableList of WineReview objects extracted from the ResultSet
    * @throws SQLException if a database access error occurs
    */
-  private ObservableList<WineReview> extractAllWineReviewsFromResultSet(ResultSet resultSet) throws SQLException {
+  private ObservableList<WineReview> extractAllWineReviewsFromResultSet(ResultSet resultSet)
+      throws SQLException {
     ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
     while (resultSet.next()) {
       wineReviews.add(extractWineReviewFromResultSet(resultSet));
@@ -271,7 +275,7 @@ public class WineReviewDAO extends DAO {
   /**
    * Updates a specific attribute of the wine review in the WINE_REVIEW table
    *
-   * @param attributeName name of attribute
+   * @param attributeName   name of attribute
    * @param attributeSetter callback to set attribute
    */
   private void updateAttribute(long id, String attributeName,

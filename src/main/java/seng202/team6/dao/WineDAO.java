@@ -111,7 +111,7 @@ public class WineDAO extends DAO {
    * Retrieves a range of wines from the WINE table.
    *
    * @param begin The start index of the range (inclusive)
-   * @param end The end index of the range (exclusive)
+   * @param end   The end index of the range (exclusive)
    * @return An ObservableList of Wine objects within the specified range
    */
   public ObservableList<Wine> getAllInRange(int begin, int end, Filters filters) {
@@ -120,13 +120,13 @@ public class WineDAO extends DAO {
         + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME)"
         + (filters == null ? "" :
         "where TITLE like ? "
-        + "and COUNTRY like ? "
-        + "and WINERY like ? "
-        + "and COLOR like ? "
-        + "and VINTAGE between ? and ?"
-        + "and SCORE_PERCENT between ? and ? "
-        + "and ABV between ? and ? "
-        + "and PRICE between ? and ? ")
+            + "and COUNTRY like ? "
+            + "and WINERY like ? "
+            + "and COLOR like ? "
+            + "and VINTAGE between ? and ?"
+            + "and SCORE_PERCENT between ? and ? "
+            + "and ABV between ? and ? "
+            + "and PRICE between ? and ? ")
         + "ORDER BY WINE.ID "
         + "LIMIT ? "
         + "OFFSET ?";
@@ -167,8 +167,8 @@ public class WineDAO extends DAO {
   }
 
   /**
-   * Replaces all wines in the WINE table by first removing all existing wines and then adding
-   * the provided lists of wines.
+   * Replaces all wines in the WINE table by first removing all existing wines and then adding the
+   * provided lists of wines.
    *
    * @param wines The list of wines to be added to the table
    */
@@ -180,7 +180,8 @@ public class WineDAO extends DAO {
   public void add(Wine wine) {
     Timer timer = new Timer();
     String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    try (PreparedStatement statement = connection.prepareStatement(sql,
+        Statement.RETURN_GENERATED_KEYS)) {
       setWineParameters(statement, wine, 1);
       statement.executeUpdate();
 
@@ -188,8 +189,9 @@ public class WineDAO extends DAO {
         if (generatedKeys.next()) {
           wine.setKey(generatedKeys.getLong(1));
           log.info("Successfully added wine with ID {} in {}ms", wine.getKey(), timer.stop());
-          if (useCache())
+          if (useCache()) {
             wineCache.addObject(wine.getKey(), wine);
+          }
           bindUpdater(wine);
         } else {
           log.info("Could not add wine with ID {} in {}ms", wine.getKey(), timer.stop());
@@ -201,13 +203,14 @@ public class WineDAO extends DAO {
   }
 
   /**
-   * Adds a list of wines to the WINE table in batch mode to improve performance.
-   * The batch is executed every 2048 wines to prevent excessive memory usage.
+   * Adds a list of wines to the WINE table in batch mode to improve performance. The batch is
+   * executed every 2048 wines to prevent excessive memory usage.
    * <p>
-   *  SQL Lite does not support batch generated key returning so all the wines in the specified
-   *  list are considered invalid. After calling this method, you must then use getAll or
-   *  getAllInRange in order to fetch new wine objects with valid ID's.
+   * SQL Lite does not support batch generated key returning so all the wines in the specified list
+   * are considered invalid. After calling this method, you must then use getAll or getAllInRange in
+   * order to fetch new wine objects with valid ID's.
    * </p>
+   *
    * @param wines The list of wines to be added to the table
    */
   public void addAll(List<Wine> wines) {
@@ -277,15 +280,15 @@ public class WineDAO extends DAO {
   }
 
   /**
-   * Extracts a Wine object from the provided ResultSet. The wine cache is checked before creating
-   * a new Wine instance
+   * Extracts a Wine object from the provided ResultSet. The wine cache is checked before creating a
+   * new Wine instance
    *
    * @param resultSet The ResultSet from which wines are to be extracted
    * @return The extracted Wine object
    * @throws SQLException If an error occurs while processing the ResultSet
    */
   Wine extractWineFromResultSet(ResultSet resultSet) throws SQLException {
-    long id =  resultSet.getLong("ID");
+    long id = resultSet.getLong("ID");
     if (useCache()) {
       Wine cachedWine = wineCache.tryGetObject(id);
       if (cachedWine != null) {
@@ -293,8 +296,9 @@ public class WineDAO extends DAO {
       }
     }
 
-    GeoLocation geoLocation = createGeoLocation(resultSet); // todo - change this to grab the geolocation when required
-    Wine wine =  new Wine(
+    GeoLocation geoLocation = createGeoLocation(
+        resultSet); // todo - change this to grab the geolocation when required
+    Wine wine = new Wine(
         id,
         resultSet.getString("TITLE"),
         resultSet.getString("VARIETY"),
@@ -309,8 +313,9 @@ public class WineDAO extends DAO {
         resultSet.getFloat("PRICE"),
         geoLocation
     );
-    if (useCache())
+    if (useCache()) {
       wineCache.addObject(id, wine);
+    }
     bindUpdater(wine);
     return wine;
   }
@@ -340,12 +345,13 @@ public class WineDAO extends DAO {
   /**
    * Sets the parameters for the PreparedStatement with the Wine objects data.
    *
-   * @param statement The PreparedStatement to set the parameters for
-   * @param wine The wine whose data will be used to set
+   * @param statement  The PreparedStatement to set the parameters for
+   * @param wine       The wine whose data will be used to set
    * @param startIndex The starting param index
    * @throws SQLException If an error occurs while setting the PreparedStatement's parameters
    */
-  private void setWineParameters(PreparedStatement statement, Wine wine, int startIndex) throws SQLException {
+  private void setWineParameters(PreparedStatement statement, Wine wine, int startIndex)
+      throws SQLException {
     statement.setString(startIndex++, wine.getTitle());
     statement.setString(startIndex++, wine.getVariety());
     statement.setString(startIndex++, wine.getCountry());
@@ -360,8 +366,8 @@ public class WineDAO extends DAO {
   }
 
   /**
-   * Binds listeners to the Wine object to ensure that any changes to the wines properties
-   * are automatically reflected in the database.
+   * Binds listeners to the Wine object to ensure that any changes to the wines properties are
+   * automatically reflected in the database.
    *
    * @param wine The Wine object to bind listeners to
    */
@@ -427,7 +433,7 @@ public class WineDAO extends DAO {
   /**
    * Updates a specific attribute of the user in the WINE table
    *
-   * @param attributeName name of attribute
+   * @param attributeName   name of attribute
    * @param attributeSetter callback to set attribute
    */
   private void updateAttribute(long id, String attributeName,

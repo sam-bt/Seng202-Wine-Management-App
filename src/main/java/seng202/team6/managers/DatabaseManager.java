@@ -17,9 +17,9 @@ import java.util.Properties;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import seng202.team6.dao.AggregatedDAO;
 import seng202.team6.dao.DAO;
 import seng202.team6.dao.GeoLocationDAO;
-import seng202.team6.dao.AggregatedDAO;
 import seng202.team6.dao.UserDAO;
 import seng202.team6.dao.WineDAO;
 import seng202.team6.dao.WineListDAO;
@@ -28,11 +28,12 @@ import seng202.team6.dao.WineReviewDAO;
 import seng202.team6.util.EncryptionUtil;
 
 /**
- * Manages the creation, initialization, and teardown of a database.
- * Provides methods for setting up an in-memory or persistent SQLite database connection
- * and initializes DAOs (Data Access Objects) for interacting with different database tables.
+ * Manages the creation, initialization, and teardown of a database. Provides methods for setting up
+ * an in-memory or persistent SQLite database connection and initializes DAOs (Data Access Objects)
+ * for interacting with different database tables.
  */
 public class DatabaseManager {
+
   private static final Logger log = LogManager.getLogger(DatabaseManager.class);
   private final Connection connection;
   private final UserDAO userDAO;
@@ -64,8 +65,8 @@ public class DatabaseManager {
   }
 
   /**
-   * Private constructor for NewDatabaseManager that initializes DAOs using the provided
-   * database connection.
+   * Private constructor for NewDatabaseManager that initializes DAOs using the provided database
+   * connection.
    *
    * @param connection the database connection to use
    */
@@ -86,13 +87,61 @@ public class DatabaseManager {
   }
 
   /**
-   * Initializes the database by executing SQL statements required to set up the tables.
-   * The SQL statements are fetched from each DAO.
+   * Sets up a database connection using the given JDBC URL.
+   *
+   * @param jdbcURL the JDBC URL to connect to
+   * @return a Connection object to the database
+   * @throws SQLException if a database access error occurs
+   */
+  private static Connection setupConnection(String jdbcURL) throws SQLException {
+    Properties properties = new Properties();
+    properties.setProperty("foreign_keys", "true");
+    return DriverManager.getConnection(jdbcURL, properties);
+  }
+
+  /**
+   * Sets up an in-memory SQLite database connection.
+   *
+   * @return a Connection object to an in-memory SQLite database
+   * @throws SQLException if a database access error occurs
+   */
+  private static Connection setupInMemoryConnection() throws SQLException {
+    return setupConnection("jdbc:sqlite::memory:");
+  }
+
+  /**
+   * Sets up a persistent SQLite database connection. If the directory does not exist, it is
+   * created.
+   *
+   * @param directoryName the directory to store the database file
+   * @param fileName      the name of the database file
+   * @return a Connection object to the SQLite database
+   * @throws SQLException     if a database access error occurs
+   * @throws RuntimeException if the directory cannot be created
+   */
+  private static Connection setupPersistentConnection(String directoryName, String fileName)
+      throws SQLException {
+    Path directory = Path.of(directoryName);
+    if (Files.notExists(directory)) {
+      try {
+        Files.createDirectories(directory);
+      } catch (IOException error) {
+        log.error("Failed to create the database directory", error);
+        throw new RuntimeException(error);
+      }
+    }
+    return setupConnection("jdbc:sqlite:" + directoryName + File.separator + fileName);
+  }
+
+  /**
+   * Initializes the database by executing SQL statements required to set up the tables. The SQL
+   * statements are fetched from each DAO.
    *
    * @throws RuntimeException if any SQL execution fails
    */
   public void init() {
-    List<String> sqlStatements = Stream.of(userDAO, wineDAO, wineListDAO, wineNotesDAO, wineReviewDAO, geoLocationDAO)
+    List<String> sqlStatements = Stream.of(userDAO, wineDAO, wineListDAO, wineNotesDAO,
+            wineReviewDAO, geoLocationDAO)
         .filter(Objects::nonNull)  // Filter out null DAOs
         .map(DAO::getInitialiseStatements)
         .filter(Objects::nonNull)  // Filter out null statements
@@ -138,8 +187,8 @@ public class DatabaseManager {
   }
 
   /**
-   * Tears down the database by closing the connection. Logs an error if the connection
-   * fails to close.
+   * Tears down the database by closing the connection. Logs an error if the connection fails to
+   * close.
    */
   public void teardown() {
     try {
@@ -176,52 +225,6 @@ public class DatabaseManager {
 
   public AggregatedDAO getAggregatedDAO() {
     return aggregatedDAO;
-  }
-
-  /**
-   * Sets up a database connection using the given JDBC URL.
-   *
-   * @param jdbcURL the JDBC URL to connect to
-   * @return a Connection object to the database
-   * @throws SQLException if a database access error occurs
-   */
-  private static Connection setupConnection(String jdbcURL) throws SQLException {
-    Properties properties = new Properties();
-    properties.setProperty("foreign_keys", "true");
-    return DriverManager.getConnection(jdbcURL, properties);
-  }
-
-  /**
-   * Sets up an in-memory SQLite database connection.
-   *
-   * @return a Connection object to an in-memory SQLite database
-   * @throws SQLException if a database access error occurs
-   */
-  private static Connection setupInMemoryConnection() throws SQLException {
-    return setupConnection("jdbc:sqlite::memory:");
-  }
-
-  /**
-   * Sets up a persistent SQLite database connection. If the directory does not exist,
-   * it is created.
-   *
-   * @param directoryName the directory to store the database file
-   * @param fileName      the name of the database file
-   * @return a Connection object to the SQLite database
-   * @throws SQLException if a database access error occurs
-   * @throws RuntimeException if the directory cannot be created
-   */
-  private static Connection setupPersistentConnection(String directoryName, String fileName) throws SQLException {
-    Path directory = Path.of(directoryName);
-    if (Files.notExists(directory)) {
-      try {
-        Files.createDirectories(directory);
-      } catch (IOException error) {
-        log.error("Failed to create the database directory", error);
-        throw new RuntimeException(error);
-      }
-    }
-    return setupConnection("jdbc:sqlite:" + directoryName + File.separator + fileName);
   }
 
   /**

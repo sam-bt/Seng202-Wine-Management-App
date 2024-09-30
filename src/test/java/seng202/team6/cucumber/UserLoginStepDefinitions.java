@@ -16,6 +16,7 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 
 public class UserLoginStepDefinitions {
+
   private DatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private String username;

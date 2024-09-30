@@ -13,6 +13,7 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;
 
 public class UserDAOTest {
+
   private DatabaseManager databaseManager;
   private UserDAO userDAO;
 

@@ -11,6 +11,7 @@ import seng202.team6.model.Wine;
  * Tests wine class
  */
 class WineTest {
+
   private Wine wine;
 
   /**
@@ -22,6 +23,7 @@ class WineTest {
   void setUp() throws SQLException {
     wine = new Wine(-1, "", "", "", "", "", "", -1, "", 0, 0f, 0f, null);
   }
+
   /**
    * Tests setting the title
    */

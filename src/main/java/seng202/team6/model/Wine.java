@@ -8,12 +8,11 @@ import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import seng202.team6.managers.DatabaseManager;
 
 /**
  * Wine represents the wine record in the database
  * <p>
- *   There must only be one wine per id. This is assured by the database
+ * There must only be one wine per id. This is assured by the database
  * </p>
  */
 public class Wine {
@@ -160,7 +159,7 @@ public class Wine {
    * @param price        NZD price
    * @param geoLocation  geographical location
    * @param reviewCount  number of reviews that wine has
-   * @param rating  average rating of the wine
+   * @param rating       average rating of the wine
    */
   public Wine(
       long key,

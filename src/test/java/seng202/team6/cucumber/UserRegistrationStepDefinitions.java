@@ -2,7 +2,6 @@ package seng202.team6.cucumber;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -16,6 +15,7 @@ import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.model.User;
 
 public class UserRegistrationStepDefinitions {
+
   private DatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private String username;
@@ -84,7 +84,6 @@ public class UserRegistrationStepDefinitions {
     password = "ValidPassword1!";
     confirmedPassword = "notValidPassword1!";
   }
-
 
 
   @Then("a new account for the user is created")

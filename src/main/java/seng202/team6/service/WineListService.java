@@ -9,6 +9,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 
 public class WineListService {
+
   private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
   private final ObservableList<WineList> wineLists = FXCollections.observableArrayList();

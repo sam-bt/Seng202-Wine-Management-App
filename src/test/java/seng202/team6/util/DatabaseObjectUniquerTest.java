@@ -1,7 +1,8 @@
 package seng202.team6.util;
 
 import static java.lang.Thread.sleep;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,9 +11,6 @@ import org.junit.jupiter.api.Test;
  */
 class DatabaseObjectUniquerTest {
 
-  static class TestClass {
-
-  }
   TestClass ref;
   DatabaseObjectUniquer<TestClass> objects = new DatabaseObjectUniquer<>();
 
@@ -46,24 +44,30 @@ class DatabaseObjectUniquerTest {
 
   /**
    * Tests references eventually get cleared from the map
+   *
    * @throws InterruptedException if interrupted
    */
   @Test
   void gc() throws InterruptedException {
-    for(int i=0; i < 4097; i++){
+    for (int i = 0; i < 4097; i++) {
       TestClass ref2 = new TestClass();
       objects.addObject(2 + i, ref2);
       assertEquals(2 + i, objects.size());
     }
 
-    for(int i=0; i < 1000; i++) {
+    for (int i = 0; i < 1000; i++) {
       objects.tryGarbageCollect();
       System.gc();
-      if(objects.size() == 1)
+      if (objects.size() == 1) {
         break;
+      }
       sleep(10);
     }
     assertEquals(1, objects.size());
+
+  }
+
+  static class TestClass {
 
   }
 

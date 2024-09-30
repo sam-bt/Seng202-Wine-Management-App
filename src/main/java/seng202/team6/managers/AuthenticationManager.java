@@ -1,7 +1,6 @@
 package seng202.team6.managers;
 
 import static seng202.team6.model.AuthenticationResponse.PASSWORD_CHANGED_SUCCESS;
-import static seng202.team6.model.AuthenticationResponse.UNEXPECTED_ERROR;
 import static seng202.team6.model.AuthenticationResponse.USERNAME_ALREADY_REGISTERED;
 
 import seng202.team6.dao.UserDAO;
@@ -10,14 +9,16 @@ import seng202.team6.model.User;
 import seng202.team6.util.EncryptionUtil;
 
 /**
- * Manager class responsible for handling authentication-related operations.
- * This class provides methods for user registration, login, password update, and logout.
+ * Manager class responsible for handling authentication-related operations. This class provides
+ * methods for user registration, login, password update, and logout.
  */
 public class AuthenticationManager {
+
+  private final DatabaseManager databaseManager;
   private User authenticatedUser;
   private boolean admin;
   private boolean adminFirstLogin;
-  private final DatabaseManager databaseManager;
+
   /**
    * Constructs an AuthenticationManager
    */
@@ -28,8 +29,8 @@ public class AuthenticationManager {
   /**
    * Validates and processes a user registration request.
    *
-   * @param username The username for the new account.
-   * @param password The password for the new account.
+   * @param username          The username for the new account.
+   * @param password          The password for the new account.
    * @param confirmedPassword The confirmed password for verification.
    * @return An AuthenticationResponse indicating the result of the registration attempt.
    */
@@ -52,8 +53,9 @@ public class AuthenticationManager {
       return AuthenticationResponse.INVALID_PASSWORD;
     }
     UserDAO userDAO = databaseManager.getUserDAO();
-    if (userDAO.get(username) != null)
+    if (userDAO.get(username) != null) {
       return USERNAME_ALREADY_REGISTERED;
+    }
 
     String salt = EncryptionUtil.generateSalt();
     String hashedPassword = EncryptionUtil.hashPassword(password, salt);
@@ -93,7 +95,7 @@ public class AuthenticationManager {
   /**
    * Validates and processes a password update request.
    *
-   * @param username The username of the account to update.
+   * @param username    The username of the account to update.
    * @param oldPassword The current password of the account.
    * @param newPassword The new password to set.
    * @return An AuthenticationResponse indicating the result of the password update attempt.
@@ -150,16 +152,16 @@ public class AuthenticationManager {
     return authenticatedUser;
   }
 
+  public void setAuthenticatedUser(User authenticatedUser) {
+    this.authenticatedUser = authenticatedUser;
+  }
+
   public boolean isAuthenticated() {
     return authenticatedUser != null;
   }
 
   public String getAuthenticatedUsername() {
     return authenticatedUser == null ? null : authenticatedUser.getUsername();
-  }
-
-  public void setAuthenticatedUser(User authenticatedUser) {
-    this.authenticatedUser = authenticatedUser;
   }
 
   public boolean isAdmin() {

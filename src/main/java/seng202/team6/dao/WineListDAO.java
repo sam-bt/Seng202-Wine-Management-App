@@ -47,7 +47,7 @@ public class WineListDAO extends DAO {
    */
   @Override
   public String[] getInitialiseStatements() {
-    return new String[] {
+    return new String[]{
         "CREATE TABLE IF NOT EXISTS LIST_NAME (" +
             "ID             INTEGER       PRIMARY KEY," +
             "USERNAME       VARCHAR(32)   NOT NULL," +
@@ -93,14 +93,15 @@ public class WineListDAO extends DAO {
   /**
    * Creates a new wine list for the specified user with the given name.
    *
-   * @param user The user who owns the list.
+   * @param user     The user who owns the list.
    * @param listName The name of the new wine list.
    * @return The created WineList object, or null if creation failed.
    */
   public WineList create(User user, String listName) {
     Timer timer = new Timer();
     String sql = "INSERT INTO LIST_NAME VALUES (NULL, ?, ?)";
-    try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    try (PreparedStatement statement = connection.prepareStatement(sql,
+        Statement.RETURN_GENERATED_KEYS)) {
       statement.setString(1, user.getUsername());
       statement.setString(2, listName);
       statement.executeUpdate();
@@ -149,7 +150,7 @@ public class WineListDAO extends DAO {
    * Checks if a wine is part of a specific wine list.
    *
    * @param wineList The wine list to check
-   * @param wine The wine to check
+   * @param wine     The wine to check
    * @return true if the wine is in the list, false otherwise
    */
   public boolean isWineInList(WineList wineList, Wine wine) {
@@ -176,7 +177,7 @@ public class WineListDAO extends DAO {
    * Adds a wine to the specified wine list.
    *
    * @param wineList The wine list to add the wine to
-   * @param wine The wine to be added
+   * @param wine     The wine to be added
    */
   public void addWine(WineList wineList, Wine wine) {
     Timer timer = new Timer();
@@ -205,7 +206,7 @@ public class WineListDAO extends DAO {
    * Removes a wine from the specified wine list.
    *
    * @param wineList The wine list to remove the wine from.
-   * @param wine The wine to be removed.
+   * @param wine     The wine to be removed.
    */
   public void removeWine(WineList wineList, Wine wine) {
     Timer timer = new Timer();

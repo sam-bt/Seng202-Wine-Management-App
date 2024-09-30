@@ -15,7 +15,9 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 
 public class UserLogoutStepDefinitions {
+
   private AuthenticationManager authenticationManager;
+
   @Before
   public void setup() throws SQLException {
     authenticationManager = new AuthenticationManager(new DatabaseManager());

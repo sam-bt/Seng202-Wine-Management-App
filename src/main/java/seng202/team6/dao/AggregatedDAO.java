@@ -16,20 +16,21 @@ import seng202.team6.model.WineList;
 import seng202.team6.util.Timer;
 
 /**
- * Aggregated Data Access Object (DAO) is responsible for combining functionality from multiple
- * DAOs and handling operations that involve joining data from different tables. It avoids code
+ * Aggregated Data Access Object (DAO) is responsible for combining functionality from multiple DAOs
+ * and handling operations that involve joining data from different tables. It avoids code
  * repetition by using existing DAO methods to extract data
  */
 public class AggregatedDAO extends DAO {
+
   private final WineNotesDAO wineNotesDAO;
   private final WineDAO wineDAO;
 
   /**
    * Constructs a new DAO with the given database connection and initializes references to DAOs.
    *
-   * @param connection The database connection to be used by this DAO.
+   * @param connection   The database connection to be used by this DAO.
    * @param wineNotesDAO The DAO responsible for handling operations related to wine notes.
-   * @param wineDAO The DAO responsible for handling operations related to wines.
+   * @param wineDAO      The DAO responsible for handling operations related to wines.
    */
   public AggregatedDAO(Connection connection, WineNotesDAO wineNotesDAO, WineDAO wineDAO) {
     super(connection, AggregatedDAO.class);
@@ -38,12 +39,13 @@ public class AggregatedDAO extends DAO {
   }
 
   /**
-   * Retrieves all notes mapped to wines for a specific user. This method joins the NOTES
-   * table with the WINE table based on the wine ID and returns a map of Wine objects to
-   * their associated Note objects for the specified user.
+   * Retrieves all notes mapped to wines for a specific user. This method joins the NOTES table with
+   * the WINE table based on the wine ID and returns a map of Wine objects to their associated Note
+   * objects for the specified user.
    *
    * @param user The user for whom to retrieve the notes and wines.
-   * @return An ObservableMap where the key is a Wine object and the value is the associated Note object.
+   * @return An ObservableMap where the key is a Wine object and the value is the associated Note
+   * object.
    */
   public ObservableMap<Wine, Note> getAllNotesMappedWithWinesByUser(User user) {
     Timer timer = new Timer();

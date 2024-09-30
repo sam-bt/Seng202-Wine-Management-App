@@ -1,6 +1,5 @@
 package seng202.team6.service;
 
-import javafx.beans.property.SimpleStringProperty;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Note;
@@ -8,6 +7,7 @@ import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 
 public class WineNoteService {
+
   private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
   private final Wine wine;

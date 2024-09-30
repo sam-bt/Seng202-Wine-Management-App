@@ -5,12 +5,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Abstract base class for Data Access Objects (DAO).
- * This class provides a common structure for all DAOs in the application.
+ * Abstract base class for Data Access Objects (DAO). This class provides a common structure for all
+ * DAOs in the application.
  */
 public abstract class DAO {
+
   /**
-   *  The database connected used by this DAO
+   * The database connected used by this DAO
    */
   protected final Connection connection;
 
@@ -39,9 +40,11 @@ public abstract class DAO {
 
   /**
    * Returns an array of SQL statements required to initialize the tables handled by this DAO.
-   * Subclasses should override this method to provide their specific SQL initialization statements.
+   * Subclasses should override this method to provide their specific SQL initialization
+   * statements.
    *
-   * @return an array of SQL statements for table initialization, or null if no statements are needed.
+   * @return an array of SQL statements for table initialization, or null if no statements are
+   * needed.
    */
   public String[] getInitialiseStatements() {
     return null;

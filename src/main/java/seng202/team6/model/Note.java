@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class Note {
+
   private final LongProperty id;
   private final SimpleStringProperty username;
   private final LongProperty wineId;

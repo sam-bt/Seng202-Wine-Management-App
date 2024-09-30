@@ -18,6 +18,7 @@ import seng202.team6.model.User;
 import seng202.team6.util.EncryptionUtil;
 
 public class UserChangePasswordStepDefinitions {
+
   private DatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private String username;

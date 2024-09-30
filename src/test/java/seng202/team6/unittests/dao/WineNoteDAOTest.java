@@ -16,6 +16,7 @@ import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 
 public class WineNoteDAOTest {
+
   private DatabaseManager databaseManager;
   private WineNotesDAO wineNotesDAO;
   private WineDAO wineDAO;
@@ -83,7 +84,8 @@ public class WineNoteDAOTest {
     Note newNote = wineNotesDAO.get(user, wine);
     newNote.setNote("MyNewNote");
 
-    Note newUpdatedNote = wineNotesDAO.get(user, wine);;
+    Note newUpdatedNote = wineNotesDAO.get(user, wine);
+    ;
     assertEquals("MyNewNote", newUpdatedNote.getNote());
   }
 }

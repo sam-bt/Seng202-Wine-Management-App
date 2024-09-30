@@ -17,6 +17,7 @@ import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
 
 public class WineFilteringStepDefinitions {
+
   private DatabaseManager databaseManager;
   private Filters filters;
   private List<Wine> filteredWines;
@@ -38,7 +39,8 @@ public class WineFilteringStepDefinitions {
   }
 
   @And("the wine with title: {string}, country: {string}, region: {string}, colour: {string}, vintage: {int}, score: {int}, abv: {float}, price ${float}")
-  public void theWineWithTitleRegionVintageScorePrice$(String title, String country, String region, String colour, int vintage, int score, float abv, float price)
+  public void theWineWithTitleRegionVintageScorePrice$(String title, String country, String region,
+      String colour, int vintage, int score, float abv, float price)
       throws SQLException {
     Wine wine = new Wine(
         -1,
@@ -124,7 +126,8 @@ public class WineFilteringStepDefinitions {
 
 
   @Then("the list of wines is updated to show wines with vintage between {int} and {int}")
-  public void theListOfWinesIsUpdatedToShowWinesWithVintageBetweenAnd(int minVintage, int maxVintage) {
+  public void theListOfWinesIsUpdatedToShowWinesWithVintageBetweenAnd(int minVintage,
+      int maxVintage) {
     assertTrue(filteredWines.stream()
         .allMatch(wine -> wine.getVintage() >= minVintage && wine.getVintage() <= maxVintage));
   }
@@ -132,7 +135,8 @@ public class WineFilteringStepDefinitions {
   @Then("the list of wines is updated to show wines with score between {int} and {int}")
   public void theListOfWinesIsUpdatedToShowWinesWithScoreBetweenAnd(int minScore, int maxScore) {
     assertTrue(filteredWines.stream()
-        .allMatch(wine -> wine.getScorePercent() >= minScore && wine.getScorePercent() <= maxScore));
+        .allMatch(
+            wine -> wine.getScorePercent() >= minScore && wine.getScorePercent() <= maxScore));
   }
 
   @Then("the list of wines is updated to show wines with abv between {double} and {double}")
@@ -142,7 +146,8 @@ public class WineFilteringStepDefinitions {
   }
 
   @Then("the list of wines is updated to show wines with price between ${double} and ${double}")
-  public void theListOfWinesIsUpdatedToShowWinesWithPriceBetweenAnd(double minPrice, double maxPrice) {
+  public void theListOfWinesIsUpdatedToShowWinesWithPriceBetweenAnd(double minPrice,
+      double maxPrice) {
     assertTrue(filteredWines.stream()
         .allMatch(wine -> wine.getPrice() >= minPrice && wine.getPrice() <= maxPrice));
   }

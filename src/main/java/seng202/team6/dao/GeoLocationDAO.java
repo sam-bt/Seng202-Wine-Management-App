@@ -30,18 +30,18 @@ public class GeoLocationDAO extends DAO {
    */
   @Override
   public String[] getInitialiseStatements() {
-    return new String[] {
+    return new String[]{
         "CREATE TABLE IF NOT EXISTS GEOLOCATION (" +
             "NAME           VARCHAR(64)   PRIMARY KEY," +
             "LATITUDE       DECIMAL       NOT NULL," +
-            "LONGITUDE      DECIMAL       NOT NULL"  +
+            "LONGITUDE      DECIMAL       NOT NULL" +
             ")"
     };
   }
 
   /**
-   * Adds default geolocation data to the database from a CSV file, if the GEOLOCATION table
-   * is empty. The CSV file should contain geolocation data with name, latitude, and longitude.
+   * Adds default geolocation data to the database from a CSV file, if the GEOLOCATION table is
+   * empty. The CSV file should contain geolocation data with name, latitude, and longitude.
    */
   public void addDefaultGeoLocations() {
     Timer timer = new Timer();

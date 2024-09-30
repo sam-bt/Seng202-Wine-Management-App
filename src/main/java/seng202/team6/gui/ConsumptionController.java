@@ -25,20 +25,15 @@ import seng202.team6.model.WineList;
  */
 public class ConsumptionController extends Controller {
 
+  static final float STD_DRINK_ETHANOL_VOLUME = 12.7f;
   @FXML
   VBox wineHistoryList;
-
   @FXML
   ProgressBar winesInPastWeekBar;
-
   @FXML
   Label winesInPastWeekLabel;
-
   @FXML
   VBox rootBox;
-
-  static final float STD_DRINK_ETHANOL_VOLUME = 12.7f;
-
   /**
    * Chart for consumption.
    * <p>
@@ -51,6 +46,7 @@ public class ConsumptionController extends Controller {
 
   /**
    * Constructor
+   *
    * @param managerContext manager context
    */
   public ConsumptionController(ManagerContext managerContext) {

@@ -14,27 +14,21 @@ import seng202.team6.service.WineReviewValidator;
 import seng202.team6.service.WineReviewsService;
 
 public class WineReviewPopupController extends Controller {
-  @FXML
-  private Pane ratingPane;
-
-  @FXML
-  private Button submitButton;
-
-  @FXML
-  private Button deleteButton;
-
-  @FXML
-  private TitledPane createModifyReviewTitlePane;
-
-  @FXML
-  private TextArea descriptionTextArea;
-
-  @FXML
-  private HBox buttonsContainer;
-
-  private Rating ratingStars;
 
   private final WineReviewsService wineReviewsService;
+  @FXML
+  private Pane ratingPane;
+  @FXML
+  private Button submitButton;
+  @FXML
+  private Button deleteButton;
+  @FXML
+  private TitledPane createModifyReviewTitlePane;
+  @FXML
+  private TextArea descriptionTextArea;
+  @FXML
+  private HBox buttonsContainer;
+  private Rating ratingStars;
 
   public WineReviewPopupController(ManagerContext context, WineReviewsService wineReviewsService) {
     super(context);
@@ -54,7 +48,8 @@ public class WineReviewPopupController extends Controller {
     // limit the number of characters that can be in the description
     descriptionTextArea.textProperty().addListener(((observable, oldText, newText) -> {
       if (newText.length() > WineReviewValidator.MAX_DESCRIPTION_CHARACTERS) {
-        descriptionTextArea.setText(newText.substring(0, WineReviewValidator.MAX_DESCRIPTION_CHARACTERS));
+        descriptionTextArea.setText(
+            newText.substring(0, WineReviewValidator.MAX_DESCRIPTION_CHARACTERS));
       }
     }));
 

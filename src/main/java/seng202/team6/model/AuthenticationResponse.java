@@ -1,7 +1,6 @@
 /**
- * Enum representing various authentication responses in the system.
- * Each enum constant corresponds to a specific authentication scenario
- * and contains an associated message.
+ * Enum representing various authentication responses in the system. Each enum constant corresponds
+ * to a specific authentication scenario and contains an associated message.
  */
 package seng202.team6.model;
 
@@ -13,10 +12,12 @@ public enum AuthenticationResponse {
   MISMATCHING_CONFIRMED_PASSWORD("Passwords do not match."),
 
   /** Indicates that the provided username is invalid. */
-  INVALID_USERNAME("Invalid username, Please make sure that your name is between 3 and 15 characters long and only contains letters, numbers or underscores."),
+  INVALID_USERNAME(
+      "Invalid username, Please make sure that your name is between 3 and 15 characters long and only contains letters, numbers or underscores."),
 
   /** Indicates that the provided password is invalid. */
-  INVALID_PASSWORD("Password must be between 8 and 30 characters long. Password must contain a lowercase letter, an uppercase letter, a number and a special character."),
+  INVALID_PASSWORD(
+      "Password must be between 8 and 30 characters long. Password must contain a lowercase letter, an uppercase letter, a number and a special character."),
 
   /** Indicates that the given username is already registered. */
   USERNAME_ALREADY_REGISTERED("The given username is already registered to an account."),
@@ -51,7 +52,8 @@ public enum AuthenticationResponse {
   SAME_AS_USERNAME("Your password cannot be the same as your username"),
 
   /** Password constraints. */
-  PASSWORD_CONSTRAINTS("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\\-+={\\[\\]}])[A-Za-z0-9!@#$%^&*()\\-+={\\[\\]}]{8,30}$");
+  PASSWORD_CONSTRAINTS(
+      "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\\-+={\\[\\]}])[A-Za-z0-9!@#$%^&*()\\-+={\\[\\]}]{8,30}$");
 
   /** The message associated with the authentication response. */
   private final String message;

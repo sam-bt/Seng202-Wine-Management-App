@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import seng202.team6.managers.DatabaseManager;
 
 public class DatabaseManagerTest {
+
   private DatabaseManager databaseManager;
 
   @BeforeEach
