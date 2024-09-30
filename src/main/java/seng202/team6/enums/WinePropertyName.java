@@ -25,7 +25,6 @@ public enum WinePropertyName {
         put(alias.toLowerCase(), winePropertyName);
       }
     }
-    System.out.println(size());
   }};
   public static final ObservableList<WinePropertyName> VALUES = FXCollections.observableArrayList(values());
 
