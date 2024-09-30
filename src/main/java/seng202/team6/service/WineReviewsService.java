@@ -65,6 +65,7 @@ public class WineReviewsService {
       databaseManager.removeWineReview(wineReview);
       usersReview.setValue(null);
       wineReviews.remove(wineReview);
+      calculateAverageReview();
     }
   }
 
