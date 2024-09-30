@@ -24,7 +24,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 
 /**
- * List Screen Controller (MORE DETAIL HERE!)
+ * Controller to display the user defined lists of wines
  */
 public class ListScreenController extends Controller {
 
@@ -219,6 +219,10 @@ public class ListScreenController extends Controller {
     setupTableView(observableList);
   }
 
+  /**
+   * Sets up the table of wines
+   * @param wines list of wines
+   */
   @FXML
   public void setupTableView(ObservableList<Wine> wines) {
     tableView.getColumns().clear();
@@ -283,6 +287,10 @@ public class ListScreenController extends Controller {
     tableView.setItems(wines);
   }
 
+  /**
+   * Handler to warn on deletion of wine from a list
+   * @param wine wine
+   */
   public void onWineInListClick(Wine wine) {
     Alert alert = new Alert(AlertType.CONFIRMATION);
     alert.setTitle("Delete Wine from List");

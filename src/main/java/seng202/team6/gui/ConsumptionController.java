@@ -8,10 +8,8 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
-import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -50,6 +48,10 @@ public class ConsumptionController extends Controller {
   @FXML
   LineChart<String, Number> consumptionChart;
 
+  /**
+   * Constructor
+   * @param managerContext manager context
+   */
   public ConsumptionController(ManagerContext managerContext) {
     super(managerContext);
   }
