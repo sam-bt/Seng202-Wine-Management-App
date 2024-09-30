@@ -20,6 +20,10 @@ public class PageService {
    */
   private final IntegerProperty pageNumber = new SimpleIntegerProperty();
 
+  private IntegerProperty totalItems = new SimpleIntegerProperty();
+
+  private IntegerProperty maxPages = new SimpleIntegerProperty();
+
   /**
    * Constructer
    *
@@ -28,6 +32,9 @@ public class PageService {
   public PageService(int pageSize) {
     this.pageSize = pageSize;
     this.pageNumber.set(1);
+
+    // Ensures that pages are "infinite" if not set
+    this.maxPages.set(Integer.MAX_VALUE);
   }
 
   /**
@@ -58,7 +65,9 @@ public class PageService {
    * Increments the current page
    */
   public void nextPage() {
-    this.pageNumber.set(this.pageNumber.get() + 1);
+    if (this.pageNumber.get() + 1 <= this.maxPages.get()) {
+      this.pageNumber.set(this.pageNumber.get() + 1);
+    }
   }
 
   /**
@@ -71,6 +80,13 @@ public class PageService {
   }
 
   /**
+   * Updates the number of max pages based on number of items and items per page
+   */
+  private void updateMaxPages() {
+    this.maxPages.set(this.totalItems.get() / this.pageSize + 1);
+  }
+
+  /**
    * Returns the current page number
    *
    * @return current page number
@@ -79,11 +95,56 @@ public class PageService {
     return pageNumber.get();
   }
 
+  /**
+   * Sets the current page number
+   * <p>
+   *     Does nothing if the page number is greater than max pages or less than 0
+   * </p>
+   * @param pageNumber
+   */
   public void setPageNumber(int pageNumber) {
-    this.pageNumber.set(pageNumber);
+    if (pageNumber <= maxPages.get() && pageNumber > 0) {
+      this.pageNumber.set(pageNumber);
+    }
   }
 
+  /**
+   * Gets the page number property
+   * <p>
+   *     <b>DO NOT USE THIS TO SET VALUES!</b>
+   * </p>
+   * @return
+   */
   public IntegerProperty pageNumberProperty() {
     return pageNumber;
+  }
+
+  public int getPageSize() {
+    return pageSize;
+  }
+
+  public int getTotalItems() {
+    return totalItems.get();
+  }
+
+  public IntegerProperty totalItemsProperty() {
+    return totalItems;
+  }
+
+  public void setTotalItems(int totalItems) {
+    this.totalItems.set(totalItems);
+    this.updateMaxPages();
+  }
+
+  public int getMaxPages() {
+    return maxPages.get();
+  }
+
+  public IntegerProperty maxPagesProperty() {
+    return maxPages;
+  }
+
+  public void setMaxPages(int maxPages) {
+    this.maxPages.set(maxPages);
   }
 }

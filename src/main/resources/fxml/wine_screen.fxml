@@ -61,7 +61,6 @@
               <children>
                 <GridPane prefHeight="729.0" prefWidth="1229.0">
                   <children>
-
                     <TableView fx:id="tableView" prefHeight="696.0" prefWidth="1040.0" GridPane.rowIndex="1">
                       <columns>
                         <TableColumn minWidth="-1.0" prefWidth="-1.0" />

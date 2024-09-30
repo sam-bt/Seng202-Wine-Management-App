@@ -238,13 +238,13 @@ public class DatabaseManager implements AutoCloseable {
   public ObservableList<Wine> getWinesInRange(int begin, int end) {
     long milliseconds = System.currentTimeMillis();
     String query = "select * from WINE "
-        + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME)"
+        + "left join GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+        + "where WINE.ID > ? "
         + "order by WINE.ID "
-        + "limit ? "
-        + "offset ?;";
+        + "limit ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
-      statement.setInt(1, end - begin);
-      statement.setInt(2, begin);
+      statement.setInt(1, begin);
+      statement.setInt(2, end - begin);
 
       ObservableList<Wine> wines = resultSetToList(statement.executeQuery());
       LogManager.getLogger(getClass())
@@ -350,9 +350,9 @@ public class DatabaseManager implements AutoCloseable {
             + "and WINE.SCORE_PERCENT between ? and ? "
             + "and WINE.ABV between ? and ? "
             + "and WINE.PRICE between ? and ? "
+            + "and WINE.ID > ? " // Faster than offset
             + "order by WINE.ID "
-            + "limit ? "
-            + "offset ?;";
+            + "limit ?;";
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       int paramIndex = 1;
       statement.setString(paramIndex++,
@@ -371,8 +371,8 @@ public class DatabaseManager implements AutoCloseable {
       statement.setDouble(paramIndex++, filters.getMaxAbv());
       statement.setDouble(paramIndex++, filters.getMinPrice());
       statement.setDouble(paramIndex++, filters.getMaxPrice());
-      statement.setInt(paramIndex++, end - begin);
-      statement.setInt(paramIndex, begin);
+      statement.setInt(paramIndex++, begin);
+      statement.setInt(paramIndex, end - begin);
 
       ObservableList<Wine> wines = resultSetToList(statement.executeQuery());
       LogManager.getLogger(getClass()).info("Time to process getWinesInRange with filter: {}",

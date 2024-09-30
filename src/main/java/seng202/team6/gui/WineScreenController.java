@@ -315,7 +315,9 @@ public class WineScreenController extends Controller {
 
     // Set listener to pageService to change pages
     pageService.pageNumberProperty()
-        .addListener((observableValue, oldValue, newValue) -> setPage());
+        .addListener((observableValue, oldValue, newValue) -> openWineRange(this.currentFilters));
+
+    // Set another listener to page service for max pages?
 
     mapController = new LeafletOSMController(webView.getEngine());
     mapController.initMap();
@@ -445,12 +447,6 @@ public class WineScreenController extends Controller {
     pageNumberTextField.setText(this.pageService.pageNumberProperty().getValue().toString());
   }
 
-  /**
-   * Sets the data in the table to the current page specified by the page service
-   */
-  public void setPage() {
-    openWineRange(this.currentFilters);
-  }
 
   public void setFilterValues() {
     // Auto Complete boxes and range sliders
