@@ -2,6 +2,7 @@ package seng202.team6.gui;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -59,6 +60,7 @@ public class WineScreenController extends Controller {
   }};
   private final Logger log = LogManager.getLogger(WineScreenController.class);
   private final PageService pageService = new PageService(100); // ← Number of wines per page = 100
+  public Label maxPageNumber;
   @FXML
   TableView<Wine> tableView;
   @FXML
@@ -317,7 +319,11 @@ public class WineScreenController extends Controller {
     pageService.pageNumberProperty()
         .addListener((observableValue, oldValue, newValue) -> openWineRange(this.currentFilters));
 
-    // Set another listener to page service for max pages?
+    // Set up max pages
+    pageService.setTotalItems(managerContext.databaseManager.getWinesCount(null));
+    pageService.maxPagesProperty().addListener((observableValue, oldValue, newValue) -> {
+      maxPageNumber.setText("/" + newValue.toString());
+    });
 
     mapController = new LeafletOSMController(webView.getEngine());
     mapController.initMap();
@@ -386,6 +392,11 @@ public class WineScreenController extends Controller {
     );
     // Save current filters for pagination
     this.currentFilters = filters;
+
+    // update max pages
+    this.pageService.setTotalItems(managerContext.databaseManager.getWinesCount(filters));
+
+    // Update table with filtered wines
     openWineRange(filters);
   }
 
@@ -406,6 +417,9 @@ public class WineScreenController extends Controller {
 
     // Reset current filters
     this.currentFilters = null;
+
+    // Update pages
+    pageService.setTotalItems(managerContext.databaseManager.getWinesCount(null));
 
     // Update wines
     openWineRange(null);

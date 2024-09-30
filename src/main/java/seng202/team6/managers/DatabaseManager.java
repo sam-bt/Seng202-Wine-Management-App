@@ -256,6 +256,47 @@ public class DatabaseManager implements AutoCloseable {
   }
 
   /**
+   * Gets the count of items from the wines table with optional filters
+   * <p>
+   *     Set filters to null for no filters
+   * </p>
+   * @param filters
+   * @return
+   */
+  public Integer getWinesCount(Filters filters) {
+
+    // Construct statement
+    String statement;
+    if (filters != null) {
+      statement = "select count(*) "
+              + "from WINE "
+              + "where WINE.TITLE like ? "
+              + "and WINE.COUNTRY like ? "
+              + "and WINE.WINERY like ? "
+              + "and WINE.COLOR like ? "
+              + "and WINE.VINTAGE between ? and ?"
+              + "and WINE.SCORE_PERCENT between ? and ? "
+              + "and WINE.ABV between ? and ? "
+              + "and WINE.PRICE between ? and ? ;";
+    } else {
+      statement = "select count(*) from WINE;";
+    }
+
+    try (PreparedStatement prepStatement = connection.prepareStatement(statement);
+         ResultSet resultSet = prepStatement.executeQuery()) {
+      if (resultSet.next()) {
+        return resultSet.getInt(1);
+      }
+
+    } catch (SQLException e) {
+      LogManager.getLogger(getClass()).error("Unable to execute statement", e);
+    }
+
+    LogManager.getLogger(getClass()).info("No results found");
+    return null;
+  }
+
+  /**
    * Gets a subset of the wines in the database
    * <p>
    * The order of elements should remain stable until a write operation occurs.

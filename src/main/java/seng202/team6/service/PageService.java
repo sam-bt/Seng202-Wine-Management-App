@@ -20,9 +20,9 @@ public class PageService {
    */
   private final IntegerProperty pageNumber = new SimpleIntegerProperty();
 
-  private IntegerProperty totalItems = new SimpleIntegerProperty();
+  private final IntegerProperty totalItems = new SimpleIntegerProperty();
 
-  private IntegerProperty maxPages = new SimpleIntegerProperty();
+  private final IntegerProperty maxPages = new SimpleIntegerProperty();
 
   /**
    * Constructer

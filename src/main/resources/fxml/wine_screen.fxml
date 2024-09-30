@@ -79,6 +79,7 @@
                   <children>
                     <Button fx:id="prevPageButton" text="&lt;" stylesheets="@../css/global.css" styleClass="secondary-button"/>
                     <TextField fx:id="pageNumberTextField" alignment="CENTER" prefHeight="25.0" prefWidth="45.0" promptText="Page" text="1" />
+                    <Label fx:id="maxPageNumber" text="/maxPages"/>
                     <Button fx:id="nextPageButton" alignment="CENTER" text="&gt;" stylesheets="@../css/global.css" styleClass="secondary-button"/>
                   </children></HBox>
               </children>
