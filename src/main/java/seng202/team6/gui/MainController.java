@@ -3,10 +3,12 @@ package seng202.team6.gui;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -125,22 +127,28 @@ public class MainController extends Controller {
   }
 
   public void switchScene(String fxml, String title, Builder<?> builder) {
-    try {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
-      // provide a custom Controller with parameters
-      loader.setControllerFactory(param -> builder.build());
-      Parent parent = loader.load();
-      pageContent.getChildren().clear();
-      pageContent.getChildren().add(parent);
-      if (loader.getController() instanceof Controller controller) {
-        controller.init();
-      }
+    Parent parent = loadFXML(fxml, builder, pageContent);
+    if (parent != null) {
       managerContext.GUIManager.setWindowTitle(title);
-    } catch (IOException e) {
-      log.error("Failed to load screen {}", fxml, e);
     }
   }
 
+  private Parent loadFXML(String fxml, Builder<?> builder, Pane parentToAdd) {
+    try {
+      FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
+      loader.setControllerFactory(param -> builder.build());
+      Parent parent = loader.load();
+      parentToAdd.getChildren().clear();
+      parentToAdd.getChildren().add(parent);
+      if (loader.getController() instanceof Controller controller) {
+        controller.init();
+      }
+      return parent;
+    } catch (IOException e) {
+      log.error("Failed to load screen {}", fxml, e);
+    }
+    return null;
+  }
 
   public void openPopup(String fxml, Builder<?> builder) {
     try {
@@ -281,7 +289,6 @@ public class MainController extends Controller {
         () -> new ConsumptionController(managerContext));
   }
 
-
   public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer, WineReview selectedReview) {
     openPopup("/fxml/popup/view_review_popup.fxml",
         () -> new ReviewViewPopupController(managerContext, wineReviewsService, reviewer, selectedReview));
@@ -293,6 +300,11 @@ public class MainController extends Controller {
     popupContent.setVisible(false);
     popupContent.setDisable(true);
     popupContent.getChildren().clear();
+  }
+
+  public Parent loadImportWineScreen(Pane parent) {
+    return loadFXML("/fxml/wine_import_screen.fxml",
+        () -> new WineImportController(managerContext), parent);
   }
 
   public void setWholePageInteractable(boolean interactable) {
