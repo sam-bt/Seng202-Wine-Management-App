@@ -112,7 +112,7 @@ public class WineDAO extends DAO {
         + "and COUNTRY like ? "
         + "and WINERY like ? "
         + "and COLOR like ? "
-        + "and VINTAGE between ? and ?"
+        + "and VINTAGE between ? and ? "
         + "and SCORE_PERCENT between ? and ? "
         + "and ABV between ? and ? "
         + "and PRICE between ? and ? "
@@ -184,20 +184,28 @@ public class WineDAO extends DAO {
    */
   public ObservableList<Wine> getAllInRange(int begin, int end, Filters filters) {
     Timer timer = new Timer();
-    String sql = "SELECT * from WINE "
-        + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME)"
-        + (filters == null ? "" :
-        "where TITLE like ? "
-            + "and COUNTRY like ? "
-            + "and WINERY like ? "
-            + "and COLOR like ? "
-            + "and VINTAGE between ? and ?"
-            + "and SCORE_PERCENT between ? and ? "
-            + "and ABV between ? and ? "
-            + "and PRICE between ? and ? ")
-        + "ORDER BY WINE.ID "
-        + "LIMIT ? "
-        + "OFFSET ?";
+    String sql = "SELECT * from "
+        + (filters == null ? "WINE " : "( " // Subquery for filtering
+        + "SELECT * from WINE "
+        + "where TITLE like ? "
+        + "and COUNTRY like ? "
+        + "and WINERY like ? "
+        + "and COLOR like ? "
+        + "and VINTAGE between ? and ? "
+        + "and SCORE_PERCENT between ? and ? "
+        + "and ABV between ? and ? "
+        + "and PRICE between ? and ? "
+        + ") "
+        + "AS filteredResults ")
+        + (filters == null ? // table definition changes if subquery used or not
+        "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME) "
+            + "WHERE ID > ? "
+            + "ORDER BY WINE.ID " :
+        "LEFT JOIN GEOLOCATION ON LOWER(filteredResults.REGION) LIKE LOWER(GEOLOCATION.NAME) "
+            + "WHERE ID > ? "
+            + "ORDER BY filteredResults.ID ")
+        + "LIMIT ? ;";
+
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       int paramIndex = 1;
       if (filters != null) {
@@ -217,10 +225,13 @@ public class WineDAO extends DAO {
         statement.setDouble(paramIndex++, filters.getMaxAbv());
         statement.setDouble(paramIndex++, filters.getMinPrice());
         statement.setDouble(paramIndex++, filters.getMaxPrice());
+        statement.setInt(paramIndex++, begin);
 
+      } else {
+        statement.setInt(paramIndex++, begin);
       }
-      statement.setInt(paramIndex++, end - begin);
-      statement.setInt(paramIndex, begin);
+
+      statement.setInt(paramIndex, end - begin);
 
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<Wine> wines = extractAllWinesFromResultSet(resultSet);

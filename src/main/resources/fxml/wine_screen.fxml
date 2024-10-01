@@ -88,11 +88,11 @@
                   <children>
                     <Button styleClass="secondary-button" stylesheets="@../css/global.css" text="&lt;"
                       fx:id="prevPageButton"/>
-                    <Button alignment="CENTER" styleClass="secondary-button" stylesheets="@../css/global.css"
-                      text="&gt;" fx:id="nextPageButton"/>
-                    <Label text="/maxPages" fx:id="maxPageNumber"/>
                     <TextField alignment="CENTER" prefHeight="25.0" prefWidth="60.0"
                       promptText="Page" text="1" fx:id="pageNumberTextField"/>
+                    <Label text="/maxPages" fx:id="maxPageNumber"/>
+                    <Button alignment="CENTER" styleClass="secondary-button" stylesheets="@../css/global.css"
+                      text="&gt;" fx:id="nextPageButton"/>
                   </children>
                 </HBox>
               </children>

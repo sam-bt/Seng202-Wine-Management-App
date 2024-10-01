@@ -320,15 +320,29 @@ public class WineScreenController extends Controller {
     pageNumberTextField.setOnAction(actionEvent -> ensureValidPageNumber());
 
     // Set listener to pageService to change pages
+    // Disables the buttons upon hitting a limit
     pageService.pageNumberProperty()
-        .addListener((observableValue, oldValue, newValue) -> openWineRange(this.currentFilters));
+        .addListener((observableValue, oldValue, newValue) -> {
+          openWineRange(this.currentFilters);
+          this.nextPageButton.setDisable((int) newValue == pageService.getMaxPages());
+
+          this.prevPageButton.setDisable((int) newValue == 1);
+        });
 
     // Set up max pages
     pageService.setTotalItems(managerContext.databaseManager.getWineDAO().getCount());
     maxPageNumber.setText("/" + pageService.getMaxPages()); // Set initial value
     pageService.maxPagesProperty().addListener((observableValue, oldValue, newValue) -> {
+
+      // Change max pages label when max pages changes
       maxPageNumber.setText(
-          "/" + newValue.toString()); // Change max pages label when max pages changes
+          "/" + newValue.toString());
+
+      // ensure page number doesn't get "caught" outside range
+      if ((int) newValue < this.pageService.getPageNumber()) {
+        this.pageService.setPageNumber(this.pageService.getMaxPages());
+        this.pageNumberTextField.setText(this.pageService.getMaxPages() + "");
+      }
     });
 
     mapController = new LeafletOSMController(webView.getEngine());
