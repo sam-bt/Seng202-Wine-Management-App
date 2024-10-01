@@ -233,7 +233,7 @@ public class WineReviewDAO extends DAO {
    * @return The WineReview object extracted from the ResultSet
    * @throws SQLException if a database access error occurs
    */
-  private WineReview extractWineReviewFromResultSet(ResultSet resultSet) throws SQLException {
+  public WineReview extractWineReviewFromResultSet(ResultSet resultSet) throws SQLException {
     long id = resultSet.getLong("ID");
     WineReview cachedWineReview = wineReviewCache.tryGetObject(id);
     if (cachedWineReview != null) {

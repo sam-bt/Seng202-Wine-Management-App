@@ -166,6 +166,27 @@ public class WineDAO extends DAO {
     return FXCollections.emptyObservableList();
   }
 
+  public Wine get(long id) {
+    String sql = "SELECT * FROM WINE WHERE ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setLong(1, id);
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        if (resultSet.next()) {
+          Wine wine = extractWineFromResultSet(resultSet);
+          if (wine != null) {
+            log.info("Successfully retrieved wine with ID {}", id);
+            return wine;
+          }
+          log.info("Could not retrieve wine with ID {}", id);
+        }
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve wine with ID {}", id);
+    }
+    return null;
+  }
+
   /**
    * Replaces all wines in the WINE table by first removing all existing wines and then adding the
    * provided lists of wines.
