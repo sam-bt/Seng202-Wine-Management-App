@@ -23,8 +23,11 @@ import javafx.scene.layout.VBox;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.CircularScoreIndicator;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.Note;
+import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
+import seng202.team6.service.WineNoteService;
 import seng202.team6.service.WineReviewsService;
 import seng202.team6.util.DateFormatter;
 import seng202.team6.util.ImageReader;
@@ -34,6 +37,21 @@ import seng202.team6.util.ImageReader;
  */
 public class DetailedWineViewController extends Controller {
 
+  private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine.png");
+  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage("/img/white_wine.png");
+  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine.png");
+  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage("/img/default_wine.png");
+  private static final Map<String, Image> wineImages = new HashMap<>() {{
+    put("red", RED_WINE_IMAGE);
+    put("white", WHITE_WINE_IMAGE);
+    put("rose", ROSE_WINE_IMAGE);
+    put("rosé", ROSE_WINE_IMAGE);
+  }};
+  private final WineReviewsService wineReviewsService;
+  private final WineNoteService wineNoteService;
+  private final Wine viewedWine;
+  private final Runnable backButtonAction;
+  private final ObservableMap<WineReview, VBox> wineReviewWrappers = FXCollections.observableHashMap();
   @FXML
   private Button saveNotes;
   @FXML
@@ -75,33 +93,20 @@ public class DetailedWineViewController extends Controller {
   private Rating ratingStars;
   private CircularScoreIndicator scoreIndicator;
 
-  private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine.png");
-  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage("/img/white_wine.png");
-  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine.png");
-  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage("/img/default_wine.png");
-  private static final Map<String, Image> wineImages = new HashMap<>() {{
-    put("red", RED_WINE_IMAGE);
-    put("white", WHITE_WINE_IMAGE);
-    put("rose", ROSE_WINE_IMAGE);
-    put("rosé", ROSE_WINE_IMAGE);
-  }};
-  private final WineReviewsService wineReviewsService;
-  private final Wine viewedWine;
-  private final Runnable backButtonAction;
-  private final ObservableMap<WineReview, VBox> wineReviewWrappers = FXCollections.observableHashMap();
-
   /**
-   * Constructs a DetailedWineViewController wth the provided ManagerContext, Wine to view, and
-   * the back button action.
+   * Constructs a DetailedWineViewController wth the provided ManagerContext, Wine to view, and the
+   * back button action.
    *
-   * @param managerContext The manager context
-   * @param viewedWine The wine currently being viewed
+   * @param managerContext   The manager context
+   * @param viewedWine       The wine currently being viewed
    * @param backButtonAction A runnable that defines what happens when the back button is clicked.
    */
   public DetailedWineViewController(ManagerContext managerContext, Wine viewedWine,
       Runnable backButtonAction) {
     super(managerContext);
     this.wineReviewsService = new WineReviewsService(managerContext.authenticationManager,
+        managerContext.databaseManager, viewedWine);
+    this.wineNoteService = new WineNoteService(managerContext.authenticationManager,
         managerContext.databaseManager, viewedWine);
     this.viewedWine = viewedWine;
     this.backButtonAction = backButtonAction;
@@ -111,9 +116,9 @@ public class DetailedWineViewController extends Controller {
   }
 
   /**
-   * Initialises the wine view with data from the viewed wine object. It also sets up the ability
-   * to view, add, and modify wine reviews and notes, depending on the authentication state
-   * of the user.
+   * Initialises the wine view with data from the viewed wine object. It also sets up the ability to
+   * view, add, and modify wine reviews and notes, depending on the authentication state of the
+   * user.
    */
   @Override
   public void init() {
@@ -130,8 +135,15 @@ public class DetailedWineViewController extends Controller {
     descriptionArea.setText(getOrDefault(viewedWine.getDescription()));
     if (managerContext.authenticationManager.isAuthenticated()) {
       setNotesVisible(true);
-      notesTextbox.setText(managerContext.databaseManager.getNoteByUserAndWine(
-          managerContext.authenticationManager.getAuthenticatedUsername(), viewedWine.getKey()));
+      User user = managerContext.authenticationManager.getAuthenticatedUser();
+      Note note = wineNoteService.loadUsersNote(user);
+      notesTextbox.setText(note.getNote());
+
+      // disables the save not button if the note is not changed
+      saveNotes.setDisable(true);
+      notesTextbox.textProperty().addListener((observableValue, before, after) -> {
+        saveNotes.setDisable(after.equals(note.getNote()));
+      });
     } else {
       setNotesVisible(false);
     }
@@ -151,7 +163,6 @@ public class DetailedWineViewController extends Controller {
     scoreIndicator.setScore(viewedWine.getScorePercent());
     descriptionScoreNotesGridPane.add(scoreIndicator, 2, 1);
 
-
     if (!managerContext.authenticationManager.isAuthenticated()) {
       addReviewButton.setDisable(true);
       addReviewButton.setVisible(false);
@@ -165,35 +176,40 @@ public class DetailedWineViewController extends Controller {
 
   /**
    * Binds the wine review service to the UI. The bindings ensure changes to the reviews are
-   * reflected in the UI. The listeners will graphically display or remove reviews upon change
-   * in the wine reviews service list.
+   * reflected in the UI. The listeners will graphically display or remove reviews upon change in
+   * the wine reviews service list.
    */
   private void bindToWineReviewsService() {
     ObservableList<WineReview> wineReviews = wineReviewsService.getWineReviews();
     wineReviews.addListener((ListChangeListener<WineReview>) change -> {
       while (change.next()) {
-        if (change.wasAdded())
+        if (change.wasAdded()) {
           change.getAddedSubList().forEach(wineReview -> {
             VBox reviewWrapper = createWineReviewElement(wineReview);
             wineReviewWrappers.put(wineReview, reviewWrapper);
             reviewsBox.getChildren().add(reviewWrapper);
           });
-        if (change.wasRemoved())
+        }
+        if (change.wasRemoved()) {
           change.getRemoved().forEach(wineReview -> {
             VBox reviewWrapper = wineReviewWrappers.get(wineReview);
             reviewsBox.getChildren().remove(reviewWrapper);
             wineReviewWrappers.remove(wineReview);
           });
+        }
       }
     });
-    wineReviewsService.usersReviewProperty().addListener((observableValue, oldValue, usersReview) -> {
-      addReviewButton.setText((usersReview == null ? "Add" : "Modify") + " Review");
-    });
+    wineReviewsService.usersReviewProperty()
+        .addListener((observableValue, oldValue, usersReview) -> {
+          addReviewButton.setText((usersReview == null ? "Add" : "Modify") + " Review");
+        });
     ratingStars.ratingProperty().bind(wineReviewsService.averageRatingProperty());
     ratingStars.ratingProperty().addListener((observableValue, oldValue, newAverageRating) -> {
       if (wineReviewsService.hasReviews()) {
         int numberOfRatings = wineReviewsService.getWineReviews().size();
-        ratingsLabel.setText("Average %.2f From %d ratings".formatted(newAverageRating.doubleValue(), numberOfRatings));
+        ratingsLabel.setText(
+            "Average %.2f From %d ratings".formatted(newAverageRating.doubleValue(),
+                numberOfRatings));
       } else {
         ratingsLabel.setText("This wine has not been reviewed");
       }
@@ -225,8 +241,8 @@ public class DetailedWineViewController extends Controller {
   }
 
   /**
-   * Creates a new VBox layout element which represents a single wine. Attributes in the wine
-   * review are bind to the UI elements to ensure any changes are reflected in the UI.
+   * Creates a new VBox layout element which represents a single wine. Attributes in the wine review
+   * are bind to the UI elements to ensure any changes are reflected in the UI.
    *
    * @param wineReview The wine review object representing the review
    * @return A VBox containing the wine review UI
@@ -253,7 +269,8 @@ public class DetailedWineViewController extends Controller {
         "From " + wineReview.getUsername() + " on " + formattedDate);
     reviewCaptionLabel.textProperty().bind(Bindings.createStringBinding(
         () ->
-            "From " + wineReview.getUsername() + " on " + DateFormatter.DATE_FORMAT.format(wineReview.getDate()),
+            "From " + wineReview.getUsername() + " on " + DateFormatter.DATE_FORMAT.format(
+                wineReview.getDate()),
         wineReview.dateProperty()
     ));
     reviewCaptionLabel.setMaxWidth(wrapper.getMaxWidth());
@@ -270,8 +287,8 @@ public class DetailedWineViewController extends Controller {
   }
 
   /**
-   * Sets the visibility of note-related elements based on the visible parameter. Also changes
-   * the text of the label, assuming that notes are only hidden when the user is not signed in.
+   * Sets the visibility of note-related elements based on the visible parameter. Also changes the
+   * text of the label, assuming that notes are only hidden when the user is not signed in.
    *
    * @param visible true if the notes functionality is available, false otherwise.
    */
@@ -290,8 +307,11 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   public void onSaveClicked() {
-    managerContext.databaseManager.saveNote(viewedWine.getKey(),
-        managerContext.authenticationManager.getAuthenticatedUsername(), notesTextbox.getText());
+    Note note = wineNoteService.getNote();
+    // if the note is null the user is not authenticated
+    if (note != null) {
+      note.setNote(notesTextbox.getText());
+    }
   }
 
   /**

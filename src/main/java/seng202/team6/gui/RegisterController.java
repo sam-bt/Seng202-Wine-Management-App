@@ -1,8 +1,6 @@
 package seng202.team6.gui;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -63,10 +61,9 @@ public class RegisterController extends Controller {
     AuthenticationResponse response = managerContext.authenticationManager.validateRegistration(
         username, password, confirmPassword);
     if (response == AuthenticationResponse.REGISTER_SUCCESS) {
-      managerContext.databaseManager.createList(username, "Favourites");
       managerContext.authenticationManager.validateLogin(username, password);
-      managerContext.GUIManager.mainController.openWineScreen();
       managerContext.GUIManager.mainController.onLogin();
+      managerContext.GUIManager.mainController.openWineScreen();
     } else {
       registerMessageLabel.setStyle("-fx-text-fill: red");
       registerMessageLabel.setText(response.getMessage());

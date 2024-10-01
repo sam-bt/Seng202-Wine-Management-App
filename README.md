@@ -15,7 +15,6 @@ Wino is an application to help wine drinkers keep track of their wine.
 - Jake Miller
 - Angus McDougall
 
-
 ## Prerequisites
 
 - JDK >=
@@ -23,10 +22,11 @@ Wino is an application to help wine drinkers keep track of their wine.
 - Gradle [Download](https://gradle.org/releases/) and [Install](https://gradle.org/install/)
 
 ## Building
+
 - WINO can be run by running `./gradlew build`
 - Tests can be run by `./gradlew check`
 - The JAR can be built by `./gradlew jar`
-  - The built application can be found in build/libs
+    - The built application can be found in build/libs
 
 ## Importing Project (Using IntelliJ)
 

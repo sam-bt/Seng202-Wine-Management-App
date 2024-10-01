@@ -9,23 +9,38 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
-
-<AnchorPane fx:id="page" maxHeight="900.0" maxWidth="1400.0" minHeight="900.0" minWidth="1400.0" prefHeight="900.0" prefWidth="1400.0" styleClass="application-background" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.MainController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="900.0" maxWidth="1400.0" minHeight="900.0" minWidth="1400.0"
+  prefHeight="900.0" prefWidth="1400.0" styleClass="application-background"
+  stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/21.0.1"
+  fx:controller="seng202.team6.gui.MainController" fx:id="page">
   <children>
-    <AnchorPane maxWidth="1400.0" minWidth="1400.0" prefHeight="80.0" prefWidth="1400.0" styleClass="primary-background" stylesheets="@../css/global.css" />
-    <AnchorPane fx:id="pageContent" layoutX="15.0" layoutY="98.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" />
-    <GridPane gridLinesVisible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="75.0" prefWidth="1370.0">
+    <AnchorPane maxWidth="1400.0" minWidth="1400.0" prefHeight="80.0" prefWidth="1400.0"
+      styleClass="primary-background" stylesheets="@../css/global.css"/>
+    <AnchorPane layoutX="15.0" layoutY="98.0" maxWidth="1370.0" minHeight="780.0"
+      minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" fx:id="pageContent"/>
+    <AnchorPane disable="true" maxHeight="900.0" maxWidth="1400.0" minHeight="900.0"
+      minWidth="1400.0" prefHeight="900.0" prefWidth="1400.0" styleClass="anchor-pane"
+      stylesheets="@../css/popup_pane_action_blocker.css" visible="false" fx:id="popupActionBlocker"/>
+    <AnchorPane disable="true" layoutX="15.0" layoutY="98.0" maxWidth="1370.0" minHeight="780.0"
+      minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" visible="false" fx:id="popupContent"/>
+    <GridPane gridLinesVisible="false" maxHeight="1.7976931348623157E308"
+      maxWidth="1.7976931348623157E308" prefHeight="75.0" prefWidth="1370.0">
       <children>
-        <AnchorPane maxWidth="300.0" minWidth="233.0" prefHeight="75.0" prefWidth="160.0" GridPane.columnIndex="2">
+        <AnchorPane GridPane.columnIndex="2" maxWidth="300.0" minWidth="233.0" prefHeight="75.0"
+          prefWidth="160.0">
           <children>
-            <Button fx:id="loginButton" focusTraversable="false" layoutX="15.0" layoutY="9.0" minWidth="75.0" mnemonicParsing="false" onMouseClicked="#openLoginScreen" prefHeight="58.0" prefWidth="131.0" styleClass="secondary-button" text="Login">
+            <Button focusTraversable="false" layoutX="15.0" layoutY="9.0" minWidth="75.0"
+              mnemonicParsing="false" onMouseClicked="#openLoginScreen" prefHeight="58.0"
+              prefWidth="131.0" styleClass="secondary-button" text="Login" fx:id="loginButton">
               <font>
-                <Font name="System Bold" size="20.0" />
+                <Font name="System Bold" size="20.0"/>
               </font>
             </Button>
-            <Button fx:id="registerButton" focusTraversable="false" layoutX="154.0" layoutY="9.0" minWidth="75.0" mnemonicParsing="false" onMouseClicked="#openRegisterScreen" prefHeight="58.0" prefWidth="131.0" styleClass="secondary-button" text="Register">
+            <Button focusTraversable="false" layoutX="154.0" layoutY="9.0" minWidth="75.0"
+              mnemonicParsing="false" onMouseClicked="#openRegisterScreen" prefHeight="58.0"
+              prefWidth="131.0" styleClass="secondary-button" text="Register" fx:id="registerButton">
               <font>
-                <Font name="System Bold" size="20.0" />
+                <Font name="System Bold" size="20.0"/>
               </font>
             </Button>
           </children>
@@ -34,56 +49,75 @@
           <children>
             <ImageView fitHeight="68.0" fitWidth="238.0" layoutX="31.0" layoutY="4.0">
               <image>
-                <Image url="@../logo-white.png" />
+                <Image url="@../logo-white.png"/>
               </image>
             </ImageView>
           </children>
         </AnchorPane>
-        <HBox fx:id="navBarBox" alignment="CENTER" prefHeight="75.0" prefWidth="1467.0" GridPane.columnIndex="1">
+        <HBox GridPane.columnIndex="1" alignment="CENTER" prefHeight="75.0" prefWidth="1467.0"
+          fx:id="navBarBox">
           <children>
-            <Button fx:id="wineScreenButton" focusTraversable="false" mnemonicParsing="false" onAction="#openWineScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Wines">
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#openWineScreen"
+              prefHeight="75.0" prefWidth="150.0" styleClass="primary-button"
+              text="Wines" fx:id="wineScreenButton">
               <font>
-                <Font name="System Bold" size="20.0" />
+                <Font name="System Bold" size="20.0"/>
               </font>
             </Button>
-            <Button fx:id="listScreenButton" focusTraversable="false" mnemonicParsing="false" onAction="#openListScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="My Lists">
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#openListScreen"
+              prefHeight="75.0" prefWidth="150.0" styleClass="primary-button"
+              text="My Lists" fx:id="listScreenButton">
               <font>
-                <Font name="System Bold" size="20.0" />
+                <Font name="System Bold" size="20.0"/>
               </font>
             </Button>
-            <Button fx:id="socialScreenButton" focusTraversable="false" mnemonicParsing="false" onAction="#openSocialScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Social">
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#openSocialScreen"
+              prefHeight="75.0" prefWidth="150.0" styleClass="primary-button"
+              text="Social" fx:id="socialScreenButton">
               <font>
-                <Font name="System Bold" size="20.0" />
+                <Font name="System Bold" size="20.0"/>
               </font>
             </Button>
-                  <Button fx:id="consumptionScreenButton" focusTraversable="false" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openConsumptionScreen" prefHeight="75.0" prefWidth="175.0" styleClass="primary-button" text="Consumption" textOverrun="CLIP">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </Button>
-            <Button fx:id="noteScreenButton" focusTraversable="false" mnemonicParsing="false" onAction="#openNotesScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Notes">
+            <Button focusTraversable="false" minHeight="-Infinity"
+              minWidth="-Infinity" mnemonicParsing="false" onAction="#openConsumptionScreen"
+              prefHeight="75.0" prefWidth="175.0" styleClass="primary-button"
+              text="Consumption" textOverrun="CLIP" fx:id="consumptionScreenButton">
               <font>
-                <Font name="System Bold" size="20.0" />
+                <Font name="System Bold" size="20.0"/>
               </font>
             </Button>
-            <Button fx:id="adminScreenButton" focusTraversable="false" mnemonicParsing="false" onAction="#openAdminScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Admin">
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#openNotesScreen"
+              prefHeight="75.0" prefWidth="150.0" styleClass="primary-button"
+              text="Notes" fx:id="noteScreenButton">
               <font>
-                <Font name="System Bold" size="20.0" />
+                <Font name="System Bold" size="20.0"/>
+              </font>
+            </Button>
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#openDataSetsScreen"
+              prefHeight="75.0" prefWidth="150.0" styleClass="primary-button"
+              text="Datasets" fx:id="dataSetsScreenButton">
+              <font>
+                <Font name="System Bold" size="20.0"/>
+              </font>
+            </Button>
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#openAdminScreen"
+              prefHeight="75.0" prefWidth="150.0" styleClass="primary-button"
+              text="Admin" fx:id="adminScreenButton">
+              <font>
+                <Font name="System Bold" size="20.0"/>
               </font>
             </Button>
           </children>
         </HBox>
       </children>
       <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
-        <ColumnConstraints hgrow="ALWAYS" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" />
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="300.0" prefWidth="300.0"/>
+        <ColumnConstraints hgrow="ALWAYS" maxWidth="800.0" minWidth="800.0" prefWidth="800.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="300.0" prefWidth="300.0"/>
       </columnConstraints>
       <rowConstraints>
-        <RowConstraints maxHeight="75.0" minHeight="75.0" prefHeight="75.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="75.0" minHeight="75.0" prefHeight="75.0" vgrow="SOMETIMES"/>
       </rowConstraints>
     </GridPane>
-    <AnchorPane fx:id="popupActionBlocker" disable="true" maxHeight="900.0" maxWidth="1400.0" minHeight="900.0" minWidth="1400.0" prefHeight="900.0" prefWidth="1400.0" styleClass="anchor-pane" stylesheets="@../css/popup_pane_action_blocker.css" visible="false" />
-    <AnchorPane fx:id="popupContent" disable="true" layoutX="15.0" layoutY="98.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" visible="false" />
   </children>
 </AnchorPane>

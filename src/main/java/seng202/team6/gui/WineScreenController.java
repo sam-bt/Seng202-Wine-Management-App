@@ -1,12 +1,10 @@
 package seng202.team6.gui;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -48,45 +46,36 @@ import seng202.team6.util.YearStringConverter;
 
 public class WineScreenController extends Controller {
 
-  private final Logger log = LogManager.getLogger(WineScreenController.class);
   private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine_cropped.png");
-  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage("/img/white_wine_cropped.png");
+  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage(
+      "/img/white_wine_cropped.png");
   private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine_cropped.png");
-  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage("/img/default_wine_cropped.png");
+  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage(
+      "/img/default_wine_cropped.png");
   private static final Map<String, Image> wineImages = new HashMap<>() {{
     put("red", RED_WINE_IMAGE);
     put("white", WHITE_WINE_IMAGE);
     put("rose", ROSE_WINE_IMAGE);
     put("rosé", ROSE_WINE_IMAGE);
   }};
-
+  private final Logger log = LogManager.getLogger(WineScreenController.class);
   @FXML
   TableView<Wine> tableView;
-
-  @FXML
-  private TilePane winesViewContainer;
-
   @FXML
   AnchorPane filtersPane;
-
   @FXML
   WebView webView;
-
   @FXML
   Button applyFiltersButton;
-
   @FXML
   Button resetFiltersButton;
-
   AutoCompletionTextField countryTextField;
-
   AutoCompletionTextField wineryTextField;
-
   AutoCompletionTextField colorTextField;
-
   @FXML
   TextField titleTextField;
-
+  @FXML
+  private TilePane winesViewContainer;
   private RangeSlider scoreSlider;
 
   private RangeSlider abvSlider;
@@ -119,12 +108,8 @@ public class WineScreenController extends Controller {
     tableView.getItems().clear();
 
     // Check if filters exist
-    ObservableList<Wine> wines;
-    if (filters != null) {
-      wines = managerContext.databaseManager.getWinesInRange(begin, end, filters);
-    } else {
-      wines = managerContext.databaseManager.getWinesInRange(begin, end);
-    }
+    ObservableList<Wine> wines = managerContext.databaseManager.getWineDAO()
+        .getAllInRange(begin, end, filters);
 
     // send the wines to the map if they have a geo location
     mapController.setOnReadyAction(() -> {
@@ -278,7 +263,7 @@ public class WineScreenController extends Controller {
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       vintageColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
       //descriptionColumn.setCellFactory(
-          //wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
+      //wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       scoreColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
       abvColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
       priceColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
@@ -347,7 +332,6 @@ public class WineScreenController extends Controller {
     this.countryTextField = createAutoCompleteTextField(9.0, 105.0);
     this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
     this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
-
 
     // Create sliders
     this.vintageSlider = createSlider(11, 290, 0, 100, 10);

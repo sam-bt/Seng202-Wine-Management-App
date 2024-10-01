@@ -114,7 +114,6 @@ public class WineImportController extends Controller {
     currentFileRows.forEach(row -> {
       try {
         parsedWines.add(WineValidator.parseWine(
-            managerContext.databaseManager,
             extractPropertyFromRowOrDefault(valid, row, WinePropertyName.TITLE),
             extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VARIETY),
             extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COUNTRY),
@@ -133,18 +132,14 @@ public class WineImportController extends Controller {
       }
     });
     log.info("Successfully parsed {} out of {} wines", parsedWines.size(),
-        currentFileRows.size());
+      currentFileRows.size());
 
-      try {
-        if (replace) {
-          managerContext.databaseManager.replaceAllWines(parsedWines);
-        } else {
-          managerContext.databaseManager.addWines(parsedWines);
-        }
-        reset();
-      } catch (SQLException e) {
-        // when we merge with dao this will be handed by the dao
-      }
+    if (replace) {
+      managerContext.databaseManager.getWineDAO().replaceAll(parsedWines);
+    } else {
+      managerContext.databaseManager.getWineDAO().addAll(parsedWines);
+    }
+    reset();
   }
 
   private String extractPropertyFromRowOrDefault(Map<WinePropertyName, Integer> valid, String[] row,

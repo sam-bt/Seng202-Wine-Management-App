@@ -2,7 +2,6 @@ package seng202.team6.cucumber;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -13,8 +12,10 @@ import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.model.User;
 
 public class UserRegistrationStepDefinitions {
+
   private DatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private String username;
@@ -29,12 +30,12 @@ public class UserRegistrationStepDefinitions {
 
   @After
   public void close() {
-    databaseManager.close();
+    databaseManager.teardown();
   }
 
   @Given("the user is not authenticated and is registering")
   public void the_user_is_not_authenticated_and_is_registering() {
-    authenticationManager.setAuthenticatedUsername(null);
+    authenticationManager.setAuthenticatedUser(null);
   }
 
   @When("the user enters a valid username, password, and confirmed password")
@@ -49,7 +50,8 @@ public class UserRegistrationStepDefinitions {
     // Write code here that turns the phrase above into concrete actions
     String existingUsername = "MyAccount";
     String existingPassword = "ValidPassword1!";
-    databaseManager.addUser(existingUsername, existingPassword, existingPassword);
+    User user = new User(username, password, "user", "salt");
+    databaseManager.getUserDAO().add(user);
     username = existingUsername;
     password = "OtherValidPass1!";
     confirmedPassword = password;
@@ -82,7 +84,6 @@ public class UserRegistrationStepDefinitions {
     password = "ValidPassword1!";
     confirmedPassword = "notValidPassword1!";
   }
-
 
 
   @Then("a new account for the user is created")

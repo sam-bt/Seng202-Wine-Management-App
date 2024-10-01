@@ -1,4 +1,5 @@
 Feature: User Registration
+
   Scenario: Register a new user successfully (AT_2)
     Given the user is not authenticated and is registering
     When the user enters a valid username, password, and confirmed password

@@ -16,6 +16,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.User;
 import seng202.team6.model.WineDatePair;
 import seng202.team6.model.WineList;
 
@@ -24,20 +25,15 @@ import seng202.team6.model.WineList;
  */
 public class ConsumptionController extends Controller {
 
+  static final float STD_DRINK_ETHANOL_VOLUME = 12.7f;
   @FXML
   VBox wineHistoryList;
-
   @FXML
   ProgressBar winesInPastWeekBar;
-
   @FXML
   Label winesInPastWeekLabel;
-
   @FXML
   VBox rootBox;
-
-  static final float STD_DRINK_ETHANOL_VOLUME = 12.7f;
-
   /**
    * Chart for consumption.
    * <p>
@@ -50,6 +46,7 @@ public class ConsumptionController extends Controller {
 
   /**
    * Constructor
+   *
    * @param managerContext manager context
    */
   public ConsumptionController(ManagerContext managerContext) {
@@ -63,8 +60,9 @@ public class ConsumptionController extends Controller {
    * @return history list
    */
   private WineList getHistoryList() {
-    return managerContext.databaseManager.getUserLists(
-            managerContext.authenticationManager.getAuthenticatedUsername()).stream()
+    User user = managerContext.authenticationManager.getAuthenticatedUser();
+    return managerContext.databaseManager.getWineListDAO().getAll(user)
+        .stream()
         .filter(wineList -> Objects.equals(
             wineList.name(), "History")).findFirst().orElse(null);
   }
@@ -114,8 +112,8 @@ public class ConsumptionController extends Controller {
    * @return all wines consumed in the past week
    */
   private ObservableList<WineDatePair> getPastWeekConsumption() {
-    ObservableList<WineDatePair> wineHistory = managerContext.databaseManager.getWineDatesInList(
-        getHistoryList());
+    ObservableList<WineDatePair> wineHistory = managerContext.databaseManager.getAggregatedDAO()
+        .getWinesMappedWithDatesFromList(getHistoryList());
     wineHistory.sort(Comparator.comparing(WineDatePair::date));
     long oneWeek = 1000 * 60 * 60 * 24 * 7;
     Date weekAgo = new Date(System.currentTimeMillis() - oneWeek);
@@ -178,6 +176,7 @@ public class ConsumptionController extends Controller {
     ObservableList<WineDatePair> observableList = getPastWeekConsumption();
     updateHistoryList(observableList);
     updateTotalConsumptionBar(observableList);
-    updateConsumptionGraph(managerContext.databaseManager.getWineDatesInList(getHistoryList()));
+    updateConsumptionGraph(managerContext.databaseManager.getAggregatedDAO()
+        .getWinesMappedWithDatesFromList(getHistoryList()));
   }
 }

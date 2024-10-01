@@ -12,10 +12,9 @@ import javafx.scene.layout.Pane;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.AddToListPopupController;
+import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
-import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
@@ -27,6 +26,7 @@ import seng202.team6.service.WineReviewsService;
  */
 public class MainController extends Controller {
 
+  private final Logger log = LogManager.getLogger(getClass());
   @FXML
   private AnchorPane page;
 
@@ -38,7 +38,8 @@ public class MainController extends Controller {
 
   @FXML
   private Button listScreenButton;
-
+  @FXML
+  private Button dataSetsScreenButton;
   @FXML
   private Button adminScreenButton;
 
@@ -63,8 +64,6 @@ public class MainController extends Controller {
   @FXML
   private AnchorPane popupContent;
 
-  private final Logger log = LogManager.getLogger(getClass());
-
   private boolean disabled = false;
 
   /**
@@ -81,9 +80,11 @@ public class MainController extends Controller {
 
   public void initialize() {
     adminScreenButton.setVisible(false);
+    dataSetsScreenButton.setVisible(false);
     navBarBox.getChildren().remove(listScreenButton);
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
+    dataSetsScreenButton.setVisible(false);
     noteScreenButton.setVisible(false);
     consumptionScreenButton.setVisible(false);
 
@@ -93,6 +94,7 @@ public class MainController extends Controller {
   public void onLogin() {
     if (managerContext.authenticationManager.isAuthenticated()) {
       adminScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
+      dataSetsScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
       noteScreenButton.setVisible(true);
       loginButton.setText("Settings");
       registerButton.setText("Logout");
@@ -100,12 +102,14 @@ public class MainController extends Controller {
       navBarBox.getChildren().remove(listScreenButton);
       navBarBox.getChildren().add(1, listScreenButton);
       listScreenButton.setVisible(true);
+      dataSetsScreenButton.setVisible(true);
       consumptionScreenButton.setVisible(true);
 
       loginButton.setOnMouseClicked(event -> openSettingsScreen());
       registerButton.setOnMouseClicked(event -> logout());
     } else {
       adminScreenButton.setVisible(false);
+      dataSetsScreenButton.setVisible(false);
     }
   }
 
@@ -113,6 +117,7 @@ public class MainController extends Controller {
     disabled = status;
     wineScreenButton.setDisable(status);
     listScreenButton.setDisable(status);
+    dataSetsScreenButton.setDisable(status);
     adminScreenButton.setDisable(status);
     consumptionScreenButton.setVisible(status);
   }
@@ -141,6 +146,7 @@ public class MainController extends Controller {
     return null;
   }
 
+
   public void openPopup(String fxml, Builder<?> builder) {
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
@@ -168,6 +174,7 @@ public class MainController extends Controller {
     loginButton.setOnMouseClicked(event -> openLoginScreen());
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
     adminScreenButton.setVisible(false);
+    dataSetsScreenButton.setVisible(false);
     noteScreenButton.setVisible(false);
     consumptionScreenButton.setVisible(false);
 
@@ -270,9 +277,12 @@ public class MainController extends Controller {
         () -> new ConsumptionController(managerContext));
   }
 
-  public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer, WineReview selectedReview) {
+
+  public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer,
+      WineReview selectedReview) {
     openPopup("/fxml/popup/view_review_popup.fxml",
-        () -> new ReviewViewPopupController(managerContext, wineReviewsService, reviewer, selectedReview));
+        () -> new ReviewViewPopupController(managerContext, wineReviewsService, reviewer,
+            selectedReview));
   }
 
   public void closePopup() {
