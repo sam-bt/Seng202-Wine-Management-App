@@ -321,7 +321,7 @@ public class WineScreenController extends Controller {
 
     // Set up max pages
     pageService.setTotalItems(managerContext.databaseManager.getWinesCount(null));
-    maxPageNumber.setText(Integer.toString(pageService.getMaxPages())); // Set initial value
+    maxPageNumber.setText( "/" + pageService.getMaxPages()); // Set initial value
     pageService.maxPagesProperty().addListener((observableValue, oldValue, newValue) -> {
       maxPageNumber.setText("/" + newValue.toString()); // Change max pages label when max pages changes
     });
@@ -446,7 +446,12 @@ public class WineScreenController extends Controller {
 
     if (!isInteger(currentText)) {
       pageNumberTextField.setText(
-          String.valueOf(this.pageService.getPageNumber())); // Set back to current page
+              String.valueOf(this.pageService.getPageNumber())); // Set back to current page
+
+      // ensure valid range
+    }else if (Integer.parseInt(currentText) > pageService.getMaxPages() || Integer.parseInt(currentText) < 1) {
+      pageNumberTextField.setText(
+              String.valueOf(this.pageService.getPageNumber())); // Set back to current page
     } else {
       pageService.setPageNumber(Integer.parseInt(currentText)); // Change page if valid
     }
