@@ -3,10 +3,12 @@ package seng202.team6.gui;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,30 +29,39 @@ public class MainController extends Controller {
   private final Logger log = LogManager.getLogger(getClass());
   @FXML
   private AnchorPane page;
+
   @FXML
   private AnchorPane pageContent;
+
   @FXML
   private Button wineScreenButton;
+
   @FXML
   private Button listScreenButton;
   @FXML
-  private Button dataSetsScreenButton;
-  @FXML
   private Button adminScreenButton;
+
   @FXML
   private Button noteScreenButton;
+
   @FXML
   private Button consumptionScreenButton;
+
   @FXML
   private Button loginButton;
+
   @FXML
   private Button registerButton;
+
   @FXML
   private HBox navBarBox;
+
   @FXML
   private AnchorPane popupActionBlocker;
+
   @FXML
   private AnchorPane popupContent;
+
   private boolean disabled = false;
 
   /**
@@ -67,11 +78,9 @@ public class MainController extends Controller {
 
   public void initialize() {
     adminScreenButton.setVisible(false);
-    dataSetsScreenButton.setVisible(false);
     navBarBox.getChildren().remove(listScreenButton);
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
-    dataSetsScreenButton.setVisible(false);
     noteScreenButton.setVisible(false);
     consumptionScreenButton.setVisible(false);
 
@@ -81,7 +90,6 @@ public class MainController extends Controller {
   public void onLogin() {
     if (managerContext.authenticationManager.isAuthenticated()) {
       adminScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
-      dataSetsScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
       noteScreenButton.setVisible(true);
       loginButton.setText("Settings");
       registerButton.setText("Logout");
@@ -89,14 +97,12 @@ public class MainController extends Controller {
       navBarBox.getChildren().remove(listScreenButton);
       navBarBox.getChildren().add(1, listScreenButton);
       listScreenButton.setVisible(true);
-      dataSetsScreenButton.setVisible(true);
       consumptionScreenButton.setVisible(true);
 
       loginButton.setOnMouseClicked(event -> openSettingsScreen());
       registerButton.setOnMouseClicked(event -> logout());
     } else {
       adminScreenButton.setVisible(false);
-      dataSetsScreenButton.setVisible(false);
     }
   }
 
@@ -104,26 +110,32 @@ public class MainController extends Controller {
     disabled = status;
     wineScreenButton.setDisable(status);
     listScreenButton.setDisable(status);
-    dataSetsScreenButton.setDisable(status);
     adminScreenButton.setDisable(status);
     consumptionScreenButton.setVisible(status);
   }
 
   public void switchScene(String fxml, String title, Builder<?> builder) {
+    Parent parent = loadFXML(fxml, builder, pageContent);
+    if (parent != null) {
+      managerContext.GUIManager.setWindowTitle(title);
+    }
+  }
+
+  private Parent loadFXML(String fxml, Builder<?> builder, Pane parentToAdd) {
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
-      // provide a custom Controller with parameters
       loader.setControllerFactory(param -> builder.build());
       Parent parent = loader.load();
-      pageContent.getChildren().clear();
-      pageContent.getChildren().add(parent);
+      parentToAdd.getChildren().clear();
+      parentToAdd.getChildren().add(parent);
       if (loader.getController() instanceof Controller controller) {
         controller.init();
       }
-      managerContext.GUIManager.setWindowTitle(title);
+      return parent;
     } catch (IOException e) {
       log.error("Failed to load screen {}", fxml, e);
     }
+    return null;
   }
 
 
@@ -154,7 +166,6 @@ public class MainController extends Controller {
     loginButton.setOnMouseClicked(event -> openLoginScreen());
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
     adminScreenButton.setVisible(false);
-    dataSetsScreenButton.setVisible(false);
     noteScreenButton.setVisible(false);
     consumptionScreenButton.setVisible(false);
 
@@ -162,20 +173,12 @@ public class MainController extends Controller {
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
 
+
     openWineScreen();
   }
 
   public boolean isDisabled() {
     return disabled;
-  }
-
-  /**
-   * Launches the data set screen.
-   */
-  @FXML
-  public void openDataSetsScreen() {
-    switchScene("/fxml/dataset_import_screen.fxml", "Manage Datasets",
-        () -> new DatasetImportController(managerContext));
   }
 
   /**
@@ -259,7 +262,6 @@ public class MainController extends Controller {
     openPopup("/fxml/popup/add_to_list_popup.fxml",
         () -> new AddToListPopupController(managerContext, wine));
   }
-
   @FXML
   public void openConsumptionScreen() {
     switchScene("/fxml/consumption_screen.fxml", "Consumption",
@@ -280,6 +282,11 @@ public class MainController extends Controller {
     popupContent.setVisible(false);
     popupContent.setDisable(true);
     popupContent.getChildren().clear();
+  }
+
+  public Parent loadImportWineScreen(Pane parent) {
+    return loadFXML("/fxml/wine_import_screen.fxml",
+        () -> new WineImportController(managerContext), parent);
   }
 
   public void setWholePageInteractable(boolean interactable) {
