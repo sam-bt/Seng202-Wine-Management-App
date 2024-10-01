@@ -321,8 +321,9 @@ public class WineScreenController extends Controller {
 
     // Set up max pages
     pageService.setTotalItems(managerContext.databaseManager.getWinesCount(null));
+    maxPageNumber.setText(Integer.toString(pageService.getMaxPages())); // Set initial value
     pageService.maxPagesProperty().addListener((observableValue, oldValue, newValue) -> {
-      maxPageNumber.setText("/" + newValue.toString());
+      maxPageNumber.setText("/" + newValue.toString()); // Change max pages label when max pages changes
     });
 
     mapController = new LeafletOSMController(webView.getEngine());
