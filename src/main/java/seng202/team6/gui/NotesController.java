@@ -1,7 +1,11 @@
 package seng202.team6.gui;
 
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -10,10 +14,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import seng202.team6.dao.AggregatedDAO;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
+import seng202.team6.model.User;
+import seng202.team6.model.Wine;
 
 
 public class NotesController extends Controller {
@@ -22,7 +28,7 @@ public class NotesController extends Controller {
   private TextArea noteArea;
 
   @FXML
-  private TableView<Note> notesTable;
+  private TableView<Map.Entry<Wine, Note>> notesTable;
 
   @FXML
   private Label wineTitle;
@@ -33,12 +39,12 @@ public class NotesController extends Controller {
   @FXML
   private Button saveButton;
 
-  private Note note;
+  private Note openedNote;
+  private Wine noteWine;
 
   public NotesController(ManagerContext managerContext) {
     super(managerContext);
   }
-
 
   public void init() {
     populateTable();
@@ -51,8 +57,12 @@ public class NotesController extends Controller {
    * refresh the notes in the table.
    */
   private void populateTable() {
-    ObservableList<Note> noteList = managerContext.databaseManager.getNotesByUser(
-        managerContext.authenticationManager.getAuthenticatedUsername());
+    User user = managerContext.authenticationManager.getAuthenticatedUser();
+    AggregatedDAO aggregatedDAO = managerContext.databaseManager.getAggregatedDAO();
+    ObservableMap<Wine, Note> allNotesMappedWithWinesByUser = aggregatedDAO
+        .getAllNotesMappedWithWinesByUser(user);
+    ObservableList<Map.Entry<Wine, Note>> noteList = FXCollections.observableArrayList(
+        allNotesMappedWithWinesByUser.entrySet());
     setupColumns();
     notesTable.getItems().clear();
     notesTable.setItems(noteList);
@@ -65,13 +75,12 @@ public class NotesController extends Controller {
   private void setupColumns() {
     notesTable.getColumns().clear();
 
-    TableColumn<Note, String> titleColumn = new TableColumn<>("Wine");
-
-    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-    titleColumn.setMinWidth(500);
-    titleColumn.setResizable(false);
-
-    notesTable.getColumns().add(titleColumn);
+    TableColumn<Map.Entry<Wine, Note>, String> wineTitleColumn = new TableColumn<>("Wine");
+    wineTitleColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getKey().titleProperty());
+    wineTitleColumn.setMinWidth(500);
+    wineTitleColumn.setResizable(false);
+    notesTable.getColumns().add(wineTitleColumn);
   }
 
   /**
@@ -87,40 +96,37 @@ public class NotesController extends Controller {
 
   @FXML
   public void openNoteOnClick(MouseEvent event) {
-    if (event.getClickCount() == 2) {
-      note = notesTable.getSelectionModel().getSelectedItem();
-      if (note == null) {
-        return;
+    Entry<Wine, Note> selectedItem = notesTable.getSelectionModel().getSelectedItem();
+      if (selectedItem == null) {
+          return;
       }
-      wineTitle.setText(note.getWineTitle());
-      noteArea.setText(note.getNote());
-      saveButton.setDisable(false);
-      deleteButton.setDisable(false);
-    }
+
+    openedNote = selectedItem.getValue();
+    noteWine = selectedItem.getKey();
+    wineTitle.setText(noteWine.getTitle());
+    noteArea.setText(openedNote.getNote());
+    saveButton.setDisable(false);
+    deleteButton.setDisable(false);
   }
 
   @FXML
   public void onSaveClicked() {
-    managerContext.databaseManager.saveNote(note.getWineID(),
-        managerContext.authenticationManager.getAuthenticatedUsername(), noteArea.getText());
-    populateTable();
-
+    openedNote.setNote(noteArea.getText());
   }
 
   @FXML
   public void onDeleteClicked() {
     Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
     confirmation.setTitle("Confirm Deletion");
-    confirmation.setHeaderText("Deleting: " + note.getWineTitle());
+    confirmation.setHeaderText("Deleting: " + noteWine.getTitle());
     confirmation.setContentText("Are you sure you want to delete this note?");
 
     Optional<ButtonType> result = confirmation.showAndWait();
-    if (result.get() == ButtonType.OK) {
-      managerContext.databaseManager.deleteNote(note.getWineID(),
-          managerContext.authenticationManager.getAuthenticatedUsername());
+    if (result.isPresent() && result.get() == ButtonType.OK) {
+      // setting the note to empty will trigger the database to delete the note
+      openedNote.setNote("");
       populateTable();
       clearNotesPanel();
     }
-
   }
 }

@@ -12,6 +12,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class WineReview {
+
   private final ReadOnlyLongProperty id;
   private final ReadOnlyLongProperty wineId;
   private final StringProperty username;
@@ -94,12 +95,12 @@ public class WineReview {
     return description.get();
   }
 
-  public StringProperty descriptionProperty() {
-    return description;
-  }
-
   public void setDescription(String description) {
     this.description.setValue(description);
+  }
+
+  public StringProperty descriptionProperty() {
+    return description;
   }
 
   public Date getDate() {
@@ -110,5 +111,7 @@ public class WineReview {
     return date;
   }
 
-  public StringProperty getWineName() { return wineName; }
+  public StringProperty getWineName() {
+    return wineName;
+  }
 }

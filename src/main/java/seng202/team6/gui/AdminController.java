@@ -3,6 +3,8 @@ package seng202.team6.gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import seng202.team6.managers.ManagerContext;
 
 public class AdminController extends Controller {
@@ -19,6 +21,9 @@ public class AdminController extends Controller {
   @FXML
   Button deleteButton;
 
+  @FXML
+  private VBox importWinesScreenContainer;
+
   public AdminController(ManagerContext managerContext) {
     super(managerContext);
   }
@@ -26,6 +31,16 @@ public class AdminController extends Controller {
   public void initialize() {
     noButton.setVisible(false);
     yesButton.setVisible(false);
+
+    VBox parent = (VBox) managerContext.GUIManager.mainController.loadImportWineScreen(
+        importWinesScreenContainer);
+    VBox.setVgrow(parent, Priority.ALWAYS);
+    parent.minHeightProperty().bind(importWinesScreenContainer.minHeightProperty());
+    parent.maxHeightProperty().bind(importWinesScreenContainer.maxHeightProperty());
+    parent.prefHeightProperty().bind(importWinesScreenContainer.prefHeightProperty());
+    parent.minWidthProperty().bind(importWinesScreenContainer.minWidthProperty());
+    parent.maxWidthProperty().bind(importWinesScreenContainer.maxWidthProperty());
+    parent.prefWidthProperty().bind(importWinesScreenContainer.prefWidthProperty());
   }
 
   @FXML
@@ -38,7 +53,7 @@ public class AdminController extends Controller {
 
   @FXML
   private void onYes() {
-    managerContext.databaseManager.deleteAllUsers();
+    managerContext.databaseManager.getUserDAO().deleteAll();
     managerContext.GUIManager.mainController.openWineScreen();
   }
 
@@ -49,5 +64,4 @@ public class AdminController extends Controller {
     yesButton.setVisible(false);
     deleteButton.setText("Delete all Users");
   }
-
 }

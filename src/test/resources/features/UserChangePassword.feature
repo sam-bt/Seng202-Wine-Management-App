@@ -1,4 +1,5 @@
 Feature: User Changing Password
+
   Scenario: The user enters the correct old password and a valid new password (AT_8)
     Given the user is authenticated and changing their password
     When the user enters in the correct old password

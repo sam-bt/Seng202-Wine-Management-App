@@ -23,8 +23,11 @@ import javafx.scene.layout.VBox;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.CircularScoreIndicator;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.Note;
+import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
+import seng202.team6.service.WineNoteService;
 import seng202.team6.service.WineReviewsService;
 import seng202.team6.util.DateFormatter;
 import seng202.team6.util.ImageReader;
@@ -45,6 +48,7 @@ public class DetailedWineViewController extends Controller {
     put("rosé", ROSE_WINE_IMAGE);
   }};
   private final WineReviewsService wineReviewsService;
+  private final WineNoteService wineNoteService;
   private final Wine viewedWine;
   private final Runnable backButtonAction;
   private final ObservableMap<WineReview, VBox> wineReviewWrappers = FXCollections.observableHashMap();
@@ -86,8 +90,8 @@ public class DetailedWineViewController extends Controller {
   private Label loginToReviewLabel;
   @FXML
   private GridPane descriptionScoreNotesGridPane;
-  private final Rating ratingStars;
-  private final CircularScoreIndicator scoreIndicator;
+  private Rating ratingStars;
+  private CircularScoreIndicator scoreIndicator;
 
   /**
    * Constructs a DetailedWineViewController wth the provided ManagerContext, Wine to view, and the
@@ -101,6 +105,8 @@ public class DetailedWineViewController extends Controller {
       Runnable backButtonAction) {
     super(managerContext);
     this.wineReviewsService = new WineReviewsService(managerContext.authenticationManager,
+        managerContext.databaseManager, viewedWine);
+    this.wineNoteService = new WineNoteService(managerContext.authenticationManager,
         managerContext.databaseManager, viewedWine);
     this.viewedWine = viewedWine;
     this.backButtonAction = backButtonAction;
@@ -129,8 +135,15 @@ public class DetailedWineViewController extends Controller {
     descriptionArea.setText(getOrDefault(viewedWine.getDescription()));
     if (managerContext.authenticationManager.isAuthenticated()) {
       setNotesVisible(true);
-      notesTextbox.setText(managerContext.databaseManager.getNoteByUserAndWine(
-          managerContext.authenticationManager.getAuthenticatedUsername(), viewedWine.getKey()));
+      User user = managerContext.authenticationManager.getAuthenticatedUser();
+      Note note = wineNoteService.loadUsersNote(user);
+      notesTextbox.setText(note.getNote());
+
+      // disables the save not button if the note is not changed
+      saveNotes.setDisable(true);
+      notesTextbox.textProperty().addListener((observableValue, before, after) -> {
+        saveNotes.setDisable(after.equals(note.getNote()));
+      });
     } else {
       setNotesVisible(false);
     }
@@ -294,8 +307,11 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   public void onSaveClicked() {
-    managerContext.databaseManager.saveNote(viewedWine.getKey(),
-        managerContext.authenticationManager.getAuthenticatedUsername(), notesTextbox.getText());
+    Note note = wineNoteService.getNote();
+    // if the note is null the user is not authenticated
+    if (note != null) {
+      note.setNote(notesTextbox.getText());
+    }
   }
 
   /**

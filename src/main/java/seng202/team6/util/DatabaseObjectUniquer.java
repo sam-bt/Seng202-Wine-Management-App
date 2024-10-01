@@ -70,6 +70,15 @@ public class DatabaseObjectUniquer<T> {
   }
 
   /**
+   * Removes an object from the cache
+   *
+   * @param id id
+   */
+  public void removeObject(long id) {
+    objects.remove(id);
+  }
+
+  /**
    * Returns an upper bound for alive objects.
    *
    * @return number of objects in map

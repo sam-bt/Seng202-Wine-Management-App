@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0"
   minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
-  xmlns="http://javafx.com/javafx/21" fx:controller="seng202.team6.gui.SettingsController">
+  xmlns="http://javafx.com/javafx/21.0.1" fx:controller="seng202.team6.gui.SettingsController">
   <children>
     <Label alignment="CENTER" contentDisplay="CENTER" layoutX="457.0" layoutY="218.0"
       prefHeight="17.0" prefWidth="456.0" textFill="RED" fx:id="loginMessageLabel">
@@ -21,9 +21,9 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="236.0" prefWidth="454.0">
           <children>
-            <Button AnchorPane.bottomAnchor="90.0" layoutX="127.0" layoutY="174.0"
+            <Button AnchorPane.bottomAnchor="81.0" layoutX="106.0" layoutY="116.0"
               mnemonicParsing="false" onAction="#onUpdatePassword" prefHeight="35.0"
-              prefWidth="200.0" styleClass="secondary-button"
+              prefWidth="242.0" styleClass="secondary-button"
               stylesheets="@../css/global.css" text="Update your password">
               <font>
                 <Font name="System Bold" size="16.0"/>

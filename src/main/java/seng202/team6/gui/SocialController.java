@@ -12,10 +12,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.Rating;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
-import seng202.team6.service.WineReviewsService;
 
 public class SocialController extends Controller {
 
@@ -57,9 +55,10 @@ public class SocialController extends Controller {
 
     ObservableList<Wine> wines;
 
-    wines = managerContext.databaseManager.getWinesInRangeWithReviewInfo(begin, end);
+    // todo - find solution to this
+//    wines = managerContext.databaseManager.getWinesInRangeWithReviewInfo(begin, end);
     // Set fetched data to the table
-    wineTableView.setItems(wines);
+//    wineTableView.setItems(wines);
 
   }
 
@@ -75,7 +74,7 @@ public class SocialController extends Controller {
 
     ObservableList<WineReview> reviews;
 
-    reviews = managerContext.databaseManager.getReviewsInRange(begin, end);
+    reviews = managerContext.databaseManager.getWineReviewDAO().getAllInRange(begin, end);
 
     // Set fetched data to the table
     reviewTableView.setItems(reviews);
@@ -208,13 +207,11 @@ public class SocialController extends Controller {
       return;
     }
 
-    Wine selectedWine = managerContext.databaseManager.getWineWithReviewInfoById(
-        selectedReview.getWineID());
-    User reviewer = managerContext.databaseManager.getUser(selectedReview.getUsername());
-    WineReviewsService wineReviewsService = new WineReviewsService(
-        managerContext.authenticationManager, managerContext.databaseManager, selectedWine);
-    managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer,
-        selectedReview);
+    // todo - find solution to this
+//    Wine selectedWine = managerContext.databaseManager.getWineWithReviewInfoById(selectedReview.getWineID());
+//    User reviewer = managerContext.databaseManager.getUser(selectedReview.getUsername());
+//    WineReviewsService wineReviewsService = new WineReviewsService(managerContext.authenticationManager, managerContext.databaseManager, selectedWine);
+//    managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview);
   }
 
 }

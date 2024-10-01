@@ -33,7 +33,7 @@ public class AddToListPopupController extends Controller {
   public AddToListPopupController(ManagerContext context, Wine wine) {
     super(context);
     this.wine = wine;
-    this.wineListService = new WineListService(context.authenticationManager,
+    this.wineListService = new WineListService(managerContext.authenticationManager,
         context.databaseManager);
     bindToWineListService();
   }
@@ -50,12 +50,12 @@ public class AddToListPopupController extends Controller {
 
   private void onAddButtonClick(WineList wineList, Button button) {
     updateWineListButton(button, wineList, true);
-    managerContext.databaseManager.addWineToList(wineList, wine);
+    managerContext.databaseManager.getWineListDAO().addWine(wineList, wine);
   }
 
   private void onRemoveButtonClick(WineList wineList, Button button) {
     updateWineListButton(button, wineList, false);
-    managerContext.databaseManager.deleteWineFromList(wineList, wine);
+    managerContext.databaseManager.getWineListDAO().removeWine(wineList, wine);
   }
 
   private void bindToWineListService() {

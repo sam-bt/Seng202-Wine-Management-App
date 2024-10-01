@@ -1,14 +1,10 @@
 package seng202.team6.gui;
 
 import java.util.List;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -17,24 +13,22 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.StringConverter;
-import javafx.util.converter.DefaultStringConverter;
-import javafx.util.converter.FloatStringConverter;
-import javafx.util.converter.IntegerStringConverter;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
+import seng202.team6.service.WineListService;
 
 /**
- * List Screen Controller (MORE DETAIL HERE!)
+ * Controller to display the user defined lists of wines
  */
 public class ListScreenController extends Controller {
 
-
+  private final WineListService wineListService;
   @FXML
   public Button createListRequestButton;
-  @FXML
-  public Button backButton;
   @FXML
   public TabPane listScreenTabs;
   @FXML
@@ -46,14 +40,16 @@ public class ListScreenController extends Controller {
   @FXML
   public Label errorText;
   @FXML
-  public Button listOneButton, listTwoButton, listThreeButton, listFourButton, listFiveButton;
+  public VBox buttonList;
   @FXML
   public Button deleteListRequestButton;
   @FXML
   public TableView<Wine> tableView;
-
-  public List<WineList> wineLists;
-  private int selected = 1;
+  @FXML
+  private Tab tabDeleting;
+  @FXML
+  private Label deleteListLabel;
+  private int selected = 0;
 
   /**
    * Constructor
@@ -62,20 +58,61 @@ public class ListScreenController extends Controller {
    */
   public ListScreenController(ManagerContext managerContext) {
     super(managerContext);
+    this.wineListService = new WineListService(managerContext.authenticationManager,
+        managerContext.databaseManager);
   }
+
+  /**
+   * Updates all the buttons
+   *
+   * @param wineLists list of wine lists
+   */
+  public void updateButtons(List<WineList> wineLists) {
+    buttonList.getChildren().clear();
+    int i = 0;
+    for (WineList wineList : wineLists) {
+      Button button = new Button();
+      button.setText(wineList.name());
+      button.setMinSize(220, 70);
+      button.setPrefWidth(100000);
+      button.getStyleClass().add("primary-button");
+      button.setFont(new Font("System Bold", 18));
+      button.setDisable(false);
+      int iCopy = i++;
+      button.setOnAction(actionEvent -> {
+        selected = iCopy;
+        render();
+      });
+
+      buttonList.getChildren().add(button);
+    }
+
+    deleteListRequestButton.setDisable(!wineListService.canRemove(wineLists.get(selected)));
+
+    createListRequestButton.setDisable(false);
+  }
+
+  /**
+   * Refreshes all the buttons & UI state when there is an update
+   */
+  public void render() {
+
+    List<WineList> wineLists = wineListService.getWineLists();
+    selected = Math.min(selected, wineLists.size() - 1);
+    updateButtons(wineLists);
+    tabViewing.setText("VIEWING: " + wineLists.get(selected));
+    changeSelected();
+  }
+
 
   /**
    * Initializes the page making sure the tab for creating lists is hidden.
    */
   public void initialize() {
     listScreenTabs.getTabs().remove(tabCreating);
-    updateListOptions();
-    tabViewing.setText("VIEWING: " + wineLists.getFirst());
-    selected = 1;
-    changeSelected();
-    if (wineLists.size() == 1) {
-      deleteListRequestButton.setDisable(true);
-    }
+    wineListService.init();
+    selected = 0;
+    render();
   }
 
   /**
@@ -100,15 +137,7 @@ public class ListScreenController extends Controller {
   public void onBackButton(ActionEvent actionEvent) {
     listScreenTabs.getTabs().add(tabViewing);
     listScreenTabs.getTabs().remove(tabCreating);
-    createListRequestButton.setDisable(false);
-    deleteListRequestButton.setDisable(false);
-    if (wineLists.size() == 5) {
-      createListRequestButton.setDisable(true);
-    } else if (wineLists.size() == 1) {
-      deleteListRequestButton.setDisable(true);
-    }
-    listName.setText("");
-    errorText.setVisible(false);
+    render();
 
   }
 
@@ -120,6 +149,7 @@ public class ListScreenController extends Controller {
   @FXML
   public void onCreateListConfirmButton(ActionEvent actionEvent) {
     String name = listName.getText();
+    List<WineList> wineLists = wineListService.getWineLists();
     if (wineLists.stream().anyMatch(wineList -> wineList.name().equals(name))) {
       errorText.setText("List Already Exists");
       errorText.setVisible(true);
@@ -131,142 +161,53 @@ public class ListScreenController extends Controller {
       } else {
         errorText.setVisible(false);
 
-        String user = managerContext.authenticationManager.getAuthenticatedUsername();
-
-        managerContext.databaseManager.createList(user, name);
+        User user = managerContext.authenticationManager.getAuthenticatedUser();
+        wineListService.createWineList(user, name);
 
         listName.setText("");
-        updateListOptions();
-        deleteListRequestButton.setDisable(false);
+        selected = wineLists.size() - 1;
+        render();
         onBackButton(actionEvent);
-        selected = wineLists.size();
-        changeSelected();
       }
-
-
     }
   }
 
   /**
-   * deletes the selected list. Cannot delete the favourites list.
+   * Deletes the selected list. Cannot delete the favourites or history list.
    *
    * @param actionEvent triggers this function when on action.
    */
   public void onDeleteListRequestButton(ActionEvent actionEvent) {
-    if (selected != 1) {
-      WineList wineList = wineLists.get(selected - 1);
-      managerContext.databaseManager.deleteList(wineList);
-      updateListOptions();
-      selected -= 1;
-      changeSelected();
-      createListRequestButton.setDisable(false);
-      if (wineLists.size() == 1) {
-        deleteListRequestButton.setDisable(true);
-      }
+    WineList wineList = wineListService.getWineLists().get(selected);
+    if (!wineListService.canRemove(wineList)) {
+      return;
     }
-  }
 
-  /**
-   * updates the information displayed on the screen
-   **/
-
-  @FXML
-  public void updateListOptions() {
-    Button[] buttons = {listOneButton, listTwoButton, listThreeButton, listFourButton,
-        listFiveButton};
-    String user = managerContext.authenticationManager.getAuthenticatedUsername();
-    wineLists = managerContext.databaseManager.getUserLists(user);
-    for (int i = 0; i < buttons.length; i++) {
-      if (i < wineLists.size()) {
-        buttons[i].setText(wineLists.get(i).name());
-        buttons[i].setDisable(false);
-      } else {
-        buttons[i].setText("Empty List");
-        buttons[i].setDisable(true);
-      }
-    }
-  }
-
-  /**
-   * Selects List One.
-   *
-   * @param actionEvent triggers this function when on action.
-   */
-  public void onListOneButton(ActionEvent actionEvent) {
-    selected = 1;
-    changeSelected();
-  }
-
-  /**
-   * Selects List Two.
-   *
-   * @param actionEvent triggers this function when on action.
-   */
-  public void onListTwoButton(ActionEvent actionEvent) {
-    selected = 2;
-    changeSelected();
-
-  }
-
-  /**
-   * Selects List Three.
-   *
-   * @param actionEvent triggers this function when on action.
-   */
-  public void onListThreeButton(ActionEvent actionEvent) {
-    selected = 3;
-    changeSelected();
-
-  }
-
-  /**
-   * Selects List Four.
-   *
-   * @param actionEvent triggers this function when on action.
-   */
-  public void onListFourButton(ActionEvent actionEvent) {
-    selected = 4;
-    changeSelected();
-
-  }
-
-  /**
-   * Selects List Five;
-   *
-   * @param actionEvent triggers this function when on action.
-   */
-  public void onListFiveButton(ActionEvent actionEvent) {
-    selected = 5;
-    changeSelected();
-
+    wineListService.deleteWineList(wineList);
+    managerContext.databaseManager.getWineListDAO().delete(wineList);
+    render();
   }
 
   /**
    * Changes the selected list.
    */
-  @FXML
   public void changeSelected() {
-    tabViewing.setText("VIEWING: " + wineLists.get(selected - 1).name());
-    tableView.getItems().clear();
-
-    String user = managerContext.authenticationManager.getAuthenticatedUsername();
-    List<WineList> userLists = managerContext.databaseManager.getUserLists(user);
-    WineList fromUserLists = userLists.get(selected - 1);
-    List<Wine> list = managerContext.databaseManager.getWinesInList(fromUserLists);
-    ObservableList<Wine> observableList = FXCollections.observableList(list);
-    setupTableView();
-    tableView.setItems(observableList);
+    WineList selectedWineList = wineListService.getWineLists().get(selected);
+    ObservableList<Wine> observableList = managerContext.databaseManager.getAggregatedDAO()
+        .getWinesInList(selectedWineList);
+    setupTableView(observableList);
   }
 
+  /**
+   * Sets up the table of wines
+   *
+   * @param wines list of wines
+   */
   @FXML
-  public void setupTableView() {
+  public void setupTableView(ObservableList<Wine> wines) {
     tableView.getColumns().clear();
 
-    StringConverter<String> stringConverter = new DefaultStringConverter();
-    StringConverter<Integer> intConverter = new IntegerStringConverter();
-    StringConverter<Float> floatConverter = new FloatStringConverter();
-
-    tableView.setEditable(true);
+    tableView.setEditable(false);
 
     TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
 
@@ -320,17 +261,25 @@ public class ListScreenController extends Controller {
       });
       return tableRow;
     });
+
+    tableView.getItems().clear();
+    tableView.setItems(wines);
   }
 
+  /**
+   * Handler to warn on deletion of wine from a list
+   *
+   * @param wine wine
+   */
   public void onWineInListClick(Wine wine) {
-    Alert alert = new Alert(AlertType.CONFIRMATION);
-    alert.setTitle("Delete Wine from List");
-    alert.setHeaderText("Would you like to remove " + wine.getTitle() + " from this list?");
-    ButtonType buttonType = alert.showAndWait().orElse(null);
-    if (buttonType == ButtonType.OK) {
-      WineList selectedList = wineLists.get(selected - 1);
-      managerContext.databaseManager.deleteWineFromList(selectedList, wine);
-      tableView.getItems().remove(wine);
-    }
+//    Alert alert = new Alert(AlertType.CONFIRMATION);
+//    alert.setTitle("Delete Wine from List");
+//    alert.setHeaderText("Would you like to remove " + wine.getTitle() + " from this list?");
+//    ButtonType buttonType = alert.showAndWait().orElse(null);
+//    if (buttonType == ButtonType.OK) {
+//      WineList selectedList = getWineLists().get(selected);
+//      managerContext.databaseManager.deleteWineFromList(selectedList, wine);
+//      tableView.getItems().remove(wine);
+//    }
   }
 }

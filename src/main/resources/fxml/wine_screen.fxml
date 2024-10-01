@@ -5,9 +5,9 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -19,40 +19,45 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
-
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.WineScreenController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0"
+  minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
+  xmlns="http://javafx.com/javafx/21" fx:controller="seng202.team6.gui.WineScreenController">
   <children>
-    <TabPane layoutX="332.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
+    <TabPane layoutX="332.0" prefHeight="780.0" prefWidth="1040.0"
+      stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
       <tabs>
-            <Tab text="Wines">
-               <content>
-                  <VBox minHeight="720.0" prefHeight="720.0" prefWidth="1014.0">
-                     <children>
-                        <GridPane prefHeight="729.0" prefWidth="1229.0">
-                           <children>
-                              <HBox prefHeight="28.0" prefWidth="914.0" />
-                              <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="705.0" prefWidth="789.0" stylesheets="@../css/scroll_pane.css" GridPane.rowIndex="1">
-                                 <content>
-                                    <TilePane fx:id="winesViewContainer" hgap="10.0" prefColumns="3" prefHeight="200.0" prefWidth="200.0" vgap="10.0">
-                                       <padding>
-                                          <Insets left="10.0" right="10.0" />
-                                       </padding>
-                                    </TilePane>
-                                 </content>
-                              </ScrollPane>
-                           </children>
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                        </GridPane>
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
+        <Tab text="Wines">
+          <content>
+            <VBox minHeight="720.0" prefHeight="720.0" prefWidth="1014.0">
+              <children>
+                <GridPane prefHeight="729.0" prefWidth="1229.0">
+                  <children>
+                    <HBox prefHeight="28.0" prefWidth="914.0"/>
+                    <ScrollPane GridPane.rowIndex="1" fitToHeight="true" fitToWidth="true"
+                      hbarPolicy="NEVER" prefHeight="705.0" prefWidth="789.0"
+                      stylesheets="@../css/scroll_pane.css">
+                      <content>
+                        <TilePane hgap="10.0" prefColumns="3" prefHeight="200.0"
+                          prefWidth="200.0" vgap="10.0" fx:id="winesViewContainer">
+                          <padding>
+                            <Insets left="10.0" right="10.0"/>
+                          </padding>
+                        </TilePane>
+                      </content>
+                    </ScrollPane>
+                  </children>
+                  <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                  </rowConstraints>
+                </GridPane>
+              </children>
+            </VBox>
+          </content>
+        </Tab>
         <Tab text="Raw Data Viewer">
           <content>
           </content>
@@ -61,27 +66,23 @@
               <children>
                 <GridPane prefHeight="729.0" prefWidth="1229.0">
                   <children>
-                    <TableView fx:id="tableView" prefHeight="696.0" prefWidth="1040.0" GridPane.rowIndex="1">
+                    <HBox prefHeight="28.0" prefWidth="914.0">
+                    </HBox>
+                    <TableView GridPane.rowIndex="1" prefHeight="696.0" prefWidth="1040.0"
+                      fx:id="tableView">
                       <columns>
-                        <TableColumn minWidth="-1.0" prefWidth="-1.0" />
+                        <TableColumn minWidth="-1.0" prefWidth="-1.0"/>
                       </columns>
                     </TableView>
                   </children>
                   <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
                   </columnConstraints>
                   <rowConstraints>
-                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                   </rowConstraints>
                 </GridPane>
-                <HBox alignment="CENTER" prefHeight="28.0" prefWidth="914.0">
-                  <children>
-                    <Button fx:id="prevPageButton" text="&lt;" stylesheets="@../css/global.css" styleClass="secondary-button"/>
-                    <TextField fx:id="pageNumberTextField" alignment="CENTER" prefHeight="25.0" prefWidth="60.0" promptText="Page" text="1" />
-                    <Label fx:id="maxPageNumber" text="/maxPages"/>
-                    <Button fx:id="nextPageButton" alignment="CENTER" text="&gt;" stylesheets="@../css/global.css" styleClass="secondary-button"/>
-                  </children></HBox>
               </children>
             </VBox>
           </content>
@@ -90,73 +91,81 @@
           <content>
             <AnchorPane prefHeight="728.0" prefWidth="1039.0">
               <children>
-                <WebView fx:id="webView" minHeight="-1.0" minWidth="-1.0" prefHeight="728.0" prefWidth="1040.0" />
+                <WebView minHeight="-1.0" minWidth="-1.0" prefHeight="728.0" prefWidth="1040.0"
+                  fx:id="webView"/>
               </children>
             </AnchorPane>
           </content>
         </Tab>
       </tabs>
     </TabPane>
-    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Filters">
+    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0"
+      stylesheets="@../css/titled_pane.css" text="Filters">
       <content>
-        <AnchorPane fx:id="filtersPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="316.0" styleClass="filters-pane" stylesheets="@../css/titled_pane.css">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="316.0"
+          styleClass="filters-pane" stylesheets="@../css/titled_pane.css" fx:id="filtersPane">
           <children>
-            <Button fx:id="applyFiltersButton" layoutX="30.0" layoutY="679.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="120.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Apply">
+            <Button layoutX="30.0" layoutY="679.0" mnemonicParsing="false"
+              prefHeight="33.0" prefWidth="120.0" styleClass="secondary-button"
+              stylesheets="@../css/global.css" text="Apply" fx:id="applyFiltersButton">
               <font>
-                <Font name="System Bold" size="16.0" />
+                <Font name="System Bold" size="16.0"/>
               </font>
             </Button>
-            <Button fx:id="resetFiltersButton" layoutX="167.0" layoutY="679.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="120.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Reset">
+            <Button layoutX="167.0" layoutY="679.0" mnemonicParsing="false"
+              prefHeight="33.0" prefWidth="120.0" styleClass="secondary-button"
+              stylesheets="@../css/global.css" text="Reset" fx:id="resetFiltersButton">
               <font>
-                <Font name="System Bold" size="16.0" />
+                <Font name="System Bold" size="16.0"/>
               </font>
             </Button>
             <Label layoutX="9.0" layoutY="20.0" text="Title">
               <font>
-                <Font size="16.0" />
+                <Font size="16.0"/>
               </font>
             </Label>
             <Label layoutX="9.0" layoutY="80.0" text="Country">
               <font>
-                <Font size="16.0" />
+                <Font size="16.0"/>
               </font>
             </Label>
             <Label layoutX="11.0" layoutY="140.0" text="Winery">
               <font>
-                <Font size="16.0" />
+                <Font size="16.0"/>
               </font>
             </Label>
             <Label layoutX="11.0" layoutY="200.0" text="Color">
               <font>
-                <Font size="16.0" />
+                <Font size="16.0"/>
               </font>
             </Label>
             <Label layoutX="11.0" layoutY="265" text="Vintage">
               <font>
-                <Font size="16.0" />
+                <Font size="16.0"/>
               </font>
             </Label>
             <Label layoutX="11.0" layoutY="340.0" text="Score Range">
               <font>
-                <Font size="16.0" />
+                <Font size="16.0"/>
               </font>
             </Label>
             <Label layoutX="11.0" layoutY="420.0" text="Alcohol by Volume Range">
               <font>
-                <Font size="16.0" />
+                <Font size="16.0"/>
               </font>
             </Label>
             <Label layoutX="11.0" layoutY="500.0" text="Price Range">
               <font>
-                <Font size="16.0" />
+                <Font size="16.0"/>
               </font>
             </Label>
-            <TextField fx:id="titleTextField" layoutX="9.0" layoutY="45.0" prefHeight="33.0" prefWidth="300.0" />
+            <TextField layoutX="9.0" layoutY="45.0" prefHeight="33.0" prefWidth="300.0"
+              fx:id="titleTextField"/>
           </children>
         </AnchorPane>
       </content>
       <font>
-        <Font name="System Bold" size="24.0" />
+        <Font name="System Bold" size="24.0"/>
       </font>
     </TitledPane>
   </children>

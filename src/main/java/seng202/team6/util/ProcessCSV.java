@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ProcessCSV {
 
-  private static final Logger log = LogManager.getLogger(ProcessCSV.class);
+  private static Logger log = LogManager.getLogger(ProcessCSV.class);
 
   /**
    * Gets a CSV file as a list of rows

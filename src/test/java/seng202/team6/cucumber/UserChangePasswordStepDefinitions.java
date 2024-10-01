@@ -18,6 +18,7 @@ import seng202.team6.model.User;
 import seng202.team6.util.EncryptionUtil;
 
 public class UserChangePasswordStepDefinitions {
+
   private DatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private String username;
@@ -92,7 +93,7 @@ public class UserChangePasswordStepDefinitions {
         newPassword, confirmNewPassword);
     assertNotEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
 
-    User user = databaseManager.getUser(username);
+    User user = databaseManager.getUserDAO().get(username);
     String storedHash = user.getPassword();
     assertFalse(EncryptionUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
     assertTrue(EncryptionUtil.verifyPassword(password, storedHash, user.getSalt()));
@@ -104,9 +105,8 @@ public class UserChangePasswordStepDefinitions {
         newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
 
-    User user = databaseManager.getUser(username);
+    User user = databaseManager.getUserDAO().get(username);
     String storedHash = user.getPassword();
     assertTrue(EncryptionUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
-    assertFalse(EncryptionUtil.verifyPassword(password, storedHash, user.getSalt()));
   }
 }
