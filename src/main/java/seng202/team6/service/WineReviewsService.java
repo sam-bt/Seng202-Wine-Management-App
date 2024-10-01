@@ -14,7 +14,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 
 public class WineReviewsService {
-
+  public static final int MAX_DESCRIPTION_CHARACTERS = 255;
   private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
   private final ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
