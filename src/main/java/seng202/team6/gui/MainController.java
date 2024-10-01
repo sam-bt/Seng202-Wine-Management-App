@@ -39,8 +39,6 @@ public class MainController extends Controller {
   @FXML
   private Button listScreenButton;
   @FXML
-  private Button dataSetsScreenButton;
-  @FXML
   private Button adminScreenButton;
 
   @FXML
@@ -80,11 +78,9 @@ public class MainController extends Controller {
 
   public void initialize() {
     adminScreenButton.setVisible(false);
-    dataSetsScreenButton.setVisible(false);
     navBarBox.getChildren().remove(listScreenButton);
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
-    dataSetsScreenButton.setVisible(false);
     noteScreenButton.setVisible(false);
     consumptionScreenButton.setVisible(false);
 
@@ -94,7 +90,6 @@ public class MainController extends Controller {
   public void onLogin() {
     if (managerContext.authenticationManager.isAuthenticated()) {
       adminScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
-      dataSetsScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
       noteScreenButton.setVisible(true);
       loginButton.setText("Settings");
       registerButton.setText("Logout");
@@ -102,14 +97,12 @@ public class MainController extends Controller {
       navBarBox.getChildren().remove(listScreenButton);
       navBarBox.getChildren().add(1, listScreenButton);
       listScreenButton.setVisible(true);
-      dataSetsScreenButton.setVisible(true);
       consumptionScreenButton.setVisible(true);
 
       loginButton.setOnMouseClicked(event -> openSettingsScreen());
       registerButton.setOnMouseClicked(event -> logout());
     } else {
       adminScreenButton.setVisible(false);
-      dataSetsScreenButton.setVisible(false);
     }
   }
 
@@ -117,7 +110,6 @@ public class MainController extends Controller {
     disabled = status;
     wineScreenButton.setDisable(status);
     listScreenButton.setDisable(status);
-    dataSetsScreenButton.setDisable(status);
     adminScreenButton.setDisable(status);
     consumptionScreenButton.setVisible(status);
   }
@@ -174,7 +166,6 @@ public class MainController extends Controller {
     loginButton.setOnMouseClicked(event -> openLoginScreen());
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
     adminScreenButton.setVisible(false);
-    dataSetsScreenButton.setVisible(false);
     noteScreenButton.setVisible(false);
     consumptionScreenButton.setVisible(false);
 
