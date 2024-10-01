@@ -15,7 +15,7 @@
 
 <AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" styleClass="popup" stylesheets="@../../css/popup_pane_action_blocker.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.popup.WineReviewPopupController">
   <children>
-    <TitledPane fx:id="createModifyReviewTitlePane" animated="false" collapsible="false" layoutX="457.0" layoutY="198.0" maxWidth="456.0" minWidth="456.0" prefHeight="384.0" prefWidth="456.0" stylesheets="@../../css/titled_pane.css" text="Create /Modify Review">
+    <TitledPane fx:id="createModifyReviewTitlePane" animated="false" collapsible="false" layoutX="457.0" layoutY="198.0" maxHeight="1.7976931348623157E308" maxWidth="456.0" minWidth="456.0" prefHeight="384.0" prefWidth="456.0" stylesheets="@../../css/titled_pane.css" text="Create /Modify Review">
       <content>
         <GridPane prefWidth="454.0">
           <children>
@@ -58,7 +58,7 @@
               </font>
             </Label>
             <Pane fx:id="ratingPane" maxHeight="45.0" maxWidth="284.0" minHeight="45.0" minWidth="284.0" prefHeight="45.0" prefWidth="284.0" GridPane.rowIndex="1" />
-            <TextArea fx:id="descriptionTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.rowIndex="3" />
+            <TextArea fx:id="descriptionTextArea" prefHeight="200.0" prefWidth="428.0" wrapText="true" GridPane.rowIndex="3" />
                   <Label fx:id="characterCountLabel" alignment="TOP_RIGHT" prefHeight="17.0" text="0/0" textFill="#00000080" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
           </children>
           <columnConstraints>
@@ -68,7 +68,7 @@
             <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
             <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           </rowConstraints>
