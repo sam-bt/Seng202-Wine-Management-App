@@ -5,13 +5,11 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Control;
 import javafx.scene.control.SkinBase;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -130,7 +128,8 @@ public class CircularScoreIndicator extends Control {
       pane.getChildren().addAll(backgroundArc, arc, scoreTextWrapper);
       getChildren().add(pane);
 
-      control.scoreProperty().addListener((obs, oldVal, newVal) -> updateScore(newVal.doubleValue()));
+      control.scoreProperty()
+          .addListener((obs, oldVal, newVal) -> updateScore(newVal.doubleValue()));
       control.widthProperty().addListener((obs, oldVal, newVal) -> resize());
       control.heightProperty().addListener((obs, oldVal, newVal) -> resize());
 

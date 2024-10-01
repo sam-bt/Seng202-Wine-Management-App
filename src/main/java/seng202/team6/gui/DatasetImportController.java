@@ -163,7 +163,6 @@ public class DatasetImportController extends Controller {
       String[] tuple = selectedTable.get(row);
 
       wines.add(WineValidator.parseWine(
-          managerContext.databaseManager,
           title != -1 ? tuple[title] : "",
           variety != -1 ? tuple[variety] : "",
           country != -1 ? tuple[country] : "",
@@ -338,7 +337,7 @@ public class DatasetImportController extends Controller {
   public void appendCSVFile() {
     try {
       List<Wine> wines = getWinesFromTable();
-      managerContext.databaseManager.addWines(wines);
+      managerContext.databaseManager.getWineDAO().addAll(wines);
     } catch (Exception e) {
       LogManager.getLogger(getClass()).error("Expected wines to be valid", e);
     }
@@ -351,7 +350,7 @@ public class DatasetImportController extends Controller {
   public void replaceCSVFile() {
     try {
       List<Wine> wines = getWinesFromTable();
-      managerContext.databaseManager.replaceAllWines(wines);
+      managerContext.databaseManager.getWineDAO().replaceAll(wines);
     } catch (Exception e) {
       LogManager.getLogger(getClass()).error("Expected wines to be valid", e);
     }

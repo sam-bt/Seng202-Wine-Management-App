@@ -36,14 +36,14 @@ public class FXWrapper {
   public void init(Stage stage) {
     this.stage = stage;
     try {
-      DatabaseManager databaseManager = new DatabaseManager("database.db", true);
+      DatabaseManager databaseManager = new DatabaseManager("database", "database.db");
       this.managerContext = new ManagerContext(
           databaseManager,
           new GUIManager(this),
           new AuthenticationManager(databaseManager)
       );
 
-      stage.setOnCloseRequest((event) -> managerContext.databaseManager.close());
+      stage.setOnCloseRequest((event) -> managerContext.databaseManager.teardown());
     } catch (Exception exception) {
       // If we fail to initialize the managers we are kinda screwed
       throw new RuntimeException("Failed to instantiate manager context", exception);

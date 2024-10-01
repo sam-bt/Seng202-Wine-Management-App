@@ -12,11 +12,12 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test class for the EncryptionUtil class.
- * This class contains unit tests to verify the functionality of the encryption utilities,
- * including password hashing, salt generation, and password verification.
+ * Test class for the EncryptionUtil class. This class contains unit tests to verify the
+ * functionality of the encryption utilities, including password hashing, salt generation, and
+ * password verification.
  */
 public class EncryptionUtilTest {
+
   /**
    * Tests that the hashing algorithm exists and produces a non-null, non-empty result.
    */

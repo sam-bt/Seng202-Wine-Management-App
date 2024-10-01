@@ -5,8 +5,9 @@ import java.sql.Date;
 /**
  * Pair of a wine and date
  * <p>
- *   Used in wine lists to associate with date added
+ * Used in wine lists to associate with date added
  * </p>
+ *
  * @param wine wine
  * @param date date
  */

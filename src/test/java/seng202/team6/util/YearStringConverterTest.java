@@ -1,12 +1,13 @@
 package seng202.team6.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
- * Test class for the YearStringConverter.
- * This class contains unit tests to verify the functionality of the YearStringConverter
+ * Test class for the YearStringConverter. This class contains unit tests to verify the
+ * functionality of the YearStringConverter
  */
 public class YearStringConverterTest {
 

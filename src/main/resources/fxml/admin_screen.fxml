@@ -5,7 +5,8 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0"
+  minHeight="780.0"
   minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
   xmlns="http://javafx.com/javafx/21" fx:controller="seng202.team6.gui.AdminController">
   <children>
@@ -28,7 +29,8 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="236.0" prefWidth="454.0">
           <children>
-            <Button AnchorPane.bottomAnchor="90.0" layoutX="127.0" layoutY="174.0" mnemonicParsing="false"
+            <Button AnchorPane.bottomAnchor="90.0" layoutX="127.0" layoutY="174.0"
+              mnemonicParsing="false"
               onAction="#onDeleteMembers" prefHeight="35.0" prefWidth="200.0"
               styleClass="secondary-button" stylesheets="@../css/global.css" text="Delete all Users"
               fx:id="deleteButton">
@@ -37,14 +39,16 @@
               </font>
             </Button>
             <Button layoutX="127.0" layoutY="137.0" mnemonicParsing="false" onAction="#onYes"
-              prefHeight="35.0" prefWidth="97.0" styleClass="secondary-button" stylesheets="@../css/global.css"
+              prefHeight="35.0" prefWidth="97.0" styleClass="secondary-button"
+              stylesheets="@../css/global.css"
               text="Yes" fx:id="yesButton">
               <font>
                 <Font name="System Bold" size="16.0"/>
               </font>
             </Button>
             <Button layoutX="230.0" layoutY="137.0" mnemonicParsing="false" onAction="#onNo"
-              prefHeight="35.0" prefWidth="97.0" styleClass="secondary-button" stylesheets="@../css/global.css"
+              prefHeight="35.0" prefWidth="97.0" styleClass="secondary-button"
+              stylesheets="@../css/global.css"
               text="No" fx:id="noButton">
               <font>
                 <Font name="System Bold" size="16.0"/>

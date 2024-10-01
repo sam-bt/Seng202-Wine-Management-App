@@ -1,4 +1,5 @@
 Feature: Wine Filtering
+
   Background:
     Given the wine with title: "Seasonal Collection Syrah", country: "New Zealand", region: "Hawke's Bay", colour: "Red", vintage: 2021, score: 93, abv: 14, price $30.00
     And the wine with title: "Seasonal Collection Lagrein", country: "New Zealand", region: "Hawke's Bay", colour: "Red", vintage: 2021, score: 91, abv: 13, price $25.00

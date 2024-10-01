@@ -12,61 +12,71 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="780.0" prefWidth="1370.0" styleClass="application-background" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.NotesController">
-   <center>
-      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <children>
-            <TableView fx:id="notesTable" prefHeight="200.0" prefWidth="500.0">
-              <columns>
-                <TableColumn prefWidth="500.0" text="C1" />
-              </columns>
-               <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </HBox.margin>
-            </TableView>
-            <VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="200.0" prefWidth="840.0">
-               <children>
-                  <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <Label fx:id="wineTitle" text="No note selected" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
-                           <font>
-                              <Font size="35.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </AnchorPane>
-                  <TextArea fx:id="noteArea" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="830.0" styleClass="notes-area" wrapText="true" />
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                     <children>
-                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDeleteClicked" styleClass="primary-button" text="Delete Note" AnchorPane.rightAnchor="130.0" AnchorPane.topAnchor="10.0">
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </Button>
-                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#onSaveClicked" styleClass="primary-button" text="Save Note" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </Button>
-                     </children>
-                  </AnchorPane>
-               </children>
-               <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" top="10.0" />
-               </HBox.margin>
-            </VBox>
-         </children>
-      </HBox>
-   </center>
-   <stylesheets>
-      <URL value="@../css/detailed_view.css" />
-      <URL value="@../css/global.css" />
-   </stylesheets>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+  minWidth="-Infinity" prefHeight="780.0" prefWidth="1370.0"
+  styleClass="application-background" xmlns="http://javafx.com/javafx/21.0.1"
+  fx:controller="seng202.team6.gui.NotesController">
+  <center>
+    <HBox BorderPane.alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+      <children>
+        <TableView prefHeight="200.0" prefWidth="500.0" fx:id="notesTable">
+          <HBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+          </HBox.margin>
+          <columns>
+            <TableColumn prefWidth="500.0" text="C1"/>
+          </columns>
+        </TableView>
+        <VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="200.0" prefWidth="840.0">
+          <HBox.margin>
+            <Insets bottom="10.0" left="10.0" top="10.0"/>
+          </HBox.margin>
+          <children>
+            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+              minWidth="-Infinity" prefHeight="100.0" prefWidth="200.0">
+              <children>
+                <Label AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" text="No note selected"
+                  fx:id="wineTitle">
+                  <font>
+                    <Font size="35.0"/>
+                  </font>
+                </Label>
+              </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+              <children>
+                <Button AnchorPane.rightAnchor="130.0" AnchorPane.topAnchor="10.0" mnemonicParsing="false"
+                  onAction="#onDeleteClicked" styleClass="primary-button" text="Delete Note"
+                  fx:id="deleteButton">
+                  <font>
+                    <Font size="15.0"/>
+                  </font>
+                  <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </padding>
+                </Button>
+                <Button AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" mnemonicParsing="false"
+                  onAction="#onSaveClicked" styleClass="primary-button" text="Save Note"
+                  fx:id="saveButton">
+                  <font>
+                    <Font size="15.0"/>
+                  </font>
+                  <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </padding>
+                </Button>
+              </children>
+            </AnchorPane>
+            <TextArea maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+              minWidth="-Infinity" prefHeight="600.0" prefWidth="830.0" styleClass="notes-area"
+              wrapText="true" fx:id="noteArea"/>
+          </children>
+        </VBox>
+      </children>
+    </HBox>
+  </center>
+  <stylesheets>
+    <URL value="@../css/detailed_view.css"/>
+    <URL value="@../css/global.css"/>
+  </stylesheets>
 </BorderPane>

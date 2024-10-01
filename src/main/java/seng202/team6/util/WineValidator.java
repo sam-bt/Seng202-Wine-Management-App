@@ -1,7 +1,6 @@
 package seng202.team6.util;
 
 import java.util.Objects;
-import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
 import seng202.team6.util.Exceptions.ValidationException;
@@ -49,7 +48,6 @@ public class WineValidator {
    * @return wine
    */
   public static Wine parseWine(
-      DatabaseManager databaseManager,
       String title,
       String variety,
       String country,
@@ -67,7 +65,6 @@ public class WineValidator {
 
       return new Wine(
           -1,
-          databaseManager,
           title,
           variety,
           country,
