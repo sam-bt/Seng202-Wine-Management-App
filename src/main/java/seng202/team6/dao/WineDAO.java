@@ -5,9 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.logging.log4j.LogManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Filters;
 import seng202.team6.model.GeoLocation;
@@ -24,6 +27,21 @@ public class WineDAO extends DAO {
    * Cache to store and reuse Wine objects to avoid duplication
    */
   private final DatabaseObjectUniquer<Wine> wineCache = new DatabaseObjectUniquer<>();
+
+  // Uniques
+  private final Set<String> uniqueCountries = new HashSet<>();
+  private final Set<String> uniqueWineries = new HashSet<>();
+  private final Set<String> uniqueColors = new HashSet<>();
+
+  // Mins and Maxes
+  private int minVintage;
+  private int maxVintage;
+  private int minScore;
+  private int maxScore;
+  private float minAbv;
+  private float maxAbv;
+  private float minPrice;
+  private float maxPrice;
 
   /**
    * Constructs a new WineDAO with the given database connection.
@@ -79,6 +97,56 @@ public class WineDAO extends DAO {
       log.error("Failed to count the number of wines", error);
     }
     return 0;
+  }
+
+  /**
+   * Retrieves total number of wines after applying filters
+   *
+   * @param filters filters to apply to wines before counting
+   * @return number of wines after filtering
+   */
+  public int getCount(Filters filters) {
+    Timer timer = new Timer();
+    String sql = "SELECT count(*) from WINE "
+        + "where TITLE like ? "
+        + "and COUNTRY like ? "
+        + "and WINERY like ? "
+        + "and COLOR like ? "
+        + "and VINTAGE between ? and ?"
+        + "and SCORE_PERCENT between ? and ? "
+        + "and ABV between ? and ? "
+        + "and PRICE between ? and ? "
+        + "ORDER BY WINE.ID ;";
+
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      int paramIndex = 1;
+      statement.setString(paramIndex++,
+          filters.getTitle().isEmpty() ? "%" : "%" + filters.getTitle() + "%");
+      statement.setString(paramIndex++,
+          filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry() + "%");
+      statement.setString(paramIndex++,
+          filters.getWinery().isEmpty() ? "%" : "%" + filters.getWinery() + "%");
+      statement.setString(paramIndex++,
+          filters.getColor().isEmpty() ? "%" : "%" + filters.getColor() + "%");
+      statement.setInt(paramIndex++, filters.getMinVintage());
+      statement.setInt(paramIndex++, filters.getMaxVintage());
+      statement.setDouble(paramIndex++, filters.getMinScore());
+      statement.setDouble(paramIndex++, filters.getMaxScore());
+      statement.setDouble(paramIndex++, filters.getMinAbv());
+      statement.setDouble(paramIndex++, filters.getMaxAbv());
+      statement.setDouble(paramIndex++, filters.getMinPrice());
+      statement.setDouble(paramIndex++, filters.getMaxPrice());
+
+      ResultSet resultSet = statement.executeQuery();
+      return resultSet.getInt(1);
+
+    } catch (SQLException e) {
+      LogManager.getLogger(this.getClass().getName())
+          .error("Unable to execute filtered count query", e);
+    }
+
+    LogManager.getLogger(this.getClass().getName()).info("No wines found");
+    return -1; // <- Error occurred
   }
 
   /**
@@ -461,5 +529,191 @@ public class WineDAO extends DAO {
       log.error("Failed to update attribute '{}' for wine with ID {} in {}ms",
           attributeName, id, timer.stop(), error);
     }
+  }
+
+  /**
+   * Updates a range of unique values:<br> Updates:
+   * <ul>
+   *   <li>uniqueCountries</li>
+   *   <li>uniqueWineries</li>
+   *   <li>uniqueColors</li>
+   *   <li>minVintage</li>
+   *   <li>maxVintage</li>
+   *   <li>minScore</li>
+   *   <li>maxScore</li>
+   *   <li>minAbv</li>
+   *   <li>maxAbv</li>
+   *   <li>minPrice</li>
+   *   <li>maxPrice</li>
+   * </ul>
+   */
+  public void updateUniques() {
+
+    // Reset old uniques
+    this.uniqueCountries.clear();
+    this.uniqueWineries.clear();
+    this.uniqueColors.clear();
+    this.minVintage = Integer.MAX_VALUE;
+    this.maxVintage = 0;
+    this.minScore = 100;
+    this.maxScore = 0;
+    this.minAbv = 100;
+    this.maxAbv = 0;
+    this.minPrice = Float.MAX_VALUE;
+    this.maxPrice = 0;
+
+    // Get unique items from database
+    String query = "SELECT country, winery, color, vintage, score_percent, abv, price FROM wine";
+
+    try (PreparedStatement statement = connection.prepareStatement(query);
+        ResultSet set = statement.executeQuery()) {
+
+      // Go through results and add to lists
+      while (set.next()) {
+        String country = set.getString("country");
+        String winery = set.getString("winery");
+        String color = set.getString("color");
+        int vintage = set.getInt("vintage");
+        int score = set.getInt("score_percent");
+        float abv = set.getFloat("abv");
+        float price = set.getFloat("price");
+
+        // Add to sets
+        this.uniqueCountries.add(country);
+        this.uniqueWineries.add(winery);
+        this.uniqueColors.add(color);
+
+        // Update mins and maxes
+        updateMinMax("vintage", vintage);
+        updateMinMax("score", score);
+        updateMinMax("abv", abv);
+        updateMinMax("price", price);
+      }
+    } catch (SQLException e) {
+      LogManager.getLogger(getClass()).error("Unable to update uniques", e);
+
+    }
+  }
+
+  /**
+   * Helper function for the update uniques, just abstracts the min and max checks
+   * <p>
+   * Updates the specified value if the new value is smaller than current min or<br> greater than
+   * current max.
+   * </p>
+   *
+   * @param name  name of the variable to update
+   * @param value new value
+   */
+  private void updateMinMax(String name, float value) {
+    switch (name) {
+      case "vintage":
+        if (value > this.maxVintage) {
+          this.maxVintage = (int) value;
+
+          // In decanter, some vintages are NV which defaults to 0
+          // In the 130k dataset, some values don't have vintage that defaults to -1
+        } else if (value < this.minVintage && value > 0) {
+          this.minVintage = (int) value;
+        }
+        break;
+      case "score":
+        if (value > this.maxScore) {
+          this.maxScore = (int) value;
+        } else if (value < this.minScore) {
+          this.minScore = (int) value;
+        }
+        break;
+      case "abv":
+        if (value > this.maxAbv) {
+          this.maxAbv = value;
+        } else if (value < this.minAbv) {
+          this.minAbv = value;
+        }
+        break;
+      case "price":
+        if (value > this.maxPrice) {
+          this.maxPrice = value;
+        } else if (value < this.minPrice) {
+          this.minPrice = value;
+        }
+        break;
+    }
+  }
+
+  public Set<String> getUniqueCountries() {
+    return uniqueCountries;
+  }
+
+  public Set<String> getUniqueWineries() {
+    return uniqueWineries;
+  }
+
+  public Set<String> getUniqueColors() {
+    return uniqueColors;
+  }
+
+  public int getMinVintage() {
+    return minVintage;
+  }
+
+  public void setMinVintage(int minVintage) {
+    this.minVintage = minVintage;
+  }
+
+  public int getMaxVintage() {
+    return maxVintage;
+  }
+
+  public void setMaxVintage(int maxVintage) {
+    this.maxVintage = maxVintage;
+  }
+
+  public int getMinScore() {
+    return minScore;
+  }
+
+  public void setMinScore(int minScore) {
+    this.minScore = minScore;
+  }
+
+  public int getMaxScore() {
+    return maxScore;
+  }
+
+  public void setMaxScore(int maxScore) {
+    this.maxScore = maxScore;
+  }
+
+  public float getMinAbv() {
+    return minAbv;
+  }
+
+  public void setMinAbv(float minAbv) {
+    this.minAbv = minAbv;
+  }
+
+  public float getMaxAbv() {
+    return maxAbv;
+  }
+
+  public void setMaxAbv(float maxAbv) {
+    this.maxAbv = maxAbv;
+  }
+
+  public float getMinPrice() {
+    return minPrice;
+  }
+
+  public void setMinPrice(float minPrice) {
+    this.minPrice = minPrice;
+  }
+
+  public float getMaxPrice() {
+    return maxPrice;
+  }
+
+  public void setMaxPrice(float maxPrice) {
+    this.maxPrice = maxPrice;
   }
 }
