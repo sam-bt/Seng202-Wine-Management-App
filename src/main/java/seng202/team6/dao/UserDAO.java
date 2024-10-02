@@ -110,7 +110,7 @@ public class UserDAO extends DAO {
     String sql = "SELECT * FROM USER WHERE USERNAME != 'admin'";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       try (ResultSet resultSet = statement.executeQuery()) {
-        if (resultSet.next()) {
+        while(resultSet.next()) {
           User user = new User(
                   resultSet.getString("USERNAME"),
                   resultSet.getString("PASSWORD"),
@@ -118,8 +118,6 @@ public class UserDAO extends DAO {
                   resultSet.getString("SALT")
           );
           users.add(user);
-        } else {
-          log.warn("No users found in {}ms", timer.stop());
         }
       }
     } catch (SQLException error) {

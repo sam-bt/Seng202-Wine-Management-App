@@ -37,7 +37,6 @@ public class UserManagementController extends Controller {
      */
     @FXML
     private void initialize() {
-        ObservableList<User> users = dbman.getUserDAO().getAll();
         resetView();
         userList.setOnMouseClicked(this::selectUser);
     }
@@ -80,21 +79,6 @@ public class UserManagementController extends Controller {
 
 
 
-    /**
-     * Delete a user and their data
-     */
-    @FXML
-    private void onDeletePressed() {
-        // Confirmation dialog
-        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmation.setTitle("Confirm Deletion");
-        confirmation.setHeaderText("Deleting: " + workingUser.getUsername());
-        confirmation.setContentText("Are you sure you want to delete this user?");
 
-        Optional<ButtonType> result = confirmation.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            dbman.getUserDAO().delete(workingUser);
-            resetView();
-        }
-    }
+
 }
