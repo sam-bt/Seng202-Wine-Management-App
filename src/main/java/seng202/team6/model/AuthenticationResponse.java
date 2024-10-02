@@ -16,7 +16,7 @@ public enum AuthenticationResponse {
   INVALID_USERNAME("Invalid username, Please make sure that your name is between 3 and 15 characters long and only contains letters, numbers or underscores."),
 
   /** Indicates that the provided password is invalid. */
-  INVALID_PASSWORD("Invalid password, Please make sure that your password is between 3 and 15 characters long and only contains letters or numbers."),
+  INVALID_PASSWORD("Invalid password, Please make sure that your password is between 8 and 40 characters long and only contains letters, numbers or special characters."),
 
   /** Indicates that the given username is already registered. */
   USERNAME_ALREADY_REGISTERED("The given username is already registered to an account."),
@@ -46,10 +46,16 @@ public enum AuthenticationResponse {
   LOGOUT_SUCCESS(null),
 
   /** Indicates an unexpected error occurred. */
-  UNEXPECTED_ERROR("An unexpected error occurred. Please try again.");
+  UNEXPECTED_ERROR("An unexpected error occurred. Please try again."),
+
+  SAME_AS_USERNAME("Your password cannot be the same as your username"),
+
+  /** Password constraints. */
+  PASSWORD_CONSTRAINTS("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\\-+={\\[\\]}])[A-Za-z0-9!@#$%^&*()\\-+={\\[\\]}]{8,30}$");
 
   /** The message associated with the authentication response. */
   private final String message;
+
 
   /**
    * Constructs an AuthenticationResponse with the specified message.

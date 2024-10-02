@@ -45,6 +45,7 @@ public class LoginController extends Controller {
 
   @FXML
   private void initialize() {
+    //set key handlers for ENTER to attempt login on keypress
     passwordField.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.ENTER) {
         login();
@@ -55,6 +56,7 @@ public class LoginController extends Controller {
         login();
       }
     });
+    // Shift focus back to the username field
     loginButton.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.TAB && !event.isShiftDown()) {
         usernameField.requestFocus();
@@ -64,7 +66,9 @@ public class LoginController extends Controller {
     Platform.runLater(() -> usernameField.requestFocus());
   }
 
-
+  /**
+   * Logs a user into the system
+   */
   private void login() {
     String username = usernameField.getText();
     String password = passwordField.getText();
