@@ -21,13 +21,14 @@ import org.apache.logging.log4j.Logger;
  * Utility class for interfacing with CSV files
  */
 public class ProcessCSV {
+
   private static Logger log = LogManager.getLogger(ProcessCSV.class);
 
   /**
    * Gets a CSV file as a list of rows
    * <p>
-   *   This function will attempt to detect the file encoding then try and read the bytes as
-   *   the detected encoding. If the encoding detection fails, the file will be read as UTF-8.
+   * This function will attempt to detect the file encoding then try and read the bytes as the
+   * detected encoding. If the encoding detection fails, the file will be read as UTF-8.
    * </p>
    *
    * @param file the CSV file to read
@@ -50,7 +51,8 @@ public class ProcessCSV {
 
     // detect encoding using ICU4J then try read the CSV rows using it
     String detectedCharset = detectFileEncoding(fileBytes);
-    try (InputStreamReader inputStreamReader = new InputStreamReader(new ByteArrayInputStream(fileBytes), detectedCharset)) {
+    try (InputStreamReader inputStreamReader = new InputStreamReader(
+        new ByteArrayInputStream(fileBytes), detectedCharset)) {
       readCSVRows(inputStreamReader, rows);
     } catch (IOException | CsvValidationException error) {
       log.error("Failed to read rows from CSV file: {}", file.getAbsolutePath(), error);
@@ -78,11 +80,12 @@ public class ProcessCSV {
    * Reads the CSV rows from an input stream reader and adds them to the provided list.
    *
    * @param inputStreamReader the input stream reader to read from
-   * @param rows the list to add the read rows to
-   * @throws IOException if an I/O error occurs while reading
+   * @param rows              the list to add the read rows to
+   * @throws IOException            if an I/O error occurs while reading
    * @throws CsvValidationException if a CSV validation error occurs
    */
-  private static void readCSVRows(InputStreamReader inputStreamReader, List<String[]> rows) throws IOException, CsvValidationException {
+  private static void readCSVRows(InputStreamReader inputStreamReader, List<String[]> rows)
+      throws IOException, CsvValidationException {
     CSVReader csvReader = new CSVReader(inputStreamReader);
     String[] nextLine;
     while ((nextLine = csvReader.readNext()) != null) {

@@ -9,13 +9,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import seng202.team6.gui.Controller;
 import seng202.team6.managers.ManagerContext;
@@ -25,17 +23,18 @@ import seng202.team6.service.WineListService;
 import seng202.team6.util.IconPaths;
 
 public class AddToListPopupController extends Controller {
-  @FXML
-  private VBox listsContainer;
 
   private final WineListService wineListService;
   private final ObservableMap<WineList, VBox> wineListWrappers = FXCollections.observableHashMap();
   private final Wine wine;
+  @FXML
+  private VBox listsContainer;
 
   public AddToListPopupController(ManagerContext context, Wine wine) {
     super(context);
     this.wine = wine;
-    this.wineListService = new WineListService(context.authenticationManager, context.databaseManager);
+    this.wineListService = new WineListService(managerContext.authenticationManager,
+        context.databaseManager);
     bindToWineListService();
   }
 
@@ -51,12 +50,12 @@ public class AddToListPopupController extends Controller {
 
   private void onAddButtonClick(WineList wineList, Button button) {
     updateWineListButton(button, wineList, true);
-    managerContext.databaseManager.addWineToList(wineList, wine);
+    managerContext.databaseManager.getWineListDAO().addWine(wineList, wine);
   }
 
   private void onRemoveButtonClick(WineList wineList, Button button) {
     updateWineListButton(button, wineList, false);
-    managerContext.databaseManager.deleteWineFromList(wineList, wine);
+    managerContext.databaseManager.getWineListDAO().removeWine(wineList, wine);
   }
 
   private void bindToWineListService() {

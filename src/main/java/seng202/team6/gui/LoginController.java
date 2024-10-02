@@ -1,14 +1,9 @@
 package seng202.team6.gui;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.application.Platform.*;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.AuthenticationResponse;
 
@@ -23,9 +18,6 @@ public class LoginController extends Controller {
   private TextField passwordField;
   @FXML
   private Label loginMessageLabel;
-  @FXML
-  private Button loginButton;
-
 
   /**
    * Constructor
@@ -43,8 +35,9 @@ public class LoginController extends Controller {
     login();
   }
 
-  @FXML
-  private void initialize() {
+  @Override
+  public void init() {
+    usernameField.requestFocus();
     //set key handlers for ENTER to attempt login on keypress
     passwordField.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.ENTER) {
@@ -56,14 +49,6 @@ public class LoginController extends Controller {
         login();
       }
     });
-    // Shift focus back to the username field
-    loginButton.setOnKeyPressed(event -> {
-      if (event.getCode() == KeyCode.TAB && !event.isShiftDown()) {
-        usernameField.requestFocus();
-        event.consume();
-      }
-    });
-    Platform.runLater(() -> usernameField.requestFocus());
   }
 
   /**
@@ -73,7 +58,7 @@ public class LoginController extends Controller {
     String username = usernameField.getText();
     String password = passwordField.getText();
     AuthenticationResponse response = managerContext.authenticationManager.validateLogin(username,
-            password);
+        password);
     if (response == AuthenticationResponse.LOGIN_SUCCESS) {
       if (managerContext.authenticationManager.isAdminFirstLogin()) {
         managerContext.GUIManager.mainController.setDisable(true);

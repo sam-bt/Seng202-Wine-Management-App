@@ -16,6 +16,7 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.AuthenticationResponse;
 
 public class UserLoginStepDefinitions {
+
   private DatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private String username;
@@ -29,12 +30,12 @@ public class UserLoginStepDefinitions {
 
   @After
   public void close() {
-    databaseManager.close();
+    databaseManager.teardown();
   }
 
   @Given("the user is not authenticated and is logging in")
   public void theUserIsNotAuthenticatedAndIsLoggingIn() {
-    authenticationManager.setAuthenticatedUsername(null);
+    authenticationManager.setAuthenticatedUser(null);
   }
 
   @When("the user enters an invalid username or password combination")

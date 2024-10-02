@@ -1,6 +1,5 @@
 package seng202.team6.model;
 
-import java.sql.SQLException;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.IntegerProperty;
@@ -9,14 +8,11 @@ import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
-import org.apache.logging.log4j.LogManager;
-import seng202.team6.managers.DatabaseManager;
 
 /**
  * Wine represents the wine record in the database
  * <p>
- *   There must only be one wine per id. This is assured by the database
+ * There must only be one wine per id. This is assured by the database
  * </p>
  */
 public class Wine {
@@ -94,8 +90,6 @@ public class Wine {
    */
   private DoubleProperty rating;
 
-
-  private DatabaseManager databaseManager;
   /**
    * GeoLocation which holds the coordinates of the region name
    * <p>
@@ -122,7 +116,6 @@ public class Wine {
    */
   public Wine(
       long key,
-      DatabaseManager databaseManager,
       String title,
       String variety,
       String country,
@@ -137,7 +130,6 @@ public class Wine {
       GeoLocation geoLocation
   ) {
     this.key = key;
-    this.databaseManager = databaseManager;
     this.title = new SimpleStringProperty(this, "title", title);
     this.variety = new SimpleStringProperty(this, "variety", variety);
     this.country = new SimpleStringProperty(this, "country", country);
@@ -150,7 +142,6 @@ public class Wine {
     this.abv = new SimpleFloatProperty(this, "abv", abv);
     this.price = new SimpleFloatProperty(this, "price", price);
     this.geoLocation = geoLocation;
-    setupSetters();
   }
 
   /**
@@ -168,11 +159,10 @@ public class Wine {
    * @param price        NZD price
    * @param geoLocation  geographical location
    * @param reviewCount  number of reviews that wine has
-   * @param rating  average rating of the wine
+   * @param rating       average rating of the wine
    */
   public Wine(
       long key,
-      DatabaseManager databaseManager,
       String title,
       String variety,
       String country,
@@ -189,7 +179,6 @@ public class Wine {
       Double rating
   ) {
     this.key = key;
-    this.databaseManager = databaseManager;
     this.title = new SimpleStringProperty(this, "title", title);
     this.variety = new SimpleStringProperty(this, "variety", variety);
     this.country = new SimpleStringProperty(this, "country", country);
@@ -223,104 +212,6 @@ public class Wine {
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent");
     this.abv = new SimpleFloatProperty(this, "abv");
     this.price = new SimpleFloatProperty(this, "price");
-    setupSetters();
-  }
-
-  /**
-   * Setup listeners
-   * <p>
-   * JavaFX uses properties to change stuff. This means we need to listen to changes rather than
-   * just intercept through setters.
-   * </p>
-   */
-  public void setupSetters() {
-    // This might be mem leaky but that is too hard to think about
-    titleProperty().addListener((observableValue, before, after) -> {
-      setAttribute("TITLE", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    varietyProperty().addListener((observableValue, before, after) -> {
-      setAttribute("VARIETY", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    countryProperty().addListener((observableValue, before, after) -> {
-      setAttribute("COUNTRY", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    regionProperty().addListener((observableValue, before, after) -> {
-      setAttribute("REGION", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    wineryProperty().addListener((observableValue, before, after) -> {
-      setAttribute("WINERY", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    colorProperty().addListener((observableValue, before, after) -> {
-      setAttribute("COLOR", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    vintageProperty().addListener((observableValue, before, after) -> {
-      setAttribute("VINTAGE", update -> {
-        update.setInt(1, (Integer) after);
-      });
-    });
-
-    descriptionProperty().addListener((observableValue, before, after) -> {
-      setAttribute("DESCRIPTION", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    scorePercentProperty().addListener((observableValue, before, after) -> {
-      setAttribute("SCORE_PERCENT", update -> {
-        update.setInt(1, (Integer) after);
-      });
-    });
-
-    abvProperty().addListener((observableValue, before, after) -> {
-      setAttribute("ABV", update -> {
-        update.setFloat(1, (Float) after);
-      });
-    });
-
-    priceProperty().addListener((observableValue, before, after) -> {
-      setAttribute("PRICE", update -> {
-        update.setFloat(1, (Float) after);
-      });
-    });
-  }
-
-
-  /**
-   * Helper to set an attribute
-   *
-   * @param attributeName name of attribute
-   * @param callback      callback to set attribute
-   */
-  private void setAttribute(String attributeName,
-      DatabaseManager.AttributeSetterCallBack callback) {
-    if (key == -1) {
-      return;
-    }
-    try {
-      databaseManager.setWineAttribute(key, attributeName, callback);
-    } catch (SQLException exception) {
-      LogManager.getLogger(getClass())
-          .error("Failed to set attribute when updating database: {}", attributeName, exception);
-    }
-
   }
 
   /**
@@ -339,27 +230,6 @@ public class Wine {
    */
   public void setKey(long key) {
     this.key = key;
-  }
-
-  /**
-   * Gets the database
-   * <p>
-   * Please don't use this. This is only here for the sake of being a bean.
-   * </p>
-   *
-   * @return database
-   */
-  public DatabaseManager getDatabaseManager() {
-    return databaseManager;
-  }
-
-  /**
-   * Sets the database
-   *
-   * @param databaseManager database
-   */
-  public void setDatabaseManager(DatabaseManager databaseManager) {
-    this.databaseManager = databaseManager;
   }
 
   /**

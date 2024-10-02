@@ -1,5 +1,6 @@
 package seng202.team6.service;
 
+import java.sql.Date;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -8,11 +9,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
+import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 
 public class WineReviewsService {
-
+  public static final int MAX_DESCRIPTION_CHARACTERS = 255;
   private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
   private final ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
@@ -29,7 +31,7 @@ public class WineReviewsService {
 
   public void init() {
     String username = authenticationManager.getAuthenticatedUsername();
-    wineReviews.addAll(databaseManager.getWineReviews(wine));
+    wineReviews.addAll(databaseManager.getWineReviewDAO().getAll(wine));
     usersReview.setValue(wineReviews.stream()
         .filter(wineReview -> wineReview.getUsername().equals(username))
         .findFirst()
@@ -38,16 +40,17 @@ public class WineReviewsService {
   }
 
   public void addOrUpdateUserReview(double rating, String description) {
-    String username = authenticationManager.getAuthenticatedUsername();
+    User user = authenticationManager.getAuthenticatedUser();
     if (hasUserReviewed()) {
       WineReview usersReview = getUsersReview();
       usersReview.setRating(rating);
       usersReview.setDescription(description);
-      databaseManager.updateWineReview(username, wine.getKey(), rating, description);
       calculateAverageReview();
       return;
     }
-    WineReview wineReview = databaseManager.addWineReview(username, wine.getKey(), rating, description);
+    Date currentDate = new Date(System.currentTimeMillis());
+    WineReview wineReview = databaseManager.getWineReviewDAO()
+        .add(user, wine, rating, description, currentDate);
     if (wineReview != null) {
       wineReviews.add(wineReview);
       usersReview.setValue(wineReview);
@@ -55,16 +58,13 @@ public class WineReviewsService {
     }
   }
 
-//  public WineReview getReviewByUsernameAndWineID(String username, long wineId) {
-//    return databaseManager.get
-//  }
-
   public void deleteUsersReview() {
     WineReview wineReview = getUsersReview();
     if (wineReview != null) {
-      databaseManager.removeWineReview(wineReview);
+      databaseManager.getWineReviewDAO().delete(wineReview);
       usersReview.setValue(null);
       wineReviews.remove(wineReview);
+      calculateAverageReview();
     }
   }
 
@@ -101,8 +101,9 @@ public class WineReviewsService {
   }
 
   private void calculateAverageReview() {
-    if (!hasReviews())
+    if (!hasReviews()) {
       averageRating.set(0);
+    }
 
     double sum = wineReviews.stream()
         .mapToDouble(WineReview::getRating)
