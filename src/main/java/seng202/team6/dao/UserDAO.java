@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;
 import seng202.team6.util.EncryptionUtil;
@@ -96,6 +99,34 @@ public class UserDAO extends DAO {
       log.error("Failed to retrieve user {}", username, error);
     }
     return null;
+  }
+
+  public ObservableList<User> getAll() {
+    Timer timer = new Timer();
+
+    ObservableList<User> users = FXCollections.observableArrayList();
+
+
+    String sql = "SELECT * FROM USER WHERE USERNAME != 'admin'";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      try (ResultSet resultSet = statement.executeQuery()) {
+        if (resultSet.next()) {
+          User user = new User(
+                  resultSet.getString("USERNAME"),
+                  resultSet.getString("PASSWORD"),
+                  resultSet.getString("ROLE"),
+                  resultSet.getString("SALT")
+          );
+          users.add(user);
+        } else {
+          log.warn("No users found in {}ms", timer.stop());
+        }
+      }
+    } catch (SQLException error) {
+      log.error("Failed to retrieve users", error);
+      log.error(error.getMessage());
+    }
+    return users;
   }
 
   /**

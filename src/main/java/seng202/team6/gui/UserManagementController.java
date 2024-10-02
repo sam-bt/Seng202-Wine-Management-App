@@ -6,12 +6,13 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.User;
 
 import java.util.Optional;
 
 public class UserManagementController extends Controller {
     @FXML
-    private ListView<String> userList;
+    private ListView<User> userList;
 
     @FXML
     private Label userLabel;
@@ -23,7 +24,7 @@ public class UserManagementController extends Controller {
 
     private DatabaseManager dbman;
 
-    private String workingUsername;
+    private User workingUser = null;
 
     public UserManagementController(ManagerContext managerContext, Runnable backAction) {
         super(managerContext);
@@ -36,36 +37,48 @@ public class UserManagementController extends Controller {
      */
     @FXML
     private void initialize() {
-        ObservableList<String> users = dbman.getUsernames();
-        userList.setItems(users);
+        ObservableList<User> users = dbman.getUserDAO().getAll();
+        resetView();
         userList.setOnMouseClicked(this::selectUser);
-        deleteUser.setDisable(true);
     }
 
     /**
      * Reset FXML component content. Used on account deletion.
      */
     private void resetView() {
-        ObservableList<String> users = dbman.getUsernames();
+        ObservableList<User> users = dbman.getUserDAO().getAll();
+        userList.setCellFactory(param -> new ListCell<User>() {
+            @Override
+            protected void updateItem(User item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null || item.getUsername() == null) {
+                    setText(null);
+                } else {
+                    setText(item.getUsername());
+                }
+            }
+        });
         userList.setItems(users);
-        workingUsername = "";
         userLabel.setText("No User Selected");
         deleteUser.setDisable(true);
     }
 
     /**
-     * Seelct a user from the list by double clicking on them.
+     * Select a user from the list by double clicking on them.
      * @param event
      */
     @FXML
     private void selectUser(MouseEvent event) {
         //doubleclick
         if (event.getClickCount() == 2) {
-            workingUsername = userList.getSelectionModel().getSelectedItem();
-            userLabel.setText(workingUsername);
+            workingUser = userList.getSelectionModel().getSelectedItem();
+            userLabel.setText(workingUser.getUsername());
             deleteUser.setDisable(false);
         }
     }
+
+
 
     /**
      * Delete a user and their data
@@ -75,12 +88,12 @@ public class UserManagementController extends Controller {
         // Confirmation dialog
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setTitle("Confirm Deletion");
-        confirmation.setHeaderText("Deleting: " + workingUsername);
+        confirmation.setHeaderText("Deleting: " + workingUser.getUsername());
         confirmation.setContentText("Are you sure you want to delete this user?");
 
         Optional<ButtonType> result = confirmation.showAndWait();
         if (result.get() == ButtonType.OK) {
-            dbman.deleteUserFromTable(workingUsername);
+            dbman.getUserDAO().delete(workingUser);
             resetView();
         }
     }
