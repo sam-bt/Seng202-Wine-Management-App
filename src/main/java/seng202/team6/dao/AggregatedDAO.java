@@ -71,6 +71,11 @@ public class AggregatedDAO extends DAO {
     return wineAndNotes;
   }
 
+  /**
+   * Gets a list of wine date pairs from a list.
+   * @param wineList list of wines
+   * @return wine-date pair with date added to list
+   */
   public ObservableList<WineDatePair> getWinesMappedWithDatesFromList(WineList wineList) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM WINE " +
@@ -97,6 +102,11 @@ public class AggregatedDAO extends DAO {
     return winesAndDates;
   }
 
+  /**
+   * Gets the wines in a given wine list.
+   * @param wineList wine list
+   * @return list of wines
+   */
   public ObservableList<Wine> getWinesInList(WineList wineList) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM WINE " +

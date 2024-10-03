@@ -20,7 +20,7 @@ import seng202.team6.managers.ManagerContext;
  * SENG201 Tutorial 2.
  */
 
-public class FXWrapper {
+public class FxWrapper {
 
   @FXML
   private Pane pane;
@@ -51,6 +51,10 @@ public class FXWrapper {
     loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
   }
 
+  /**
+   * Sets the window title.
+   * @param title title to set
+   */
   public void setWindowTitle(String title) {
     stage.setTitle(title);
   }

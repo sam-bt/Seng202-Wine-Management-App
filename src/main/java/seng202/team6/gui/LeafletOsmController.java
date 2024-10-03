@@ -16,24 +16,24 @@ import seng202.team6.model.Wine;
 
 /**
  * Map controller which is responsible for loading the map and calling JavaScript functions which
- * add markers to the map
+ * add markers to the map.
  */
-public class LeafletOSMController {
+public class LeafletOsmController {
 
-  private static final Logger log = LogManager.getLogger(LeafletOSMController.class);
+  private static final Logger log = LogManager.getLogger(LeafletOsmController.class);
 
   /**
-   * Web engine with allows loading and rendering of a single web page
+   * Web engine with allows loading and rendering of a single web page.
    */
   private final WebEngine webEngine;
 
   /**
-   * The JavaScript program which is created during the Java run time
+   * The JavaScript program which is created during the Java run time.
    */
   private JSObject javaScriptConnector;
 
   /**
-   * The action to run when the map is ready
+   * The action to run when the map is ready.
    * <p>
    * This is used when the wine screen is opened for the first time and the map has not yet been
    * loaded
@@ -42,11 +42,11 @@ public class LeafletOSMController {
   private Runnable onReadyAction;
 
   /**
-   * Constructs the controller for the map
+   * Constructs the controller for the map.
    *
    * @param webEngine the web engine for the map view
    */
-  LeafletOSMController(WebEngine webEngine) {
+  LeafletOsmController(WebEngine webEngine) {
     this.webEngine = webEngine;
   }
 
@@ -93,7 +93,7 @@ public class LeafletOSMController {
   }
 
   /**
-   * Calls the clearMarkers function in JavaScript
+   * Calls the clearMarkers function in JavaScript.
    * <p>
    * The JavaScript function will clear all of the markers on the map
    * </p>
@@ -103,7 +103,7 @@ public class LeafletOSMController {
   }
 
   /**
-   * Calls the clearHeatmap function in JavaScript
+   * Calls the clearHeatmap function in JavaScript.
    * <p>
    * The JavaScript function will clear the heatmap
    * </p>
@@ -113,7 +113,7 @@ public class LeafletOSMController {
   }
 
   /**
-   * Calls the addWineMarker function in JavaScript
+   * Calls the addWineMarker function in JavaScript.
    * <p>
    * The JavaScript function will create a new marker of the wine and display it at the wines
    * geolocation
@@ -128,7 +128,7 @@ public class LeafletOSMController {
   }
 
   /**
-   * Sets the on ready action
+   * Sets the on ready action.
    * <p>
    * If the map has loaded, the runnable param can be ran straight away. If the map has not loaded,
    * the runnable is stored and will be executed when the map has loaded

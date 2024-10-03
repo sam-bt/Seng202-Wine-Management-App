@@ -8,15 +8,15 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * Class starts the javaFX application window
+ * Class starts the javaFX application window.
  *
  * @author seng202 teaching team
  */
-public class FXWindow extends Application {
+public class FxWindow extends Application {
 
   /**
    * Launches the FXML application, this must be called from another class (in this cass App.java)
-   * otherwise JavaFX errors out and does not run
+   * otherwise JavaFX errors out and does not run.
    *
    * @param args command line arguments
    */
@@ -25,7 +25,7 @@ public class FXWindow extends Application {
   }
 
   /**
-   * Opens the gui with the fxml content specified in resources/fxml/main.fxml
+   * Opens the gui with the fxml content specified in resources/fxml/main.fxml.
    *
    * @param primaryStage The current fxml stage, handled by javaFX Application class
    * @throws IOException if there is an issue loading fxml file
@@ -35,7 +35,7 @@ public class FXWindow extends Application {
     FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/fx_wrapper.fxml"));
     Parent root = baseLoader.load();
 
-    FXWrapper baseController = baseLoader.getController();
+    FxWrapper baseController = baseLoader.getController();
     baseController.init(primaryStage);
 
     primaryStage.setTitle("WINO App [DEV]");

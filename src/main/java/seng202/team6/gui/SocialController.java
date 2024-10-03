@@ -100,8 +100,8 @@ public class SocialController extends Controller {
     regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));
     colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
     scoreColumn.setCellValueFactory(new PropertyValueFactory<>("scorePercent"));
-    reviewsColumn.setCellValueFactory(cellData -> cellData.getValue().getReviewCount().asObject());
-    ratingsColumn.setCellValueFactory(cellData -> cellData.getValue().getRating().asObject());
+    reviewsColumn.setCellValueFactory(new PropertyValueFactory<>("reviewCount"));
+    ratingsColumn.setCellValueFactory(new PropertyValueFactory<>("rating"));
     ratingsColumn.setCellFactory(column -> new TableCell<Wine, Double>() {
       private final HBox starBox = new HBox(5);
 

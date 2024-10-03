@@ -2,7 +2,7 @@ package seng202.team6.managers;
 
 import javafx.util.Builder;
 import seng202.team6.gui.MainController;
-import seng202.team6.gui.wrapper.FXWrapper;
+import seng202.team6.gui.wrapper.FxWrapper;
 
 /**
  * Manager for interacting with the GUI
@@ -11,7 +11,7 @@ import seng202.team6.gui.wrapper.FXWrapper;
  */
 public class GUIManager {
 
-  private final FXWrapper wrapper;
+  private final FxWrapper wrapper;
   public MainController mainController;
 
   /**
@@ -19,7 +19,7 @@ public class GUIManager {
    *
    * @param wrapper fxwrapper
    */
-  public GUIManager(FXWrapper wrapper) {
+  public GUIManager(FxWrapper wrapper) {
     this.wrapper = wrapper;
   }
 

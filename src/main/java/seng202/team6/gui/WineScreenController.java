@@ -41,7 +41,7 @@ import seng202.team6.util.ImageReader;
 import seng202.team6.util.YearStringConverter;
 
 /**
- * Controller for the screen that displays wines
+ * Controller for the screen that displays wines.
  */
 
 public class WineScreenController extends Controller {
@@ -84,7 +84,7 @@ public class WineScreenController extends Controller {
 
   private RangeSlider vintageSlider;
 
-  private LeafletOSMController mapController;
+  private LeafletOsmController mapController;
 
 
   /**
@@ -368,7 +368,7 @@ public class WineScreenController extends Controller {
     applyFiltersButton.setOnAction(event -> onApplyFiltersButtonPressed());
     resetFiltersButton.setOnAction(event -> onResetFiltersButtonPressed());
 
-    mapController = new LeafletOSMController(webView.getEngine());
+    mapController = new LeafletOsmController(webView.getEngine());
     mapController.initMap();
 
     setupTableColumns();
