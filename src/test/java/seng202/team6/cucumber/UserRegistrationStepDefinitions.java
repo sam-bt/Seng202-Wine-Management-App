@@ -11,7 +11,7 @@ import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.model.User;
 
 public class UserRegistrationStepDefinitions {

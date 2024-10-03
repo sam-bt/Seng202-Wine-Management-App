@@ -1,10 +1,10 @@
 package seng202.team6.managers;
 
-import static seng202.team6.model.AuthenticationResponse.PASSWORD_CHANGED_SUCCESS;
-import static seng202.team6.model.AuthenticationResponse.USERNAME_ALREADY_REGISTERED;
+import static seng202.team6.enums.AuthenticationResponse.PASSWORD_CHANGED_SUCCESS;
+import static seng202.team6.enums.AuthenticationResponse.USERNAME_ALREADY_REGISTERED;
 
 import seng202.team6.dao.UserDAO;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.model.User;
 import seng202.team6.util.EncryptionUtil;
 

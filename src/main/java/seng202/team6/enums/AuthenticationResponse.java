@@ -2,7 +2,7 @@
  * Enum representing various authentication responses in the system. Each enum constant corresponds
  * to a specific authentication scenario and contains an associated message.
  */
-package seng202.team6.model;
+package seng202.team6.enums;
 
 public enum AuthenticationResponse {
   /** Indicates that required fields are missing. */

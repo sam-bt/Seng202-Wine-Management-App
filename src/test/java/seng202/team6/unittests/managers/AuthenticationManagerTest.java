@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 
 /**
  * Test class for the AuthenticationManager. This class contains unit tests to verify the

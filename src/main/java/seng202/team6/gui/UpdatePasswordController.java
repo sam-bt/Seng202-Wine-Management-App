@@ -6,7 +6,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyCode;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 
 public class UpdatePasswordController extends Controller {
 
