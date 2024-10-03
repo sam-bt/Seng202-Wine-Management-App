@@ -34,6 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
 import seng202.team6.gui.controls.AutoCompletionTextField;
+import seng202.team6.gui.controls.CardContainer;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.WineFilters;
 import seng202.team6.model.Wine;
@@ -282,25 +283,12 @@ public class WineScreenController extends Controller {
   }
 
   public void createWineCard(Wine wine) {
-    // todo use same styling as detailed wine view review cards
-    VBox wrapper = new VBox();
-    wrapper.setPadding(new Insets(10));
-    wrapper.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
-    wrapper.setOnMouseClicked(event -> {
+    CardContainer card = new CardContainer();
+    card.setOnMouseClicked(event -> {
       if (event.getClickCount() == 2) {
         openDetailedWineView(wine);
       }
     });
-
-    // when the page is loaded, the width of the container is not set immediately, so we have to
-    // listen to the width property changing. But, after it is loaded, and we add a new wine card,
-    // the wine property will not change, so we need to take this into account
-    if (winesViewContainer.getWidth() != 0) {
-      double totalWidth = winesViewContainer.getWidth();
-      // minus 10 for insets
-      double tileWidth = (totalWidth - winesViewContainer.getHgap() * 2) / 3 - 10;
-      wrapper.setPrefWidth(tileWidth);
-    }
 
     Image wineImage = wineImages.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
     ImageView imageView = new ImageView(wineImage);
@@ -316,8 +304,8 @@ public class WineScreenController extends Controller {
     HBox header = new HBox(imageView, wineTitle);
     header.setAlignment(Pos.CENTER_LEFT);
     header.setSpacing(20);
-    wrapper.getChildren().add(header);
-    winesViewContainer.getChildren().add(wrapper);
+    card.getChildren().add(header);
+    winesViewContainer.getChildren().add(card);
   }
 
   /**
@@ -349,11 +337,9 @@ public class WineScreenController extends Controller {
     // because in the init() method, the winesViewContainer does not yet have a width
     winesViewContainer.widthProperty().addListener((obs, oldVal, newVal) -> {
       double totalWidth = newVal.doubleValue();
-      // minus 10 for insets
-      double tileWidth = (totalWidth - winesViewContainer.getHgap() * 2) / 3 - 10;
       for (Node child : winesViewContainer.getChildren()) {
-        if (child instanceof VBox) {
-          ((VBox) child).setPrefWidth(tileWidth);
+        if (child instanceof CardContainer) {
+          ((CardContainer) child).setCardWidth(totalWidth, winesViewContainer.getHgap());
         }
       }
     });
