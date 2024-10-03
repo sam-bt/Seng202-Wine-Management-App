@@ -170,7 +170,7 @@ public class DatabaseManager {
     );
 
     try (Statement statement = connection.createStatement()) {
-      statement.execute("DROP TABLE VINEYARD");      // todo - remove this, for debugging purposes only
+//      statement.execute("DROP TABLE VINEYARD");      // todo - remove this, for debugging purposes only
       for (String sql : sqlStatements) {
         statement.execute(sql);
       }
