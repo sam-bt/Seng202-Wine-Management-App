@@ -5,12 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardFilters;
 import seng202.team6.util.DatabaseObjectUniquer;
+import seng202.team6.util.ProcessCSV;
 import seng202.team6.util.Timer;
 
 public class VineyardDAO extends DAO {
@@ -46,6 +48,23 @@ public class VineyardDAO extends DAO {
             "DESCRIPTION    TEXT" +
             ")"
     };
+  }
+
+  public void addDefaultVineyards() {
+    Timer timer = new Timer();
+    if (vineyardsTableHasData()) {
+      log.info("Skip loading default vineyards as the VINEYARD table is not empty in {}ms",
+          timer.stop());
+      return;
+    }
+
+    String sql = "INSERT INTO VINEYARD VALUES (null, ?, ?, ?, ?, ?)";
+    List<String[]> rows = ProcessCSV.getCSVRows(
+        getClass().getResourceAsStream("/data/nz_vineyards.csv"));
+
+    int rowsAffected = batchInsertVineyards(sql, rows);
+    log.info("Successfully added {} out of {} default vineyards in {}ms",
+        rowsAffected, rows.size() - 1, timer.stop());
   }
 
   /**
@@ -182,5 +201,75 @@ public class VineyardDAO extends DAO {
       return null;
     }
     return new GeoLocation(latitude, longitude);
+  }
+
+  /**
+   * Checks if the GEOLOCATION table already has data to avoid re-adding default geolocations.
+   *
+   * @return true if the GEOLOCATION table has data, false otherwise.
+   */
+  private boolean vineyardsTableHasData() {
+    String sql = "SELECT 1 FROM VINEYARD";
+    try (Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql)) {
+      return resultSet.next();
+    } catch (SQLException error) {
+      log.error("Failed to check if default vineyard have been added", error);
+      return false;
+    }
+  }
+
+  /**
+   * Inserts the default vineyards data in batches from the CSV file into the database.
+   *
+   * @param sql  The SQL insert statement for geolocations.
+   * @param rows The list of vineyard data from the CSV.
+   * @return The total number of rows successfully inserted into the database.
+   */
+  private int batchInsertVineyards(String sql, List<String[]> rows) {
+    int rowsAffected = 0;
+    int batchSize = 2048;
+
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      for (int i = 1; i < rows.size(); i++) {
+        String[] row = rows.get(i);
+        String name = row[0];
+        String address = row[1];
+        String region = row[1];
+        String website = row[1];
+        String description = row[1];
+
+        statement.setString(1, name);
+        statement.setString(2, address);
+        statement.setString(3, region);
+        statement.setString(4, website);
+        statement.setString(5, description);
+        statement.addBatch();
+
+        if (i > 1 && i % batchSize == 0) {
+          rowsAffected += executeBatch(statement);
+        }
+      }
+      rowsAffected += executeBatch(statement);
+
+    } catch (SQLException error) {
+      log.error("Failed to add default vineyards", error);
+    }
+    return rowsAffected;
+  }
+
+  /**
+   * Executes a batch of insert operations for geolocation data.
+   *
+   * @param statement The prepared statement with batched insert operations.
+   * @return The total number of rows affected by the batch execution.
+   * @throws SQLException If there is an error executing the batch.
+   */
+  private int executeBatch(PreparedStatement statement) throws SQLException {
+    int rowsAffected = 0;
+    for (int rowsAffectedInBatch : statement.executeBatch()) {
+      rowsAffected += rowsAffectedInBatch;
+    }
+    return rowsAffected;
   }
 }

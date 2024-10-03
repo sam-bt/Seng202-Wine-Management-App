@@ -160,11 +160,6 @@ public class DatabaseManager {
             "BEGIN " +
             "INSERT INTO LIST_NAME (USERNAME, NAME) " +
             "VALUES (NEW.USERNAME, 'Favourites'); " +
-            "END",
-        "CREATE TRIGGER IF NOT EXISTS HISTORY_LIST" +
-            "AFTER INSERT ON USER " +
-            "FOR EACH ROW " +
-            "BEGIN " +
             "INSERT INTO LIST_NAME (USERNAME, NAME) " +
             "VALUES (NEW.USERNAME, 'History'); " +
             "END",
@@ -187,6 +182,7 @@ public class DatabaseManager {
     }
     log.info("Successfully executed {} initialise statements", sqlStatements.size());
     geoLocationDAO.addDefaultGeoLocations();
+    vineyardsDAO.addDefaultVineyards();
   }
 
   /**

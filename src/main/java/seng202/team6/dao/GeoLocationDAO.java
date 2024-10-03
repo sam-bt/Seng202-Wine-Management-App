@@ -53,7 +53,7 @@ public class GeoLocationDAO extends DAO {
 
     String sql = "INSERT INTO GEOLOCATION values (?, ?, ?);";
     List<String[]> rows = ProcessCSV.getCSVRows(
-        getClass().getResourceAsStream("/nz_geolocations.csv"));
+        getClass().getResourceAsStream("/data/nz_geolocations.csv"));
 
     int rowsAffected = batchInsertGeoLocations(sql, rows);
     log.info("Successfully added {} out of {} default geolocations in {}ms",
