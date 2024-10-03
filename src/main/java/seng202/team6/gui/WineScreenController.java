@@ -283,7 +283,8 @@ public class WineScreenController extends Controller {
   }
 
   public void createWineCard(Wine wine) {
-    CardContainer card = new CardContainer();
+    CardContainer card = new CardContainer(winesViewContainer.widthProperty(),
+        winesViewContainer.hgapProperty());
     card.setOnMouseClicked(event -> {
       if (event.getClickCount() == 2) {
         openDetailedWineView(wine);
@@ -330,17 +331,6 @@ public class WineScreenController extends Controller {
     colorTextField.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.TAB) {
         applyFiltersButton.requestFocus();
-      }
-    });
-
-    // we need to listen to the width property
-    // because in the init() method, the winesViewContainer does not yet have a width
-    winesViewContainer.widthProperty().addListener((obs, oldVal, newVal) -> {
-      double totalWidth = newVal.doubleValue();
-      for (Node child : winesViewContainer.getChildren()) {
-        if (child instanceof CardContainer) {
-          ((CardContainer) child).setCardWidth(totalWidth, winesViewContainer.getHgap());
-        }
       }
     });
 

@@ -21,4 +21,8 @@ public class ImageReader {
     }
     return null;
   }
+
+  public static Image loadImageFromURL(String url) {
+    return new Image(url, true);
+  }
 }

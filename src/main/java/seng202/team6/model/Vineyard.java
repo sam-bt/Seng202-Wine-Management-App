@@ -17,6 +17,7 @@ public class Vineyard {
   private final StringProperty region;
   private final StringProperty website;
   private final StringProperty description;
+  private final StringProperty logoUrl;
   private final Property<GeoLocation> geoLocation;
 
   /**
@@ -30,13 +31,14 @@ public class Vineyard {
    * @param geoLocation the geographic location of the vineyard
    */
   public Vineyard(long id, String name, String address, String region, String website,
-      String description, GeoLocation geoLocation) {
+      String description, String logoUrl, GeoLocation geoLocation) {
     this.id = new SimpleLongProperty(id);
     this.name = new SimpleStringProperty(name);
     this.address = new SimpleStringProperty(address);
     this.region = new SimpleStringProperty(region);
     this.website = new SimpleStringProperty(website);
     this.description = new SimpleStringProperty(description);
+    this.logoUrl = new SimpleStringProperty(logoUrl);
     this.geoLocation = new SimpleObjectProperty<>(geoLocation);
   }
 
@@ -191,6 +193,18 @@ public class Vineyard {
    */
   public void setDescription(String description) {
     descriptionProperty().set(description);
+  }
+
+  public StringProperty logoUrlProperty() {
+    return logoUrl;
+  }
+
+  public String getLogoUrl() {
+    return logoUrl.get();
+  }
+
+  public void setLogoUrl(String logoUrl) {
+    logoUrlProperty().set(logoUrl);
   }
 
   /**

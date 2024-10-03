@@ -45,7 +45,8 @@ public class VineyardDAO extends DAO {
             "ADDRESS        VARCHAR(64)   NOT NULL," +
             "REGION         VARCHAR(32)   NOT NULL," +
             "WEBSITE        TEXT," +
-            "DESCRIPTION    TEXT" +
+            "DESCRIPTION    TEXT," +
+            "LOGO_URL       TEXT" +
             ")"
     };
   }
@@ -58,7 +59,7 @@ public class VineyardDAO extends DAO {
       return;
     }
 
-    String sql = "INSERT INTO VINEYARD VALUES (null, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO VINEYARD VALUES (null, ?, ?, ?, ?, ?, ?)";
     List<String[]> rows = ProcessCSV.getCSVRows(
         getClass().getResourceAsStream("/data/nz_vineyards.csv"));
 
@@ -100,13 +101,13 @@ public class VineyardDAO extends DAO {
   public ObservableList<Vineyard> getAllInRange(int begin, int end,
       VineyardFilters vineyardFilters) {
     Timer timer = new Timer(); // todo - make query not use limit and offset
-    String sql = "SELECT * FROM VINEYARD"
-        + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME)"
+    String sql = "SELECT * FROM VINEYARD "
+        + "LEFT JOIN GEOLOCATION ON LOWER(VINEYARD.ADDRESS) LIKE LOWER(GEOLOCATION.NAME)"
         + (vineyardFilters == null ? "" :
         "where NAME like ? "
             + "and ADDRESS like ? "
             + "and REGION like ? ")
-        + "ORDER BY WINE.ID "
+        + "ORDER BY VINEYARD.ID "
         + "LIMIT ? "
         + "OFFSET ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -126,6 +127,7 @@ public class VineyardDAO extends DAO {
         ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet);
         log.info("Successfully retrieved {} vineyards in range {}-{} in {}ms",
             vineyards.size(), begin, end, timer.stop());
+        return vineyards;
       }
     } catch (SQLException error) {
       log.info("Failed to retrieve vineyards in range {}-{}", begin, end, error);
@@ -174,6 +176,7 @@ public class VineyardDAO extends DAO {
         resultSet.getString("REGION"),
         resultSet.getString("WEBSITE"),
         resultSet.getString("DESCRIPTION"),
+        resultSet.getString("LOGO_URL"),
         geoLocation
     );
     if (useCache()) {
@@ -235,15 +238,17 @@ public class VineyardDAO extends DAO {
         String[] row = rows.get(i);
         String name = row[0];
         String address = row[1];
-        String region = row[1];
-        String website = row[1];
-        String description = row[1];
+        String region = row[2];
+        String website = row[3];
+        String description = row[4];
+        String logoUrl = row[5];
 
         statement.setString(1, name);
         statement.setString(2, address);
         statement.setString(3, region);
         statement.setString(4, website);
         statement.setString(5, description);
+        statement.setString(6, logoUrl);
         statement.addBatch();
 
         if (i > 1 && i % batchSize == 0) {

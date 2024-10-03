@@ -12,4 +12,14 @@ public class VineyardService {
   public VineyardService(DatabaseManager databaseManager) {
     this.databaseManager = databaseManager;
   }
+
+  public void init() {
+    ObservableList<Vineyard> vineyards = databaseManager.getVineyardsDAO()
+        .getAllInRange(0, 100, null);
+    this.vineyards.addAll(vineyards);
+  }
+
+  public ObservableList<Vineyard> get() {
+    return vineyards;
+  }
 }

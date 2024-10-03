@@ -21,6 +21,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.Rating;
+import seng202.team6.gui.controls.CardContainer;
 import seng202.team6.gui.controls.CircularScoreIndicator;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
@@ -51,7 +52,7 @@ public class DetailedWineViewController extends Controller {
   private final WineNoteService wineNoteService;
   private final Wine viewedWine;
   private final Runnable backButtonAction;
-  private final ObservableMap<WineReview, VBox> wineReviewWrappers = FXCollections.observableHashMap();
+  private final ObservableMap<WineReview, VBox> wineReviewCards = FXCollections.observableHashMap();
   @FXML
   private Button saveNotes;
   @FXML
@@ -186,15 +187,15 @@ public class DetailedWineViewController extends Controller {
         if (change.wasAdded()) {
           change.getAddedSubList().forEach(wineReview -> {
             VBox reviewWrapper = createWineReviewElement(wineReview);
-            wineReviewWrappers.put(wineReview, reviewWrapper);
+            wineReviewCards.put(wineReview, reviewWrapper);
             reviewsBox.getChildren().add(reviewWrapper);
           });
         }
         if (change.wasRemoved()) {
           change.getRemoved().forEach(wineReview -> {
-            VBox reviewWrapper = wineReviewWrappers.get(wineReview);
+            VBox reviewWrapper = wineReviewCards.get(wineReview);
             reviewsBox.getChildren().remove(reviewWrapper);
-            wineReviewWrappers.remove(wineReview);
+            wineReviewCards.remove(wineReview);
           });
         }
       }
