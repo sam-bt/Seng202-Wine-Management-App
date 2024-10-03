@@ -35,7 +35,7 @@ import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
 import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.model.Filters;
+import seng202.team6.model.WineFilters;
 import seng202.team6.model.Wine;
 import seng202.team6.util.ImageReader;
 import seng202.team6.util.YearStringConverter;
@@ -101,15 +101,15 @@ public class WineScreenController extends Controller {
    *
    * @param begin   first element
    * @param end     last element + 1
-   * @param filters list of filters
+   * @param wineFilters list of filters
    */
-  private void openWineRange(int begin, int end, Filters filters) {
+  private void openWineRange(int begin, int end, WineFilters wineFilters) {
     // Clear existing data
     tableView.getItems().clear();
 
     // Check if filters exist
     ObservableList<Wine> wines = managerContext.databaseManager.getWineDAO()
-        .getAllInRange(begin, end, filters);
+        .getAllInRange(begin, end, wineFilters);
 
     // send the wines to the map if they have a geo location
     mapController.setOnReadyAction(() -> {
@@ -127,7 +127,7 @@ public class WineScreenController extends Controller {
     tableView.setItems(wines);
 
     // Only update autocomplete if NOT filtering
-    if (filters == null) {
+    if (wineFilters == null) {
       // Auto Complete boxes and range sliders
       // Update filter checkboxes
       Set<String> winerySet = new HashSet<>();
@@ -419,7 +419,7 @@ public class WineScreenController extends Controller {
    * Is called when the apply button is pressed<br> Updates table with filtered data
    */
   public void onApplyFiltersButtonPressed() {
-    Filters filters = new Filters(
+    WineFilters wineFilters = new WineFilters(
         titleTextField.getText(),
         countryTextField.getText(),
         wineryTextField.getText(),
@@ -433,7 +433,7 @@ public class WineScreenController extends Controller {
         priceSlider.getLowValue(),
         priceSlider.getHighValue()
     );
-    openWineRange(0, 100, filters);
+    openWineRange(0, 100, wineFilters);
   }
 
   public void onResetFiltersButtonPressed() {

@@ -94,7 +94,7 @@
     </TabPane>
     <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Filters">
       <content>
-        <AnchorPane fx:id="filtersPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="316.0" styleClass="filters-pane" stylesheets="@../css/titled_pane.css">
+        <AnchorPane fx:id="filtersPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="316.0" styleClass="wineFilters-pane" stylesheets="@../css/titled_pane.css">
           <children>
             <Button fx:id="applyFiltersButton" layoutX="30.0" layoutY="679.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="120.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Apply">
               <font>

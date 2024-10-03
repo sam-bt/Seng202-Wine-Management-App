@@ -1,7 +1,7 @@
 package seng202.team6.model;
 
-import javafx.beans.property.LongProperty;
 import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -11,7 +11,7 @@ import javafx.beans.property.StringProperty;
  * The Vineyard class represents a vineyard.
  */
 public class Vineyard {
-  private final LongProperty id;
+  private final ReadOnlyLongProperty id;
   private final StringProperty name;
   private final StringProperty address;
   private final StringProperty region;
@@ -22,7 +22,6 @@ public class Vineyard {
   /**
    * Constructs a new Vineyard object with the specified properties.
    *
-   * @param id          the unique identifier of the vineyard
    * @param name        the name of the vineyard
    * @param address     the address of the vineyard
    * @param region      the region where the vineyard is located
@@ -42,18 +41,18 @@ public class Vineyard {
   }
 
   /**
-   * Returns the LongProperty representing the vineyard's ID.
+   * Returns the LongProperty representing the vineyard's id.
    *
-   * @return the LongProperty of the vineyard's ID
+   * @return the LongProperty of the vineyard's id
    */
-  public LongProperty idProperty() {
+  public ReadOnlyLongProperty idProperty() {
     return id;
   }
 
   /**
-   * Returns the vineyard's ID.
+   * Returns the vineyard's id.
    *
-   * @return the vineyard's ID
+   * @return the id of the vineyard
    */
   public long getId() {
     return id.get();

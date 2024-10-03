@@ -13,13 +13,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.Filters;
+import seng202.team6.model.WineFilters;
 import seng202.team6.model.Wine;
 
 public class WineFilteringStepDefinitions {
 
   private DatabaseManager databaseManager;
-  private Filters filters;
+  private WineFilters wineFilters;
   private List<Wine> filteredWines;
 
   @Before
@@ -34,7 +34,7 @@ public class WineFilteringStepDefinitions {
 
   @Given("the user is viewing the raw wine data")
   public void theUserIsViewingTheRawWineData() {
-    filters = new Filters();
+    wineFilters = new WineFilters();
     filteredWines = new ArrayList<>();
   }
 
@@ -61,48 +61,48 @@ public class WineFilteringStepDefinitions {
 
   @When("the user searches for title containing {string}")
   public void theUserSearchesForTitleContaining(String title) {
-    filters.setTitle(title);
+    wineFilters.setTitle(title);
     applySearch();
   }
 
   @When("the user searches for country matching {string}")
   public void theUserSearchesForCountryMatching(String country) {
-    filters.setCountry(country);
+    wineFilters.setCountry(country);
     applySearch();
   }
 
   @When("the user searches for colour matching {string}")
   public void theUserSearchesForColourMatching(String colour) {
-    filters.setColor(colour);
+    wineFilters.setColor(colour);
     applySearch();
   }
 
 
   @When("the user searches for vintage between {int} and {int}")
   public void theUserSearchesForVintageBetweenAnd(int minVintage, int maxVintage) {
-    filters.setMinVintage(minVintage);
-    filters.setMaxVintage(maxVintage);
+    wineFilters.setMinVintage(minVintage);
+    wineFilters.setMaxVintage(maxVintage);
     applySearch();
   }
 
   @When("the user searches for score between {int} and {int}")
   public void theUserSearchesForScoreBetweenAnd(int minScore, int maxScore) {
-    filters.setMinScore(minScore);
-    filters.setMaxScore(maxScore);
+    wineFilters.setMinScore(minScore);
+    wineFilters.setMaxScore(maxScore);
     applySearch();
   }
 
   @When("the user searches for abv between {double} and {double}")
   public void theUserSearchesForAbvBetweenAnd(double minAbv, double maxAbv) {
-    filters.setMinAbv(minAbv);
-    filters.setMaxAbv(maxAbv);
+    wineFilters.setMinAbv(minAbv);
+    wineFilters.setMaxAbv(maxAbv);
     applySearch();
   }
 
   @When("the user searches for price between {double} and {double}")
   public void theUserSearchesForPriceBetweenAnd(double minPrice, double maxPrice) {
-    filters.setMinPrice(minPrice);
-    filters.setMaxPrice(maxPrice);
+    wineFilters.setMinPrice(minPrice);
+    wineFilters.setMaxPrice(maxPrice);
     applySearch();
   }
 
@@ -153,7 +153,7 @@ public class WineFilteringStepDefinitions {
   }
 
   private void applySearch() {
-    filteredWines = databaseManager.getWineDAO().getAllInRange(0, Integer.MAX_VALUE, filters);
+    filteredWines = databaseManager.getWineDAO().getAllInRange(0, Integer.MAX_VALUE, wineFilters);
   }
 
   @And("the list of wines has size {int}")

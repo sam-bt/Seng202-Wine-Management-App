@@ -9,7 +9,7 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.Filters;
+import seng202.team6.model.WineFilters;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
 import seng202.team6.util.DatabaseObjectUniquer;
@@ -103,6 +103,13 @@ public class WineDAO extends DAO {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Retrieves a range of wines from the WINE table.
+   *
+   * @param begin The start index of the range (inclusive)
+   * @param end   The end index of the range (exclusive)
+   * @return An ObservableList of Wine objects within the specified range
+   */
   public ObservableList<Wine> getAllInRange(int begin, int end) {
     return getAllInRange(begin, end, null);
   }
@@ -112,13 +119,14 @@ public class WineDAO extends DAO {
    *
    * @param begin The start index of the range (inclusive)
    * @param end   The end index of the range (exclusive)
+   * @param wineFilters The wine filters to be applied
    * @return An ObservableList of Wine objects within the specified range
    */
-  public ObservableList<Wine> getAllInRange(int begin, int end, Filters filters) {
+  public ObservableList<Wine> getAllInRange(int begin, int end, WineFilters wineFilters) {
     Timer timer = new Timer();
     String sql = "SELECT * from WINE "
         + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME)"
-        + (filters == null ? "" :
+        + (wineFilters == null ? "" :
         "where TITLE like ? "
             + "and COUNTRY like ? "
             + "and WINERY like ? "
@@ -132,23 +140,23 @@ public class WineDAO extends DAO {
         + "OFFSET ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       int paramIndex = 1;
-      if (filters != null) {
+      if (wineFilters != null) {
         statement.setString(paramIndex++,
-            filters.getTitle().isEmpty() ? "%" : "%" + filters.getTitle() + "%");
+            wineFilters.getTitle().isEmpty() ? "%" : "%" + wineFilters.getTitle() + "%");
         statement.setString(paramIndex++,
-            filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry() + "%");
+            wineFilters.getCountry().isEmpty() ? "%" : "%" + wineFilters.getCountry() + "%");
         statement.setString(paramIndex++,
-            filters.getWinery().isEmpty() ? "%" : "%" + filters.getWinery() + "%");
+            wineFilters.getWinery().isEmpty() ? "%" : "%" + wineFilters.getWinery() + "%");
         statement.setString(paramIndex++,
-            filters.getColor().isEmpty() ? "%" : "%" + filters.getColor() + "%");
-        statement.setInt(paramIndex++, filters.getMinVintage());
-        statement.setInt(paramIndex++, filters.getMaxVintage());
-        statement.setDouble(paramIndex++, filters.getMinScore());
-        statement.setDouble(paramIndex++, filters.getMaxScore());
-        statement.setDouble(paramIndex++, filters.getMinAbv());
-        statement.setDouble(paramIndex++, filters.getMaxAbv());
-        statement.setDouble(paramIndex++, filters.getMinPrice());
-        statement.setDouble(paramIndex++, filters.getMaxPrice());
+            wineFilters.getColor().isEmpty() ? "%" : "%" + wineFilters.getColor() + "%");
+        statement.setInt(paramIndex++, wineFilters.getMinVintage());
+        statement.setInt(paramIndex++, wineFilters.getMaxVintage());
+        statement.setDouble(paramIndex++, wineFilters.getMinScore());
+        statement.setDouble(paramIndex++, wineFilters.getMaxScore());
+        statement.setDouble(paramIndex++, wineFilters.getMinAbv());
+        statement.setDouble(paramIndex++, wineFilters.getMaxAbv());
+        statement.setDouble(paramIndex++, wineFilters.getMinPrice());
+        statement.setDouble(paramIndex++, wineFilters.getMaxPrice());
 
       }
       statement.setInt(paramIndex++, end - begin);
@@ -296,8 +304,7 @@ public class WineDAO extends DAO {
       }
     }
 
-    GeoLocation geoLocation = createGeoLocation(
-        resultSet); // todo - change this to grab the geolocation when required
+    GeoLocation geoLocation = createGeoLocation(resultSet);
     Wine wine = new Wine(
         id,
         resultSet.getString("TITLE"),
