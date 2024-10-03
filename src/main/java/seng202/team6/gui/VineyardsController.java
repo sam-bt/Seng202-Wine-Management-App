@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
+import javafx.scene.web.WebView;
 import seng202.team6.gui.controls.CardContainer;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Vineyard;
@@ -21,6 +22,9 @@ import seng202.team6.util.ImageReader;
 public class VineyardsController extends Controller {
   @FXML
   TilePane vineyardsViewContainer;
+  @FXML
+  WebView webView;
+  private LeafletOSMController mapController;
 
   private final ObservableMap<Vineyard, CardContainer> vineyardCards = FXCollections.observableHashMap();
   private final VineyardService vineyardService;
@@ -39,6 +43,8 @@ public class VineyardsController extends Controller {
   @Override
   public void init() {
     vineyardService.init();
+    mapController = new LeafletOSMController(webView.getEngine());
+    mapController.initMap();
   }
 
   private void bindToVineyardService() {
