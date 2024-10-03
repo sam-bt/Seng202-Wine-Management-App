@@ -6,7 +6,6 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -91,12 +90,6 @@
                 <Font size="16.0" />
               </font>
             </Label>
-            <Label layoutX="11.0" layoutY="200.0" text="Color">
-              <font>
-                <Font size="16.0" />
-              </font>
-            </Label>
-            <TextField fx:id="titleTextField" layoutX="9.0" layoutY="45.0" prefHeight="33.0" prefWidth="300.0" />
           </children>
         </AnchorPane>
       </content>
