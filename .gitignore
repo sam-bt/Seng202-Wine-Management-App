@@ -21,4 +21,5 @@ database/
 *.db
 
 # Environment variables
+.env
 *.env
