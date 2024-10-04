@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
+import seng202.team6.model.Vineyard;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineDatePair;
 import seng202.team6.model.WineList;
@@ -114,10 +115,33 @@ public class AggregatedDAO extends DAO {
           wines.add(wine);
         }
       }
-      log.info("Successfully retrieves {} wines in list {} in {}ms",
+      log.info("Successfully retrieved {} wines in list {} in {}ms",
           wines.size(), wineList.id(), timer.stop());
     } catch (SQLException e) {
       log.error("Failed to retrieve wines in list {}", wineList.id());
+    }
+    return wines;
+  }
+
+  public ObservableList<Wine> getWinesFromVineyard(Vineyard vineyard) {
+    Timer timer = new Timer();
+    String sql = "SELECT * FROM WINE " +
+        "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) " +
+        "WHERE WINERY = ?";
+    ObservableList<Wine> wines = FXCollections.observableArrayList();
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setString(1, vineyard.getName());
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          Wine wine = wineDAO.extractWineFromResultSet(resultSet);
+          wines.add(wine);
+        }
+      }
+      log.info("Successfully retrieved {} wines from vineyard {} in {}ms",
+          wines.size(), vineyard.getName(), timer.stop());
+    } catch (SQLException e) {
+      log.error("Failed to retrieve wines from vineyard {}", vineyard.getName());
     }
     return wines;
   }

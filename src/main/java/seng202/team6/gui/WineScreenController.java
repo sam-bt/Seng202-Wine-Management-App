@@ -35,6 +35,7 @@ import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
 import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.gui.controls.CardContainer;
+import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.WineFilters;
 import seng202.team6.model.Wine;
@@ -47,18 +48,6 @@ import seng202.team6.util.YearStringConverter;
 
 public class WineScreenController extends Controller {
 
-  private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine_cropped.png");
-  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage(
-      "/img/white_wine_cropped.png");
-  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine_cropped.png");
-  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage(
-      "/img/default_wine_cropped.png");
-  private static final Map<String, Image> wineImages = new HashMap<>() {{
-    put("red", RED_WINE_IMAGE);
-    put("white", WHITE_WINE_IMAGE);
-    put("rose", ROSE_WINE_IMAGE);
-    put("rosé", ROSE_WINE_IMAGE);
-  }};
   private final Logger log = LogManager.getLogger(WineScreenController.class);
   @FXML
   TableView<Wine> tableView;
@@ -283,29 +272,13 @@ public class WineScreenController extends Controller {
   }
 
   public void createWineCard(Wine wine) {
-    CardContainer card = new CardContainer(winesViewContainer.widthProperty(),
-        winesViewContainer.hgapProperty());
+    WineCard card = new WineCard(winesViewContainer.widthProperty(),
+        winesViewContainer.hgapProperty(), wine);
     card.setOnMouseClicked(event -> {
       if (event.getClickCount() == 2) {
         openDetailedWineView(wine);
       }
     });
-
-    Image wineImage = wineImages.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
-    ImageView imageView = new ImageView(wineImage);
-    imageView.setFitHeight(100);
-    imageView.setPreserveRatio(true);
-    HBox.setHgrow(imageView, Priority.NEVER);
-
-    Label wineTitle = new Label();
-    wineTitle.textProperty().bind(wine.titleProperty());
-    wineTitle.setStyle("-fx-font-size: 16px;");
-    wineTitle.setWrapText(true);
-
-    HBox header = new HBox(imageView, wineTitle);
-    header.setAlignment(Pos.CENTER_LEFT);
-    header.setSpacing(20);
-    card.getChildren().add(header);
     winesViewContainer.getChildren().add(card);
   }
 

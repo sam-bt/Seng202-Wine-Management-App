@@ -86,6 +86,11 @@ public class VineyardsController extends Controller {
   private CardContainer createVineyardCard(Vineyard vineyard) {
     CardContainer card = new CardContainer(vineyardsViewContainer.widthProperty(),
         vineyardsViewContainer.hgapProperty());
+    card.setOnMouseClicked(event -> {
+      if (event.getClickCount() == 2) {
+        openDetailedVineyardView(vineyard);
+      }
+    });
 
     int logoWidth = 200, logoHeight = 150;
     Image logo = ImageReader.loadImageFromURL(vineyard.getLogoUrl());
@@ -118,5 +123,10 @@ public class VineyardsController extends Controller {
     autoCompleteTextField.setStyle("-fx-font-size: 15px;");
     filtersPane.getChildren().add(autoCompleteTextField);
     return autoCompleteTextField;
+  }
+
+  private void openDetailedVineyardView(Vineyard vineyard) {
+    Runnable backAction = () -> managerContext.GUIManager.mainController.openVineyardsScreen();
+    managerContext.GUIManager.mainController.openDetailedVineyardView(vineyard, backAction);
   }
 }

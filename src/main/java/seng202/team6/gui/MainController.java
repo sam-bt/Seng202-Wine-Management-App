@@ -17,6 +17,7 @@ import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
+import seng202.team6.model.Vineyard;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
@@ -242,6 +243,11 @@ public class MainController extends Controller {
   public void openDetailedWineView(Wine wine, Runnable backButtonAction) {
     switchScene("/fxml/detailed_wine_view.fxml", "Detailed Wine View",
         () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
+  }
+
+  public void openDetailedVineyardView(Vineyard vineyard, Runnable backButtonAction) {
+    switchScene("/fxml/detailed_vineyard_view.fxml", "Detailed Wine View",
+        () -> new DetailedVineyardViewController(managerContext, vineyard, backButtonAction));
   }
 
   /**
