@@ -112,7 +112,6 @@ public class GeolocationResolver {
 
   private GeoLocation parseResponse(String locationName, String responseBody, Timer timer) {
     try {
-      System.out.println("(responseBody == null) = " + (responseBody == null));
       JSONObject jsonObject = (JSONObject) jsonParser.parse(responseBody);
       JSONArray features = (JSONArray) jsonObject.get("features");
       if (features != null && !features.isEmpty()) {
