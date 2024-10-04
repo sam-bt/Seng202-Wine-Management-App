@@ -25,12 +25,12 @@ import seng202.team6.model.GeoLocation;
 
 public class GeolocationResolver {
   private static final int MAX_REQUESTS_PER_MINUTE = 40; // ORS has a cap of 40 requests per min
-  private static final String LOCATION_RESOLVER_API_URL;
+  private final String LOCATION_RESOLVER_API_URL;
   private final HttpClient client = HttpClient.newHttpClient();
   private final Logger log = LogManager.getLogger(getClass());
   private final JSONParser jsonParser = new JSONParser();
 
-  static {
+  public GeolocationResolver() {
     Dotenv dotenv = Dotenv.load();
     String apiKey = dotenv.get("ORS_API_KEY");
     LOCATION_RESOLVER_API_URL = "https://api.openrouteservice.org/geocode/search?api_key=" + apiKey + "&boundary.country=NZ&size=1";

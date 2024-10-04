@@ -17,7 +17,7 @@ import seng202.team6.util.Timer;
 
 public class VineyardDefaultsService {
   private final Logger log = LogManager.getLogger(getClass());
-  private final GeolocationResolver geolocationResolver = new GeolocationResolver();
+  private final GeolocationResolver geolocationResolver;
   private final GeoLocationDAO geoLocationDAO;
   private final VineyardDAO vineyardDAO;
   private final boolean resolveMissingAddresses;
@@ -27,6 +27,10 @@ public class VineyardDefaultsService {
     this.geoLocationDAO = geoLocationDAO;
     this.vineyardDAO = vineyardDAO;
     this.resolveMissingAddresses = resolveMissingAddresses;
+    // only initialise the resolver if we are using it
+    // otherwise dotenv will try and look for the ORS API KEY
+    // todo - find a better fix for this
+    this.geolocationResolver = resolveMissingAddresses ? new GeolocationResolver() : null;
   }
 
   public void init() {
