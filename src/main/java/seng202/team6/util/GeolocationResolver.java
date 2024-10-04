@@ -28,7 +28,6 @@ public class GeolocationResolver {
   private final String LOCATION_RESOLVER_API_URL;
   private final HttpClient client = HttpClient.newHttpClient();
   private final Logger log = LogManager.getLogger(getClass());
-  private final JSONParser jsonParser = new JSONParser();
 
   public GeolocationResolver() {
     Dotenv dotenv = Dotenv.load();
@@ -114,6 +113,7 @@ public class GeolocationResolver {
   }
 
   private GeoLocation parseResponse(String locationName, String responseBody, Timer timer) {
+    JSONParser jsonParser = new JSONParser();
     try {
       JSONObject jsonObject = (JSONObject) jsonParser.parse(responseBody);
       JSONArray features = (JSONArray) jsonObject.get("features");
