@@ -98,7 +98,10 @@ public class GeolocationResolver {
           .build();
 
       return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-          .thenApply(HttpResponse::body)
+          .thenApply(response -> {
+            log.info("Status code for location '{}': {}", locationName, response.statusCode());
+            return response.body();
+          })
           .thenApply(response -> parseResponse(locationName, response, timer))
 //          .orTimeout(3, TimeUnit.SECONDS)
           .exceptionally(error -> {
