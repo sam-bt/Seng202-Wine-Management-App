@@ -82,7 +82,7 @@ public class DatabaseManager {
     this.wineNotesDAO = new WineNotesDAO(connection);
     this.wineReviewDAO = new WineReviewDAO(connection);
     this.geoLocationDAO = new GeoLocationDAO(connection);
-    this.aggregatedDAO = new AggregatedDAO(connection, wineNotesDAO, wineDAO);
+    this.aggregatedDAO = new AggregatedDAO(connection, wineReviewDAO, wineNotesDAO, wineDAO);
     init();
   }
 

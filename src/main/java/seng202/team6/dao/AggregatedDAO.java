@@ -8,11 +8,13 @@ import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import kotlin.Pair;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineDatePair;
 import seng202.team6.model.WineList;
+import seng202.team6.model.WineReview;
 import seng202.team6.util.Timer;
 
 /**
@@ -22,6 +24,7 @@ import seng202.team6.util.Timer;
  */
 public class AggregatedDAO extends DAO {
 
+  private final WineReviewDAO wineReviewDAO;
   private final WineNotesDAO wineNotesDAO;
   private final WineDAO wineDAO;
 
@@ -32,8 +35,9 @@ public class AggregatedDAO extends DAO {
    * @param wineNotesDAO The DAO responsible for handling operations related to wine notes.
    * @param wineDAO      The DAO responsible for handling operations related to wines.
    */
-  public AggregatedDAO(Connection connection, WineNotesDAO wineNotesDAO, WineDAO wineDAO) {
+  public AggregatedDAO(Connection connection, WineReviewDAO wineReviewDAO, WineNotesDAO wineNotesDAO, WineDAO wineDAO) {
     super(connection, AggregatedDAO.class);
+    this.wineReviewDAO = wineReviewDAO;
     this.wineNotesDAO = wineNotesDAO;
     this.wineDAO = wineDAO;
   }
@@ -120,5 +124,33 @@ public class AggregatedDAO extends DAO {
       log.error("Failed to retrieve wines in list {}", wineList.id());
     }
     return wines;
+  }
+
+  public ObservableList<Pair<WineReview, Wine>> getWineReviewsAndWines(int begin, int end) {
+    Timer timer = new Timer();
+    String sql = "SELECT * FROM WINE_REVIEW " +
+        "INNER JOIN WINE ON WINE_REVIEW.WINE_ID = WINE.ID " +
+        "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) " +
+        "LIMIT ? " +
+        "OFFSET ?";
+    ObservableList<Pair<WineReview, Wine>> wineReviewPairs = FXCollections.observableArrayList();
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setInt(1, end - begin);
+      statement.setInt(2, begin);
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          WineReview wineReview = wineReviewDAO.extractWineReviewFromResultSet(resultSet);
+          Wine wine = wineDAO.extractWineFromResultSet(resultSet);
+         wineReviewPairs.add(new Pair<>(wineReview, wine));
+        }
+        log.info("Successfully retrieved {} reviews with wines in range {}-{} in {}ms",
+            wineReviewPairs.size(), begin, end, timer.stop());
+        return wineReviewPairs;
+      }
+    } catch (SQLException e) {
+      log.error("Failed to retrieve with wines in range {}-{}", begin, end, e);
+    }
+    return wineReviewPairs;
   }
 }
