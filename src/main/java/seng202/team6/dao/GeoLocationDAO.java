@@ -5,7 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import seng202.team6.model.GeoLocation;
 import seng202.team6.util.ProcessCSV;
 import seng202.team6.util.Timer;
 
@@ -57,7 +64,52 @@ public class GeoLocationDAO extends DAO {
 
     int rowsAffected = batchInsertGeoLocations(sql, rows);
     log.info("Successfully added {} out of {} default geolocations in {}ms",
-        rowsAffected, rows.size() - 1, timer.stop());
+        rowsAffected, rows.size(), timer.stop());
+  }
+
+  public void addAll(Map<String, GeoLocation> geoLocations) {
+    Timer timer = new Timer();
+    String sql = "INSERT INTO GEOLOCATION values (?, ?, ?);";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      for (Entry<String, GeoLocation> entry : geoLocations.entrySet()) {
+        statement.setString(1, entry.getKey());
+        statement.setDouble(2, entry.getValue().getLatitude());
+        statement.setDouble(3, entry.getValue().getLongitude());
+        statement.addBatch();
+      }
+
+      int rowsAffected = Arrays.stream(statement.executeBatch()).sum();
+      log.info("Successfully added {} geolocations in {}ms",
+          rowsAffected, rowsAffected, timer.stop());
+    } catch (SQLException error) {
+      log.error("Failed to add geolocations", error);
+    }
+  }
+
+  public Set<String> getExistingLocationNames(Set<String> locationNames) {
+    Timer timer = new Timer();
+    // Collections.nCopies just repeats '?' n times
+    String sql = "SELECT NAME FROM GEOLOCATION WHERE NAME IN (" +
+        String.join(",", Collections.nCopies(locationNames.size(), "?")) + ")";
+    Set<String> existingLocationNames = new HashSet<>();
+
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      int paramIndex = 1;
+      for (String locationName : locationNames) {
+        statement.setString(paramIndex++, locationName);
+      }
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          existingLocationNames.add(resultSet.getString("NAME"));
+        }
+      }
+      log.info("Successfully found {} out of {} location names in {}ms",
+          existingLocationNames.size(), locationNames.size(), timer.stop());
+    } catch (SQLException error) {
+      log.error("Failed to retrieve locations names that match", error);
+    }
+    return existingLocationNames;
   }
 
   /**

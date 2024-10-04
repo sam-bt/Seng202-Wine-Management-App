@@ -5,15 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardFilters;
 import seng202.team6.util.DatabaseObjectUniquer;
-import seng202.team6.util.ProcessCSV;
 import seng202.team6.util.Timer;
 
 public class VineyardDAO extends DAO {
@@ -50,23 +49,6 @@ public class VineyardDAO extends DAO {
             "LOGO_URL       TEXT" +
             ")"
     };
-  }
-
-  public void addDefaultVineyards() {
-    Timer timer = new Timer();
-    if (vineyardsTableHasData()) {
-      log.info("Skip loading default vineyards as the VINEYARD table is not empty in {}ms",
-          timer.stop());
-      return;
-    }
-
-    String sql = "INSERT INTO VINEYARD VALUES (null, ?, ?, ?, ?, ?, ?)";
-    List<String[]> rows = ProcessCSV.getCSVRows(
-        getClass().getResourceAsStream("/data/nz_vineyards.csv"));
-
-    int rowsAffected = batchInsertVineyards(sql, rows);
-    log.info("Successfully added {} out of {} default vineyards in {}ms",
-        rowsAffected, rows.size() - 1, timer.stop());
   }
 
   /**
@@ -134,6 +116,28 @@ public class VineyardDAO extends DAO {
       log.info("Failed to retrieve vineyards in range {}-{}", begin, end, error);
     }
     return FXCollections.emptyObservableList();
+  }
+
+  public void addAll(List<Vineyard> vineyards) {
+    Timer timer = new Timer();
+    String sql = "INSERT INTO VINEYARD values (null, ?, ?, ?, ?, ?, ?);";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      for (Vineyard vineyard : vineyards) {
+        statement.setString(1, vineyard.getName());
+        statement.setString(2, vineyard.getAddress());
+        statement.setString(3, vineyard.getRegion());
+        statement.setString(4, vineyard.getWebsite());
+        statement.setString(5, vineyard.getDescription());
+        statement.setString(6, vineyard.getLogoUrl());
+        statement.addBatch();
+      }
+
+      int rowsAffected = Arrays.stream(statement.executeBatch()).sum();
+      log.info("Successfully added {} vineyards in {}ms",
+          rowsAffected, rowsAffected, timer.stop());
+    } catch (SQLException error) {
+      log.error("Failed to add vineyards", error);
+    }
   }
 
   /**
@@ -212,7 +216,7 @@ public class VineyardDAO extends DAO {
    *
    * @return true if the GEOLOCATION table has data, false otherwise.
    */
-  private boolean vineyardsTableHasData() {
+  public boolean vineyardsTableHasData() {
     String sql = "SELECT 1 FROM VINEYARD";
     try (Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(sql)) {

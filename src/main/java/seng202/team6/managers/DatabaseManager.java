@@ -30,6 +30,7 @@ import seng202.team6.dao.WineDAO;
 import seng202.team6.dao.WineListDAO;
 import seng202.team6.dao.WineNotesDAO;
 import seng202.team6.dao.WineReviewDAO;
+import seng202.team6.service.VineyardDefaultsService;
 import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.Timer;
 
@@ -175,7 +176,7 @@ public class DatabaseManager {
     );
 
     try (Statement statement = connection.createStatement()) {
-//      statement.execute("DROP TABLE VINEYARD");      // todo - remove this, for debugging purposes only
+      statement.execute("DROP TABLE VINEYARD");      // todo - remove this, for debugging purposes only
       for (String sql : sqlStatements) {
         statement.execute(sql);
       }
@@ -188,7 +189,10 @@ public class DatabaseManager {
     }
     log.info("Successfully executed {} initialise statements", sqlStatements.size());
     geoLocationDAO.addDefaultGeoLocations();
-    vineyardsDAO.addDefaultVineyards();
+
+    VineyardDefaultsService vineyardDefaultsService = new VineyardDefaultsService(geoLocationDAO,
+        vineyardsDAO);
+    vineyardDefaultsService.init();
   }
 
   /**
@@ -213,7 +217,7 @@ public class DatabaseManager {
         while (resultSet.next()) {
           values.add(resultSet.getString(1));
         }
-        log.error("Sucessfully retrieved {} distinct values from {} in table {}",
+        log.error("Successfully retrieved {} distinct values from {} in table {}",
             values.size(), attribute, tableName);
       }
     } catch (SQLException error) {
