@@ -10,7 +10,7 @@ public enum WinePropertyName {
   VARIETY("Variety"),
   COUNTRY("Country"),
   REGION("Region"),
-  WINERY("Winery"),
+  WINERY("Winery", "Producer"),
   COLOUR("Colour", "Color"),
   VINTAGE("Vintage", "Year"),
   DESCRIPTION("Description"),
