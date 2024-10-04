@@ -8,12 +8,16 @@ import java.security.InvalidParameterException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +31,7 @@ import seng202.team6.dao.WineListDAO;
 import seng202.team6.dao.WineNotesDAO;
 import seng202.team6.dao.WineReviewDAO;
 import seng202.team6.util.EncryptionUtil;
+import seng202.team6.util.Timer;
 
 /**
  * Manages the creation, initialization, and teardown of a database. Provides methods for setting up
@@ -197,6 +202,25 @@ public class DatabaseManager {
     } catch (SQLException error) {
       log.error("Failed to close the database connection", error);
     }
+  }
+
+  public Set<String> getDistinctStringValues(String attribute, String tableName) {
+    Set<String> values = new HashSet<>();
+    Timer timer = new Timer();
+    String sql = "SELECT DISTINCT " + attribute + " FROM " + tableName;
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          values.add(resultSet.getString(1));
+        }
+        log.error("Sucessfully retrieved {} distinct values from {} in table {}",
+            values.size(), attribute, tableName);
+      }
+    } catch (SQLException error) {
+      log.error("Failed to select distinct values from {} in table {}", attribute,
+          tableName);
+    }
+    return values;
   }
 
   public UserDAO getUserDAO() {

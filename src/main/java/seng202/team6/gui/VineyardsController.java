@@ -55,6 +55,8 @@ public class VineyardsController extends Controller {
     nameTextField = createAutoCompleteTextField(9, 45);
     addressTextField = createAutoCompleteTextField(9, 105);
     regionTextField = createAutoCompleteTextField(9, 165);
+    vineyardService.addDistinctValues(nameTextField.getEntries(), addressTextField.getEntries(),
+        regionTextField.getEntries());
   }
 
   private void bindToVineyardService() {

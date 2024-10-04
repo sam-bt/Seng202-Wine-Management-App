@@ -15,7 +15,7 @@ public class ImageReader {
       if (inputStream != null) {
         return new Image(inputStream);
       }
-      log.error("Could not load image at path %s".formatted(path));
+      log.error("Could not load image at path {}}", path);
     } catch (IOException error) {
       log.error("Could load image", error);
     }

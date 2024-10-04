@@ -1,5 +1,6 @@
 package seng202.team6.service;
 
+import java.util.SortedSet;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;
@@ -17,6 +18,16 @@ public class VineyardService {
     ObservableList<Vineyard> vineyards = databaseManager.getVineyardsDAO()
         .getAllInRange(0, 100, null);
     this.vineyards.addAll(vineyards);
+  }
+
+  public void addDistinctValues(SortedSet<String> nameValues, SortedSet<String> addressValues,
+      SortedSet<String> regionValues) {
+    nameValues.addAll(databaseManager
+        .getDistinctStringValues("NAME", "VINEYARD"));
+    addressValues.addAll(databaseManager
+        .getDistinctStringValues("ADDRESS", "VINEYARD"));
+    regionValues.addAll(databaseManager
+        .getDistinctStringValues("REGION", "VINEYARD"));
   }
 
   public ObservableList<Vineyard> get() {
