@@ -53,7 +53,7 @@ public enum AuthenticationResponse {
 
   /** Password constraints. */
   PASSWORD_CONSTRAINTS(
-      "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\\-+={\\[\\]}])[A-Za-z0-9!@#$%^&*()\\-+={\\[\\]}]{8,30}$");
+      "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*.()\\-+={\\[\\]}])[A-Za-z0-9!@#$%^&*.()\\-+={\\[\\]}]{8,30}$");
 
   /** The message associated with the authentication response. */
   private final String message;

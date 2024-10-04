@@ -118,8 +118,9 @@ public class GeolocationResolver {
         JSONObject firstResult = (JSONObject) features.getFirst();
         JSONObject geometry = (JSONObject) firstResult.get("geometry");
         JSONArray coordinates = (JSONArray) geometry.get("coordinates");
-        double lat = (double) coordinates.get(0);
-        double lon = (double) coordinates.get(1);
+        // for some reason ORS returns the longitude first
+        double lon = (double) coordinates.get(0);
+        double lat = (double) coordinates.get(1);
         log.info("Successfully resolved geolocation for location '{}' in {}ms", locationName,
             timer.stop());
         return new GeoLocation(lat, lon);

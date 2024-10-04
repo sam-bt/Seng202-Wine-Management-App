@@ -113,7 +113,7 @@ public class WineScreenController extends Controller {
         .getAllInRange(begin, end, wineFilters);
 
     // send the wines to the map if they have a geo location
-    mapController.setOnReadyAction(() -> {
+    mapController.runOrQueueWhenReady(() -> {
       mapController.clearWineMarkers();
       mapController.clearHeatmap();
       wines.stream()

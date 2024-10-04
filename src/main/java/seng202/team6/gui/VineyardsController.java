@@ -49,9 +49,9 @@ public class VineyardsController extends Controller {
 
   @Override
   public void init() {
-    vineyardService.init();
     mapController = new LeafletOSMController(webView.getEngine());
     mapController.initMap();
+    vineyardService.init();
     nameTextField = createAutoCompleteTextField(9, 45);
     addressTextField = createAutoCompleteTextField(9, 105);
     regionTextField = createAutoCompleteTextField(9, 165);
@@ -68,6 +68,8 @@ public class VineyardsController extends Controller {
             CardContainer card = createVineyardCard(vineyard);
             vineyardCards.put(vineyard, card);
             vineyardsViewContainer.getChildren().add(card);
+            mapController.runOrQueueWhenReady(() ->
+                mapController.addVineyardMaker(vineyard));
           });
         }
         if (change.wasRemoved()) {

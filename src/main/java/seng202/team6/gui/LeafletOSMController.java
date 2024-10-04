@@ -5,6 +5,11 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Stack;
 import java.util.stream.Collectors;
 import javafx.concurrent.Worker;
 import javafx.scene.web.WebEngine;
@@ -12,6 +17,7 @@ import netscape.javascript.JSObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.model.GeoLocation;
+import seng202.team6.model.Vineyard;
 import seng202.team6.model.Wine;
 
 /**
@@ -33,13 +39,13 @@ public class LeafletOSMController {
   private JSObject javaScriptConnector;
 
   /**
-   * The action to run when the map is ready
+   * The actions to run when the map is ready
    * <p>
    * This is used when the wine screen is opened for the first time and the map has not yet been
    * loaded
    * </p>
    */
-  private Runnable onReadyAction;
+  private List<Runnable> onReadyActions = new ArrayList<>();
 
   /**
    * Constructs the controller for the map
@@ -84,9 +90,9 @@ public class LeafletOSMController {
             javaScriptConnector = (JSObject) webEngine.executeScript("jsConnector");
             javaScriptConnector.call("initMap");
 
-            if (onReadyAction != null) {
-              onReadyAction.run();
-              onReadyAction = null;
+            if (!onReadyActions.isEmpty()) {
+              onReadyActions.forEach(Runnable::run);
+              onReadyActions.clear();
             }
           }
         });
@@ -127,6 +133,12 @@ public class LeafletOSMController {
         geoLocation.getLatitude(), geoLocation.getLongitude());
   }
 
+  public void addVineyardMaker(Vineyard vineyard) {
+    GeoLocation geoLocation = vineyard.getGeoLocation();
+    javaScriptConnector.call("addVineyardMarker", geoLocation.getLatitude(),
+        geoLocation.getLongitude());
+  }
+
   /**
    * Sets the on ready action
    * <p>
@@ -136,11 +148,11 @@ public class LeafletOSMController {
    *
    * @param runnable the action to be preformed when the map is loaded
    */
-  public void setOnReadyAction(Runnable runnable) {
+  public void runOrQueueWhenReady(Runnable runnable) {
     if (javaScriptConnector != null) {
       runnable.run();
       return;
     }
-    onReadyAction = runnable;
+    onReadyActions.add(runnable);
   }
 }
