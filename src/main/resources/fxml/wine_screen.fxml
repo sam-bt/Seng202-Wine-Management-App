@@ -84,15 +84,15 @@
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                   </rowConstraints>
                 </GridPane>
-                <HBox alignment="CENTER" prefHeight="28.0" prefWidth="914.0">
+                <HBox alignment="CENTER" prefHeight="50.0" prefWidth="914.0" spacing="2" style="-fx-padding: 2px">
                   <children>
                     <Button styleClass="secondary-button" stylesheets="@../css/global.css" text="&lt;"
-                      fx:id="prevPageButton"/>
+                      fx:id="prevPageButton" style="-fx-border-width: 0"/>
                     <TextField alignment="CENTER" prefHeight="25.0" prefWidth="60.0"
                       promptText="Page" text="1" fx:id="pageNumberTextField"/>
                     <Label text="/maxPages" fx:id="maxPageNumber"/>
                     <Button alignment="CENTER" styleClass="secondary-button" stylesheets="@../css/global.css"
-                      text="&gt;" fx:id="nextPageButton"/>
+                      text="&gt;" fx:id="nextPageButton" style="-fx-border-width: 0"/>
                   </children>
                 </HBox>
               </children>

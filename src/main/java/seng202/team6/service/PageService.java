@@ -25,7 +25,7 @@ public class PageService {
   private final IntegerProperty maxPages = new SimpleIntegerProperty();
 
   /**
-   * Constructer
+   * Constructor
    *
    * @param pageSize the number of elements on each page
    */
@@ -80,7 +80,7 @@ public class PageService {
   }
 
   /**
-   * Updates the number of max pages based on number of items and items per page
+   * Updates the number of max pages based on the number of items and items per page
    */
   private void updateMaxPages() {
     this.maxPages.set(this.totalItems.get() / this.pageSize + 1);
@@ -98,9 +98,10 @@ public class PageService {
   /**
    * Sets the current page number
    * <p>
-   *     Does nothing if the page number is greater than max pages or less than 0
+   * Does nothing if the page number is greater than max pages or less than 0
    * </p>
-   * @param pageNumber
+   *
+   * @param pageNumber page number to go too
    */
   public void setPageNumber(int pageNumber) {
     if (pageNumber <= maxPages.get() && pageNumber > 0) {
@@ -111,9 +112,10 @@ public class PageService {
   /**
    * Gets the page number property
    * <p>
-   *     <b>DO NOT USE THIS TO SET VALUES!</b>
+   * <b>DO NOT USE THIS TO SET VALUES!</b>
    * </p>
-   * @return
+   *
+   * @return the page number integer property
    */
   public IntegerProperty pageNumberProperty() {
     return pageNumber;
@@ -127,24 +129,32 @@ public class PageService {
     return totalItems.get();
   }
 
-  public IntegerProperty totalItemsProperty() {
-    return totalItems;
-  }
-
+  /**
+   * Sets the total number of items that the page service will have to go through
+   * <p>
+   * For example, with 100 total items and page size of 25, there will be 4 pages
+   * </p>
+   *
+   * @param totalItems the total items the page service needs to page through
+   */
   public void setTotalItems(int totalItems) {
     this.totalItems.set(totalItems);
     this.updateMaxPages();
+  }
+
+  public IntegerProperty totalItemsProperty() {
+    return totalItems;
   }
 
   public int getMaxPages() {
     return maxPages.get();
   }
 
-  public IntegerProperty maxPagesProperty() {
-    return maxPages;
-  }
-
   public void setMaxPages(int maxPages) {
     this.maxPages.set(maxPages);
+  }
+
+  public IntegerProperty maxPagesProperty() {
+    return maxPages;
   }
 }
