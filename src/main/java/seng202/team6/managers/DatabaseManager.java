@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +39,6 @@ import seng202.team6.util.Timer;
  * for interacting with different database tables.
  */
 public class DatabaseManager {
-
   private static final Logger log = LogManager.getLogger(DatabaseManager.class);
   private final Connection connection;
   private final UserDAO userDAO;
@@ -58,7 +56,7 @@ public class DatabaseManager {
    * @throws SQLException if a database access error occurs
    */
   public DatabaseManager() throws SQLException {
-    this(setupInMemoryConnection());
+    this(setupInMemoryConnection(), true);
   }
 
   /**
@@ -69,7 +67,7 @@ public class DatabaseManager {
    * @throws SQLException if a database access error occurs
    */
   public DatabaseManager(String directoryName, String fileName) throws SQLException {
-    this(setupPersistentConnection(directoryName, fileName));
+    this(setupPersistentConnection(directoryName, fileName), false);
   }
 
   /**
@@ -78,7 +76,7 @@ public class DatabaseManager {
    *
    * @param connection the database connection to use
    */
-  private DatabaseManager(Connection connection) throws SQLException {
+  private DatabaseManager(Connection connection, boolean inMemory) throws SQLException {
     if (connection == null || connection.isClosed()) {
       throw new InvalidParameterException("The provided connection was invalid or closed");
     }
@@ -93,6 +91,10 @@ public class DatabaseManager {
     this.geoLocationDAO = new GeoLocationDAO(connection);
     this.aggregatedDAO = new AggregatedDAO(connection, wineNotesDAO, wineDAO);
     init();
+
+    VineyardDefaultsService vineyardDefaultsService = new VineyardDefaultsService(geoLocationDAO,
+        vineyardsDAO, !inMemory);
+    vineyardDefaultsService.init();
   }
 
   /**
@@ -188,10 +190,6 @@ public class DatabaseManager {
     }
     log.info("Successfully executed {} initialise statements", sqlStatements.size());
     geoLocationDAO.addDefaultGeoLocations();
-
-    VineyardDefaultsService vineyardDefaultsService = new VineyardDefaultsService(geoLocationDAO,
-        vineyardsDAO);
-    vineyardDefaultsService.init();
   }
 
   /**

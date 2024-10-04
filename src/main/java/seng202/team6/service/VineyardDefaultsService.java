@@ -20,10 +20,13 @@ public class VineyardDefaultsService {
   private final GeolocationResolver geolocationResolver = new GeolocationResolver();
   private final GeoLocationDAO geoLocationDAO;
   private final VineyardDAO vineyardDAO;
+  private final boolean resolveMissingAddresses;
 
-  public VineyardDefaultsService(GeoLocationDAO geoLocationDAO, VineyardDAO vineyardDAO) {
+  public VineyardDefaultsService(GeoLocationDAO geoLocationDAO, VineyardDAO vineyardDAO,
+      boolean resolveMissingAddresses) {
     this.geoLocationDAO = geoLocationDAO;
     this.vineyardDAO = vineyardDAO;
+    this.resolveMissingAddresses = resolveMissingAddresses;
   }
 
   public void init() {
@@ -35,13 +38,16 @@ public class VineyardDefaultsService {
     }
 
     List<Vineyard> vineyards = loadDefaultVineyards();
-    Set<String> addresses = vineyards.stream().map(Vineyard::getAddress).collect(Collectors.toSet());
-    Set<String> addressesInDatabase = geoLocationDAO.getExistingLocationNames(addresses);
-    List<String> missingAddresses = findMissingAddresses(addresses, addressesInDatabase);
-    if (!missingAddresses.isEmpty()) {
-      Map<String, GeoLocation> missingAddressesGeolocations = geolocationResolver.resolveAll(
-          missingAddresses);
-      geoLocationDAO.addAll(missingAddressesGeolocations);
+    if (resolveMissingAddresses) {
+      Set<String> addresses = vineyards.stream().map(Vineyard::getAddress)
+          .collect(Collectors.toSet());
+      Set<String> addressesInDatabase = geoLocationDAO.getExistingLocationNames(addresses);
+      List<String> missingAddresses = findMissingAddresses(addresses, addressesInDatabase);
+      if (!missingAddresses.isEmpty()) {
+        Map<String, GeoLocation> missingAddressesGeolocations = geolocationResolver.resolveAll(
+            missingAddresses);
+        geoLocationDAO.addAll(missingAddressesGeolocations);
+      }
     }
     vineyardDAO.addAll(vineyards);
   }
