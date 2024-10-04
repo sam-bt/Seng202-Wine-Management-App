@@ -1,4 +1,4 @@
-# SENG202 Project: WINO
+![WINO](./src/main/resources/logo-white.png)
 
 TODO - add attribution
 https://www.freepik.com/free-vector/realistic-wine-collection-bottles-glasses-with-white-red-rose-beverages-isolated_10347028.htm****
