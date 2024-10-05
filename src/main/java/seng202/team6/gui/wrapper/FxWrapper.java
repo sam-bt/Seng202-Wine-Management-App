@@ -12,7 +12,7 @@ import seng202.team6.gui.Controller;
 import seng202.team6.gui.MainController;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.managers.GUIManager;
+import seng202.team6.managers.GuiManager;
 import seng202.team6.managers.ManagerContext;
 
 /**
@@ -39,11 +39,11 @@ public class FxWrapper {
       DatabaseManager databaseManager = new DatabaseManager("database", "database.db");
       this.managerContext = new ManagerContext(
           databaseManager,
-          new GUIManager(this),
+          new GuiManager(this),
           new AuthenticationManager(databaseManager)
       );
 
-      stage.setOnCloseRequest((event) -> managerContext.databaseManager.teardown());
+      stage.setOnCloseRequest((event) -> managerContext.getDatabaseManager().teardown());
     } catch (Exception exception) {
       // If we fail to initialize the managers we are kinda screwed
       throw new RuntimeException("Failed to instantiate manager context", exception);

@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import seng202.team6.util.ProcessCSV;
+import seng202.team6.util.ProcessCsv;
 import seng202.team6.util.Timer;
 
 /**
@@ -52,7 +52,7 @@ public class GeoLocationDao extends Dao {
     }
 
     String sql = "INSERT INTO GEOLOCATION values (?, ?, ?);";
-    List<String[]> rows = ProcessCSV.getCSVRows(
+    List<String[]> rows = ProcessCsv.getCsvRows(
         getClass().getResourceAsStream("/nz_geolocations.csv"));
 
     int rowsAffected = batchInsertGeoLocations(sql, rows);

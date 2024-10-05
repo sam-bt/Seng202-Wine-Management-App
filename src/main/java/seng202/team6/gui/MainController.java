@@ -72,7 +72,7 @@ public class MainController extends Controller {
     super(managerContext);
 
     // This is an ugly circular dependency. It is easier to resolve here
-    managerContext.GUIManager.setMainController(this);
+    managerContext.getGuiManager().setMainController(this);
   }
 
   /**
@@ -94,8 +94,8 @@ public class MainController extends Controller {
    * Handles login.
    */
   public void onLogin() {
-    if (managerContext.authenticationManager.isAuthenticated()) {
-      adminScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
+    if (managerContext.getAuthenticationManager().isAuthenticated()) {
+      adminScreenButton.setVisible(managerContext.getAuthenticationManager().isAdmin());
       noteScreenButton.setVisible(true);
       loginButton.setText("Settings");
       registerButton.setText("Logout");
@@ -135,7 +135,7 @@ public class MainController extends Controller {
   public void switchScene(String fxml, String title, Builder<?> builder) {
     Parent parent = loadFxml(fxml, builder, pageContent);
     if (parent != null) {
-      managerContext.GUIManager.setWindowTitle(title);
+      managerContext.getGuiManager().setWindowTitle(title);
     }
   }
 
@@ -195,7 +195,7 @@ public class MainController extends Controller {
    * Logout the current user.
    */
   public void logout() {
-    managerContext.authenticationManager.logout();
+    managerContext.getAuthenticationManager().logout();
     loginButton.setText("Login");
     registerButton.setText("Register");
     loginButton.setOnMouseClicked(event -> openLoginScreen());

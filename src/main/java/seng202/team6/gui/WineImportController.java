@@ -1,7 +1,6 @@
 package seng202.team6.gui;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,27 +35,25 @@ import seng202.team6.enums.WinePropertyName;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.util.Exceptions.ValidationException;
-import seng202.team6.util.ProcessCSV;
+import seng202.team6.util.ProcessCsv;
 import seng202.team6.util.WineValidator;
 
 /**
  * Controller for wine import.
  */
 public class WineImportController extends Controller {
-  @FXML
-  private GridPane dataColumnsContainer;
-
-  @FXML
-  private CheckBox extractVintageFromTitleCheckbox;
 
   private final Logger log = LogManager.getLogger(getClass());
-
   private final Map<Integer, WinePropertyName> selectedWineProperties = new HashMap<>();
-
+  @FXML
+  private GridPane dataColumnsContainer;
+  @FXML
+  private CheckBox extractVintageFromTitleCheckbox;
   private List<String[]> currentFileRows;
 
   /**
    * Constructor.
+   *
    * @param context manager context
    */
   public WineImportController(ManagerContext context) {
@@ -64,7 +61,7 @@ public class WineImportController extends Controller {
   }
 
   /**
-   * Initialize this constructor
+   * Initialize this constructor.
    */
   @Override
   public void init() {
@@ -88,7 +85,7 @@ public class WineImportController extends Controller {
       return;
     }
 
-    currentFileRows = ProcessCSV.getCSVRows(selectedFile);
+    currentFileRows = ProcessCsv.getCsvRows(selectedFile);
     String[] columnNames = currentFileRows.removeFirst();
     selectedWineProperties.clear();
     makeColumnRemapList(columnNames, currentFileRows);
@@ -100,8 +97,9 @@ public class WineImportController extends Controller {
    */
   @FXML
   void onAppendDataButtonClick() {
-    if (!validate())
+    if (!validate()) {
       return;
+    }
     parseWines(false);
   }
 
@@ -110,8 +108,9 @@ public class WineImportController extends Controller {
    */
   @FXML
   void onReplaceDataButtonClick() {
-    if (!validate())
+    if (!validate()) {
       return;
+    }
     parseWines(true);
   }
 
@@ -159,12 +158,12 @@ public class WineImportController extends Controller {
       }
     });
     log.info("Successfully parsed {} out of {} wines", parsedWines.size(),
-      currentFileRows.size());
+        currentFileRows.size());
 
     if (replace) {
-      managerContext.databaseManager.getWineDao().replaceAll(parsedWines);
+      managerContext.getDatabaseManager().getWineDao().replaceAll(parsedWines);
     } else {
-      managerContext.databaseManager.getWineDao().addAll(parsedWines);
+      managerContext.getDatabaseManager().getWineDao().addAll(parsedWines);
     }
     reset();
   }
@@ -172,8 +171,8 @@ public class WineImportController extends Controller {
   /**
    * Gets the string at a row if it is valid or empty string.
    *
-   * @param valid map of valid wine property names
-   * @param row row of table to import
+   * @param valid            map of valid wine property names
+   * @param row              row of table to import
    * @param winePropertyName name of property
    * @return string from row or default
    */
@@ -228,8 +227,8 @@ public class WineImportController extends Controller {
       alert.setHeaderText("Duplicate Properties Selected");
       alert.setContentText("The property field(s) " + duplicatedProperties.stream()
           .map(WinePropertyName::name)
-          .collect(Collectors.joining(", ")) +
-          " have been selected more than once.");
+          .collect(Collectors.joining(", "))
+          + " have been selected more than once.");
       alert.showAndWait();
       return false;
     }
@@ -240,7 +239,7 @@ public class WineImportController extends Controller {
    * Makes the column remap list.
    *
    * @param columnNames column names
-   * @param rows rows
+   * @param rows        rows
    */
   private void makeColumnRemapList(String[] columnNames, List<String[]> rows) {
     int columns = 4;
@@ -249,7 +248,9 @@ public class WineImportController extends Controller {
     for (int i = 0; i < columnNames.length; i++) {
       String columnName = columnNames[i];
       if (columnName.isBlank()) // skip if the column name is empty
+      {
         continue;
+      }
       if (column >= columns) {
         addRow();
         row++;
@@ -280,13 +281,14 @@ public class WineImportController extends Controller {
   /**
    * Creates an import box.
    *
-   * @param index index
-   * @param columnName column rename
+   * @param index                index
+   * @param columnName           column rename
    * @param possiblePropertyName possible property name
-   * @param sampleValues sample values
+   * @param sampleValues         sample values
    * @return created box
    */
-  private GridPane createImportBox(int index, String columnName, WinePropertyName possiblePropertyName,
+  private GridPane createImportBox(int index, String columnName,
+      WinePropertyName possiblePropertyName,
       ObservableList<String> sampleValues) {
     GridPane gridPane = new GridPane();
     RowConstraints firstRow = new RowConstraints();
@@ -351,7 +353,6 @@ public class WineImportController extends Controller {
     secondColumn.setHgrow(Priority.ALWAYS);
     firstColumn.setPercentWidth(50);
     secondColumn.setPercentWidth(50);
-
 
     GridPane.setFillWidth(gridPane, true);
     return gridPane;

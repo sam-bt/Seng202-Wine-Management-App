@@ -65,8 +65,8 @@ public class ConsumptionController extends Controller {
    * @return history list
    */
   private WineList getHistoryList() {
-    User user = managerContext.authenticationManager.getAuthenticatedUser();
-    return managerContext.databaseManager.getWineListDao().getAll(user)
+    User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
+    return managerContext.getDatabaseManager().getWineListDao().getAll(user)
         .stream()
         .filter(wineList -> Objects.equals(
             wineList.name(), "History")).findFirst().orElse(null);
@@ -118,7 +118,7 @@ public class ConsumptionController extends Controller {
    * @return all wines consumed in the past week
    */
   private ObservableList<WineDatePair> getPastWeekConsumption() {
-    ObservableList<WineDatePair> wineHistory = managerContext.databaseManager.getAggregatedDao()
+    ObservableList<WineDatePair> wineHistory = managerContext.getDatabaseManager().getAggregatedDao()
         .getWinesMappedWithDatesFromList(getHistoryList());
     wineHistory.sort(Comparator.comparing(WineDatePair::date));
     long oneWeek = 1000 * 60 * 60 * 24 * 7;
@@ -179,7 +179,7 @@ public class ConsumptionController extends Controller {
     ObservableList<WineDatePair> observableList = getPastWeekConsumption();
     updateHistoryList(observableList);
     updateTotalConsumptionBar(observableList);
-    updateConsumptionGraph(managerContext.databaseManager.getAggregatedDao()
+    updateConsumptionGraph(managerContext.getDatabaseManager().getAggregatedDao()
         .getWinesMappedWithDatesFromList(getHistoryList()));
   }
 }

@@ -22,7 +22,7 @@ public class SettingsController extends Controller {
    */
   @FXML
   private void onUpdatePassword() {
-    managerContext.GUIManager.mainController.openUpdatePasswordScreen();
+    managerContext.getGuiManager().mainController.openUpdatePasswordScreen();
   }
 
 }

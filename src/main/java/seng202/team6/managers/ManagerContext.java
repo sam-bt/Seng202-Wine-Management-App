@@ -3,31 +3,41 @@ package seng202.team6.managers;
 /**
  * ManagerContext is simply a bag of managers. Members are public because of this
  *
- * @author Angus McDougall
  */
 public class ManagerContext {
 
-  // Managers
-  final public DatabaseManager databaseManager;
+  final private DatabaseManager databaseManager;
 
-  final public GUIManager GUIManager;
+  final private GuiManager guiManager;
 
-  final public AuthenticationManager authenticationManager;
+  final private AuthenticationManager authenticationManager;
+
+  public DatabaseManager getDatabaseManager() {
+    return databaseManager;
+  }
+
+  public seng202.team6.managers.GuiManager getGuiManager() {
+    return guiManager;
+  }
+
+  public AuthenticationManager getAuthenticationManager() {
+    return authenticationManager;
+  }
 
   /**
    * Constructor for ManagerContext
    *
    * @param databaseManager       database manager
-   * @param GUIManager            interface manager
+   * @param guiManager            interface manager
    * @param authenticationManager authentication manager
    */
   public ManagerContext(
       DatabaseManager databaseManager,
-      GUIManager GUIManager,
+      GuiManager guiManager,
       AuthenticationManager authenticationManager
   ) {
     this.databaseManager = databaseManager;
-    this.GUIManager = GUIManager;
+    this.guiManager = guiManager;
     this.authenticationManager = authenticationManager;
   }
 }

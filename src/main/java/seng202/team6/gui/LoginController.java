@@ -57,16 +57,16 @@ public class LoginController extends Controller {
   private void login() {
     String username = usernameField.getText();
     String password = passwordField.getText();
-    AuthenticationResponse response = managerContext.authenticationManager.validateLogin(username,
+    AuthenticationResponse response = managerContext.getAuthenticationManager().validateLogin(username,
         password);
     if (response == AuthenticationResponse.LOGIN_SUCCESS) {
-      if (managerContext.authenticationManager.isAdminFirstLogin()) {
-        managerContext.GUIManager.mainController.setDisable(true);
-        managerContext.GUIManager.mainController.openUpdatePasswordScreen();
+      if (managerContext.getAuthenticationManager().isAdminFirstLogin()) {
+        managerContext.getGuiManager().mainController.setDisable(true);
+        managerContext.getGuiManager().mainController.openUpdatePasswordScreen();
         return;
       }
-      managerContext.GUIManager.mainController.openWineScreen();
-      managerContext.GUIManager.mainController.onLogin();
+      managerContext.getGuiManager().mainController.openWineScreen();
+      managerContext.getGuiManager().mainController.onLogin();
     } else {
       loginMessageLabel.setStyle("-fx-text-fill: red");
       loginMessageLabel.setText(response.getMessage());

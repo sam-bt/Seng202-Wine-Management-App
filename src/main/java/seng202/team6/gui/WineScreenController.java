@@ -110,7 +110,7 @@ public class WineScreenController extends Controller {
     tableView.getItems().clear();
 
     // Check if filters exist
-    ObservableList<Wine> wines = managerContext.databaseManager.getWineDao()
+    ObservableList<Wine> wines = managerContext.getDatabaseManager().getWineDao()
         .getAllInRange(begin, end, filters);
 
     // send the wines to the map if they have a geo location
@@ -246,7 +246,7 @@ public class WineScreenController extends Controller {
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
     // Enable editing if admin
-    if (managerContext.authenticationManager.isAdmin()) {
+    if (managerContext.getAuthenticationManager().isAdmin()) {
 
       StringConverter<String> stringConverter = new DefaultStringConverter();
       StringConverter<Integer> intConverter = new IntegerStringConverter();
@@ -483,7 +483,7 @@ public class WineScreenController extends Controller {
    * @param wine wine
    */
   private void openDetailedWineView(Wine wine) {
-    Runnable backAction = () -> managerContext.GUIManager.mainController.openWineScreen();
-    managerContext.GUIManager.mainController.openDetailedWineView(wine, backAction);
+    Runnable backAction = () -> managerContext.getGuiManager().mainController.openWineScreen();
+    managerContext.getGuiManager().mainController.openDetailedWineView(wine, backAction);
   }
 }

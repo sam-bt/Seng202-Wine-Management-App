@@ -33,8 +33,8 @@ public class AddToListPopupController extends Controller {
   public AddToListPopupController(ManagerContext context, Wine wine) {
     super(context);
     this.wine = wine;
-    this.wineListService = new WineListService(managerContext.authenticationManager,
-        context.databaseManager);
+    this.wineListService = new WineListService(managerContext.getAuthenticationManager(),
+        context.getDatabaseManager());
     bindToWineListService();
   }
 
@@ -45,17 +45,17 @@ public class AddToListPopupController extends Controller {
 
   @FXML
   void onBackButtonClick() {
-    managerContext.GUIManager.mainController.closePopup();
+    managerContext.getGuiManager().mainController.closePopup();
   }
 
   private void onAddButtonClick(WineList wineList, Button button) {
     updateWineListButton(button, wineList, true);
-    managerContext.databaseManager.getWineListDao().addWine(wineList, wine);
+    managerContext.getDatabaseManager().getWineListDao().addWine(wineList, wine);
   }
 
   private void onRemoveButtonClick(WineList wineList, Button button) {
     updateWineListButton(button, wineList, false);
-    managerContext.databaseManager.getWineListDao().removeWine(wineList, wine);
+    managerContext.getDatabaseManager().getWineListDao().removeWine(wineList, wine);
   }
 
   private void bindToWineListService() {

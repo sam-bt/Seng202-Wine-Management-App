@@ -33,7 +33,7 @@ import seng202.team6.util.DateFormatter;
 import seng202.team6.util.ImageReader;
 
 /**
- * The DetailedWineViewController is responsible for managing the detailed wine view within the GUI
+ * The DetailedWineViewController is responsible for managing the detailed wine view within the GUI.
  */
 public class DetailedWineViewController extends Controller {
 
@@ -41,17 +41,20 @@ public class DetailedWineViewController extends Controller {
   private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage("/img/white_wine.png");
   private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine.png");
   private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage("/img/default_wine.png");
-  private static final Map<String, Image> wineImages = new HashMap<>() {{
-    put("red", RED_WINE_IMAGE);
-    put("white", WHITE_WINE_IMAGE);
-    put("rose", ROSE_WINE_IMAGE);
-    put("rosé", ROSE_WINE_IMAGE);
-  }};
+  private static final Map<String, Image> wineImages = new HashMap<>() {
+    {
+        put("red", RED_WINE_IMAGE);
+        put("white", WHITE_WINE_IMAGE);
+        put("rose", ROSE_WINE_IMAGE);
+        put("rosé", ROSE_WINE_IMAGE);
+    }
+  };
   private final WineReviewsService wineReviewsService;
   private final WineNoteService wineNoteService;
   private final Wine viewedWine;
   private final Runnable backButtonAction;
-  private final ObservableMap<WineReview, VBox> wineReviewWrappers = FXCollections.observableHashMap();
+  private final ObservableMap<WineReview, VBox> wineReviewWrappers
+      = FXCollections.observableHashMap();
   @FXML
   private Button saveNotes;
   @FXML
@@ -104,10 +107,10 @@ public class DetailedWineViewController extends Controller {
   public DetailedWineViewController(ManagerContext managerContext, Wine viewedWine,
       Runnable backButtonAction) {
     super(managerContext);
-    this.wineReviewsService = new WineReviewsService(managerContext.authenticationManager,
-        managerContext.databaseManager, viewedWine);
-    this.wineNoteService = new WineNoteService(managerContext.authenticationManager,
-        managerContext.databaseManager, viewedWine);
+    this.wineReviewsService = new WineReviewsService(managerContext.getAuthenticationManager(),
+        managerContext.getDatabaseManager(), viewedWine);
+    this.wineNoteService = new WineNoteService(managerContext.getAuthenticationManager(),
+        managerContext.getDatabaseManager(), viewedWine);
     this.viewedWine = viewedWine;
     this.backButtonAction = backButtonAction;
     this.ratingStars = new Rating();
@@ -133,9 +136,9 @@ public class DetailedWineViewController extends Controller {
     viewingWineTitledPane.setText("Viewing Wine: " + viewedWine.getTitle());
 
     descriptionArea.setText(getOrDefault(viewedWine.getDescription()));
-    if (managerContext.authenticationManager.isAuthenticated()) {
+    if (managerContext.getAuthenticationManager().isAuthenticated()) {
       setNotesVisible(true);
-      User user = managerContext.authenticationManager.getAuthenticatedUser();
+      User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
       Note note = wineNoteService.loadUsersNote(user);
       notesTextbox.setText(note.getNote());
 
@@ -163,7 +166,7 @@ public class DetailedWineViewController extends Controller {
     scoreIndicator.setScore(viewedWine.getScorePercent());
     descriptionScoreNotesGridPane.add(scoreIndicator, 2, 1);
 
-    if (!managerContext.authenticationManager.isAuthenticated()) {
+    if (!managerContext.getAuthenticationManager().isAuthenticated()) {
       addReviewButton.setDisable(true);
       addReviewButton.setVisible(false);
       loginToReviewLabel.setVisible(true);
@@ -229,7 +232,7 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   void onAddReviewButtonClick() {
-    managerContext.GUIManager.mainController.openPopupWineReview(wineReviewsService);
+    managerContext.getGuiManager().mainController.openPopupWineReview(wineReviewsService);
   }
 
   /**
@@ -237,7 +240,7 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   void onOpenListsButtonClick() {
-    managerContext.GUIManager.mainController.openAddToListPopup(viewedWine);
+    managerContext.getGuiManager().mainController.openAddToListPopup(viewedWine);
   }
 
   /**
@@ -248,7 +251,6 @@ public class DetailedWineViewController extends Controller {
    * @return A VBox containing the wine review UI
    */
   private VBox createWineReviewElement(WineReview wineReview) {
-    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
     VBox wrapper = new VBox();
     wrapper.setMaxWidth(reviewsBox.getMaxWidth());
     wrapper.setMaxHeight(Double.MAX_VALUE);
@@ -264,6 +266,8 @@ public class DetailedWineViewController extends Controller {
     rating.setMouseTransparent(true);
     rating.setOnMouseClicked(Event::consume);
     rating.setOnMouseDragEntered(Event::consume);
+
+    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
 
     Label reviewCaptionLabel = new Label(
         "From " + wineReview.getUsername() + " on " + formattedDate);

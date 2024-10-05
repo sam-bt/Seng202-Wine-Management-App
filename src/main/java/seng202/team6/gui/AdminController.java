@@ -32,7 +32,7 @@ public class AdminController extends Controller {
     noButton.setVisible(false);
     yesButton.setVisible(false);
 
-    VBox parent = (VBox) managerContext.GUIManager.mainController.loadImportWineScreen(
+    VBox parent = (VBox) managerContext.getGuiManager().mainController.loadImportWineScreen(
         importWinesScreenContainer);
     VBox.setVgrow(parent, Priority.ALWAYS);
     parent.minHeightProperty().bind(importWinesScreenContainer.minHeightProperty());
@@ -53,8 +53,8 @@ public class AdminController extends Controller {
 
   @FXML
   private void onYes() {
-    managerContext.databaseManager.getUserDao().deleteAll();
-    managerContext.GUIManager.mainController.openWineScreen();
+    managerContext.getDatabaseManager().getUserDao().deleteAll();
+    managerContext.getGuiManager().mainController.openWineScreen();
   }
 
   @FXML

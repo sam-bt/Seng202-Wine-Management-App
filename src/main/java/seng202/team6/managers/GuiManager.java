@@ -5,26 +5,24 @@ import seng202.team6.gui.MainController;
 import seng202.team6.gui.wrapper.FxWrapper;
 
 /**
- * Manager for interacting with the GUI
- *
- * @author Angus McDougall
+ * Manager for interacting with the GUI.
  */
-public class GUIManager {
+public class GuiManager {
 
   private final FxWrapper wrapper;
   public MainController mainController;
 
   /**
-   * Constructs a GUIManager
+   * Constructs a GUIManager.
    *
    * @param wrapper fxwrapper
    */
-  public GUIManager(FxWrapper wrapper) {
+  public GuiManager(FxWrapper wrapper) {
     this.wrapper = wrapper;
   }
 
   /**
-   * Sets the main controller
+   * Sets the main controller.
    * <p>
    * This class requires main controller and main controller requires this. Resolve the circular
    * dependency.
@@ -37,7 +35,7 @@ public class GUIManager {
   }
 
   /**
-   * Sets the window title
+   * Sets the window title.
    *
    * @param title title to set
    */
@@ -46,7 +44,7 @@ public class GUIManager {
   }
 
   /**
-   * Switches the current scene
+   * Switches the current scene.
    *
    * @param fxmlPath path to the fxml to load
    * @param title    title of the scene to display

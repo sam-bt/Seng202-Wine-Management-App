@@ -13,6 +13,9 @@ import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 
+/**
+ * Wine review service for a given wine.
+ */
 public class WineReviewsService {
   public static final int MAX_DESCRIPTION_CHARACTERS = 255;
   private final AuthenticationManager authenticationManager;
@@ -22,6 +25,13 @@ public class WineReviewsService {
   private final Property<WineReview> usersReview = new SimpleObjectProperty<>();
   private final DoubleProperty averageRating = new SimpleDoubleProperty();
 
+  /**
+   * Constructor
+   *
+   * @param authenticationManager authentication manager
+   * @param databaseManager database manager
+   * @param wine wine
+   */
   public WineReviewsService(AuthenticationManager authenticationManager,
       DatabaseManager databaseManager, Wine wine) {
     this.authenticationManager = authenticationManager;
@@ -29,6 +39,9 @@ public class WineReviewsService {
     this.wine = wine;
   }
 
+  /**
+   * Initialize the service.
+   */
   public void init() {
     String username = authenticationManager.getAuthenticatedUsername();
     wineReviews.addAll(databaseManager.getWineReviewDao().getAll(wine));
@@ -39,6 +52,12 @@ public class WineReviewsService {
     calculateAverageReview();
   }
 
+  /**
+   * Adds or removes a user review
+   *
+   * @param rating rating
+   * @param description description
+   */
   public void addOrUpdateUserReview(double rating, String description) {
     User user = authenticationManager.getAuthenticatedUser();
     if (hasUserReviewed()) {
@@ -58,6 +77,9 @@ public class WineReviewsService {
     }
   }
 
+  /**
+   * Deletes users review.
+   */
   public void deleteUsersReview() {
     WineReview wineReview = getUsersReview();
     if (wineReview != null) {
@@ -68,38 +90,81 @@ public class WineReviewsService {
     }
   }
 
+  /**
+   * Checks if this wine has any reviews
+   *
+   * @return if this wine has a review
+   */
   public boolean hasReviews() {
     return !wineReviews.isEmpty();
   }
 
+  /**
+   * Gets the reviews for a wine.
+   *
+   * @return reviews
+   */
   public ObservableList<WineReview> getWineReviews() {
     return wineReviews;
   }
 
+  /**
+   * Gets the wine.
+   *
+   * @return wine
+   */
   public Wine getWine() {
     return wine;
   }
 
+  /**
+   * Gets the users review property.
+   *
+   * @return review property
+   */
   public Property<WineReview> usersReviewProperty() {
     return usersReview;
   }
 
+  /**
+   * Gets the users review.
+   *
+   * @return users review
+   */
   public WineReview getUsersReview() {
     return usersReview.getValue();
   }
 
+  /**
+   * Checks if the user has reviewed this wine.
+   *
+   * @return review
+   */
   public boolean hasUserReviewed() {
     return getUsersReview() != null;
   }
 
+  /**
+   * Gets the average rating property.
+   *
+   * @return average rating property
+   */
   public DoubleProperty averageRatingProperty() {
     return averageRating;
   }
 
+  /**
+   * Gets the average rating.
+   *
+   * @return average rating
+   */
   public double getAverageRating() {
     return averageRating.get();
   }
 
+  /**
+   * Updates the average rating.
+   */
   private void calculateAverageReview() {
     if (!hasReviews()) {
       averageRating.set(0);

@@ -58,8 +58,8 @@ public class ListScreenController extends Controller {
    */
   public ListScreenController(ManagerContext managerContext) {
     super(managerContext);
-    this.wineListService = new WineListService(managerContext.authenticationManager,
-        managerContext.databaseManager);
+    this.wineListService = new WineListService(managerContext.getAuthenticationManager(),
+        managerContext.getDatabaseManager());
   }
 
   /**
@@ -161,7 +161,7 @@ public class ListScreenController extends Controller {
       } else {
         errorText.setVisible(false);
 
-        User user = managerContext.authenticationManager.getAuthenticatedUser();
+        User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
         wineListService.createWineList(user, name);
 
         listName.setText("");
@@ -184,7 +184,7 @@ public class ListScreenController extends Controller {
     }
 
     wineListService.deleteWineList(wineList);
-    managerContext.databaseManager.getWineListDao().delete(wineList);
+    managerContext.getDatabaseManager().getWineListDao().delete(wineList);
     render();
   }
 
@@ -193,7 +193,7 @@ public class ListScreenController extends Controller {
    */
   public void changeSelected() {
     WineList selectedWineList = wineListService.getWineLists().get(selected);
-    ObservableList<Wine> observableList = managerContext.databaseManager.getAggregatedDao()
+    ObservableList<Wine> observableList = managerContext.getDatabaseManager().getAggregatedDao()
         .getWinesInList(selectedWineList);
     setupTableView(observableList);
   }

@@ -31,9 +31,13 @@ public class SocialController extends Controller {
    * @param managerContext manager context
    */
   public SocialController(ManagerContext managerContext) {
-    super(managerContext);// TODO allow upvotes/downvotes/user search/review search
+    super(managerContext);
   }
 
+  /**
+   * Initializes this controller.
+   */
+  @Override
   public void init() {
     setupReviewTableColumns();
     openReviewInRange(0, 100);
@@ -46,11 +50,11 @@ public class SocialController extends Controller {
    * @param begin first element
    * @param end   last element + 1
    */
-  private void openReviewInRange(int begin, int end) { // TODO, add filtering
+  private void openReviewInRange(int begin, int end) {
     // Clear existing data
     reviewTableView.getItems().clear();
 
-    ObservableList<Pair<WineReview, Wine>>  reviews = managerContext.databaseManager
+    ObservableList<Pair<WineReview, Wine>>  reviews = managerContext.getDatabaseManager()
         .getAggregatedDao().getWineReviewsAndWines(begin, end);
 
     // Set fetched data to the table
@@ -136,10 +140,10 @@ public class SocialController extends Controller {
 
     String reviewerUsername = selectedReview.getFirst().getUsername();
     Wine selectedWine = selectedReview.getSecond();
-    User reviewer = managerContext.databaseManager.getUserDao().get(reviewerUsername);
+    User reviewer = managerContext.getDatabaseManager().getUserDao().get(reviewerUsername);
     WineReviewsService wineReviewsService = new WineReviewsService(
-        managerContext.authenticationManager, managerContext.databaseManager, selectedWine);
-    managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview.getFirst(), selectedWine);
+        managerContext.getAuthenticationManager(), managerContext.getDatabaseManager(), selectedWine);
+    managerContext.getGuiManager().mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview.getFirst(), selectedWine);
   }
 
 }
