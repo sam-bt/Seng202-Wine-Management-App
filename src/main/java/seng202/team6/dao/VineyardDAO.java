@@ -118,6 +118,28 @@ public class VineyardDAO extends DAO {
     return FXCollections.emptyObservableList();
   }
 
+  public Vineyard get(String name) {
+    Timer timer = new Timer();
+    String sql = "SELECT * FROM VINEYARD " +
+        "LEFT JOIN GEOLOCATION ON LOWER(VINEYARD.ADDRESS) LIKE LOWER(GEOLOCATION.NAME) " +
+        "WHERE VINEYARD.NAME = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setString(1, name);
+      try (ResultSet resultSet = statement.executeQuery()) {
+        if (resultSet.next()) {
+          log.info("Successfully retrieved vineyard with name '{}' in {}ms", name,
+              timer.stop());
+          return extractVineyardFromResultSet(resultSet);
+        }
+        log.warn("Could not retrieve vineyard with name '{}' in {}ms", name,
+            timer.stop());
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve vineyard with name {}", name, error);
+    }
+    return null;
+  }
+
   public void addAll(List<Vineyard> vineyards) {
     Timer timer = new Timer();
     String sql = "INSERT INTO VINEYARD values (null, ?, ?, ?, ?, ?, ?);";

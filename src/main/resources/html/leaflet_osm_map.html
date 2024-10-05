@@ -50,6 +50,9 @@
         outline: none;
         border: none;
     }
+    .hidden {
+        display: none;
+    }
   </style>
 </head>
 <body>
@@ -60,12 +63,12 @@
 <div class="leaflet-top leaflet-right">
   <div class="toggle-buttons-container">
     <!-- responsible for toggling the heatmap view-->
-    <button class="toggle-button" onclick="onToggleHeatMapClick()">
+    <button class="toggle-button hidden" onclick="onToggleHeatMapClick()">
       Toggle Heatmap
     </button>
 
     <!-- responsible for toggling the markers view-->
-    <button class="toggle-button" onclick="onToggleMarkersClick()">
+    <button class="toggle-button hidden" onclick="onToggleMarkersClick()">
       Toggle Markers
     </button>
   </div>
@@ -117,6 +120,7 @@
       initMap: initMap,
       addWineMarker: addWineMarker,
       addVineyardMarker: addVineyardMarker,
+      setView: setView,
       clearMarkers: clearMarkers,
       clearHeatMap: clearHeatMap,
   };
@@ -300,6 +304,10 @@
       heatMapLayer.setData({ data: heatMapData });
   }
 
+  function setView(latitude, longitude) {
+    map.setView(new L.LatLng(latitude, longitude), 5);
+  }
+
   // if the heat map is disabled, the heat map will be enabled and shown on the map
   // if the heat map is enabled, it will be removed from the map
   function onToggleHeatMapClick() {
@@ -311,7 +319,7 @@
   }
 
   // if the markers are disabled, the markers will be enabled and shown on the map
-  // if the markers are enabled, the markers will be enabled and shown on the map
+  // if the markers are enabled, the markersv will be enabled and shown on the map
   function onToggleMarkersClick() {
       if ((markersEnabled = !markersEnabled)) {
           map.addLayer(wineMarkersLayer);

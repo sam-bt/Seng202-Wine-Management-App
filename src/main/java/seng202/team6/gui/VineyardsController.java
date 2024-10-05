@@ -69,7 +69,7 @@ public class VineyardsController extends Controller {
             vineyardCards.put(vineyard, card);
             vineyardsViewContainer.getChildren().add(card);
             mapController.runOrQueueWhenReady(() ->
-                mapController.addVineyardMaker(vineyard));
+                mapController.addVineyardMaker(vineyard, false));
           });
         }
         if (change.wasRemoved()) {

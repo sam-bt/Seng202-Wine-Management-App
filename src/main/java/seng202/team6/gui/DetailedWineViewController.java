@@ -20,12 +20,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebView;
 import org.controlsfx.control.Rating;
-import seng202.team6.gui.controls.CardContainer;
 import seng202.team6.gui.controls.CircularScoreIndicator;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
+import seng202.team6.model.Vineyard;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineNoteService;
@@ -91,8 +92,11 @@ public class DetailedWineViewController extends Controller {
   private Label loginToReviewLabel;
   @FXML
   private GridPane descriptionScoreNotesGridPane;
+  @FXML
+  private WebView webView;
   private Rating ratingStars;
   private CircularScoreIndicator scoreIndicator;
+  private LeafletOSMController mapController;
 
   /**
    * Constructs a DetailedWineViewController wth the provided ManagerContext, Wine to view, and the
@@ -170,9 +174,27 @@ public class DetailedWineViewController extends Controller {
       loginToReviewLabel.setVisible(true);
       loginToReviewLabel.setDisable(false);
     }
+    findVineyard();
 
     // everything is ready so now the wine reviews can be loaded
     wineReviewsService.init();
+  }
+
+  private void findVineyard() {
+    String winery = viewedWine.getWinery();
+    if (winery == null || winery.isEmpty())
+      return;
+
+    Vineyard vineyard = managerContext.databaseManager.getVineyardsDAO().get(winery);
+    if (vineyard == null)
+      return;
+
+    mapController = new LeafletOSMController(webView.getEngine());
+    mapController.initMap();
+    mapController.runOrQueueWhenReady(() -> {
+      mapController.addVineyardMaker(vineyard, true);
+
+    });
   }
 
   /**

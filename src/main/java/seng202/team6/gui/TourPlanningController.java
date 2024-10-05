@@ -1,6 +1,5 @@
 package seng202.team6.gui;
 
-import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
