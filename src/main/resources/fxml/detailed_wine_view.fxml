@@ -23,26 +23,6 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="336.0">
           <children>
-            <Button fx:id="viewOnMapButton" layoutX="512.0" layoutY="679.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="View on Map" AnchorPane.rightAnchor="335.0">
-              <font>
-                <Font name="System Bold" size="16.0" />
-              </font>
-            </Button>
-            <Button fx:id="backButton" layoutX="327.0" layoutY="679.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onBackButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Back" AnchorPane.rightAnchor="520.0">
-              <font>
-                <Font name="System Bold" size="16.0" />
-              </font>
-            </Button>
-            <Button fx:id="saveNotes" layoutX="14.0" layoutY="638.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onAction="#onSaveClicked" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Save Note">
-              <font>
-                <Font name="System Bold" size="16.0" />
-              </font>
-            </Button>
-            <Button layoutX="668.0" layoutY="679.0" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onOpenListsButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Open Lists">
-              <font>
-                <Font name="System Bold" size="16.0" />
-              </font>
-            </Button>
             <GridPane layoutX="381.0" layoutY="49.0" prefHeight="214.0" prefWidth="616.0">
               <children>
                 <Label text="Variety:">
@@ -139,6 +119,33 @@
               </children>
             </HBox>
             <ImageView fx:id="imageView" fitHeight="250.0" fitWidth="350.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
+                  <HBox fx:id="buttonsContainer" alignment="CENTER" layoutX="4.0" layoutY="673.0" prefHeight="55.0" prefWidth="1016.0" spacing="20.0">
+                     <children>
+                  <Button fx:id="backButton" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onBackButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Back">
+                    <font>
+                      <Font name="System Bold" size="16.0" />
+                    </font>
+                  </Button>
+                  <Button fx:id="saveNotes" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onAction="#onSaveClicked" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Save Note">
+                    <font>
+                      <Font name="System Bold" size="16.0" />
+                    </font>
+                  </Button>
+                  <Button fx:id="openListsButton" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onOpenListsButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Open Lists">
+                    <font>
+                      <Font name="System Bold" size="16.0" />
+                    </font>
+                  </Button>
+                        <Button fx:id="viewVineyardButton" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onViewVineyardClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="View Vineyard">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </HBox>
           </children>
         </AnchorPane>
       </content>
