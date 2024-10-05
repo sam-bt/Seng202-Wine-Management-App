@@ -39,6 +39,9 @@ import seng202.team6.util.Exceptions.ValidationException;
 import seng202.team6.util.ProcessCSV;
 import seng202.team6.util.WineValidator;
 
+/**
+ * Controller for wine import.
+ */
 public class WineImportController extends Controller {
   @FXML
   private GridPane dataColumnsContainer;
@@ -52,10 +55,17 @@ public class WineImportController extends Controller {
 
   private List<String[]> currentFileRows;
 
+  /**
+   * Constructor.
+   * @param context manager context
+   */
   public WineImportController(ManagerContext context) {
     super(context);
   }
 
+  /**
+   * Initialize this constructor
+   */
   @Override
   public void init() {
     dataColumnsContainer.getRowConstraints().clear();
@@ -63,6 +73,9 @@ public class WineImportController extends Controller {
     dataColumnsContainer.setVgap(20);
   }
 
+  /**
+   * Called when the open file button is clicked.
+   */
   @FXML
   public void onOpenFileButtonClick() {
     FileChooser fileChooser = new FileChooser();
@@ -82,6 +95,9 @@ public class WineImportController extends Controller {
   }
 
 
+  /**
+   * Called when the append data button is clicked.
+   */
   @FXML
   void onAppendDataButtonClick() {
     if (!validate())
@@ -89,6 +105,9 @@ public class WineImportController extends Controller {
     parseWines(false);
   }
 
+  /**
+   * Called when the replace data button is clicked.
+   */
   @FXML
   void onReplaceDataButtonClick() {
     if (!validate())
@@ -96,6 +115,9 @@ public class WineImportController extends Controller {
     parseWines(true);
   }
 
+  /**
+   * Resets the wine import screen.
+   */
   private void reset() {
     dataColumnsContainer.getChildren().clear();
     dataColumnsContainer.getRowConstraints().clear();
@@ -105,6 +127,11 @@ public class WineImportController extends Controller {
     currentFileRows = null;
   }
 
+  /**
+   * Parse the list of currently selected wines.
+   *
+   * @param replace whether to replace
+   */
   private void parseWines(boolean replace) {
     List<Wine> parsedWines = new ArrayList<>();
     Map<WinePropertyName, Integer> valid = new HashMap<>() {{
@@ -142,15 +169,33 @@ public class WineImportController extends Controller {
     reset();
   }
 
+  /**
+   * Gets the string at a row if it is valid or empty string.
+   *
+   * @param valid map of valid wine property names
+   * @param row row of table to import
+   * @param winePropertyName name of property
+   * @return string from row or default
+   */
   private String extractPropertyFromRowOrDefault(Map<WinePropertyName, Integer> valid, String[] row,
       WinePropertyName winePropertyName) {
     return valid.containsKey(winePropertyName) ? row[valid.get(winePropertyName)] : "";
   }
 
+  /**
+   * Validates the current table.
+   *
+   * @return if current table is valid
+   */
   private boolean validate() {
     return checkContainsTitleProperty() && checkDuplicateProperties();
   }
 
+  /**
+   * Checks if the importer contains the title property.
+   *
+   * @return if the selection contains the title property
+   */
   private boolean checkContainsTitleProperty() {
     if (!selectedWineProperties.containsValue(WinePropertyName.TITLE)) {
       Alert alert = new Alert(AlertType.ERROR);
@@ -163,6 +208,11 @@ public class WineImportController extends Controller {
     return true;
   }
 
+  /**
+   * Check for duplicate attribute names.
+   *
+   * @return true if valid
+   */
   private boolean checkDuplicateProperties() {
     Set<WinePropertyName> duplicatedProperties = new HashSet<>();
     Set<WinePropertyName> selectedProperties = new HashSet<>();
@@ -186,6 +236,12 @@ public class WineImportController extends Controller {
     return true;
   }
 
+  /**
+   * Makes the column remap list.
+   *
+   * @param columnNames column names
+   * @param rows rows
+   */
   private void makeColumnRemapList(String[] columnNames, List<String[]> rows) {
     int columns = 4;
     int row = 0;
@@ -206,20 +262,31 @@ public class WineImportController extends Controller {
       }
 
       WinePropertyName possiblePropertyName = WinePropertyName.tryMatch(columnName);
-      GridPane wrapper = createSomeElement(i, columnName, possiblePropertyName, sampleValues);
+      GridPane wrapper = createImportBox(i, columnName, possiblePropertyName, sampleValues);
       dataColumnsContainer.add(wrapper, column, row);
       column++;
     }
   }
 
+  /**
+   * Adds a row.
+   */
   private void addRow() {
     RowConstraints rowConstraint = new RowConstraints();
     rowConstraint.setVgrow(Priority.ALWAYS);
     dataColumnsContainer.getRowConstraints().add(rowConstraint);
   }
 
-  // idk what to call this
-  private GridPane createSomeElement(int index, String columnName, WinePropertyName possiblePropertyName,
+  /**
+   * Creates an import box.
+   *
+   * @param index index
+   * @param columnName column rename
+   * @param possiblePropertyName possible property name
+   * @param sampleValues sample values
+   * @return created box
+   */
+  private GridPane createImportBox(int index, String columnName, WinePropertyName possiblePropertyName,
       ObservableList<String> sampleValues) {
     GridPane gridPane = new GridPane();
     RowConstraints firstRow = new RowConstraints();

@@ -42,20 +42,20 @@ public class WineDao extends Dao {
   @Override
   public String[] getInitialiseStatements() {
     return new String[]{
-        "CREATE TABLE IF NOT EXISTS WINE (" +
-            "ID             INTEGER       PRIMARY KEY," +
-            "TITLE          VARCHAR(64)   NOT NULL," +
-            "VARIETY        VARCHAR(32)," +
-            "COUNTRY        VARCHAR(32)," +
-            "REGION         VARCHAR(32)," +
-            "WINERY         VARCHAR(64)," +
-            "COLOR          VARCHAR(32)," +
-            "VINTAGE        INTEGER," +
-            "DESCRIPTION    INTEGER," +
-            "SCORE_PERCENT  INTEGER," +
-            "ABV            FLOAT," +
-            "PRICE          FLOAT" +
-            ")"
+        "CREATE TABLE IF NOT EXISTS WINE ("
+            + "ID             INTEGER       PRIMARY KEY,"
+            + "TITLE          VARCHAR(64)   NOT NULL,"
+            + "VARIETY        VARCHAR(32),"
+            + "COUNTRY        VARCHAR(32),"
+            + "REGION         VARCHAR(32),"
+            + "WINERY         VARCHAR(64),"
+            + "COLOR          VARCHAR(32),"
+            + "VINTAGE        INTEGER,"
+            + "DESCRIPTION    INTEGER,"
+            + "SCORE_PERCENT  INTEGER,"
+            + "ABV            FLOAT,"
+            + "PRICE          FLOAT"
+            + ")"
     };
   }
 
@@ -101,10 +101,6 @@ public class WineDao extends Dao {
       log.info("Failed to retrieve wines in range", error);
     }
     return FXCollections.emptyObservableList();
-  }
-
-  public ObservableList<Wine> getAllInRange(int begin, int end) {
-    return getAllInRange(begin, end, null);
   }
 
   /**
@@ -354,7 +350,7 @@ public class WineDao extends Dao {
 
   /**
    * Extracts the latitude and longitude from the provided ResultSet and creates a new GeoLocation
-   * object
+   * object.
    *
    * @param set The ResultSet from which geolocations are to be extracted
    * @return The extract Geolocation if available, otherwise null if either the latitude or

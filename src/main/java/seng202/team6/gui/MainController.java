@@ -3,7 +3,6 @@ package seng202.team6.gui;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
@@ -115,6 +114,7 @@ public class MainController extends Controller {
 
   /**
    * Disables toolbar.
+   *
    * @param status enabled or not
    */
   public void setDisable(boolean status) {
@@ -127,12 +127,13 @@ public class MainController extends Controller {
 
   /**
    * Switches the current scene.
+   *
    * @param fxml fxml resource path
    * @param title window title
    * @param builder controller builder
    */
   public void switchScene(String fxml, String title, Builder<?> builder) {
-    Parent parent = loadFXML(fxml, builder, pageContent);
+    Parent parent = loadFxml(fxml, builder, pageContent);
     if (parent != null) {
       managerContext.GUIManager.setWindowTitle(title);
     }
@@ -140,12 +141,13 @@ public class MainController extends Controller {
 
   /**
    * Loads a scene from a fxml resource.
+   *
    * @param fxml fxml resource path
    * @param builder controller builder
    * @param parentToAdd parent to add scene to
    * @return added node
    */
-  private Parent loadFXML(String fxml, Builder<?> builder, Pane parentToAdd) {
+  private Parent loadFxml(String fxml, Builder<?> builder, Pane parentToAdd) {
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
       loader.setControllerFactory(param -> builder.build());
@@ -165,6 +167,7 @@ public class MainController extends Controller {
 
   /**
    * Opens a popup.
+   *
    * @param fxml fxml resource path
    * @param builder controller builder
    */
@@ -211,6 +214,7 @@ public class MainController extends Controller {
 
   /**
    * Gets if screen is disabled.
+   *
    * @return if currently disabled
    */
   public boolean isDisabled() {
@@ -289,6 +293,7 @@ public class MainController extends Controller {
 
   /**
    * Launches the detailed wine view
+   *
    * @param wine wine
    * @param backButtonAction object to run when back button is pressed
    */
@@ -308,6 +313,7 @@ public class MainController extends Controller {
 
   /**
    * Launches the popup wine view.
+   *
    * @param wineReviewsService wine reviews service
    */
   public void openPopupWineReview(WineReviewsService wineReviewsService) {
@@ -317,6 +323,7 @@ public class MainController extends Controller {
 
   /**
    * Launches the add to list popup.
+   *
    * @param wine wine
    */
   public void openAddToListPopup(Wine wine) {
@@ -336,6 +343,7 @@ public class MainController extends Controller {
 
   /**
    * Launches the popup to review a wine.
+   *
    * @param wineReviewsService service
    * @param reviewer reviewer
    * @param selectedReview selected review
@@ -361,11 +369,12 @@ public class MainController extends Controller {
 
   /**
    * Launches the load import screen under a given node.
+   *
    * @param parent node to add to
    * @return node that was added
    */
   public Parent loadImportWineScreen(Pane parent) {
-    return loadFXML("/fxml/wine_import_screen.fxml",
+    return loadFxml("/fxml/wine_import_screen.fxml",
         () -> new WineImportController(managerContext), parent);
   }
 }

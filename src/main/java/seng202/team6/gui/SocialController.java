@@ -17,13 +17,16 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
 
+/**
+ * Controller for the social screen.
+ */
 public class SocialController extends Controller {
 
   @FXML
   TableView<Pair<WineReview, Wine>> reviewTableView;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context
    */
@@ -38,7 +41,7 @@ public class SocialController extends Controller {
   }
 
   /**
-   * Opens a page of reviews from the database according to filters
+   * Opens a page of reviews from the database according to filters.
    *
    * @param begin first element
    * @param end   last element + 1
@@ -54,6 +57,9 @@ public class SocialController extends Controller {
     reviewTableView.setItems(reviews);
   }
 
+  /**
+   * Sets up the review table columns.
+   */
   public void setupReviewTableColumns() {
     // Clear any existing cols
     reviewTableView.getColumns().clear();
@@ -82,7 +88,7 @@ public class SocialController extends Controller {
           setGraphic(null);
         } else {
           starBox.getChildren().clear();
-          Rating ratingStars = setRating(rating);
+          Rating ratingStars = createRating(rating);
           starBox.getChildren().addFirst(ratingStars);
           setGraphic(starBox);
         }
@@ -95,7 +101,13 @@ public class SocialController extends Controller {
     reviewTableView.getColumns().add(dateColumn);
   }
 
-  private Rating setRating(double rating) {
+  /**
+   * Creates the rating for a given rating.
+   *
+   * @param rating rating
+   * @return rating object
+   */
+  private Rating createRating(double rating) {
     Rating ratingStars = new Rating();
     ratingStars.setUpdateOnHover(false);
     ratingStars.setMouseTransparent(true);
@@ -106,9 +118,13 @@ public class SocialController extends Controller {
     return ratingStars;
   }
 
+  /**
+   * Opens a review when clicked.
+   *
+   * @param event mouse event
+   */
   @FXML
-  public void openReviewOnClick(
-      MouseEvent event) { //TODO take to review screen (upvote/downvote reviews)
+  public void openReviewOnClick(MouseEvent event) {
     if (event.getClickCount() != 2) {
       return;
     }

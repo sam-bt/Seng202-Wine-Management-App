@@ -21,7 +21,7 @@ import seng202.team6.util.Timer;
 public class WineReviewDao extends Dao {
 
   /**
-   * Cache to store and reuse WineReview objects to avoid duplication
+   * Cache to store and reuse WineReview objects to avoid duplication.
    */
   private final DatabaseObjectUniquer<WineReview> wineReviewCache = new DatabaseObjectUniquer<>();
 
@@ -42,16 +42,16 @@ public class WineReviewDao extends Dao {
   @Override
   public String[] getInitialiseStatements() {
     return new String[]{
-        "CREATE TABLE IF NOT EXISTS WINE_REVIEW (" +
-            "ID             INTEGER       PRIMARY KEY," +
-            "USERNAME       varchar(64)   NOT NULL," +
-            "WINE_ID        INTEGER       NOT NULL," +
-            "RATING         DOUBLE        NOT NULL," +
-            "DESCRIPTION    VARCHAR(256)  NOT NULL," +
-            "DATE           DATE          NOT NULL," +
-            "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE," +
-            "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE" +
-            ")"
+        "CREATE TABLE IF NOT EXISTS WINE_REVIEW ("
+            + "ID             INTEGER       PRIMARY KEY,"
+            + "USERNAME       varchar(64)   NOT NULL,"
+            + "WINE_ID        INTEGER       NOT NULL,"
+            + "RATING         DOUBLE        NOT NULL,"
+            + "DESCRIPTION    VARCHAR(256)  NOT NULL,"
+            + "DATE           DATE          NOT NULL,"
+            + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE,"
+            + "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE"
+            + ")"
     };
   }
 
@@ -273,7 +273,7 @@ public class WineReviewDao extends Dao {
   }
 
   /**
-   * Updates a specific attribute of the wine review in the WINE_REVIEW table
+   * Updates a specific attribute of the wine review in the WINE_REVIEW table.
    *
    * @param attributeName   name of attribute
    * @param attributeSetter callback to set attribute

@@ -42,10 +42,19 @@ public class NotesController extends Controller {
   private Note openedNote;
   private Wine noteWine;
 
+  /**
+   * Constructor.
+   * @param managerContext context
+   */
   public NotesController(ManagerContext managerContext) {
     super(managerContext);
   }
 
+
+  /**
+   * Initializes the note controller.
+   */
+  @Override
   public void init() {
     populateTable();
     deleteButton.setDisable(true);
@@ -94,6 +103,11 @@ public class NotesController extends Controller {
     saveButton.setDisable(true);
   }
 
+  /**
+   * Opens a note when mouse button is clicked.
+   *
+   * @param event mouse event
+   */
   @FXML
   public void openNoteOnClick(MouseEvent event) {
     Entry<Wine, Note> selectedItem = notesTable.getSelectionModel().getSelectedItem();
@@ -109,11 +123,17 @@ public class NotesController extends Controller {
     deleteButton.setDisable(false);
   }
 
+  /**
+   * Called when save is clicked..
+   */
   @FXML
   public void onSaveClicked() {
     openedNote.setNote(noteArea.getText());
   }
 
+  /**
+   * Called when delete is clicked.
+   */
   @FXML
   public void onDeleteClicked() {
     Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
