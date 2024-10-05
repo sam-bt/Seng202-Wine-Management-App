@@ -22,21 +22,21 @@ public class WineListService {
 
   public void init() {
     User user = authenticationManager.getAuthenticatedUser();
-    wineLists.addAll(databaseManager.getWineListDAO().getAll(user));
+    wineLists.addAll(databaseManager.getWineListDao().getAll(user));
   }
 
   public boolean isWineInList(WineList wineList, Wine wine) {
-    return databaseManager.getWineListDAO().isWineInList(wineList, wine);
+    return databaseManager.getWineListDao().isWineInList(wineList, wine);
   }
 
   public void createWineList(User user, String name) {
-    WineList wineList = databaseManager.getWineListDAO().create(user, name);
+    WineList wineList = databaseManager.getWineListDao().create(user, name);
     wineLists.add(wineList);
   }
 
   public void deleteWineList(WineList wineList) {
     wineLists.remove(wineList);
-    databaseManager.getWineListDAO().delete(wineList);
+    databaseManager.getWineListDao().delete(wineList);
   }
 
   public boolean canRemove(WineList wineList) {

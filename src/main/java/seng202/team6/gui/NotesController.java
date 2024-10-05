@@ -15,7 +15,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
-import seng202.team6.dao.AggregatedDAO;
+import seng202.team6.dao.AggregatedDao;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
@@ -58,8 +58,8 @@ public class NotesController extends Controller {
    */
   private void populateTable() {
     User user = managerContext.authenticationManager.getAuthenticatedUser();
-    AggregatedDAO aggregatedDAO = managerContext.databaseManager.getAggregatedDAO();
-    ObservableMap<Wine, Note> allNotesMappedWithWinesByUser = aggregatedDAO
+    AggregatedDao aggregatedDao = managerContext.databaseManager.getAggregatedDao();
+    ObservableMap<Wine, Note> allNotesMappedWithWinesByUser = aggregatedDao
         .getAllNotesMappedWithWinesByUser(user);
     ObservableList<Map.Entry<Wine, Note>> noteList = FXCollections.observableArrayList(
         allNotesMappedWithWinesByUser.entrySet());

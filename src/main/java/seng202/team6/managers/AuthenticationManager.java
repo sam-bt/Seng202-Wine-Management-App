@@ -3,7 +3,7 @@ package seng202.team6.managers;
 import static seng202.team6.model.AuthenticationResponse.PASSWORD_CHANGED_SUCCESS;
 import static seng202.team6.model.AuthenticationResponse.USERNAME_ALREADY_REGISTERED;
 
-import seng202.team6.dao.UserDAO;
+import seng202.team6.dao.UserDao;
 import seng202.team6.model.AuthenticationResponse;
 import seng202.team6.model.User;
 import seng202.team6.util.EncryptionUtil;
@@ -52,14 +52,14 @@ public class AuthenticationManager {
         AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())) {
       return AuthenticationResponse.INVALID_PASSWORD;
     }
-    UserDAO userDAO = databaseManager.getUserDAO();
-    if (userDAO.get(username) != null) {
+    UserDao userDao = databaseManager.getUserDao();
+    if (userDao.get(username) != null) {
       return USERNAME_ALREADY_REGISTERED;
     }
 
     String salt = EncryptionUtil.generateSalt();
     String hashedPassword = EncryptionUtil.hashPassword(password, salt);
-    userDAO.add(new User(username, hashedPassword, "user", salt));
+    userDao.add(new User(username, hashedPassword, "user", salt));
     return AuthenticationResponse.REGISTER_SUCCESS;
   }
 
@@ -76,7 +76,7 @@ public class AuthenticationManager {
       return AuthenticationResponse.MISSING_FIELDS;
     }
 
-    User user = databaseManager.getUserDAO().get(username);
+    User user = databaseManager.getUserDao().get(username);
     if (user == null) {
       return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
     }
@@ -109,7 +109,7 @@ public class AuthenticationManager {
       return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
     }
 
-    User user = databaseManager.getUserDAO().get(username);
+    User user = databaseManager.getUserDao().get(username);
     if (user != null) {
       boolean validPassword = EncryptionUtil.verifyPassword(oldPassword, user.getPassword(),
           user.getSalt());

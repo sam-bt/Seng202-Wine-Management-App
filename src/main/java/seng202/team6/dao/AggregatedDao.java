@@ -22,24 +22,24 @@ import seng202.team6.util.Timer;
  * and handling operations that involve joining data from different tables. It avoids code
  * repetition by using existing DAO methods to extract data
  */
-public class AggregatedDAO extends DAO {
+public class AggregatedDao extends Dao {
 
-  private final WineReviewDAO wineReviewDAO;
-  private final WineNotesDAO wineNotesDAO;
-  private final WineDAO wineDAO;
+  private final WineReviewDao wineReviewDao;
+  private final WineNotesDao wineNotesDao;
+  private final WineDao wineDao;
 
   /**
    * Constructs a new DAO with the given database connection and initializes references to DAOs.
    *
    * @param connection   The database connection to be used by this DAO.
-   * @param wineNotesDAO The DAO responsible for handling operations related to wine notes.
+   * @param wineNotesDao The DAO responsible for handling operations related to wine notes.
    * @param wineDAO      The DAO responsible for handling operations related to wines.
    */
-  public AggregatedDAO(Connection connection, WineReviewDAO wineReviewDAO, WineNotesDAO wineNotesDAO, WineDAO wineDAO) {
-    super(connection, AggregatedDAO.class);
-    this.wineReviewDAO = wineReviewDAO;
-    this.wineNotesDAO = wineNotesDAO;
-    this.wineDAO = wineDAO;
+  public AggregatedDao(Connection connection, WineReviewDao wineReviewDao, WineNotesDao wineNotesDao, WineDao wineDAO) {
+    super(connection, AggregatedDao.class);
+    this.wineReviewDao = wineReviewDao;
+    this.wineNotesDao = wineNotesDao;
+    this.wineDao = wineDAO;
   }
 
   /**
@@ -62,8 +62,8 @@ public class AggregatedDAO extends DAO {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
-          Wine wine = wineDAO.extractWineFromResultSet(resultSet);
-          Note note = wineNotesDAO.extractNoteFromResultSet(resultSet);
+          Wine wine = wineDao.extractWineFromResultSet(resultSet);
+          Note note = wineNotesDao.extractNoteFromResultSet(resultSet);
           wineAndNotes.put(wine, note);
         }
       }
@@ -93,7 +93,7 @@ public class AggregatedDAO extends DAO {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
-          Wine wine = wineDAO.extractWineFromResultSet(resultSet);
+          Wine wine = wineDao.extractWineFromResultSet(resultSet);
           Date date = resultSet.getDate("DATE_ADDED");
           winesAndDates.add(new WineDatePair(wine, date));
         }
@@ -124,7 +124,7 @@ public class AggregatedDAO extends DAO {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
-          Wine wine = wineDAO.extractWineFromResultSet(resultSet);
+          Wine wine = wineDao.extractWineFromResultSet(resultSet);
           wines.add(wine);
         }
       }
@@ -150,8 +150,8 @@ public class AggregatedDAO extends DAO {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
-          WineReview wineReview = wineReviewDAO.extractWineReviewFromResultSet(resultSet);
-          Wine wine = wineDAO.extractWineFromResultSet(resultSet);
+          WineReview wineReview = wineReviewDao.extractWineReviewFromResultSet(resultSet);
+          Wine wine = wineDao.extractWineFromResultSet(resultSet);
          wineReviewPairs.add(new Pair<>(wineReview, wine));
         }
         log.info("Successfully retrieved {} reviews with wines in range {}-{} in {}ms",

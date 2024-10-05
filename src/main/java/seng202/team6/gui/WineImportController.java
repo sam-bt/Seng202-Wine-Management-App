@@ -135,9 +135,9 @@ public class WineImportController extends Controller {
       currentFileRows.size());
 
     if (replace) {
-      managerContext.databaseManager.getWineDAO().replaceAll(parsedWines);
+      managerContext.databaseManager.getWineDao().replaceAll(parsedWines);
     } else {
-      managerContext.databaseManager.getWineDAO().addAll(parsedWines);
+      managerContext.databaseManager.getWineDao().addAll(parsedWines);
     }
     reset();
   }

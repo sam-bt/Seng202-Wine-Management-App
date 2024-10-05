@@ -48,7 +48,7 @@ public class SocialController extends Controller {
     reviewTableView.getItems().clear();
 
     ObservableList<Pair<WineReview, Wine>>  reviews = managerContext.databaseManager
-        .getAggregatedDAO().getWineReviewsAndWines(begin, end);
+        .getAggregatedDao().getWineReviewsAndWines(begin, end);
 
     // Set fetched data to the table
     reviewTableView.setItems(reviews);
@@ -120,7 +120,7 @@ public class SocialController extends Controller {
 
     String reviewerUsername = selectedReview.getFirst().getUsername();
     Wine selectedWine = selectedReview.getSecond();
-    User reviewer = managerContext.databaseManager.getUserDAO().get(reviewerUsername);
+    User reviewer = managerContext.databaseManager.getUserDao().get(reviewerUsername);
     WineReviewsService wineReviewsService = new WineReviewsService(
         managerContext.authenticationManager, managerContext.databaseManager, selectedWine);
     managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview.getFirst(), selectedWine);

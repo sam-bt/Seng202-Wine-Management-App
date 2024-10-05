@@ -21,7 +21,7 @@ public class WineNoteService {
   }
 
   public Note loadUsersNote(User user) {
-    note = databaseManager.getWineNotesDAO().get(user, wine);
+    note = databaseManager.getWineNotesDao().get(user, wine);
     return note;
   }
 

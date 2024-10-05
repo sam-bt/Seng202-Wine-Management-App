@@ -184,7 +184,7 @@ public class ListScreenController extends Controller {
     }
 
     wineListService.deleteWineList(wineList);
-    managerContext.databaseManager.getWineListDAO().delete(wineList);
+    managerContext.databaseManager.getWineListDao().delete(wineList);
     render();
   }
 
@@ -193,7 +193,7 @@ public class ListScreenController extends Controller {
    */
   public void changeSelected() {
     WineList selectedWineList = wineListService.getWineLists().get(selected);
-    ObservableList<Wine> observableList = managerContext.databaseManager.getAggregatedDAO()
+    ObservableList<Wine> observableList = managerContext.databaseManager.getAggregatedDao()
         .getWinesInList(selectedWineList);
     setupTableView(observableList);
   }

@@ -31,7 +31,7 @@ public class WineReviewsService {
 
   public void init() {
     String username = authenticationManager.getAuthenticatedUsername();
-    wineReviews.addAll(databaseManager.getWineReviewDAO().getAll(wine));
+    wineReviews.addAll(databaseManager.getWineReviewDao().getAll(wine));
     usersReview.setValue(wineReviews.stream()
         .filter(wineReview -> wineReview.getUsername().equals(username))
         .findFirst()
@@ -49,7 +49,7 @@ public class WineReviewsService {
       return;
     }
     Date currentDate = new Date(System.currentTimeMillis());
-    WineReview wineReview = databaseManager.getWineReviewDAO()
+    WineReview wineReview = databaseManager.getWineReviewDao()
         .add(user, wine, rating, description, currentDate);
     if (wineReview != null) {
       wineReviews.add(wineReview);
@@ -61,7 +61,7 @@ public class WineReviewsService {
   public void deleteUsersReview() {
     WineReview wineReview = getUsersReview();
     if (wineReview != null) {
-      databaseManager.getWineReviewDAO().delete(wineReview);
+      databaseManager.getWineReviewDao().delete(wineReview);
       usersReview.setValue(null);
       wineReviews.remove(wineReview);
       calculateAverageReview();

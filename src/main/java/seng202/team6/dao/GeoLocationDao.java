@@ -12,15 +12,15 @@ import seng202.team6.util.Timer;
 /**
  * Data Access Object (DAO) for handling geolocation related database operations.
  */
-public class GeoLocationDAO extends DAO {
+public class GeoLocationDao extends Dao {
 
   /**
    * Constructs a new GeoLocationDAO with the given database connection.
    *
    * @param connection The database connection to be used for geolocation operations.
    */
-  public GeoLocationDAO(Connection connection) {
-    super(connection, GeoLocationDAO.class);
+  public GeoLocationDao(Connection connection) {
+    super(connection, GeoLocationDao.class);
   }
 
   /**

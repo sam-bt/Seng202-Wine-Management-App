@@ -18,7 +18,7 @@ import seng202.team6.util.Timer;
 /**
  * Data Access Object (DAO) for handling wine review related database operations.
  */
-public class WineReviewDAO extends DAO {
+public class WineReviewDao extends Dao {
 
   /**
    * Cache to store and reuse WineReview objects to avoid duplication
@@ -30,8 +30,8 @@ public class WineReviewDAO extends DAO {
    *
    * @param connection The database connection to be used for wine review operations.
    */
-  public WineReviewDAO(Connection connection) {
-    super(connection, WineReviewDAO.class);
+  public WineReviewDao(Connection connection) {
+    super(connection, WineReviewDao.class);
   }
 
   /**

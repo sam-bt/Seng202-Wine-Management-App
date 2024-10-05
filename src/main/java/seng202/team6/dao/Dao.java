@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
  * Abstract base class for Data Access Objects (DAO). This class provides a common structure for all
  * DAOs in the application.
  */
-public abstract class DAO {
+public abstract class Dao {
 
   /**
    * The database connected used by this DAO
@@ -33,7 +33,7 @@ public abstract class DAO {
    * @param connection          The database connection to be used by this DAO.
    * @param implementationClass The class that implements this DAO, used to configure the logger.
    */
-  public DAO(Connection connection, Class<?> implementationClass) {
+  public Dao(Connection connection, Class<?> implementationClass) {
     this.connection = connection;
     this.log = LogManager.getLogger(implementationClass);
   }

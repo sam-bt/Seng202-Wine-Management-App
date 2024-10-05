@@ -53,7 +53,7 @@ public class AdminController extends Controller {
 
   @FXML
   private void onYes() {
-    managerContext.databaseManager.getUserDAO().deleteAll();
+    managerContext.databaseManager.getUserDao().deleteAll();
     managerContext.GUIManager.mainController.openWineScreen();
   }
 
