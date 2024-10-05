@@ -268,6 +268,12 @@ public class MainController extends Controller {
         () -> new ConsumptionController(managerContext));
   }
 
+  @FXML
+  public void onHelpPressed() {
+    switchScene("/fxml/help_screen.fxml", "Help",
+            () -> new HelpController(managerContext));
+  }
+
 
   public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer,
       WineReview selectedReview, Wine wine) {
