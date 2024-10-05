@@ -24,18 +24,18 @@
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="336.0">
           <children>
             <HBox fx:id="ratingsContainer" alignment="CENTER_LEFT" layoutX="381.0" layoutY="25.0" maxHeight="45.0" minHeight="30.0" prefHeight="30.0" prefWidth="616.0" />
-                  <HBox alignment="CENTER" layoutX="-3.0" layoutY="674.0" prefHeight="35.0" prefWidth="1016.0" spacing="10.0">
+                  <HBox alignment="CENTER" layoutX="-3.0" layoutY="674.0" prefHeight="35.0" prefWidth="1016.0" spacing="20.0">
                      <children>
                   <Button fx:id="backButton" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onBackButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Back">
                     <font>
                       <Font name="System Bold" size="16.0" />
                     </font>
                   </Button>
-                  <Button fx:id="viewOnMapButton" maxHeight="1.7976931348623157E308" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="View on Map">
-                    <font>
-                      <Font name="System Bold" size="16.0" />
-                    </font>
-                  </Button>
+                        <Button fx:id="openToursButton" maxHeight="1.7976931348623157E308" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onOpenToursClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Open Tours">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Button>
                      </children>
                      <padding>
                         <Insets bottom="10.0" top="10.0" />

@@ -70,6 +70,11 @@ public class DetailedVineyardViewController extends Controller {
     backButtonAction.run();
   }
 
+  @FXML
+  void onOpenToursClick() {
+
+  }
+
   public void createWineCard(Wine wine) {
     WineCard card = new WineCard(winesContainer.widthProperty(),
         new SimpleDoubleProperty(), wine);
