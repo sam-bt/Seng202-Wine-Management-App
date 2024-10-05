@@ -265,6 +265,12 @@ public class MainController extends Controller {
         () -> new VineyardsController(managerContext));
   }
 
+  @FXML
+  public void openTourPlanningScreen() {
+    switchScene("/fxml/tour_planning_screen.fxml", "Tour Planning",
+        () -> new TourPlanningController(managerContext));
+  }
+
   public void openPopupWineReview(WineReviewsService wineReviewsService) {
     openPopup("/fxml/popup/review_popup.fxml",
         () -> new WineReviewPopupController(managerContext, wineReviewsService));

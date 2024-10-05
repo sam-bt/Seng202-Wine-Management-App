@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane cacheShape="false" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.LoginController">
+  <children>
+    <TitledPane animated="false" collapsible="false" focusTraversable="false" maxWidth="1370.0" minWidth="456.0" prefHeight="780.0" prefWidth="1370.0" stylesheets="@../css/titled_pane.css" text="Tour Planning">
+      <font>
+        <Font name="System Bold" size="24.0" />
+      </font>
+    </TitledPane>
+  </children>
+</AnchorPane>

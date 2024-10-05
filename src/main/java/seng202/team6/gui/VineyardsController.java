@@ -83,6 +83,11 @@ public class VineyardsController extends Controller {
     });
   }
 
+  @FXML
+  public void onPlanATourClick() {
+    managerContext.GUIManager.mainController.openTourPlanningScreen();
+  }
+
   private CardContainer createVineyardCard(Vineyard vineyard) {
     CardContainer card = new CardContainer(vineyardsViewContainer.widthProperty(),
         vineyardsViewContainer.hgapProperty());
