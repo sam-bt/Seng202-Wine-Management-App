@@ -50,8 +50,8 @@ public class WineListDAO extends DAO {
     return new String[]{
         "CREATE TABLE IF NOT EXISTS LIST_NAME (" +
             "ID             INTEGER       PRIMARY KEY," +
-            "USERNAME       VARCHAR(32)   NOT NULL," +
-            "NAME           VARCHAR(10)   NOT NULL," +
+            "USERNAME       VARCHAR(64)   NOT NULL," +
+            "NAME           VARCHAR(32)   NOT NULL," +
             "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE" +
             ")",
 
@@ -110,13 +110,17 @@ public class WineListDAO extends DAO {
         if (generatedKeys.next()) {
           long id = generatedKeys.getLong(1);
           log.info("Successfully created list '{}' with ID {} for user '{}' in {}ms", listName,
-              id, listName, user.getUsername(), timer.stop());
-          return new WineList(id, listName);
+              id, user.getUsername(), timer.stop());
+          WineList wineList = new WineList(id, listName);
+          if (useCache()) {
+            wineListCache.addObject(id, wineList);
+          }
+          return wineList;
         }
         log.warn("Could not create list '{}' for user '{}'", listName, user.getUsername());
       }
     } catch (SQLException error) {
-      log.error("Failed to create list '{}' for user {''}", listName, user.getUsername(), error);
+      log.error("Failed to create list '{}' for user '{}'", listName, user.getUsername(), error);
     }
     return null;
   }

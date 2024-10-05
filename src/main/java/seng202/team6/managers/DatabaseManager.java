@@ -25,6 +25,7 @@ import seng202.team6.dao.DAO;
 import seng202.team6.dao.GeoLocationDAO;
 import seng202.team6.dao.UserDAO;
 import seng202.team6.dao.VineyardDAO;
+import seng202.team6.dao.VineyardTourDAO;
 import seng202.team6.dao.WineDAO;
 import seng202.team6.dao.WineListDAO;
 import seng202.team6.dao.WineNotesDAO;
@@ -48,6 +49,7 @@ public class DatabaseManager {
   private final WineNotesDAO wineNotesDAO;
   private final WineReviewDAO wineReviewDAO;
   private final GeoLocationDAO geoLocationDAO;
+  private final VineyardTourDAO vineyardTourDAO;
   private final AggregatedDAO aggregatedDAO;
 
   /**
@@ -89,6 +91,7 @@ public class DatabaseManager {
     this.wineNotesDAO = new WineNotesDAO(connection);
     this.wineReviewDAO = new WineReviewDAO(connection);
     this.geoLocationDAO = new GeoLocationDAO(connection);
+    this.vineyardTourDAO = new VineyardTourDAO(connection);
     this.aggregatedDAO = new AggregatedDAO(connection, wineReviewDAO, wineNotesDAO, wineDAO);
     init();
 
@@ -152,7 +155,7 @@ public class DatabaseManager {
    */
   public void init() {
     List<String> sqlStatements = Stream.of(userDAO, wineDAO, wineListDAO, vineyardsDAO, wineNotesDAO,
-            wineReviewDAO, geoLocationDAO)
+            wineReviewDAO, geoLocationDAO, vineyardTourDAO)
         .filter(Objects::nonNull)  // Filter out null DAOs
         .map(DAO::getInitialiseStatements)
         .filter(Objects::nonNull)  // Filter out null statements
@@ -250,6 +253,10 @@ public class DatabaseManager {
 
   public GeoLocationDAO getGeoLocationDAO() {
     return geoLocationDAO;
+  }
+
+  public VineyardTourDAO getVineyardTourDAO() {
+    return vineyardTourDAO;
   }
 
   public AggregatedDAO getAggregatedDAO() {
