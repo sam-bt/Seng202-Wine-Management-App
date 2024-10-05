@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -17,7 +19,7 @@
 
 <AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="400.0" prefWidth="1370.0" stylesheets="@../css/detailed_view.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.DetailedVineyardViewController">
   <children>
-    <TitledPane fx:id="viewingVineyardTitledPane" animated="false" collapsible="false" prefHeight="780.0" prefWidth="1016.0" stylesheets="@../css/titled_pane.css" text="Viewing Vineyard: Wine Name">
+    <TitledPane fx:id="viewingVineyardTitledPane" animated="false" collapsible="false" prefHeight="780.0" prefWidth="1016.0" stylesheets="@../css/titled_pane.css" text="Viewing Vineyard: Vineyard Name">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="336.0">
           <children>
@@ -39,11 +41,49 @@
                         <Insets bottom="10.0" top="10.0" />
                      </padding>
                   </HBox>
-                  <BorderPane layoutX="14.0" layoutY="25.0" maxHeight="250.0" maxWidth="250.0" minHeight="250.0" minWidth="350.0" prefHeight="250.0" prefWidth="350.0">
-                     <center>
-                  <ImageView fx:id="imageView" fitHeight="250.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
-                     </center>
-                  </BorderPane>
+                  <HBox layoutX="-4.0" prefHeight="312.0" prefWidth="1022.0" spacing="20.0">
+                     <children>
+                        <BorderPane maxHeight="250.0" maxWidth="250.0" minHeight="250.0" minWidth="350.0" prefHeight="250.0" prefWidth="350.0">
+                           <center>
+                        <ImageView fx:id="imageView" fitHeight="250.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+                           </center>
+                        </BorderPane>
+                        <GridPane prefHeight="248.0" prefWidth="10000.0" vgap="20.0">
+                           <children>
+                              <Label text="Address">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Website" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Description" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="addressTextbox" editable="false" GridPane.columnIndex="1" />
+                              <TextField fx:id="websiteTextbox" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <TextArea fx:id="descriptionTextbox" editable="false" prefHeight="125.0" prefWidth="516.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                  </HBox>
           </children>
         </AnchorPane>
       </content>
@@ -51,17 +91,12 @@
         <Font name="System Bold" size="24.0" />
       </font>
     </TitledPane>
-    <TitledPane animated="false" collapsible="false" layoutX="1032.0" prefHeight="780.0" prefWidth="338.0" stylesheets="@../css/titled_pane.css" text="Wines">
+    <TitledPane animated="false" collapsible="false" layoutX="1032.0" prefHeight="780.0" prefWidth="338.0" stylesheets="@../css/titled_pane.css" text="Produced Wines">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="336.0">
           <children>
             <GridPane layoutX="1.0" layoutY="675.0" prefHeight="53.0" prefWidth="338.0">
               <children>
-                <Button maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Add Review">
-                  <font>
-                    <Font name="System Bold" size="16.0" />
-                  </font>
-                </Button>
                 <Label fx:id="loginToReviewLabel" alignment="CENTER" disable="true" text="Login to add a review!" textAlignment="CENTER" visible="false">
                   <font>
                     <Font name="System Bold" size="16.0" />
@@ -75,7 +110,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutY="14.0" maxWidth="337.0" minWidth="-Infinity" prefHeight="661.0" prefWidth="336.0" stylesheets="@../css/scroll_pane.css">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutY="14.0" maxWidth="337.0" minWidth="-Infinity" prefHeight="702.0" prefWidth="336.0" stylesheets="@../css/scroll_pane.css">
               <content>
                 <VBox fx:id="winesContainer" maxHeight="1.7976931348623157E308" spacing="10.0" VBox.vgrow="ALWAYS">
                            <padding>

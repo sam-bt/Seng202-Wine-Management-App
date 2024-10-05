@@ -3,6 +3,8 @@ package seng202.team6.gui;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,6 +23,13 @@ public class DetailedVineyardViewController extends Controller {
   ImageView imageView;
   @FXML
   VBox winesContainer;
+  @FXML
+  TextField addressTextbox;
+  @FXML
+  TextField websiteTextbox;
+  @FXML
+  TextArea descriptionTextbox;
+
 
   private final Vineyard vineyard;
   private final Runnable backButtonAction;
@@ -40,6 +49,9 @@ public class DetailedVineyardViewController extends Controller {
   @Override
   public void init() {
     viewingVineyardTitledPane.setText("Viewing Vineyard: " + vineyard.getName());
+    addressTextbox.textProperty().bind(vineyard.addressProperty());
+    websiteTextbox.textProperty().bind(vineyard.websiteProperty());
+    descriptionTextbox.textProperty().bind(vineyard.descriptionProperty());
 
     Image image = ImageReader.loadImageFromURL(vineyard.getLogoUrl());
     imageView.setImage(image);
