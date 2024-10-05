@@ -10,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -60,6 +61,11 @@ public class WineScreenController extends Controller {
   }};
   private final Logger log = LogManager.getLogger(WineScreenController.class);
   private final PageService pageService = new PageService(100);
+  public TabPane tabPane;
+  public Button prevPageButtonSimpleView;
+  public TextField pageNumberTextFieldSimpleView;
+  public Label maxPageNumberSimpleView;
+  public Button nextPageButtonSimpleView;
   @FXML
   TableView<Wine> tableView;
   @FXML
@@ -82,20 +88,21 @@ public class WineScreenController extends Controller {
   private RangeSlider priceSlider;
   private RangeSlider vintageSlider;
   private LeafletOSMController mapController;
-  @FXML
-  private Button nextPageButton;
 
   @FXML
-  private Button prevPageButton;
+  private Button nextPageButtonRawViewer;
 
   @FXML
-  private TextField pageNumberTextField;
+  private Button prevPageButtonRawViewer;
+
+  @FXML
+  private TextField pageNumberTextFieldRawViewer;
 
   @FXML
   private Filters currentFilters;
 
   @FXML
-  private Label maxPageNumber;
+  private Label maxPageNumberRawViewer;
 
 
   /**
@@ -294,6 +301,7 @@ public class WineScreenController extends Controller {
         }
       }
     });
+
     // Ensure uniques are up to date
     managerContext.databaseManager.getWineDAO().updateUniques();
     setFilterValues();
@@ -307,41 +315,57 @@ public class WineScreenController extends Controller {
     // Set button functions
     applyFiltersButton.setOnAction(event -> onApplyFiltersButtonPressed());
     resetFiltersButton.setOnAction(event -> onResetFiltersButtonPressed());
-    prevPageButton.setOnAction(actionEvent -> previousPage());
-    nextPageButton.setOnAction(actionEvent -> nextPage());
+    prevPageButtonRawViewer.setOnAction(actionEvent -> previousPage());
+    nextPageButtonRawViewer.setOnAction(actionEvent -> nextPage());
+    prevPageButtonSimpleView.setOnAction(actionEvent -> previousPage());
+    nextPageButtonSimpleView.setOnAction(actionEvent -> nextPage());
 
     // Set textfield listener and on action to ensure valid inputs
-    pageNumberTextField.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
-      if (!newValue) {
-        // This is executed when the text field loses focus
-        ensureValidPageNumber();
-      }
-    });
-    pageNumberTextField.setOnAction(actionEvent -> ensureValidPageNumber());
+    pageNumberTextFieldRawViewer.focusedProperty()
+        .addListener((observableValue, oldValue, newValue) -> {
+          if (!newValue) {
+            // This is executed when the text field loses focus
+            ensureValidPageNumber(pageNumberTextFieldRawViewer);
+          }
+        });
+    pageNumberTextFieldRawViewer.setOnAction(
+        actionEvent -> ensureValidPageNumber(pageNumberTextFieldRawViewer));
+
+    pageNumberTextFieldSimpleView.focusedProperty()
+        .addListener((observableValue, oldValue, newValue) -> {
+          if (!newValue) {
+            ensureValidPageNumber(pageNumberTextFieldSimpleView);
+          }
+        });
+    pageNumberTextFieldSimpleView.setOnAction(
+        actionEvent -> ensureValidPageNumber(pageNumberTextFieldSimpleView));
 
     // Set listener to pageService to change pages
     // Disables the buttons upon hitting a limit
     pageService.pageNumberProperty()
         .addListener((observableValue, oldValue, newValue) -> {
           openWineRange(this.currentFilters);
-          this.nextPageButton.setDisable((int) newValue == pageService.getMaxPages());
-
-          this.prevPageButton.setDisable((int) newValue == 1);
+          this.nextPageButtonRawViewer.setDisable((int) newValue == pageService.getMaxPages());
+          this.prevPageButtonRawViewer.setDisable((int) newValue == 1);
+          this.nextPageButtonSimpleView.setDisable((int) newValue == pageService.getMaxPages());
+          this.prevPageButtonSimpleView.setDisable((int) newValue == 1);
         });
 
     // Set up max pages
     pageService.setTotalItems(managerContext.databaseManager.getWineDAO().getCount());
-    maxPageNumber.setText("/" + pageService.getMaxPages()); // Set initial value
+    maxPageNumberRawViewer.setText("/" + pageService.getMaxPages()); // Set initial value
+    maxPageNumberSimpleView.setText("/" + pageService.getMaxPages());
     pageService.maxPagesProperty().addListener((observableValue, oldValue, newValue) -> {
 
       // Change max pages label when max pages changes
-      maxPageNumber.setText(
-          "/" + newValue.toString());
+      maxPageNumberRawViewer.setText("/" + newValue);
+      maxPageNumberSimpleView.setText("/" + newValue);
 
       // ensure page number doesn't get "caught" outside range
       if ((int) newValue < this.pageService.getPageNumber()) {
         this.pageService.setPageNumber(this.pageService.getMaxPages());
-        this.pageNumberTextField.setText(this.pageService.getMaxPages() + "");
+        this.pageNumberTextFieldRawViewer.setText(this.pageService.getMaxPages() + "");
+        this.pageNumberTextFieldSimpleView.setText(this.pageService.getMaxPages() + "");
       }
     });
 
@@ -460,17 +484,17 @@ public class WineScreenController extends Controller {
     managerContext.GUIManager.mainController.openDetailedWineView(wine, backAction);
   }
 
-  public void ensureValidPageNumber() {
-    String currentText = pageNumberTextField.getText();
+  public void ensureValidPageNumber(TextField textField) {
+    String currentText = textField.getText();
 
     if (!isInteger(currentText)) {
-      pageNumberTextField.setText(
+      textField.setText(
           String.valueOf(this.pageService.getPageNumber())); // Set back to current page
 
       // ensure valid range
     } else if (Integer.parseInt(currentText) > pageService.getMaxPages()
         || Integer.parseInt(currentText) < 1) {
-      pageNumberTextField.setText(
+      textField.setText(
           String.valueOf(this.pageService.getPageNumber())); // Set back to current page
     } else {
       pageService.setPageNumber(Integer.parseInt(currentText)); // Change page if valid
@@ -479,12 +503,18 @@ public class WineScreenController extends Controller {
 
   public void nextPage() {
     this.pageService.nextPage();
-    pageNumberTextField.setText(this.pageService.pageNumberProperty().getValue().toString());
+    pageNumberTextFieldRawViewer.setText(
+        this.pageService.pageNumberProperty().getValue().toString());
+    pageNumberTextFieldSimpleView.setText(
+        this.pageService.pageNumberProperty().getValue().toString());
   }
 
   public void previousPage() {
     this.pageService.previousPage();
-    pageNumberTextField.setText(this.pageService.pageNumberProperty().getValue().toString());
+    pageNumberTextFieldRawViewer.setText(
+        this.pageService.pageNumberProperty().getValue().toString());
+    pageNumberTextFieldSimpleView.setText(
+        this.pageService.pageNumberProperty().getValue().toString());
   }
 
 
