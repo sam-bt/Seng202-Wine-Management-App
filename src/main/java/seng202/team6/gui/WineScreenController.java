@@ -521,15 +521,24 @@ public class WineScreenController extends Controller {
   public void setFilterValues() {
     // Auto Complete boxes and range sliders
     // Update filter checkboxes
-    Set<String> winerySet = managerContext.databaseManager.getWineDAO().getUniqueWineries();
-    Set<String> countrySet = managerContext.databaseManager.getWineDAO().getUniqueCountries();
-    Set<String> colorSet = managerContext.databaseManager.getWineDAO().getUniqueColors();
-    int minVintage = managerContext.databaseManager.getWineDAO().getMinVintage();
-    int maxVintage = managerContext.databaseManager.getWineDAO().getMaxVintage();
-    double maxScore = managerContext.databaseManager.getWineDAO().getMaxScore();
-    double minScore = managerContext.databaseManager.getWineDAO().getMinScore();
-    double minPrice = managerContext.databaseManager.getWineDAO().getMinPrice();
-    double maxPrice = managerContext.databaseManager.getWineDAO().getMaxPrice();
+    Set<String> winerySet = managerContext.databaseManager.getWineDAO().getWineDataStatService()
+        .getUniqueWineries();
+    Set<String> countrySet = managerContext.databaseManager.getWineDAO().getWineDataStatService()
+        .getUniqueCountries();
+    Set<String> colorSet = managerContext.databaseManager.getWineDAO().getWineDataStatService()
+        .getUniqueColors();
+    int minVintage = managerContext.databaseManager.getWineDAO().getWineDataStatService()
+        .getMinVintage();
+    int maxVintage = managerContext.databaseManager.getWineDAO().getWineDataStatService()
+        .getMaxVintage();
+    double maxScore = managerContext.databaseManager.getWineDAO().getWineDataStatService()
+        .getMaxScore();
+    double minScore = managerContext.databaseManager.getWineDAO().getWineDataStatService()
+        .getMinScore();
+    double minPrice = managerContext.databaseManager.getWineDAO().getWineDataStatService()
+        .getMinPrice();
+    double maxPrice = managerContext.databaseManager.getWineDAO().getWineDataStatService()
+        .getMaxPrice();
 
     // Clear old list data
     wineryTextField.getEntries().clear();

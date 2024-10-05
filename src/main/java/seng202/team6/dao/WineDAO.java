@@ -15,6 +15,7 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Filters;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
+import seng202.team6.service.WineDataStatService;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
@@ -28,28 +29,17 @@ public class WineDAO extends DAO {
    */
   private final DatabaseObjectUniquer<Wine> wineCache = new DatabaseObjectUniquer<>();
 
-  // Uniques
-  private final Set<String> uniqueCountries = new HashSet<>();
-  private final Set<String> uniqueWineries = new HashSet<>();
-  private final Set<String> uniqueColors = new HashSet<>();
+  private final WineDataStatService wineDataStatService;
 
-  // Mins and Maxes
-  private int minVintage;
-  private int maxVintage;
-  private int minScore;
-  private int maxScore;
-  private float minAbv;
-  private float maxAbv;
-  private float minPrice;
-  private float maxPrice;
 
   /**
    * Constructs a new WineDAO with the given database connection.
    *
    * @param connection The database connection to be used for wine operations.
    */
-  public WineDAO(Connection connection) {
+  public WineDAO(Connection connection, WineDataStatService wineDataStatService) {
     super(connection, WineDAO.class);
+    this.wineDataStatService = wineDataStatService;
   }
 
   /**
@@ -561,17 +551,7 @@ public class WineDAO extends DAO {
   public void updateUniques() {
 
     // Reset old uniques
-    this.uniqueCountries.clear();
-    this.uniqueWineries.clear();
-    this.uniqueColors.clear();
-    this.minVintage = Integer.MAX_VALUE;
-    this.maxVintage = 0;
-    this.minScore = 100;
-    this.maxScore = 0;
-    this.minAbv = 100;
-    this.maxAbv = 0;
-    this.minPrice = Float.MAX_VALUE;
-    this.maxPrice = 0;
+    this.wineDataStatService.reset();
 
     // Get unique items from database
     String query = "SELECT country, winery, color, vintage, score_percent, abv, price FROM wine";
@@ -590,9 +570,9 @@ public class WineDAO extends DAO {
         float price = set.getFloat("price");
 
         // Add to sets
-        this.uniqueCountries.add(country);
-        this.uniqueWineries.add(winery);
-        this.uniqueColors.add(color);
+        this.wineDataStatService.getUniqueCountries().add(country);
+        this.wineDataStatService.getUniqueWineries().add(winery);
+        this.wineDataStatService.getUniqueColors().add(color);
 
         // Update mins and maxes
         updateMinMax("vintage", vintage);
@@ -600,6 +580,7 @@ public class WineDAO extends DAO {
         updateMinMax("abv", abv);
         updateMinMax("price", price);
       }
+
     } catch (SQLException e) {
       LogManager.getLogger(getClass()).error("Unable to update uniques", e);
 
@@ -619,112 +600,63 @@ public class WineDAO extends DAO {
   private void updateMinMax(String name, float value) {
     switch (name) {
       case "vintage":
-        if (value > this.maxVintage) {
-          this.maxVintage = (int) value;
+        if (value > this.wineDataStatService.getMaxVintage()) {
+          this.wineDataStatService.setMaxVintage((int) value);
 
           // In decanter, some vintages are NV which defaults to 0
           // In the 130k dataset, some values don't have vintage that defaults to -1
-        } else if (value < this.minVintage && value > 0) {
-          this.minVintage = (int) value;
+        } else if (value < this.wineDataStatService.getMinVintage() && value > 0) {
+          this.wineDataStatService.setMinVintage((int) value);
         }
         break;
       case "score":
-        if (value > this.maxScore) {
-          this.maxScore = (int) value;
-        } else if (value < this.minScore) {
-          this.minScore = (int) value;
+        if (value > this.wineDataStatService.getMaxScore()) {
+          this.wineDataStatService.setMaxScore((int) value);
+        } else if (value < this.wineDataStatService.getMinScore()) {
+          this.wineDataStatService.setMinScore((int) value);
         }
         break;
       case "abv":
-        if (value > this.maxAbv) {
-          this.maxAbv = value;
-        } else if (value < this.minAbv) {
-          this.minAbv = value;
+        if (value > this.wineDataStatService.getMaxAbv()) {
+          this.wineDataStatService.setMaxAbv(value);
+        } else if (value < this.wineDataStatService.getMinAbv()) {
+          this.wineDataStatService.setMinAbv(value);
         }
         break;
       case "price":
-        if (value > this.maxPrice) {
-          this.maxPrice = value;
-        } else if (value < this.minPrice) {
-          this.minPrice = value;
+        if (value > this.wineDataStatService.getMaxPrice()) {
+          this.wineDataStatService.setMaxPrice(value);
+        } else if (value < this.wineDataStatService.getMinPrice()) {
+          this.wineDataStatService.setMinPrice(value);
         }
         break;
     }
   }
 
-  public Set<String> getUniqueCountries() {
-    return uniqueCountries;
+  private Set<String> getDistinctValues(String column) {
+    Set<String> uniqueValues = new HashSet<>();
+
+    String sql = "SELECT DISTINCT ? FROM WINE";
+
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      ResultSet resultSet = statement.executeQuery();
+
+      while (resultSet.next()) {
+        String value = resultSet.getString(1);
+        if (value != null) {
+          uniqueValues.add(value);
+        }
+      }
+
+    } catch (SQLException e) {
+      LogManager.getLogger(this.getClass().getName())
+          .error("Unable to get unique values from column " + column, e);
+    }
+
+    return uniqueValues;
   }
 
-  public Set<String> getUniqueWineries() {
-    return uniqueWineries;
-  }
-
-  public Set<String> getUniqueColors() {
-    return uniqueColors;
-  }
-
-  public int getMinVintage() {
-    return minVintage;
-  }
-
-  public void setMinVintage(int minVintage) {
-    this.minVintage = minVintage;
-  }
-
-  public int getMaxVintage() {
-    return maxVintage;
-  }
-
-  public void setMaxVintage(int maxVintage) {
-    this.maxVintage = maxVintage;
-  }
-
-  public int getMinScore() {
-    return minScore;
-  }
-
-  public void setMinScore(int minScore) {
-    this.minScore = minScore;
-  }
-
-  public int getMaxScore() {
-    return maxScore;
-  }
-
-  public void setMaxScore(int maxScore) {
-    this.maxScore = maxScore;
-  }
-
-  public float getMinAbv() {
-    return minAbv;
-  }
-
-  public void setMinAbv(float minAbv) {
-    this.minAbv = minAbv;
-  }
-
-  public float getMaxAbv() {
-    return maxAbv;
-  }
-
-  public void setMaxAbv(float maxAbv) {
-    this.maxAbv = maxAbv;
-  }
-
-  public float getMinPrice() {
-    return minPrice;
-  }
-
-  public void setMinPrice(float minPrice) {
-    this.minPrice = minPrice;
-  }
-
-  public float getMaxPrice() {
-    return maxPrice;
-  }
-
-  public void setMaxPrice(float maxPrice) {
-    this.maxPrice = maxPrice;
+  public WineDataStatService getWineDataStatService() {
+    return wineDataStatService;
   }
 }

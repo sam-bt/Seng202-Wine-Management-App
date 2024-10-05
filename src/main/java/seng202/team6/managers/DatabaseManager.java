@@ -11,11 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.Set;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +25,7 @@ import seng202.team6.dao.WineDAO;
 import seng202.team6.dao.WineListDAO;
 import seng202.team6.dao.WineNotesDAO;
 import seng202.team6.dao.WineReviewDAO;
+import seng202.team6.service.WineDataStatService;
 import seng202.team6.util.EncryptionUtil;
 
 /**
@@ -45,6 +44,7 @@ public class DatabaseManager {
   private final WineReviewDAO wineReviewDAO;
   private final GeoLocationDAO geoLocationDAO;
   private final AggregatedDAO aggregatedDAO;
+  private final WineDataStatService wineDataStatService;
 
   /**
    * Constructs a NewDatabaseManager with an in-memory SQLite database connection.
@@ -78,8 +78,9 @@ public class DatabaseManager {
     }
     this.connection = connection;
     log.info("Successfully opened a connection to the database");
+    this.wineDataStatService = new WineDataStatService();
     this.userDAO = new UserDAO(connection);
-    this.wineDAO = new WineDAO(connection);
+    this.wineDAO = new WineDAO(connection, wineDataStatService);
     this.wineListDAO = new WineListDAO(connection);
     this.wineNotesDAO = new WineNotesDAO(connection);
     this.wineReviewDAO = new WineReviewDAO(connection);
