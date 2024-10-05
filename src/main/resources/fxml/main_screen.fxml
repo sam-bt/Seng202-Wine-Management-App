@@ -14,8 +14,6 @@
   <children>
     <AnchorPane maxWidth="1400.0" minWidth="1400.0" prefHeight="80.0" prefWidth="1400.0" styleClass="primary-background" stylesheets="@../css/global.css" />
     <AnchorPane fx:id="pageContent" layoutX="15.0" layoutY="98.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" />
-    <AnchorPane fx:id="popupActionBlocker" disable="true" maxHeight="900.0" maxWidth="1400.0" minHeight="900.0" minWidth="1400.0" prefHeight="900.0" prefWidth="1400.0" styleClass="anchor-pane" stylesheets="@../css/popup_pane_action_blocker.css" visible="false" />
-    <AnchorPane fx:id="popupContent" disable="true" layoutX="15.0" layoutY="98.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" visible="false" />
     <GridPane gridLinesVisible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="75.0" prefWidth="1370.0">
       <children>
         <AnchorPane maxWidth="300.0" minWidth="233.0" prefHeight="75.0" prefWidth="160.0" GridPane.columnIndex="2">
@@ -90,5 +88,7 @@
         <RowConstraints maxHeight="75.0" minHeight="75.0" prefHeight="75.0" vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
+    <AnchorPane fx:id="popupActionBlocker" disable="true" maxHeight="900.0" maxWidth="1400.0" minHeight="900.0" minWidth="1400.0" prefHeight="900.0" prefWidth="1400.0" styleClass="anchor-pane" stylesheets="@../css/popup_pane_action_blocker.css" visible="false" />
+    <AnchorPane fx:id="popupContent" disable="true" layoutX="15.0" layoutY="98.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" visible="false" />
   </children>
 </AnchorPane>

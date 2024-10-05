@@ -288,10 +288,10 @@ public class MainController extends Controller {
 
 
   public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer,
-      WineReview selectedReview) {
+      WineReview selectedReview, Wine wine) {
     openPopup("/fxml/popup/view_review_popup.fxml",
         () -> new ReviewViewPopupController(managerContext, wineReviewsService, reviewer,
-            selectedReview));
+            selectedReview, wine));
   }
 
   public void closePopup() {
