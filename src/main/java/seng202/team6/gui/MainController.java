@@ -14,12 +14,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.gui.popup.AddToListPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
+import seng202.team6.gui.popup.VineyardTourPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
+import seng202.team6.model.VineyardTour;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
+import seng202.team6.service.VineyardToursService;
 import seng202.team6.service.WineReviewsService;
 
 /**
@@ -276,22 +279,28 @@ public class MainController extends Controller {
         () -> new WineReviewPopupController(managerContext, wineReviewsService));
   }
 
-  public void openAddToListPopup(Wine wine) {
-    openPopup("/fxml/popup/add_to_list_popup.fxml",
-        () -> new AddToListPopupController(managerContext, wine));
-  }
   @FXML
   public void openConsumptionScreen() {
     switchScene("/fxml/consumption_screen.fxml", "Consumption",
         () -> new ConsumptionController(managerContext));
   }
 
+  public void openAddToListPopup(Wine wine) {
+    openPopup("/fxml/popup/add_to_list_popup.fxml",
+        () -> new AddToListPopupController(managerContext, wine));
+  }
 
   public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer,
       WineReview selectedReview, Wine wine) {
     openPopup("/fxml/popup/view_review_popup.fxml",
         () -> new ReviewViewPopupController(managerContext, wineReviewsService, reviewer,
             selectedReview, wine));
+  }
+
+  public void openVineyardTourPopup(VineyardToursService vineyardToursService,
+      VineyardTour modifyingVineyardTour) {
+    openPopup("/fxml/popup/create_vineyard_tour_popup.fxml",
+        () -> new VineyardTourPopupController(managerContext, vineyardToursService, modifyingVineyardTour));
   }
 
   public void closePopup() {

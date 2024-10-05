@@ -72,6 +72,11 @@ public enum Island {
     return maxPostcode;
   }
 
+  @Override
+  public String toString() {
+    return name;
+  }
+
   /**
    * Determines the island based on the given postcode.
    *

@@ -1,15 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane cacheShape="false" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.LoginController">
+<HBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.TourPlanningController">
   <children>
-    <TitledPane animated="false" collapsible="false" focusTraversable="false" maxWidth="1370.0" minWidth="456.0" prefHeight="780.0" prefWidth="1370.0" stylesheets="@../css/titled_pane.css" text="Tour Planning">
+    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Vineyard Tours">
+      <content>
+        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="50.0">
+          <children>
+            <ScrollPane fx:id="vineyardToursContainer" focusTraversable="false" hbarPolicy="NEVER" pickOnBounds="false" prefHeight="20000.0" stylesheets="@../css/scroll_pane.css" VBox.vgrow="ALWAYS" />
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+              <children>
+                <Button mnemonicParsing="false" onMouseClicked="#onCreateTourButtonClick" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Create Tour">
+                  <font>
+                    <Font name="System Bold" size="16.0" />
+                  </font>
+                </Button>
+              </children>
+            </VBox>
+          </children>
+        </VBox>
+      </content>
       <font>
         <Font name="System Bold" size="24.0" />
       </font>
     </TitledPane>
+      <TitledPane animated="false" collapsible="false" maxHeight="780.0" maxWidth="1040.0" minHeight="780.0" minWidth="1040.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/titled_pane.css" text="Viewing Vineyard Tour">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+        </content>
+      </TitledPane>
   </children>
-</AnchorPane>
+</HBox>

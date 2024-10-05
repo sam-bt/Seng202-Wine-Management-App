@@ -69,12 +69,13 @@ public class VineyardTourDAO extends DAO {
 
   public VineyardTour create(User user, String tourName, Island island) {
     Timer timer = new Timer();
-    String sql = "INSERT INTO WINE_TOUR VALUES (NULL, ?, ?, ?)";
+    String sql = "INSERT INTO VINEYARD_TOUR VALUES (NULL, ?, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(sql,
         Statement.RETURN_GENERATED_KEYS)) {
       statement.setString(1, user.getUsername());
       statement.setString(2, tourName);
       statement.setString(3, String.valueOf(island.getCode()));
+      statement.executeUpdate();
 
       try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
         if (generatedKeys.next()) {
