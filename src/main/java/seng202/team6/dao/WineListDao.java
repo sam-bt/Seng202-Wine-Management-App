@@ -20,7 +20,7 @@ import seng202.team6.util.Timer;
 public class WineListDao extends Dao {
 
   /**
-   * Cache to store and reuse WineList objects to avoid duplication
+   * Cache to store and reuse WineList objects to avoid duplication.
    */
   private final DatabaseObjectUniquer<WineList> wineListCache = new DatabaseObjectUniquer<>();
 

@@ -89,14 +89,14 @@ public class DatabaseManager {
   /**
    * Sets up a database connection using the given JDBC URL.
    *
-   * @param jdbcURL the JDBC URL to connect to
+   * @param jdbcUrl the JDBC URL to connect to
    * @return a Connection object to the database
    * @throws SQLException if a database access error occurs
    */
-  private static Connection setupConnection(String jdbcURL) throws SQLException {
+  private static Connection setupConnection(String jdbcUrl) throws SQLException {
     Properties properties = new Properties();
     properties.setProperty("foreign_keys", "true");
-    return DriverManager.getConnection(jdbcURL, properties);
+    return DriverManager.getConnection(jdbcUrl, properties);
   }
 
   /**
@@ -151,24 +151,24 @@ public class DatabaseManager {
     String salt = EncryptionUtil.generateSalt();
     String hashedAdminPassword = EncryptionUtil.hashPassword("admin", salt);
     List<String> triggersAndDefaultStatements = List.of(
-        "CREATE TRIGGER IF NOT EXISTS FAVOURITES_LIST" +
-            "AFTER INSERT ON USER " +
-            "FOR EACH ROW " +
-            "BEGIN " +
-            "INSERT INTO LIST_NAME (USERNAME, NAME) " +
-            "VALUES (NEW.USERNAME, 'Favourites'); " +
-            "END",
-        "CREATE TRIGGER IF NOT EXISTS HISTORY_LIST" +
-            "AFTER INSERT ON USER " +
-            "FOR EACH ROW " +
-            "BEGIN " +
-            "INSERT INTO LIST_NAME (USERNAME, NAME) " +
-            "VALUES (NEW.USERNAME, 'History'); " +
-            "END",
-        "INSERT INTO USER (USERNAME, PASSWORD, ROLE, SALT) " +
-            "SELECT 'admin', '" + hashedAdminPassword + "', 'admin', '" + salt + "' " +
-            "WHERE NOT EXISTS (" +
-            "SELECT 1 FROM USER WHERE USERNAME = 'admin')"
+        "CREATE TRIGGER IF NOT EXISTS FAVOURITES_LIST"
+            + "AFTER INSERT ON USER "
+            + "FOR EACH ROW "
+            + "BEGIN "
+            + "INSERT INTO LIST_NAME (USERNAME, NAME) "
+            + "VALUES (NEW.USERNAME, 'Favourites'); "
+            + "END",
+        "CREATE TRIGGER IF NOT EXISTS HISTORY_LIST"
+            + "AFTER INSERT ON USER "
+            + "FOR EACH ROW "
+            + "BEGIN "
+            + "INSERT INTO LIST_NAME (USERNAME, NAME) "
+            + "VALUES (NEW.USERNAME, 'History'); "
+            + "END",
+        "INSERT INTO USER (USERNAME, PASSWORD, ROLE, SALT) "
+            + "SELECT 'admin', '" + hashedAdminPassword + "', 'admin', '" + salt + "' "
+            + "WHERE NOT EXISTS ("
+            + "SELECT 1 FROM USER WHERE USERNAME = 'admin')"
     );
 
     try (Statement statement = connection.createStatement()) {

@@ -544,6 +544,7 @@ public class Wine {
 
   /**
    * Checks equality.
+   *
    * @param o object
    * @return true if equal
    */
@@ -561,6 +562,7 @@ public class Wine {
 
   /**
    * Gets the review count.
+   *
    * @return review count
    */
   public int getReviewCount() {
@@ -569,6 +571,7 @@ public class Wine {
 
   /**
    * Gets the view count property.
+   *
    * @return review count
    */
   public IntegerProperty reviewCountProperty() {
@@ -576,7 +579,8 @@ public class Wine {
   }
 
   /**
-   * Sets the review count
+   * Sets the review count.
+   *
    * @param reviewCount review count
    */
   public void setReviewCount(int reviewCount) {
@@ -585,6 +589,7 @@ public class Wine {
 
   /**
    * Gets the rating.
+   *
    * @return rating
    */
   public double getRating() {
@@ -593,6 +598,7 @@ public class Wine {
 
   /**
    * Gets the rating property.
+   *
    * @return rating
    */
   public DoubleProperty ratingProperty() {
@@ -601,6 +607,7 @@ public class Wine {
 
   /**
    * Sets the rating.
+   *
    * @param rating rating
    */
   public void setRating(double rating) {

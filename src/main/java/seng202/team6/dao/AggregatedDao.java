@@ -33,13 +33,13 @@ public class AggregatedDao extends Dao {
    *
    * @param connection   The database connection to be used by this DAO.
    * @param wineNotesDao The DAO responsible for handling operations related to wine notes.
-   * @param wineDAO      The DAO responsible for handling operations related to wines.
+   * @param wineDao      The DAO responsible for handling operations related to wines.
    */
-  public AggregatedDao(Connection connection, WineReviewDao wineReviewDao, WineNotesDao wineNotesDao, WineDao wineDAO) {
+  public AggregatedDao(Connection connection, WineReviewDao wineReviewDao, WineNotesDao wineNotesDao, WineDao wineDao) {
     super(connection, AggregatedDao.class);
     this.wineReviewDao = wineReviewDao;
     this.wineNotesDao = wineNotesDao;
-    this.wineDao = wineDAO;
+    this.wineDao = wineDao;
   }
 
   /**
@@ -77,16 +77,17 @@ public class AggregatedDao extends Dao {
 
   /**
    * Gets a list of wine date pairs from a list.
+   *
    * @param wineList list of wines
    * @return wine-date pair with date added to list
    */
   public ObservableList<WineDatePair> getWinesMappedWithDatesFromList(WineList wineList) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM WINE " +
-        "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID " +
-        "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID " +
-        "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) " +
-        "WHERE LIST_NAME.ID = ?";
+        "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID "
+        + "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID "
+        + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+        + "WHERE LIST_NAME.ID = ?";
     ObservableList<WineDatePair> winesAndDates = FXCollections.observableArrayList();
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setLong(1, wineList.id());
@@ -108,16 +109,17 @@ public class AggregatedDao extends Dao {
 
   /**
    * Gets the wines in a given wine list.
+   *
    * @param wineList wine list
    * @return list of wines
    */
   public ObservableList<Wine> getWinesInList(WineList wineList) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE " +
-        "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID " +
-        "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID " +
-        "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) " +
-        "WHERE LIST_NAME.ID = ?";
+    String sql = "SELECT * FROM WINE "
+        + "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID "
+        + "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID "
+        + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+        + "WHERE LIST_NAME.ID = ?";
     ObservableList<Wine> wines = FXCollections.observableArrayList();
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setLong(1, wineList.id());
@@ -136,13 +138,20 @@ public class AggregatedDao extends Dao {
     return wines;
   }
 
+  /**
+   * Gets a list of wine reviews and wines.
+   *
+   * @param begin begin
+   * @param end end
+   * @return sub range of pairs between begin and end
+   */
   public ObservableList<Pair<WineReview, Wine>> getWineReviewsAndWines(int begin, int end) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE_REVIEW " +
-        "INNER JOIN WINE ON WINE_REVIEW.WINE_ID = WINE.ID " +
-        "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) " +
-        "LIMIT ? " +
-        "OFFSET ?";
+    String sql = "SELECT * FROM WINE_REVIEW "
+        + "INNER JOIN WINE ON WINE_REVIEW.WINE_ID = WINE.ID "
+        + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+        + "LIMIT ? "
+        + "OFFSET ?";
     ObservableList<Pair<WineReview, Wine>> wineReviewPairs = FXCollections.observableArrayList();
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setInt(1, end - begin);

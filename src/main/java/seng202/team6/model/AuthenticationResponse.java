@@ -4,6 +4,9 @@
  */
 package seng202.team6.model;
 
+/**
+ * Class to represent an error code and message when authenticating.
+ */
 public enum AuthenticationResponse {
   /** Indicates that required fields are missing. */
   MISSING_FIELDS("All fields must be filled."),

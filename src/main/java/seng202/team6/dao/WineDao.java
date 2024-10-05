@@ -21,7 +21,7 @@ import seng202.team6.util.Timer;
 public class WineDao extends Dao {
 
   /**
-   * Cache to store and reuse Wine objects to avoid duplication
+   * Cache to store and reuse Wine objects to avoid duplication.
    */
   private final DatabaseObjectUniquer<Wine> wineCache = new DatabaseObjectUniquer<>();
 
@@ -166,6 +166,12 @@ public class WineDao extends Dao {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Gets a wine with a specific id.
+   *
+   * @param id id of wine
+   * @return wine of given id or null
+   */
   public Wine get(long id) {
     String sql = "SELECT * FROM WINE WHERE ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -198,6 +204,11 @@ public class WineDao extends Dao {
     addAll(wines);
   }
 
+  /**
+   * Adds a wine to the database.
+   *
+   * @param wine wine
+   */
   public void add(Wine wine) {
     Timer timer = new Timer();
     String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -452,7 +463,7 @@ public class WineDao extends Dao {
   }
 
   /**
-   * Updates a specific attribute of the user in the WINE table
+   * Updates a specific attribute of the user in the WINE table.
    *
    * @param attributeName   name of attribute
    * @param attributeSetter callback to set attribute
