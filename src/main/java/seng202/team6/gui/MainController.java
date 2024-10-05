@@ -13,6 +13,7 @@ import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.gui.popup.AddToListPopupController;
+import seng202.team6.gui.popup.AddToTourPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.VineyardTourPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
@@ -288,6 +289,11 @@ public class MainController extends Controller {
   public void openAddToListPopup(Wine wine) {
     openPopup("/fxml/popup/add_to_list_popup.fxml",
         () -> new AddToListPopupController(managerContext, wine));
+  }
+
+  public void openAddToTourPopup(Vineyard vineyard) {
+    openPopup("/fxml/popup/add_to_tour_popup.fxml",
+        () -> new AddToTourPopupController(managerContext, vineyard));
   }
 
   public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer,

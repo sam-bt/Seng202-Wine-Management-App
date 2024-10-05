@@ -6,6 +6,7 @@ import seng202.team6.enums.Island;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;
+import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
 
 public class VineyardToursService {
@@ -22,6 +23,10 @@ public class VineyardToursService {
   public void init() {
     User user = authenticationManager.getAuthenticatedUser();
     vineyardTours.addAll(databaseManager.getVineyardTourDAO().getAll(user));
+  }
+
+  public boolean isVineyardInTour(VineyardTour vineyardTour, Vineyard vineyard) {
+    return databaseManager.getVineyardTourDAO().isVineyardInTour(vineyardTour, vineyard);
   }
 
   public void createVineyardTour(String name, Island island) {

@@ -72,7 +72,7 @@ public class DetailedVineyardViewController extends Controller {
 
   @FXML
   void onOpenToursClick() {
-
+    managerContext.GUIManager.mainController.openAddToTourPopup(vineyard);
   }
 
   public void createWineCard(Wine wine) {

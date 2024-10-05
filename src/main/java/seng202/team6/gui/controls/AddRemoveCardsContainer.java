@@ -98,7 +98,7 @@ public class AddRemoveCardsContainer<T> extends VBox {
     private void updateActionIcon(boolean shouldAdd) {
       SVGPath svgPath = new SVGPath();
       svgPath.getStyleClass().add("icon");
-      svgPath.setContent(shouldAdd ? IconPaths.REMOVE_PATH : IconPaths.ADD_PATH);
+      svgPath.setContent(shouldAdd ? IconPaths.ADD_PATH : IconPaths.REMOVE_PATH);
       svgPath.setScaleX(0.05);
       svgPath.setScaleY(0.05);
       button.setGraphic(svgPath);

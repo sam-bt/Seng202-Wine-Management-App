@@ -1,6 +1,7 @@
 package seng202.team6.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.enums.Island;
 import seng202.team6.model.User;
+import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
@@ -96,6 +98,68 @@ public class VineyardTourDAO extends DAO {
           user.getUsername(), error);
     }
     return null;
+  }
+
+  public boolean isVineyardInTour(VineyardTour vineyardTour, Vineyard vineyard) {
+    Timer timer = new Timer();
+    String sql = "SELECT * FROM VINEYARD_TOUR_ITEM WHERE TOUR_ID = ? AND VINEYARD_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setLong(1, vineyardTour.getId());
+      statement.setLong(2, vineyard.getId());
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        boolean found = resultSet.next();
+        log.info("Successfully found vineyard with ID {} is {} list with ID {} in {}ms",
+            vineyard.getId(), found ? "in" : "not in", vineyardTour.getId(), timer.stop());
+        return found;
+      }
+    } catch (SQLException error) {
+      log.error("Failed to check if vineyard with ID {} is in list '{}'", vineyard.getId(),
+          vineyardTour.getId(), error);
+    }
+    return false;
+  }
+
+  public void addVineyard(VineyardTour vineyardTour, Vineyard vineyard) {
+    Timer timer = new Timer();
+    String sql = "INSERT INTO VINEYARD_TOUR_ITEM VALUES (?, ?)";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setLong(1, vineyardTour.getId());
+      statement.setLong(2, vineyard.getId());
+
+      int rowsAffected = statement.executeUpdate();
+      if (rowsAffected == 1) {
+        log.info("Successfully added vineyard with ID {} to tour with ID {} in {}ms",
+            vineyard.getId(), vineyardTour.getId(), timer.stop());
+      } else {
+        log.warn("Could not add vineyard with ID {} to tour with ID {} in {}ms",
+            vineyard.getId(), vineyardTour.getId(), timer.stop());
+      }
+    } catch (SQLException error) {
+      log.error("Failed to add vineyard with ID {} to tour with ID {}",
+          vineyard.getId(),vineyardTour.getId(), error);
+    }
+  }
+
+  public void removeVineyard(VineyardTour vineyardTour, Vineyard vineyard) {
+    Timer timer = new Timer();
+    String sql = "DELETE FROM VINEYARD_TOUR_ITEM WHERE TOUR_ID = ? AND VINEYARD_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setLong(1, vineyardTour.getId());
+      statement.setLong(2, vineyard.getId());
+
+      int rowsAffected = statement.executeUpdate();
+      if (rowsAffected == 1) {
+        log.info("Successfully removed vineyard with ID {} from tour with ID {} in {}ms",
+            vineyard.getId(),vineyardTour.getId(), timer.stop());
+      } else {
+        log.warn("Could not remove vineyard with ID {} from tour with ID {} in {}ms",
+            vineyard.getId(),vineyardTour.getId(), timer.stop());
+      }
+    } catch (SQLException error) {
+      log.error("Failed to remove vineyard with ID {} from tour with ID {}",
+          vineyard.getId(),vineyardTour.getId(), error);
+    }
   }
 
   private ObservableList<VineyardTour> extractVineyardToursFromResultSet(ResultSet resultSet)

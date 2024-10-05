@@ -168,7 +168,7 @@ public class WineListDAO extends DAO {
         boolean found = resultSet.next();
         log.info("Successfully found wine with ID {} is {} list with ID {} in {}ms",
             wine.getKey(), found ? "in" : "not in", wineList.id(), timer.stop());
-        return resultSet.next();
+        return found;
       }
     } catch (SQLException error) {
       log.error("Failed to check if wine with ID {} is in list '{}'", wineList.id(),

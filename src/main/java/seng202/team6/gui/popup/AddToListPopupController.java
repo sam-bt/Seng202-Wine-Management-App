@@ -5,25 +5,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.SVGPath;
 import seng202.team6.gui.Controller;
 import seng202.team6.gui.controls.AddRemoveCardsContainer;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 import seng202.team6.service.WineListService;
-import seng202.team6.util.IconPaths;
 
 public class AddToListPopupController extends Controller {
 
