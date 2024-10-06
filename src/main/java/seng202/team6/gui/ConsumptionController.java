@@ -10,7 +10,6 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
@@ -19,6 +18,7 @@ import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.WineDatePair;
 import seng202.team6.model.WineList;
+import seng202.team6.util.WineWidgets;
 
 /**
  * Controller for the scene that shows wine consumption.
@@ -90,8 +90,11 @@ public class ConsumptionController extends Controller {
    */
   private Node createWineWidget(WineDatePair pair) {
     HBox separator = new HBox();
+    separator.setAlignment(Pos.CENTER_LEFT);
+    separator.setSpacing(20);
 
-    separator.getChildren().add(new Button());
+    separator.getChildren().add(WineWidgets.createWineCard(pair.wine()));
+
     // anything above 20 is full strength
     double abvProgress = Math.min(1f, pair.wine().getAbv() / 20f);
     VBox abvSegment = new VBox();

@@ -39,11 +39,11 @@ import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
 import seng202.team6.service.PageService;
 import seng202.team6.util.ImageReader;
+import seng202.team6.util.WineWidgets;
 import seng202.team6.util.YearStringConverter;
 
 /**
  * Controller for the screen that displays wines.
- *
  */
 
 public class WineScreenController extends Controller {
@@ -144,7 +144,19 @@ public class WineScreenController extends Controller {
     });
 
     winesViewContainer.getChildren().clear();
-    wines.forEach(this::createWineCard);
+
+    for (Wine wine : wines) {
+
+      Node node = WineWidgets.createWineCard(wine);
+
+      node.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2) {
+          openDetailedWineView(wine);
+        }
+      });
+
+      winesViewContainer.getChildren().add(node);
+    }
 
     // Set fetched data to the table
     tableView.setItems(wines);
@@ -162,7 +174,6 @@ public class WineScreenController extends Controller {
 
   /**
    * Sets up the table columns.
-   *
    */
   public void setupTableColumns() {
     // Clear any existing cols
@@ -234,21 +245,6 @@ public class WineScreenController extends Controller {
     VBox wrapper = new VBox();
     wrapper.setPadding(new Insets(10));
     wrapper.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
-    wrapper.setOnMouseClicked(event -> {
-      if (event.getClickCount() == 2) {
-        openDetailedWineView(wine);
-      }
-    });
-
-    // when the page is loaded, the width of the container is not set immediately, so we have to
-    // listen to the width property changing. But, after it is loaded, and we add a new wine card,
-    // the wine property will not change, so we need to take this into account
-    if (winesViewContainer.getWidth() != 0) {
-      double totalWidth = winesViewContainer.getWidth();
-      // minus 10 for insets
-      double tileWidth = (totalWidth - winesViewContainer.getHgap() * 2) / 3 - 10;
-      wrapper.setPrefWidth(tileWidth);
-    }
 
     Image wineImage = wineImages.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
     ImageView imageView = new ImageView(wineImage);
@@ -429,7 +425,6 @@ public class WineScreenController extends Controller {
 
   /**
    * Is called when the apply button is pressed<br> Updates table with filtered data.
-   *
    */
   public void onApplyFiltersButtonPressed() {
     Filters filters = new Filters(
@@ -459,7 +454,6 @@ public class WineScreenController extends Controller {
 
   /**
    * Handles reset button being pressed.
-   *
    */
   public void onResetFiltersButtonPressed() {
     // Reset all parameters
@@ -535,7 +529,6 @@ public class WineScreenController extends Controller {
 
   /**
    * Goes to the next page.
-   *
    */
   public void nextPage() {
     this.pageService.nextPage();
@@ -547,7 +540,6 @@ public class WineScreenController extends Controller {
 
   /**
    * Goes to the previous.
-   *
    */
   public void previousPage() {
     this.pageService.previousPage();
