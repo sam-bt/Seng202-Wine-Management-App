@@ -1,4 +1,4 @@
-package seng202.team6.gui.controls;
+package seng202.team6.gui.controls.container;
 
 
 import java.util.HashMap;

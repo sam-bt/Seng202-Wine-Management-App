@@ -4,7 +4,7 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import seng202.team6.gui.Controller;
-import seng202.team6.gui.controls.AddRemoveCardsContainer;
+import seng202.team6.gui.controls.container.AddRemoveCardsContainer;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;

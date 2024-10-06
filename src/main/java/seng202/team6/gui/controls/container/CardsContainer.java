@@ -1,19 +1,19 @@
-package seng202.team6.gui.controls;
+package seng202.team6.gui.controls.container;
 
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.layout.VBox;
 
 import java.util.HashMap;
 import java.util.Map;
+import seng202.team6.gui.controls.card.Card;
 
 public class CardsContainer<T> extends VBox {
     /**
      * Stores a mapping of elements to their corresponding buttons.
      */
-    private final Map<T, CardContainer> cards = new HashMap<>();
+    private final Map<T, Card> cards = new HashMap<>();
 
     public CardsContainer(ReadOnlyObjectProperty<Bounds> viewportBounds, ReadOnlyDoubleProperty scrollPaneWidth) {
         setSpacing(10);
@@ -35,8 +35,22 @@ public class CardsContainer<T> extends VBox {
         });
     }
 
-    public void addCard(T element, CardContainer cardContainer) {
+    public void addCard(T element, Card cardContainer) {
         cards.put(element, cardContainer);
         getChildren().add(cardContainer);
+    }
+
+    public void remove(T element) {
+        Card card = cards.remove(element);
+        if (card != null) {
+            getChildren().remove(card);
+        }
+    }
+
+    public void removeAll() {
+        cards.values().removeIf(card -> {
+            getChildren().remove(card);
+            return true;
+        });
     }
 }

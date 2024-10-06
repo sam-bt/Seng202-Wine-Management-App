@@ -1,5 +1,7 @@
 package seng202.team6.service;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
@@ -10,7 +12,7 @@ import java.util.List;
 public class TourPlanningService {
     private final DatabaseManager databaseManager;
     private final VineyardTour vineyardTour;
-    private final List<Vineyard> vineyards = new ArrayList<>();
+    private final ObservableList<Vineyard> vineyards = FXCollections.observableArrayList();
 
     public TourPlanningService(DatabaseManager databaseManager, VineyardTour vineyardTour) {
         this.databaseManager = databaseManager;
@@ -25,7 +27,7 @@ public class TourPlanningService {
         return vineyardTour;
     }
 
-    public List<Vineyard> getVineyards() {
+    public ObservableList<Vineyard> getVineyards() {
         return vineyards;
     }
 

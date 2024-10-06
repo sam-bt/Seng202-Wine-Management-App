@@ -11,13 +11,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.Rating;
+import seng202.team6.gui.controls.card.Card;
 import seng202.team6.model.Wine;
 import seng202.team6.util.ImageReader;
 
-public class WineCard extends CardContainer {
+public class WineCard extends Card {
   private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine_cropped.png");
   private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage(
       "/img/white_wine_cropped.png");

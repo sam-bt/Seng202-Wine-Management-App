@@ -1,30 +1,19 @@
 package seng202.team6.gui;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
@@ -34,12 +23,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
 import seng202.team6.gui.controls.AutoCompletionTextField;
-import seng202.team6.gui.controls.CardContainer;
 import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.WineFilters;
 import seng202.team6.model.Wine;
-import seng202.team6.util.ImageReader;
 import seng202.team6.util.YearStringConverter;
 
 /**

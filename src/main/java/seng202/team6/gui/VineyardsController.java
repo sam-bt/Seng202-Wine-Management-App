@@ -15,7 +15,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.web.WebView;
 import seng202.team6.gui.controls.AutoCompletionTextField;
-import seng202.team6.gui.controls.CardContainer;
+import seng202.team6.gui.controls.card.Card;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Vineyard;
 import seng202.team6.service.VineyardService;
@@ -33,7 +33,7 @@ public class VineyardsController extends Controller {
   private AutoCompletionTextField regionTextField;
   private LeafletOSMController mapController;
 
-  private final ObservableMap<Vineyard, CardContainer> vineyardCards = FXCollections.observableHashMap();
+  private final ObservableMap<Vineyard, Card> vineyardCards = FXCollections.observableHashMap();
   private final VineyardService vineyardService;
 
   /**
@@ -65,7 +65,7 @@ public class VineyardsController extends Controller {
       while (change.next()) {
         if (change.wasAdded()) {
           change.getAddedSubList().forEach(vineyard -> {
-            CardContainer card = createVineyardCard(vineyard);
+            Card card = createVineyardCard(vineyard);
             vineyardCards.put(vineyard, card);
             vineyardsViewContainer.getChildren().add(card);
             mapController.runOrQueueWhenReady(() ->
@@ -74,7 +74,7 @@ public class VineyardsController extends Controller {
         }
         if (change.wasRemoved()) {
           change.getRemoved().forEach(vineyard -> {
-            CardContainer card = vineyardCards.get(vineyard);
+            Card card = vineyardCards.get(vineyard);
             vineyardsViewContainer.getChildren().remove(card);
             vineyardCards.remove(vineyard);
           });
@@ -88,8 +88,8 @@ public class VineyardsController extends Controller {
     managerContext.GUIManager.mainController.openTourPlanningScreen();
   }
 
-  private CardContainer createVineyardCard(Vineyard vineyard) {
-    CardContainer card = new CardContainer(vineyardsViewContainer.widthProperty(),
+  private Card createVineyardCard(Vineyard vineyard) {
+    Card card = new Card(vineyardsViewContainer.widthProperty(),
         vineyardsViewContainer.hgapProperty());
     card.setOnMouseClicked(event -> {
       if (event.getClickCount() == 2) {
