@@ -10,7 +10,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -145,64 +144,52 @@ public class GeolocationResolver {
     return null;
   }
 
-  public String getRoute(List<GeoLocation> vineyards) {
-    String geometry;
-
+  @SuppressWarnings("unchecked")
+  public String resolveRoute(List<GeoLocation> vineyardLocations) {
+    JSONObject content = new JSONObject();
     JSONArray coordinatesArray = new JSONArray();
-
-    for (GeoLocation vineyard : vineyards) {
-      JSONArray coordinate = new JSONArray();
-      coordinate.add(vineyard.getLongitude());
-      coordinate.add(vineyard.getLatitude());
-
-      coordinatesArray.add(coordinate);
-    }
-
-    HttpResponse<String> response = sendRouteRequest(coordinatesArray);
-
-    if (response.statusCode() != 200) {
-      return null;
-    }
-
-    try {
-
-      JSONParser parser = new JSONParser();
-      JSONObject parsedRespone = (JSONObject) parser.parse(response.body());
-
-      JSONArray routesArray = (JSONArray) parsedRespone.get("routes");
-
-      JSONObject firstRoute = (JSONObject) routesArray.getFirst();
-
-      geometry = (String) firstRoute.get("geometry");
-    } catch (ParseException e) {
-      throw new RuntimeException(e);
-    }
-
-    if (geometry != null) {
-      return geometry;
-    } else {
-      throw new RuntimeException("error");
-    }
-  }
-
-  private HttpResponse<String> sendRouteRequest(JSONArray coordinatesArray) {
-
-    JSONObject routeBody = new JSONObject();
-    routeBody.put("coordinates", coordinatesArray);
+    vineyardLocations.forEach(geolocation -> {
+      JSONArray coordinates = new JSONArray();
+      coordinates.add(geolocation.getLongitude());
+      coordinates.add(geolocation.getLatitude());
+      coordinatesArray.add(coordinates);
+    });
+    JSONArray radii = new JSONArray();
+    radii.add(-1);
+    content.put("coordinates", coordinatesArray);
+    content.put("radiuses", radii);
 
     try {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(new URI(ROUTE_RESOLVER_API_URL))
           .header("Authorization", API_KEY)
           .header("Content-Type", "application/json")
-          .POST(HttpRequest.BodyPublishers.ofString(routeBody.toString(), StandardCharsets.UTF_8))
+          .POST(HttpRequest.BodyPublishers.ofString(content.toString(), StandardCharsets.UTF_8))
           .build();
-
       HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-      return response;
-
+      String geometricLine = parseRouteResponse(response);
+      if (geometricLine != null) {
+        log.info("Successfully found route to vineyards");
+        return geometricLine;
+      }
+      log.warn("Could not find route to vineyards");
     } catch (URISyntaxException | IOException | InterruptedException e) {
+      log.error("Failed to resolve route to vineyards", e);
+    }
+    return null;
+  }
+
+  private String parseRouteResponse(HttpResponse<String> response) {
+    if (response.statusCode() != 200) {
+      return null;
+    }
+    JSONParser parser = new JSONParser();
+    try {
+      JSONObject content = (JSONObject) parser.parse(response.body());
+      JSONArray routesArray = (JSONArray) content.get("routes");
+      JSONObject firstRoute = (JSONObject) routesArray.getFirst();
+      return (String) firstRoute.get("geometry");
+    } catch (ParseException e) {
       throw new RuntimeException(e);
     }
   }
