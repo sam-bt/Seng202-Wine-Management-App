@@ -285,7 +285,7 @@
       heatMapLayer.setData({ data: heatMapData });
   }
 
-  function addVineyardMarker(latitude, longitude) {
+  function addVineyardMarker(latitude, longitude, vineyardName, vineyardAddress) {
     const marker = L.marker([latitude, longitude], {
           icon: L.divIcon({
               html: `
@@ -298,6 +298,9 @@
           }),
           riseOnHover: true,
       });
+      marker.bindPopup(
+          `<b>Vineyard:</b> ${vineyardName}<br><b>Address:</b> ${vineyardAddress}`
+      );
       if (!vineyardMarkersLayer) {
         clearMarkers();
       }

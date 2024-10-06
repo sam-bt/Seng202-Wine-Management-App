@@ -136,7 +136,7 @@ public class LeafletOSMController {
   public void addVineyardMaker(Vineyard vineyard, boolean focus) {
     GeoLocation geoLocation = vineyard.getGeoLocation();
     javaScriptConnector.call("addVineyardMarker", geoLocation.getLatitude(),
-        geoLocation.getLongitude());
+        geoLocation.getLongitude(), vineyard.getName(), vineyard.getAddress());
     if (focus) {
       javaScriptConnector.call("setView", geoLocation.getLatitude(),
           geoLocation.getLongitude());
