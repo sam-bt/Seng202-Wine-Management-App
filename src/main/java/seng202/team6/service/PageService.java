@@ -4,16 +4,16 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 /**
- * Simple class used to manage pagination
+ * Simple class used to manage pagination.
  */
 public class PageService {
 
   /**
-   * This is the number of table elements on said page
+   * This is the number of table elements on said page.
    */
   private final int pageSize;
   /**
-   * Current page number
+   * Current page number.
    * <p>
    * Attach a listener to this property via pageNumberProperty to check for page changes
    * </p>
@@ -25,7 +25,7 @@ public class PageService {
   private final IntegerProperty maxPages = new SimpleIntegerProperty();
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param pageSize the number of elements on each page
    */
@@ -38,7 +38,7 @@ public class PageService {
   }
 
   /**
-   * Gets the index of the end element on the page
+   * Gets the index of the end element on the page.
    * <p>
    * This corresponds to the end of the range of values to get from a<br> table in the database.
    * </p>
@@ -50,7 +50,7 @@ public class PageService {
   }
 
   /**
-   * Gets the index of the first element on the page
+   * Gets the index of the first element on the page.
    * <p>
    * This corresponds to the start of the range of values to get from a<br> table in the database
    * </p>
@@ -62,7 +62,7 @@ public class PageService {
   }
 
   /**
-   * Increments the current page
+   * Increments the current page.
    */
   public void nextPage() {
     if (this.pageNumber.get() + 1 <= this.maxPages.get()) {
@@ -71,7 +71,7 @@ public class PageService {
   }
 
   /**
-   * Decrements the current page, ensures you cannot have negative pages
+   * Decrements the current page, ensures you cannot have negative pages.
    */
   public void previousPage() {
     if (this.pageNumber.get() > 1) { // Ensure you can't go into negative pages
@@ -80,14 +80,14 @@ public class PageService {
   }
 
   /**
-   * Updates the number of max pages based on the number of items and items per page
+   * Updates the number of max pages based on the number of items and items per page.
    */
   private void updateMaxPages() {
     this.maxPages.set(this.totalItems.get() / this.pageSize + 1);
   }
 
   /**
-   * Returns the current page number
+   * Returns the current page number.
    *
    * @return current page number
    */
@@ -96,7 +96,7 @@ public class PageService {
   }
 
   /**
-   * Sets the current page number
+   * Sets the current page number.
    * <p>
    * Does nothing if the page number is greater than max pages or less than 0
    * </p>
@@ -110,7 +110,7 @@ public class PageService {
   }
 
   /**
-   * Gets the page number property
+   * Gets the page number property.
    * <p>
    * <b>DO NOT USE THIS TO SET VALUES!</b>
    * </p>
@@ -130,7 +130,7 @@ public class PageService {
   }
 
   /**
-   * Sets the total number of items that the page service will have to go through
+   * Sets the total number of items that the page service will have to go through.
    * <p>
    * For example, with 100 total items and page size of 25, there will be 4 pages
    * </p>
@@ -142,18 +142,38 @@ public class PageService {
     this.updateMaxPages();
   }
 
+  /**
+   * Gets the total items integer property.
+   *
+   * @return IntegerProperty
+   */
   public IntegerProperty totalItemsProperty() {
     return totalItems;
   }
 
+  /**
+   * Gets max pages.
+   *
+   * @return max pages
+   */
   public int getMaxPages() {
     return maxPages.get();
   }
 
+  /**
+   * Sets max pages.
+   *
+   * @param maxPages number to set max pages too
+   */
   public void setMaxPages(int maxPages) {
     this.maxPages.set(maxPages);
   }
 
+  /**
+   * Gets max pages integer property.
+   *
+   * @return Max pages integer property
+   */
   public IntegerProperty maxPagesProperty() {
     return maxPages;
   }

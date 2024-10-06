@@ -43,6 +43,7 @@ import seng202.team6.util.YearStringConverter;
 
 /**
  * Controller for the screen that displays wines.
+ *
  */
 
 public class WineScreenController extends Controller {
@@ -161,6 +162,7 @@ public class WineScreenController extends Controller {
 
   /**
    * Sets up the table columns.
+   *
    */
   public void setupTableColumns() {
     // Clear any existing cols
@@ -427,6 +429,7 @@ public class WineScreenController extends Controller {
 
   /**
    * Is called when the apply button is pressed<br> Updates table with filtered data.
+   *
    */
   public void onApplyFiltersButtonPressed() {
     Filters filters = new Filters(
@@ -447,7 +450,8 @@ public class WineScreenController extends Controller {
     this.currentFilters = filters;
 
     // update max pages
-    this.pageService.setTotalItems(managerContext.getDatabaseManager().getWineDao().getCount(filters));
+    this.pageService.setTotalItems(
+        managerContext.getDatabaseManager().getWineDao().getCount(filters));
 
     // Update table with filtered wines
     openWineRange(filters);
@@ -455,6 +459,7 @@ public class WineScreenController extends Controller {
 
   /**
    * Handles reset button being pressed.
+   *
    */
   public void onResetFiltersButtonPressed() {
     // Reset all parameters
@@ -506,6 +511,11 @@ public class WineScreenController extends Controller {
     managerContext.getGuiManager().mainController.openDetailedWineView(wine, backAction);
   }
 
+  /**
+   * Ensures the value in the text field is a valid page number.
+   *
+   * @param textField Text field to test
+   */
   public void ensureValidPageNumber(TextField textField) {
     String currentText = textField.getText();
 
@@ -523,6 +533,10 @@ public class WineScreenController extends Controller {
     }
   }
 
+  /**
+   * Goes to the next page.
+   *
+   */
   public void nextPage() {
     this.pageService.nextPage();
     pageNumberTextFieldRawViewer.setText(
@@ -531,6 +545,10 @@ public class WineScreenController extends Controller {
         this.pageService.pageNumberProperty().getValue().toString());
   }
 
+  /**
+   * Goes to the previous.
+   *
+   */
   public void previousPage() {
     this.pageService.previousPage();
     pageNumberTextFieldRawViewer.setText(
@@ -540,26 +558,38 @@ public class WineScreenController extends Controller {
   }
 
 
+  /**
+   * Sets the value of the current filters based off the inputted filters.
+   */
   public void setFilterValues() {
     // Auto Complete boxes and range sliders
     // Update filter checkboxes
-    Set<String> winerySet = managerContext.getDatabaseManager().getWineDao().getWineDataStatService()
+    Set<String> winerySet = managerContext.getDatabaseManager().getWineDao()
+        .getWineDataStatService()
         .getUniqueWineries();
-    Set<String> countrySet = managerContext.getDatabaseManager().getWineDao().getWineDataStatService()
+    Set<String> countrySet = managerContext.getDatabaseManager().getWineDao()
+        .getWineDataStatService()
         .getUniqueCountries();
-    Set<String> colorSet = managerContext.getDatabaseManager().getWineDao().getWineDataStatService()
+    Set<String> colorSet = managerContext.getDatabaseManager().getWineDao()
+        .getWineDataStatService()
         .getUniqueColors();
-    int minVintage = managerContext.getDatabaseManager().getWineDao().getWineDataStatService()
+    final int minVintage = managerContext.getDatabaseManager().getWineDao()
+        .getWineDataStatService()
         .getMinVintage();
-    int maxVintage = managerContext.getDatabaseManager().getWineDao().getWineDataStatService()
+    final int maxVintage = managerContext.getDatabaseManager().getWineDao()
+        .getWineDataStatService()
         .getMaxVintage();
-    double maxScore = managerContext.getDatabaseManager().getWineDao().getWineDataStatService()
+    final double maxScore = managerContext.getDatabaseManager().getWineDao()
+        .getWineDataStatService()
         .getMaxScore();
-    double minScore = managerContext.getDatabaseManager().getWineDao().getWineDataStatService()
+    final double minScore = managerContext.getDatabaseManager().getWineDao()
+        .getWineDataStatService()
         .getMinScore();
-    double minPrice = managerContext.getDatabaseManager().getWineDao().getWineDataStatService()
+    final double minPrice = managerContext.getDatabaseManager().getWineDao()
+        .getWineDataStatService()
         .getMinPrice();
-    double maxPrice = managerContext.getDatabaseManager().getWineDao().getWineDataStatService()
+    final double maxPrice = managerContext.getDatabaseManager().getWineDao()
+        .getWineDataStatService()
         .getMaxPrice();
 
     // Clear old list data
@@ -601,7 +631,7 @@ public class WineScreenController extends Controller {
   }
 
   /**
-   * Ensures a value is an integer
+   * Ensures a value is an integer.
    *
    * @param str string value to check
    * @return true if it is an integer false if not

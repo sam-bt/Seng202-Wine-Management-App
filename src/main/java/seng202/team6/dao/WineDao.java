@@ -90,7 +90,7 @@ public class WineDao extends Dao {
   }
 
   /**
-   * Retrieves total number of wines after applying filters
+   * Retrieves total number of wines after applying filters.
    *
    * @param filters filters to apply to wines before counting
    * @return number of wines after filtering
@@ -184,7 +184,8 @@ public class WineDao extends Dao {
         + "and PRICE between ? and ? "
         + ") "
         + "AS filteredResults ")
-        + (filters == null ? // table definition changes if subquery used or not
+        + (filters == null
+        ? // table definition changes if subquery used or not
         "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME) "
             + "WHERE ID > ? "
             + "ORDER BY WINE.ID " :
@@ -565,20 +566,8 @@ public class WineDao extends Dao {
   }
 
   /**
-   * Updates a range of unique values:<br> Updates:
-   * <ul>
-   *   <li>uniqueCountries</li>
-   *   <li>uniqueWineries</li>
-   *   <li>uniqueColors</li>
-   *   <li>minVintage</li>
-   *   <li>maxVintage</li>
-   *   <li>minScore</li>
-   *   <li>maxScore</li>
-   *   <li>minAbv</li>
-   *   <li>maxAbv</li>
-   *   <li>minPrice</li>
-   *   <li>maxPrice</li>
-   * </ul>
+   * Updates a range of unique values using the wineDataStatService.
+   *
    */
   public void updateUniques() {
 
@@ -593,13 +582,13 @@ public class WineDao extends Dao {
 
       // Go through results and add to lists
       while (set.next()) {
-        String country = set.getString("country");
-        String winery = set.getString("winery");
-        String color = set.getString("color");
-        int vintage = set.getInt("vintage");
-        int score = set.getInt("score_percent");
-        float abv = set.getFloat("abv");
-        float price = set.getFloat("price");
+        final String country = set.getString("country");
+        final String winery = set.getString("winery");
+        final String color = set.getString("color");
+        final int vintage = set.getInt("vintage");
+        final int score = set.getInt("score_percent");
+        final float abv = set.getFloat("abv");
+        final float price = set.getFloat("price");
 
         // Add to sets
         this.wineDataStatService.getUniqueCountries().add(country);
@@ -620,7 +609,7 @@ public class WineDao extends Dao {
   }
 
   /**
-   * Helper function for the update uniques, just abstracts the min and max checks
+   * Helper function for the update uniques, just abstracts the min and max checks.
    * <p>
    * Updates the specified value if the new value is smaller than current min or<br> greater than
    * current max.
@@ -661,6 +650,9 @@ public class WineDao extends Dao {
         } else if (value < this.wineDataStatService.getMinPrice()) {
           this.wineDataStatService.setMinPrice(value);
         }
+        break;
+
+      default:
         break;
     }
   }

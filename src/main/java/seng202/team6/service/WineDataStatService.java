@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Stores a range of unique values and stats:<br> Stores:
+ * Stores a range of unique values and stats.<br> Stores:
  * <ul>
  *   <li>uniqueCountries</li>
  *   <li>uniqueWineries</li>
@@ -37,13 +37,13 @@ public class WineDataStatService {
   private float maxPrice;
 
   /**
-   * Constructor
+   * Constructor.
    */
   public WineDataStatService() {
   }
 
   /**
-   * Resets all values
+   * Resets all values.
    */
   public void reset() {
     this.uniqueCountries.clear();
