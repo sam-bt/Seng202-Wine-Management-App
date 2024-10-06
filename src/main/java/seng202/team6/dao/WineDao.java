@@ -214,11 +214,9 @@ public class WineDao extends Dao {
         statement.setDouble(paramIndex++, filters.getMinPrice());
         statement.setDouble(paramIndex++, filters.getMaxPrice());
         statement.setInt(paramIndex++, begin);
-
       } else {
         statement.setInt(paramIndex++, begin);
       }
-
       statement.setInt(paramIndex, end - begin);
 
       try (ResultSet resultSet = statement.executeQuery()) {
@@ -570,13 +568,8 @@ public class WineDao extends Dao {
    *
    */
   public void updateUniques() {
-
-    // Reset old uniques
-    this.wineDataStatService.reset();
-
-    // Get unique items from database
+    wineDataStatService.reset();
     String query = "SELECT country, winery, color, vintage, score_percent, abv, price FROM wine";
-
     try (PreparedStatement statement = connection.prepareStatement(query);
         ResultSet set = statement.executeQuery()) {
 
@@ -601,9 +594,10 @@ public class WineDao extends Dao {
         updateMinMax("abv", abv);
         updateMinMax("price", price);
       }
+      log.info("Successfully updated unique values wine cache");
 
     } catch (SQLException e) {
-      LogManager.getLogger(getClass()).error("Unable to update uniques", e);
+      log.error("Failed to update unique values wine cache", e);
 
     }
   }
@@ -655,29 +649,6 @@ public class WineDao extends Dao {
       default:
         break;
     }
-  }
-
-  private Set<String> getDistinctValues(String column) {
-    Set<String> uniqueValues = new HashSet<>();
-
-    String sql = "SELECT DISTINCT ? FROM WINE";
-
-    try (PreparedStatement statement = connection.prepareStatement(sql)) {
-      ResultSet resultSet = statement.executeQuery();
-
-      while (resultSet.next()) {
-        String value = resultSet.getString(1);
-        if (value != null) {
-          uniqueValues.add(value);
-        }
-      }
-
-    } catch (SQLException e) {
-      LogManager.getLogger(this.getClass().getName())
-          .error("Unable to get unique values from column " + column, e);
-    }
-
-    return uniqueValues;
   }
 
   public WineDataStatService getWineDataStatService() {

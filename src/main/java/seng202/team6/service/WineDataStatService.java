@@ -26,7 +26,7 @@ public class WineDataStatService {
   private final Set<String> uniqueWineries = new HashSet<>();
   private final Set<String> uniqueColors = new HashSet<>();
 
-  // Mins and Maxes
+  // minimum and maximum values
   private int minVintage;
   private int maxVintage;
   private int minScore;
