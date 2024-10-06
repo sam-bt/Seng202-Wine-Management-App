@@ -140,7 +140,10 @@ public class ListScreenController extends Controller {
     render();
 
   }
-
+  @FXML
+  void onDeleteListRequestClick() {
+    managerContext.GUIManager.mainController.openDeleteListPopUp();
+  }
   /**
    * creates the lists, adding it to the array and updates relevant information on screen
    *
@@ -182,11 +185,17 @@ public class ListScreenController extends Controller {
     if (!wineListService.canRemove(wineList)) {
       return;
     }
+    onDeleteListRequestClick();
 
+  }
+
+  public void onDeleteListConfirm() {
+    WineList wineList = wineListService.getWineLists().get(selected);
     wineListService.deleteWineList(wineList);
     managerContext.databaseManager.getWineListDAO().delete(wineList);
     render();
   }
+
 
   /**
    * Changes the selected list.
