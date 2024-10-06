@@ -12,7 +12,7 @@ import seng202.team6.gui.Controller;
 import seng202.team6.gui.MainController;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.managers.GUIManager;
+import seng202.team6.managers.GuiManager;
 import seng202.team6.managers.ManagerContext;
 
 /**
@@ -20,7 +20,7 @@ import seng202.team6.managers.ManagerContext;
  * SENG201 Tutorial 2.
  */
 
-public class FXWrapper {
+public class FxWrapper {
 
   @FXML
   private Pane pane;
@@ -39,11 +39,11 @@ public class FXWrapper {
       DatabaseManager databaseManager = new DatabaseManager("database", "database.db");
       this.managerContext = new ManagerContext(
           databaseManager,
-          new GUIManager(this),
+          new GuiManager(this),
           new AuthenticationManager(databaseManager)
       );
 
-      stage.setOnCloseRequest((event) -> managerContext.databaseManager.teardown());
+      stage.setOnCloseRequest((event) -> managerContext.getDatabaseManager().teardown());
     } catch (Exception exception) {
       // If we fail to initialize the managers we are kinda screwed
       throw new RuntimeException("Failed to instantiate manager context", exception);
@@ -51,6 +51,11 @@ public class FXWrapper {
     loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
   }
 
+  /**
+   * Sets the window title.
+   *
+   * @param title title to set
+   */
   public void setWindowTitle(String title) {
     stage.setTitle(title);
   }

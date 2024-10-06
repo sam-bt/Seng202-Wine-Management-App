@@ -3,7 +3,7 @@ package seng202.team6.model;
 import java.sql.Date;
 
 /**
- * Pair of a wine and date
+ * Pair of a wine and date.
  * <p>
  * Used in wine lists to associate with date added
  * </p>

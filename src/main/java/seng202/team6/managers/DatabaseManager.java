@@ -17,14 +17,14 @@ import java.util.Properties;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import seng202.team6.dao.AggregatedDAO;
-import seng202.team6.dao.DAO;
-import seng202.team6.dao.GeoLocationDAO;
-import seng202.team6.dao.UserDAO;
-import seng202.team6.dao.WineDAO;
-import seng202.team6.dao.WineListDAO;
-import seng202.team6.dao.WineNotesDAO;
-import seng202.team6.dao.WineReviewDAO;
+import seng202.team6.dao.AggregatedDao;
+import seng202.team6.dao.Dao;
+import seng202.team6.dao.GeoLocationDao;
+import seng202.team6.dao.UserDao;
+import seng202.team6.dao.WineDao;
+import seng202.team6.dao.WineListDao;
+import seng202.team6.dao.WineNotesDao;
+import seng202.team6.dao.WineReviewDao;
 import seng202.team6.util.EncryptionUtil;
 
 /**
@@ -36,13 +36,13 @@ public class DatabaseManager {
 
   private static final Logger log = LogManager.getLogger(DatabaseManager.class);
   private final Connection connection;
-  private final UserDAO userDAO;
-  private final WineDAO wineDAO;
-  private final WineListDAO wineListDAO;
-  private final WineNotesDAO wineNotesDAO;
-  private final WineReviewDAO wineReviewDAO;
-  private final GeoLocationDAO geoLocationDAO;
-  private final AggregatedDAO aggregatedDAO;
+  private final UserDao userDao;
+  private final WineDao wineDao;
+  private final WineListDao wineListDao;
+  private final WineNotesDao wineNotesDao;
+  private final WineReviewDao wineReviewDao;
+  private final GeoLocationDao geoLocationDao;
+  private final AggregatedDao aggregatedDao;
 
   /**
    * Constructs a NewDatabaseManager with an in-memory SQLite database connection.
@@ -76,27 +76,27 @@ public class DatabaseManager {
     }
     this.connection = connection;
     log.info("Successfully opened a connection to the database");
-    this.userDAO = new UserDAO(connection);
-    this.wineDAO = new WineDAO(connection);
-    this.wineListDAO = new WineListDAO(connection);
-    this.wineNotesDAO = new WineNotesDAO(connection);
-    this.wineReviewDAO = new WineReviewDAO(connection);
-    this.geoLocationDAO = new GeoLocationDAO(connection);
-    this.aggregatedDAO = new AggregatedDAO(connection, wineReviewDAO, wineNotesDAO, wineDAO);
+    this.userDao = new UserDao(connection);
+    this.wineDao = new WineDao(connection);
+    this.wineListDao = new WineListDao(connection);
+    this.wineNotesDao = new WineNotesDao(connection);
+    this.wineReviewDao = new WineReviewDao(connection);
+    this.geoLocationDao = new GeoLocationDao(connection);
+    this.aggregatedDao = new AggregatedDao(connection, wineReviewDao, wineNotesDao, wineDao);
     init();
   }
 
   /**
    * Sets up a database connection using the given JDBC URL.
    *
-   * @param jdbcURL the JDBC URL to connect to
+   * @param jdbcUrl the JDBC URL to connect to
    * @return a Connection object to the database
    * @throws SQLException if a database access error occurs
    */
-  private static Connection setupConnection(String jdbcURL) throws SQLException {
+  private static Connection setupConnection(String jdbcUrl) throws SQLException {
     Properties properties = new Properties();
     properties.setProperty("foreign_keys", "true");
-    return DriverManager.getConnection(jdbcURL, properties);
+    return DriverManager.getConnection(jdbcUrl, properties);
   }
 
   /**
@@ -140,10 +140,10 @@ public class DatabaseManager {
    * @throws RuntimeException if any SQL execution fails
    */
   public void init() {
-    List<String> sqlStatements = Stream.of(userDAO, wineDAO, wineListDAO, wineNotesDAO,
-            wineReviewDAO, geoLocationDAO)
-        .filter(Objects::nonNull)  // Filter out null DAOs
-        .map(DAO::getInitialiseStatements)
+    List<String> sqlStatements = Stream.of(userDao, wineDao, wineListDao, wineNotesDao,
+            wineReviewDao, geoLocationDao)
+        .filter(Objects::nonNull)  // Filter out null Daos
+        .map(Dao::getInitialiseStatements)
         .filter(Objects::nonNull)  // Filter out null statements
         .flatMap(Arrays::stream)
         .toList();
@@ -151,24 +151,24 @@ public class DatabaseManager {
     String salt = EncryptionUtil.generateSalt();
     String hashedAdminPassword = EncryptionUtil.hashPassword("admin", salt);
     List<String> triggersAndDefaultStatements = List.of(
-        "CREATE TRIGGER IF NOT EXISTS FAVOURITES_LIST" +
-            "AFTER INSERT ON USER " +
-            "FOR EACH ROW " +
-            "BEGIN " +
-            "INSERT INTO LIST_NAME (USERNAME, NAME) " +
-            "VALUES (NEW.USERNAME, 'Favourites'); " +
-            "END",
-        "CREATE TRIGGER IF NOT EXISTS HISTORY_LIST" +
-            "AFTER INSERT ON USER " +
-            "FOR EACH ROW " +
-            "BEGIN " +
-            "INSERT INTO LIST_NAME (USERNAME, NAME) " +
-            "VALUES (NEW.USERNAME, 'History'); " +
-            "END",
-        "INSERT INTO USER (USERNAME, PASSWORD, ROLE, SALT) " +
-            "SELECT 'admin', '" + hashedAdminPassword + "', 'admin', '" + salt + "' " +
-            "WHERE NOT EXISTS (" +
-            "SELECT 1 FROM USER WHERE USERNAME = 'admin')"
+        "CREATE TRIGGER IF NOT EXISTS FAVOURITES_LIST"
+            + "AFTER INSERT ON USER "
+            + "FOR EACH ROW "
+            + "BEGIN "
+            + "INSERT INTO LIST_NAME (USERNAME, NAME) "
+            + "VALUES (NEW.USERNAME, 'Favourites'); "
+            + "END",
+        "CREATE TRIGGER IF NOT EXISTS HISTORY_LIST"
+            + "AFTER INSERT ON USER "
+            + "FOR EACH ROW "
+            + "BEGIN "
+            + "INSERT INTO LIST_NAME (USERNAME, NAME) "
+            + "VALUES (NEW.USERNAME, 'History'); "
+            + "END",
+        "INSERT INTO USER (USERNAME, PASSWORD, ROLE, SALT) "
+            + "SELECT 'admin', '" + hashedAdminPassword + "', 'admin', '" + salt + "' "
+            + "WHERE NOT EXISTS ("
+            + "SELECT 1 FROM USER WHERE USERNAME = 'admin')"
     );
 
     try (Statement statement = connection.createStatement()) {
@@ -183,7 +183,7 @@ public class DatabaseManager {
       throw new RuntimeException(e);
     }
     log.info("Successfully executed {} initialise statements", sqlStatements.size());
-    geoLocationDAO.addDefaultGeoLocations();
+    geoLocationDao.addDefaultGeoLocations();
   }
 
   /**
@@ -199,41 +199,41 @@ public class DatabaseManager {
     }
   }
 
-  public UserDAO getUserDAO() {
-    return userDAO;
+  public UserDao getUserDao() {
+    return userDao;
   }
 
-  public WineDAO getWineDAO() {
-    return wineDAO;
+  public WineDao getWineDao() {
+    return wineDao;
   }
 
-  public WineListDAO getWineListDAO() {
-    return wineListDAO;
+  public WineListDao getWineListDao() {
+    return wineListDao;
   }
 
-  public WineNotesDAO getWineNotesDAO() {
-    return wineNotesDAO;
+  public WineNotesDao getWineNotesDao() {
+    return wineNotesDao;
   }
 
-  public WineReviewDAO getWineReviewDAO() {
-    return wineReviewDAO;
+  public WineReviewDao getWineReviewDao() {
+    return wineReviewDao;
   }
 
-  public GeoLocationDAO getGeoLocationDAO() {
-    return geoLocationDAO;
+  public GeoLocationDao getGeoLocationDao() {
+    return geoLocationDao;
   }
 
-  public AggregatedDAO getAggregatedDAO() {
-    return aggregatedDAO;
+  public AggregatedDao getAggregatedDao() {
+    return aggregatedDao;
   }
 
   /**
-   * Callback to set the attribute to update
+   * Callback to set the attribute to update.
    */
   public interface AttributeSetter {
 
     /**
-     * Updates the prepared statement with the value to set
+     * Updates the prepared statement with the value to set.
      * <p>
      * Attribute must be index 1 in prepared statement
      * </p>

@@ -21,11 +21,15 @@ import seng202.team6.model.WineDatePair;
 import seng202.team6.model.WineList;
 
 /**
- * Controller for the scene that shows wine consumption
+ * Controller for the scene that shows wine consumption.
  */
 public class ConsumptionController extends Controller {
 
   static final float STD_DRINK_ETHANOL_VOLUME = 12.7f;
+  /**
+   * Number of std drinks to stop counting at.
+   */
+  static final float ALCOHOLIC_STD_DRINKS = 10.f;
   @FXML
   VBox wineHistoryList;
   @FXML
@@ -38,14 +42,15 @@ public class ConsumptionController extends Controller {
    * Chart for consumption.
    * <p>
    * The generic parameters for LineChart are checked at runtime and don't seem to be documented...
-   * - X seems to be either Number or string - Y seems to be only Number
+   * - X seems to be either Number or string
+   * - Y seems to be only Number
    * </p>
    */
   @FXML
   LineChart<String, Number> consumptionChart;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context
    */
@@ -55,20 +60,20 @@ public class ConsumptionController extends Controller {
 
 
   /**
-   * Gets the history list for the current user
+   * Gets the history list for the current user.
    *
    * @return history list
    */
   private WineList getHistoryList() {
-    User user = managerContext.authenticationManager.getAuthenticatedUser();
-    return managerContext.databaseManager.getWineListDAO().getAll(user)
+    User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
+    return managerContext.getDatabaseManager().getWineListDao().getAll(user)
         .stream()
         .filter(wineList -> Objects.equals(
             wineList.name(), "History")).findFirst().orElse(null);
   }
 
   /**
-   * Gets the std drinks for a wine assuming 750 bottles and 12.7 ml for
+   * Gets the std drinks for a wine assuming 750 bottles and 12.7 ml for.
    *
    * @param wineDatePair wine
    * @return std drinks for wine
@@ -78,14 +83,13 @@ public class ConsumptionController extends Controller {
   }
 
   /**
-   * Creates a wine widget
+   * Creates a wine widget.
    *
    * @param pair wine-date pair to display
    * @return widget
    */
   private Node createWineWidget(WineDatePair pair) {
     HBox separator = new HBox();
-    Label date = new Label(pair.date().toString());
 
     separator.getChildren().add(new Button());
     // anything above 20 is full strength
@@ -97,6 +101,8 @@ public class ConsumptionController extends Controller {
     abvSegment.getChildren().add(progressBar);
     abvSegment.setAlignment(Pos.CENTER);
 
+    Label date = new Label(pair.date().toString());
+
     separator.getChildren().add(date);
     separator.getChildren().add(abvSegment);
 
@@ -107,12 +113,13 @@ public class ConsumptionController extends Controller {
   }
 
   /**
-   * Gets all the wines consumed in the past week
+   * Gets all the wines consumed in the past week.
    *
    * @return all wines consumed in the past week
    */
   private ObservableList<WineDatePair> getPastWeekConsumption() {
-    ObservableList<WineDatePair> wineHistory = managerContext.databaseManager.getAggregatedDAO()
+    ObservableList<WineDatePair> wineHistory =
+        managerContext.getDatabaseManager().getAggregatedDao()
         .getWinesMappedWithDatesFromList(getHistoryList());
     wineHistory.sort(Comparator.comparing(WineDatePair::date));
     long oneWeek = 1000 * 60 * 60 * 24 * 7;
@@ -122,23 +129,22 @@ public class ConsumptionController extends Controller {
   }
 
   /**
-   * Update the total consumption bar with std drinks for the past week
+   * Update the total consumption bar with std drinks for the past week.
    */
   private void updateTotalConsumptionBar(ObservableList<WineDatePair> pastWeekConsumption) {
     float drinks = 0;
     for (WineDatePair pair : pastWeekConsumption) {
       drinks += getStdDrinks(pair);
     }
-    // Recommended alcohol intakes are made up for the most part
-    // WHO sets 0
-    // We make up 10 std drinks a week
-    float normalizedProgress = Math.min(1f, drinks / 10f);
+    float normalizedProgress = Math.min(1f, drinks / ALCOHOLIC_STD_DRINKS);
     winesInPastWeekBar.setProgress(normalizedProgress);
-    winesInPastWeekLabel.setText((drinks > 10f ? "10+" : (int) drinks) + " Drinks");
+    winesInPastWeekLabel.setText(
+        (drinks > ALCOHOLIC_STD_DRINKS ? (int) ALCOHOLIC_STD_DRINKS + "+" : (int) drinks)
+            + " Drinks");
   }
 
   /**
-   * Updates the history list with a given list
+   * Updates the history list with a given list.
    *
    * @param pastWeekConsumption list of wine-date pairs to update
    */
@@ -150,7 +156,7 @@ public class ConsumptionController extends Controller {
   }
 
   /**
-   * Updates the graph with a list of wines
+   * Updates the graph with a list of wines.
    *
    * @param pastConsumption list of wines
    */
@@ -169,14 +175,14 @@ public class ConsumptionController extends Controller {
 
 
   /**
-   * Initialize lists
+   * Initialize lists.
    */
   @Override
   public void init() {
     ObservableList<WineDatePair> observableList = getPastWeekConsumption();
     updateHistoryList(observableList);
     updateTotalConsumptionBar(observableList);
-    updateConsumptionGraph(managerContext.databaseManager.getAggregatedDAO()
+    updateConsumptionGraph(managerContext.getDatabaseManager().getAggregatedDao()
         .getWinesMappedWithDatesFromList(getHistoryList()));
   }
 }

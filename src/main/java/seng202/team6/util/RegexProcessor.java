@@ -3,6 +3,9 @@ package seng202.team6.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class to handle regex expressions.
+ */
 public class RegexProcessor {
 
   /**
