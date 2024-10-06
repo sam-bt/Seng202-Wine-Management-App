@@ -16,6 +16,7 @@ import seng202.team6.gui.controls.*;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
+import seng202.team6.service.TourPlanningService;
 import seng202.team6.service.VineyardService;
 import seng202.team6.service.VineyardToursService;
 
@@ -38,8 +39,7 @@ public class TourPlanningController extends Controller {
   private final VineyardToursService vineyardToursService;
   private final VineyardService vineyardService;
   private LeafletOSMController mapController;
-
-  private VineyardTour selectedTour;
+  private TourPlanningService currentTourPlanningService;
 
   /**
    * Constructs a new TourPlanningController.
@@ -105,8 +105,8 @@ public class TourPlanningController extends Controller {
       HBox hbox = card.getHbox();
       AddRemoveButton addRemoveButton = new AddRemoveButton(
               !vineyardToursService.isVineyardInTour(vineyardTour, vineyard),
-              () -> {},
-              () -> {},
+              () -> currentTourPlanningService.addVineyard(vineyard),
+              () -> currentTourPlanningService.removeVineyard(vineyard),
               false
       );
       HBox addRemoveButtonWrapper = new HBox(addRemoveButton);
@@ -117,5 +117,6 @@ public class TourPlanningController extends Controller {
       hbox.getChildren().add(addRemoveButtonWrapper);
       vineyardCardsContainer.addCard(vineyard, card);
     });
+    currentTourPlanningService = new TourPlanningService(managerContext.databaseManager, vineyardTour);
   }
 }
