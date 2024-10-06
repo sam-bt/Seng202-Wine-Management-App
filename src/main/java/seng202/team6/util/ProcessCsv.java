@@ -18,14 +18,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Utility class for interfacing with CSV files
+ * Utility class for interfacing with CSV files.
  */
-public class ProcessCSV {
+public class ProcessCsv {
 
-  private static Logger log = LogManager.getLogger(ProcessCSV.class);
+  private static Logger log = LogManager.getLogger(ProcessCsv.class);
 
   /**
-   * Gets a CSV file as a list of rows
+   * Gets a CSV file as a list of rows.
    * <p>
    * This function will attempt to detect the file encoding then try and read the bytes as the
    * detected encoding. If the encoding detection fails, the file will be read as UTF-8.
@@ -34,7 +34,7 @@ public class ProcessCSV {
    * @param file the CSV file to read
    * @return a list of rows from the CSV input stream, or an empty list if the reading fails
    */
-  public static List<String[]> getCSVRows(File file) {
+  public static List<String[]> getCsvRows(File file) {
     List<String[]> rows = new ArrayList<>();
     byte[] fileBytes;
 
@@ -53,7 +53,7 @@ public class ProcessCSV {
     String detectedCharset = detectFileEncoding(fileBytes);
     try (InputStreamReader inputStreamReader = new InputStreamReader(
         new ByteArrayInputStream(fileBytes), detectedCharset)) {
-      readCSVRows(inputStreamReader, rows);
+      readCsvRows(inputStreamReader, rows);
     } catch (IOException | CsvValidationException error) {
       log.error("Failed to read rows from CSV file: {}", file.getAbsolutePath(), error);
     }
@@ -61,15 +61,15 @@ public class ProcessCSV {
   }
 
   /**
-   * Gets a CSV input stream as a list of rows
+   * Gets a CSV input stream as a list of rows.
    *
    * @param input the input stream to read
    * @return a list of rows from the CSV input stream, or an empty list if the reading fails
    */
-  public static List<String[]> getCSVRows(InputStream input) {
+  public static List<String[]> getCsvRows(InputStream input) {
     List<String[]> rows = new ArrayList<>();
     try (InputStreamReader inputStreamReader = new InputStreamReader(input, UTF_8)) {
-      readCSVRows(inputStreamReader, rows);
+      readCsvRows(inputStreamReader, rows);
     } catch (IOException | CsvValidationException error) {
       log.error("Failed to read rows from resource", error);
     }
@@ -84,7 +84,7 @@ public class ProcessCSV {
    * @throws IOException            if an I/O error occurs while reading
    * @throws CsvValidationException if a CSV validation error occurs
    */
-  private static void readCSVRows(InputStreamReader inputStreamReader, List<String[]> rows)
+  private static void readCsvRows(InputStreamReader inputStreamReader, List<String[]> rows)
       throws IOException, CsvValidationException {
     CSVReader csvReader = new CSVReader(inputStreamReader);
     String[] nextLine;
@@ -94,7 +94,7 @@ public class ProcessCSV {
   }
 
   /**
-   * Detects the file encoding of the provided byte array using ICU4J's character detector
+   * Detects the file encoding of the provided byte array using ICU4J's character detector.
    *
    * @param fileBytes the byte array of the file
    * @return the name of the detected charset, or UTF-8 is detection fails

@@ -17,10 +17,10 @@ import seng202.team6.util.Timer;
 /**
  * Data Access Object (DAO) for handling wine notes related database operations.
  */
-public class WineNotesDAO extends DAO {
+public class WineNotesDao extends Dao {
 
   /**
-   * Cache to store and reuse Note objects to avoid duplication
+   * Cache to store and reuse Note objects to avoid duplication.
    */
   private final DatabaseObjectUniquer<Note> notesCache = new DatabaseObjectUniquer<>();
 
@@ -30,21 +30,21 @@ public class WineNotesDAO extends DAO {
    *
    * @param connection The database connection to be used for wine note operations.
    */
-  public WineNotesDAO(Connection connection) {
-    super(connection, WineNotesDAO.class);
+  public WineNotesDao(Connection connection) {
+    super(connection, WineNotesDao.class);
   }
 
   @Override
   public String[] getInitialiseStatements() {
     return new String[]{
-        "CREATE TABLE IF NOT EXISTS NOTES (" +
-            "ID             INTEGER       PRIMARY KEY," +
-            "USERNAME       VARCHAR(64)   NOT NULL," +
-            "WINE_ID        INTEGER       NOT NULL, " +
-            "NOTE           TEXT," +
-            "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE," +
-            "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE" +
-            ")"
+        "CREATE TABLE IF NOT EXISTS NOTES ("
+            + "ID             INTEGER       PRIMARY KEY,"
+            + "USERNAME       VARCHAR(64)   NOT NULL,"
+            + "WINE_ID        INTEGER       NOT NULL, "
+            + "NOTE           TEXT,"
+            + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE,"
+            + "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE"
+            + ")"
     };
   }
 
@@ -60,7 +60,7 @@ public class WineNotesDAO extends DAO {
       try (ResultSet resultSet = statement.executeQuery(sql)) {
         ObservableList<Note> notes = extractAllNotesFromResultSet(resultSet);
         log.info("Successfully retrieved all {} notes in {}ms",
-            notes.size(), timer.stop());
+            notes.size(), timer.currentOffsetMilliseconds());
         return notes;
       }
     } catch (SQLException error) {
@@ -77,15 +77,14 @@ public class WineNotesDAO extends DAO {
    */
   public ObservableList<Note> getAll(User user) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM NOTES " +
-        "WHERE USERNAME = ?";
+    String sql = "SELECT * FROM NOTES WHERE USERNAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setString(1, user.getUsername());
 
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<Note> notes = extractAllNotesFromResultSet(resultSet);
         log.info("Successfully retrieved all {} notes for user '{}' in {}ms",
-            notes.size(), user.getUsername(), timer.stop());
+            notes.size(), user.getUsername(), timer.currentOffsetMilliseconds());
         return notes;
       }
     } catch (SQLException error) {
@@ -105,8 +104,7 @@ public class WineNotesDAO extends DAO {
    */
   public Note get(User user, Wine wine) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM NOTES " +
-        "WHERE USERNAME = ? AND WINE_ID = ?";
+    String sql = "SELECT * FROM NOTES WHERE USERNAME = ? AND WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setString(1, user.getUsername());
       statement.setLong(2, wine.getKey());
@@ -114,13 +112,16 @@ public class WineNotesDAO extends DAO {
       try (ResultSet resultSet = statement.executeQuery()) {
         if (resultSet.next()) {
           long id = resultSet.getLong("ID");
-          log.info("Successfully retrieved note with ID {} for user '{}' and wine with ID {} "
-              + "in {}ms", id, user.getUsername(), wine.getKey(), timer.stop());
+          log.info("Successfully retrieved note with ID {} for user '{}' "
+              + "and wine with ID {} "
+              + "in {}ms", id, user.getUsername(), wine.getKey(),
+              timer.currentOffsetMilliseconds());
           return extractNoteFromResultSet(resultSet);
         } else {
           log.warn(
-              "Could not find note for user '{}' and wine with ID {} so returning blank note in {}ms",
-              user.getUsername(), wine.getKey(), timer.stop());
+              "Could not find note for user '{}'"
+                  + " and wine with ID {} so returning blank note in {}ms",
+              user.getUsername(), wine.getKey(), timer.currentOffsetMilliseconds());
           // do not add to cache as it has common -1 key which indicates it's not in the database
           Note note = new Note(-1, user.getUsername(), wine.getKey(), "");
           bindUpdater(note);
@@ -128,14 +129,15 @@ public class WineNotesDAO extends DAO {
         }
       }
     } catch (SQLException error) {
-      log.error("Failed to find note for user '{}' and wine with ID {}", user.getUsername(),
+      log.error("Failed to find note for user '{}' and wine with ID {}",
+          user.getUsername(),
           wine.getKey(), error);
     }
     return null;
   }
 
   /**
-   * Adds a note to the database
+   * Adds a note to the database.
    * <p>
    * Upon successful insertion, the note's ID is set to the generated ID. This is to ensure any
    * classes holding a reference to this note can still be used and will update the database as
@@ -145,9 +147,10 @@ public class WineNotesDAO extends DAO {
    * @param note The note to be added to the database
    */
   private void add(Note note) {
-    if (note.getID() != -1) {
+    if (note.getId() != -1) {
       log.error(
-          "Failed to add note for user '{}' as the note has a valid ID indicating it is in the database already");
+          "Failed to add note for user '{}' "
+              + "as the note has a valid ID indicating it is in the database already");
       return;
     }
     Timer timer = new Timer();
@@ -155,32 +158,35 @@ public class WineNotesDAO extends DAO {
     try (PreparedStatement statement = connection.prepareStatement(sql,
         Statement.RETURN_GENERATED_KEYS)) {
       statement.setString(1, note.getUsername());
-      statement.setLong(2, note.getWineID());
+      statement.setLong(2, note.getWineId());
       statement.setString(3, note.getNote());
       statement.executeUpdate();
 
       try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
         if (generatedKeys.next()) {
           long id = generatedKeys.getLong(1);
-          note.setID(id);
+          note.setId(id);
           if (useCache()) {
             notesCache.addObject(id, note);
           }
-          log.info("Successfully added note with ID '{}' for user {} and wine with ID {} in {}ms",
-              id, note.getUsername(), note.getWineID(), timer.stop());
+          log.info("Successfully added note with ID '{}' for user {}"
+                  + " and wine with ID {} in {}ms",
+              id, note.getUsername(), note.getWineId(), timer.currentOffsetMilliseconds());
         } else {
-          log.warn("Could not add note for user {} and wine with ID {} in {}ms", note.getUsername(),
-              note.getWineID(), timer.stop());
+          log.warn("Could not add note for user {} and wine with ID {} in {}ms",
+              note.getUsername(),
+              note.getWineId(), timer.currentOffsetMilliseconds());
         }
       }
     } catch (SQLException error) {
       log.warn("Failed to add note for user {} and wine with ID {}", note.getUsername(),
-          note.getWineID(), error);
+          note.getWineId(), error);
     }
   }
 
   /**
    * Deletes a note from the database.
+   *
    * <p>
    * Upon successful removal, the note's ID is set to -1 to indicate that the note is not in the
    * database.
@@ -189,33 +195,36 @@ public class WineNotesDAO extends DAO {
    * @param note The note to be deleted.
    */
   public void delete(Note note) {
-    if (note.getID() == -1) {
+    if (note.getId() == -1) {
       log.error(
-          "Failed to add note for user '{}' as the note has an invalid ID indicating it is not in the database already");
+          "Failed to add note for user '{}' "
+              + "as the note has an invalid ID indicating it is not in the database already");
       return;
     }
     Timer timer = new Timer();
     String sql = "DELETE FROM NOTES WHERE ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
-      statement.setLong(1, note.getID());
+      statement.setLong(1, note.getId());
 
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
-        log.info("Successfully deleted note with ID {} in {}ms", note.getID(), timer.stop());
+        log.info("Successfully deleted note with ID {} in {}ms", note.getId(),
+            timer.currentOffsetMilliseconds());
       } else {
-        log.warn("Could not delete note with ID {} in {}ms", note.getID(), timer.stop());
+        log.warn("Could not delete note with ID {} in {}ms", note.getId(),
+            timer.currentOffsetMilliseconds());
       }
       // set the note id to -1 as it is no longer in the database but the object will still
       // be used in the service, remove from cache as well
-      notesCache.removeObject(note.getID());
-      note.setID(-1);
+      notesCache.removeObject(note.getId());
+      note.setId(-1);
     } catch (SQLException error) {
-      log.error("Failed to delete note with ID {}", note.getID(), error);
+      log.error("Failed to delete note with ID {}", note.getId(), error);
     }
   }
 
   /**
-   * Extracts all notes from the provided ResultSet and stores them in an ObservableList
+   * Extracts all notes from the provided ResultSet and stores them in an ObservableList.
    *
    * @param resultSet The ResultSet containing note data
    * @return ObservableList of Note objects extracted from the ResultSet
@@ -279,16 +288,16 @@ public class WineNotesDAO extends DAO {
       if (after.isEmpty()) { // if the new note is empty
         // if id is -1, it is not in the database
         // otherwise the note is in the database but can be removed as it is now blank
-        if (note.getID() != -1) {
+        if (note.getId() != -1) {
           delete(note);
         }
         return;
       }
       // the note is not in the database, so we add it to database
-      if (note.getID() == -1) {
+      if (note.getId() == -1) {
         add(note);
       } else { // otherwise the note is in the database so update it
-        updateAttribute(note.getID(), "NOTE", update -> {
+        updateAttribute(note.getId(), "NOTE", update -> {
           update.setString(1, note.getNote());
         });
       }
@@ -296,7 +305,7 @@ public class WineNotesDAO extends DAO {
   }
 
   /**
-   * Updates a specific attribute of the note in the NOTES table
+   * Updates a specific attribute of the note in the NOTES table.
    *
    * @param attributeName   name of attribute
    * @param attributeSetter callback to set attribute
@@ -312,14 +321,14 @@ public class WineNotesDAO extends DAO {
       int rowsAffected = update.executeUpdate();
       if (rowsAffected == 1) {
         log.info("Successfully updated attribute '{}' for note with ID {} in {}ms",
-            attributeName, id, timer.stop());
+            attributeName, id, timer.currentOffsetMilliseconds());
       } else {
         log.info("Could not update attribute '{}' for note with ID {} in {}ms",
-            attributeName, id, timer.stop());
+            attributeName, id, timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
       log.error("Failed to update attribute '{}' for note with ID {} in {}ms",
-          attributeName, id, timer.stop(), error);
+          attributeName, id, timer.currentOffsetMilliseconds(), error);
     }
   }
 }

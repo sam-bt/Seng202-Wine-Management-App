@@ -27,14 +27,36 @@ import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.WineFilters;
 import seng202.team6.model.Wine;
+<<<<<<< HEAD
+=======
+import seng202.team6.util.ImageReader;
+import seng202.team6.util.WineWidgets;
+>>>>>>> Development
 import seng202.team6.util.YearStringConverter;
 
 /**
- * Controller for the screen that displays wines
+ * Controller for the screen that displays wines.
  */
 
 public class WineScreenController extends Controller {
 
+<<<<<<< HEAD
+=======
+  private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine_cropped.png");
+  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage(
+      "/img/white_wine_cropped.png");
+  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine_cropped.png");
+  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage(
+      "/img/default_wine_cropped.png");
+  private static final Map<String, Image> wineImages = new HashMap<>() {
+    {
+      put("red", RED_WINE_IMAGE);
+      put("white", WHITE_WINE_IMAGE);
+      put("rose", ROSE_WINE_IMAGE);
+      put("rosé", ROSE_WINE_IMAGE);
+    }
+  };
+>>>>>>> Development
   private final Logger log = LogManager.getLogger(WineScreenController.class);
   @FXML
   TableView<Wine> tableView;
@@ -61,11 +83,11 @@ public class WineScreenController extends Controller {
 
   private RangeSlider vintageSlider;
 
-  private LeafletOSMController mapController;
+  private LeafletOsmController mapController;
 
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context
    */
@@ -74,7 +96,7 @@ public class WineScreenController extends Controller {
   }
 
   /**
-   * Opens a page of wines from the database according to filters
+   * Opens a page of wines from the database according to filters.
    *
    * @param begin   first element
    * @param end     last element + 1
@@ -85,8 +107,13 @@ public class WineScreenController extends Controller {
     tableView.getItems().clear();
 
     // Check if filters exist
+<<<<<<< HEAD
     ObservableList<Wine> wines = managerContext.databaseManager.getWineDAO()
         .getAllInRange(begin, end, wineFilters);
+=======
+    ObservableList<Wine> wines = managerContext.getDatabaseManager().getWineDao()
+        .getAllInRange(begin, end, filters);
+>>>>>>> Development
 
     // send the wines to the map if they have a geo location
     mapController.runOrQueueWhenReady(() -> {
@@ -98,7 +125,20 @@ public class WineScreenController extends Controller {
     });
 
     winesViewContainer.getChildren().clear();
-    wines.forEach(this::createWineCard);
+
+    for (Wine wine : wines) {
+
+      Node node = WineWidgets.createWineCard(wine);
+
+      node.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2) {
+          openDetailedWineView(wine);
+        }
+      });
+
+      winesViewContainer.getChildren().add(node);
+    }
+
 
     // Set fetched data to the table
     tableView.setItems(wines);
@@ -184,36 +224,29 @@ public class WineScreenController extends Controller {
 
       YearStringConverter yearStringConverter = new YearStringConverter();
       vintageSlider.setLabelFormatter(yearStringConverter);
-
-
     }
 
   }
 
   /**
-   * Sets up the table columns
+   * Sets up the table columns.
    */
   public void setupTableColumns() {
     // Clear any existing cols
     tableView.getColumns().clear();
 
-    StringConverter<String> stringConverter = new DefaultStringConverter();
-    StringConverter<Integer> intConverter = new IntegerStringConverter();
-    StringConverter<Float> floatConverter = new FloatStringConverter();
-
     // Create and config cols
     tableView.setEditable(true);
 
-    TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
-    TableColumn<Wine, String> varietyColumn = new TableColumn<>("Variety");
-    TableColumn<Wine, String> wineryColumn = new TableColumn<>("Winery");
-    TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
-    TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
-    TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
-    //TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
-    TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
-    TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
-    TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
+    final TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
+    final TableColumn<Wine, String> varietyColumn = new TableColumn<>("Variety");
+    final TableColumn<Wine, String> wineryColumn = new TableColumn<>("Winery");
+    final TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
+    final TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
+    final TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
+    final TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
+    final TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
+    final TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
 
     titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
     varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));
@@ -221,13 +254,17 @@ public class WineScreenController extends Controller {
     regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));
     colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
     vintageColumn.setCellValueFactory(new PropertyValueFactory<>("vintage"));
-    //descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
     scoreColumn.setCellValueFactory(new PropertyValueFactory<>("scorePercent"));
     abvColumn.setCellValueFactory(new PropertyValueFactory<>("abv"));
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
     // Enable editing if admin
-    if (managerContext.authenticationManager.isAdmin()) {
+    if (managerContext.getAuthenticationManager().isAdmin()) {
+
+      final StringConverter<String> stringConverter = new DefaultStringConverter();
+      final StringConverter<Integer> intConverter = new IntegerStringConverter();
+      final StringConverter<Float> floatConverter = new FloatStringConverter();
+
       titleColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       varietyColumn.setCellFactory(
@@ -239,8 +276,6 @@ public class WineScreenController extends Controller {
       colorColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       vintageColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
-      //descriptionColumn.setCellFactory(
-      //wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       scoreColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
       abvColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
       priceColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
@@ -252,13 +287,18 @@ public class WineScreenController extends Controller {
     tableView.getColumns().add(regionColumn);
     tableView.getColumns().add(colorColumn);
     tableView.getColumns().add(vintageColumn);
-    //tableView.getColumns().add(descriptionColumn);
     tableView.getColumns().add(scoreColumn);
     tableView.getColumns().add(abvColumn);
     tableView.getColumns().add(priceColumn);
   }
 
+  /**
+   * Creates a card for a wine.
+   *
+   * @param wine wine
+   */
   public void createWineCard(Wine wine) {
+<<<<<<< HEAD
     WineCard card = new WineCard(winesViewContainer.widthProperty(),
         winesViewContainer.hgapProperty(), wine, true);
     card.setOnMouseClicked(event -> {
@@ -267,10 +307,33 @@ public class WineScreenController extends Controller {
       }
     });
     winesViewContainer.getChildren().add(card);
+=======
+    VBox wrapper = new VBox();
+    wrapper.setPadding(new Insets(10));
+    wrapper.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
+
+
+    Image wineImage = wineImages.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
+    ImageView imageView = new ImageView(wineImage);
+    imageView.setFitHeight(100);
+    imageView.setPreserveRatio(true);
+    HBox.setHgrow(imageView, Priority.NEVER);
+
+    Label wineTitle = new Label();
+    wineTitle.textProperty().bind(wine.titleProperty());
+    wineTitle.setStyle("-fx-font-size: 16px;");
+    wineTitle.setWrapText(true);
+
+    HBox header = new HBox(imageView, wineTitle);
+    header.setAlignment(Pos.CENTER_LEFT);
+    header.setSpacing(20);
+    wrapper.getChildren().add(header);
+    winesViewContainer.getChildren().add(wrapper);
+>>>>>>> Development
   }
 
   /**
-   * Called after the constructor for when fxml is loaded
+   * Called after the constructor for when fxml is loaded.
    * <p>
    * Gets, loads, and displays a table from a list of wines from the controller layer
    * </p>
@@ -304,7 +367,7 @@ public class WineScreenController extends Controller {
     applyFiltersButton.setOnAction(event -> onApplyFiltersButtonPressed());
     resetFiltersButton.setOnAction(event -> onResetFiltersButtonPressed());
 
-    mapController = new LeafletOSMController(webView.getEngine());
+    mapController = new LeafletOsmController(webView.getEngine());
     mapController.initMap();
 
     setupTableColumns();
@@ -315,7 +378,7 @@ public class WineScreenController extends Controller {
 
   /**
    * Creates a range slider element and displays it on the filters pane at the given layout
-   * coordinates
+   * coordinates.
    *
    * @param layoutX         The layout X position
    * @param layoutY         The layout Y position
@@ -339,6 +402,13 @@ public class WineScreenController extends Controller {
     return rangeSlider;
   }
 
+  /**
+   * Creates an auto complete field at a location.
+   *
+   * @param layoutX x location
+   * @param layoutY y location
+   * @return auto complete field
+   */
   public AutoCompletionTextField createAutoCompleteTextField(double layoutX, double layoutY) {
     AutoCompletionTextField autoCompleteTextField = new AutoCompletionTextField();
     autoCompleteTextField.setLayoutX(layoutX);
@@ -352,7 +422,7 @@ public class WineScreenController extends Controller {
 
 
   /**
-   * Is called when the apply button is pressed<br> Updates table with filtered data
+   * Is called when the apply button is pressed<br> Updates table with filtered data.
    */
   public void onApplyFiltersButtonPressed() {
     WineFilters wineFilters = new WineFilters(
@@ -372,6 +442,9 @@ public class WineScreenController extends Controller {
     openWineRange(0, 100, wineFilters);
   }
 
+  /**
+   * Handles reset button being pressed.
+   */
   public void onResetFiltersButtonPressed() {
     // Reset all parameters
     priceSlider.setHighValue(priceSlider.getMax());
@@ -387,10 +460,14 @@ public class WineScreenController extends Controller {
     titleTextField.setText("");
     colorTextField.setText("");
 
-    // Update wines
     openWineRange(0, 100, null);
   }
 
+  /**
+   * Opens a wine when mouse is clicked.
+   *
+   * @param event event
+   */
   @FXML
   public void openWineOnClick(MouseEvent event) {
     if (event.getClickCount() != 2) {
@@ -401,8 +478,13 @@ public class WineScreenController extends Controller {
     }
   }
 
+  /**
+   * Opens the detailed wine view for a wine.
+   *
+   * @param wine wine
+   */
   private void openDetailedWineView(Wine wine) {
-    Runnable backAction = () -> managerContext.GUIManager.mainController.openWineScreen();
-    managerContext.GUIManager.mainController.openDetailedWineView(wine, backAction);
+    Runnable backAction = () -> managerContext.getGuiManager().mainController.openWineScreen();
+    managerContext.getGuiManager().mainController.openDetailedWineView(wine, backAction);
   }
 }

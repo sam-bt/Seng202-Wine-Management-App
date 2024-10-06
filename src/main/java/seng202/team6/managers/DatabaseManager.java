@@ -20,37 +20,37 @@ import java.util.Set;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import seng202.team6.dao.AggregatedDAO;
-import seng202.team6.dao.DAO;
-import seng202.team6.dao.GeoLocationDAO;
-import seng202.team6.dao.UserDAO;
-import seng202.team6.dao.VineyardDAO;
-import seng202.team6.dao.VineyardTourDAO;
-import seng202.team6.dao.WineDAO;
-import seng202.team6.dao.WineListDAO;
-import seng202.team6.dao.WineNotesDAO;
-import seng202.team6.dao.WineReviewDAO;
+import seng202.team6.dao.AggregatedDao;
+import seng202.team6.dao.Dao;
+import seng202.team6.dao.GeoLocationDao;
+import seng202.team6.dao.UserDao;
+import seng202.team6.dao.VineyardDao;
+import seng202.team6.dao.VineyardTourDao;
+import seng202.team6.dao.WineDao;
+import seng202.team6.dao.WineListDao;
+import seng202.team6.dao.WineNotesDao;
+import seng202.team6.dao.WineReviewDao;
 import seng202.team6.service.VineyardDefaultsService;
 import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.Timer;
 
 /**
  * Manages the creation, initialization, and teardown of a database. Provides methods for setting up
- * an in-memory or persistent SQLite database connection and initializes DAOs (Data Access Objects)
+ * an in-memory or persistent SQLite database connection and initializes Daos (Data Access Objects)
  * for interacting with different database tables.
  */
 public class DatabaseManager {
   private static final Logger log = LogManager.getLogger(DatabaseManager.class);
   private final Connection connection;
-  private final UserDAO userDAO;
-  private final WineDAO wineDAO;
-  private final WineListDAO wineListDAO;
-  private final VineyardDAO vineyardsDAO;
-  private final WineNotesDAO wineNotesDAO;
-  private final WineReviewDAO wineReviewDAO;
-  private final GeoLocationDAO geoLocationDAO;
-  private final VineyardTourDAO vineyardTourDAO;
-  private final AggregatedDAO aggregatedDAO;
+  private final UserDao userDao;
+  private final WineDao wineDao;
+  private final WineListDao wineListDao;
+  private final VineyardDao vineyardsDao;
+  private final WineNotesDao wineNotesDao;
+  private final WineReviewDao wineReviewDao;
+  private final GeoLocationDao geoLocationDao;
+  private final VineyardTourDao vineyardTourDao;
+  private final AggregatedDao aggregatedDao;
 
   /**
    * Constructs a NewDatabaseManager with an in-memory SQLite database connection.
@@ -73,7 +73,7 @@ public class DatabaseManager {
   }
 
   /**
-   * Private constructor for NewDatabaseManager that initializes DAOs using the provided database
+   * Private constructor for NewDatabaseManager that initializes Daos using the provided database
    * connection.
    *
    * @param connection the database connection to use
@@ -84,19 +84,19 @@ public class DatabaseManager {
     }
     this.connection = connection;
     log.info("Successfully opened a connection to the database");
-    this.userDAO = new UserDAO(connection);
-    this.wineDAO = new WineDAO(connection);
-    this.wineListDAO = new WineListDAO(connection);
-    this.vineyardsDAO = new VineyardDAO(connection);
-    this.wineNotesDAO = new WineNotesDAO(connection);
-    this.wineReviewDAO = new WineReviewDAO(connection);
-    this.geoLocationDAO = new GeoLocationDAO(connection);
-    this.vineyardTourDAO = new VineyardTourDAO(connection);
-    this.aggregatedDAO = new AggregatedDAO(connection, wineReviewDAO, wineNotesDAO, wineDAO);
+    this.userDao = new UserDao(connection);
+    this.wineDao = new WineDao(connection);
+    this.wineListDao = new WineListDao(connection);
+    this.vineyardsDao = new VineyardDao(connection);
+    this.wineNotesDao = new WineNotesDao(connection);
+    this.wineReviewDao = new WineReviewDao(connection);
+    this.geoLocationDao = new GeoLocationDao(connection);
+    this.vineyardTourDao = new VineyardTourDao(connection);
+    this.aggregatedDao = new AggregatedDao(connection, wineReviewDao, wineNotesDao, wineDao);
     init();
 
-    VineyardDefaultsService vineyardDefaultsService = new VineyardDefaultsService(geoLocationDAO,
-        vineyardsDAO, !inMemory);
+    VineyardDefaultsService vineyardDefaultsService = new VineyardDefaultsService(geoLocationDao,
+        vineyardsDao, !inMemory);
     vineyardDefaultsService.init();
   }
 
@@ -149,15 +149,15 @@ public class DatabaseManager {
 
   /**
    * Initializes the database by executing SQL statements required to set up the tables. The SQL
-   * statements are fetched from each DAO.
+   * statements are fetched from each Dao.
    *
    * @throws RuntimeException if any SQL execution fails
    */
   public void init() {
-    List<String> sqlStatements = Stream.of(userDAO, wineDAO, wineListDAO, vineyardsDAO, wineNotesDAO,
-            wineReviewDAO, geoLocationDAO, vineyardTourDAO)
-        .filter(Objects::nonNull)  // Filter out null DAOs
-        .map(DAO::getInitialiseStatements)
+    List<String> sqlStatements = Stream.of(userDao, wineDao, wineListDao, wineNotesDao,
+            wineReviewDao, geoLocationDao)
+        .filter(Objects::nonNull)  // Filter out null Daos
+        .map(Dao::getInitialiseStatements)
         .filter(Objects::nonNull)  // Filter out null statements
         .flatMap(Arrays::stream)
         .toList();
@@ -171,6 +171,11 @@ public class DatabaseManager {
             "BEGIN " +
             "INSERT INTO LIST_NAME (USERNAME, NAME) " +
             "VALUES (NEW.USERNAME, 'Favourites'); " +
+            "END",
+        "CREATE TRIGGER IF NOT EXISTS HISTORY_LIST" +
+            "AFTER INSERT ON USER " +
+            "FOR EACH ROW " +
+            "BEGIN " +
             "INSERT INTO LIST_NAME (USERNAME, NAME) " +
             "VALUES (NEW.USERNAME, 'History'); " +
             "END",
@@ -192,7 +197,7 @@ public class DatabaseManager {
       throw new RuntimeException(e);
     }
     log.info("Successfully executed {} initialise statements", sqlStatements.size());
-    geoLocationDAO.addDefaultGeoLocations();
+    geoLocationDao.addDefaultGeoLocations();
   }
 
   /**
@@ -208,59 +213,32 @@ public class DatabaseManager {
     }
   }
 
-  public Set<String> getDistinctStringValues(String attribute, String tableName) {
-    Set<String> values = new HashSet<>();
-    Timer timer = new Timer();
-    String sql = "SELECT DISTINCT " + attribute + " FROM " + tableName;
-    try (PreparedStatement statement = connection.prepareStatement(sql)) {
-      try (ResultSet resultSet = statement.executeQuery()) {
-        while (resultSet.next()) {
-          values.add(resultSet.getString(1));
-        }
-        log.error("Successfully retrieved {} distinct values from {} in table {}",
-            values.size(), attribute, tableName);
-      }
-    } catch (SQLException error) {
-      log.error("Failed to select distinct values from {} in table {}", attribute,
-          tableName);
-    }
-    return values;
+  public UserDao getUserDao() {
+    return userDao;
   }
 
-  public UserDAO getUserDAO() {
-    return userDAO;
+  public WineDao getWineDao() {
+    return wineDao;
   }
 
-  public WineDAO getWineDAO() {
-    return wineDAO;
+  public WineListDao getWineListDao() {
+    return wineListDao;
   }
 
-  public WineListDAO getWineListDAO() {
-    return wineListDAO;
+  public WineNotesDao getWineNotesDao() {
+    return wineNotesDao;
   }
 
-  public VineyardDAO getVineyardsDAO() {
-    return vineyardsDAO;
+  public WineReviewDao getWineReviewDao() {
+    return wineReviewDao;
   }
 
-  public WineNotesDAO getWineNotesDAO() {
-    return wineNotesDAO;
+  public GeoLocationDao getGeoLocationDao() {
+    return geoLocationDao;
   }
 
-  public WineReviewDAO getWineReviewDAO() {
-    return wineReviewDAO;
-  }
-
-  public GeoLocationDAO getGeoLocationDAO() {
-    return geoLocationDAO;
-  }
-
-  public VineyardTourDAO getVineyardTourDAO() {
-    return vineyardTourDAO;
-  }
-
-  public AggregatedDAO getAggregatedDAO() {
-    return aggregatedDAO;
+  public AggregatedDao getAggregatedDao() {
+    return aggregatedDao;
   }
 
   /**

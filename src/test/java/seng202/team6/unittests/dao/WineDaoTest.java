@@ -8,20 +8,20 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import seng202.team6.dao.WineDAO;
+import seng202.team6.dao.WineDao;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Wine;
 
-public class WineDAOTest {
+public class WineDaoTest {
 
   private DatabaseManager databaseManager;
-  private WineDAO wineDAO;
+  private WineDao wineDao;
 
   @BeforeEach
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
-    wineDAO = databaseManager.getWineDAO();
-    wineDAO.setUseCache(false);
+    wineDao = databaseManager.getWineDao();
+    wineDao.setUseCache(false);
   }
 
   @AfterEach
@@ -32,20 +32,20 @@ public class WineDAOTest {
   @Test
   void testAddSingleWine() {
     addWines(1);
-    assertEquals(1, wineDAO.getAll().size());
+    assertEquals(1, wineDao.getAll().size());
   }
 
   @Test
   void testAddingMultipleWines() {
     addWines(20);
-    assertEquals(20, wineDAO.getAll().size());
+    assertEquals(20, wineDao.getAll().size());
   }
 
   @Test
   void testRemoveAllWines() {
     addWines(10);
-    wineDAO.removeAll();
-    assertEquals(0, wineDAO.getAll().size());
+    wineDao.removeAll();
+    assertEquals(0, wineDao.getAll().size());
   }
 
   @Test
@@ -59,8 +59,8 @@ public class WineDAOTest {
               50f, null));
     }
 
-    wineDAO.replaceAll(wines);
-    assertEquals(wines.size(), wineDAO.getAll().size());
+    wineDao.replaceAll(wines);
+    assertEquals(wines.size(), wineDao.getAll().size());
   }
 
   @Test
@@ -71,7 +71,7 @@ public class WineDAOTest {
         "bob's wine", "red", 2011, "na", 99, 25f, 10f);
     initialWine.setTitle(changed);
 
-    Wine updatedWine = wineDAO.getAll().getFirst();
+    Wine updatedWine = wineDao.getAll().getFirst();
     assertEquals(changed, updatedWine.getTitle());
   }
 
@@ -83,7 +83,7 @@ public class WineDAOTest {
         "bob's wine", "red", 2011, "na", 99, 25f, 10f);
     initialWine.setVariety(changed);
 
-    Wine updatedWine = wineDAO.getAll().getFirst();
+    Wine updatedWine = wineDao.getAll().getFirst();
     assertEquals(changed, updatedWine.getVariety());
   }
 
@@ -95,7 +95,7 @@ public class WineDAOTest {
         "winery", "red", 2011, "description", 99, 25f, 10f);
     initialWine.setCountry(changed);
 
-    Wine updatedWine = wineDAO.getAll().getFirst();
+    Wine updatedWine = wineDao.getAll().getFirst();
     assertEquals(changed, updatedWine.getCountry());
   }
 
@@ -107,7 +107,7 @@ public class WineDAOTest {
         "winery", "red", 2011, "description", 99, 25f, 10f);
     initialWine.setRegion(changed);
 
-    Wine updatedWine = wineDAO.getAll().getFirst();
+    Wine updatedWine = wineDao.getAll().getFirst();
     assertEquals(changed, updatedWine.getRegion());
   }
 
@@ -119,7 +119,7 @@ public class WineDAOTest {
         initial, "red", 2011, "description", 99, 25f, 10f);
     initialWine.setWinery(changed);
 
-    Wine updatedWine = wineDAO.getAll().getFirst();
+    Wine updatedWine = wineDao.getAll().getFirst();
     assertEquals(changed, updatedWine.getWinery());
   }
 
@@ -131,7 +131,7 @@ public class WineDAOTest {
         "winery", initial, 2011, "description", 99, 25f, 10f);
     initialWine.setColor(changed);
 
-    Wine updatedWine = wineDAO.getAll().getFirst();
+    Wine updatedWine = wineDao.getAll().getFirst();
     assertEquals(changed, updatedWine.getColor());
   }
 
@@ -143,7 +143,7 @@ public class WineDAOTest {
         "winery", "red", initial, "description", 99, 25f, 10f);
     initialWine.setVintage(changed);
 
-    Wine updatedWine = wineDAO.getAll().getFirst();
+    Wine updatedWine = wineDao.getAll().getFirst();
     assertEquals(changed, updatedWine.getVintage());
   }
 
@@ -155,7 +155,7 @@ public class WineDAOTest {
         "winery", "red", 2011, initial, 99, 25f, 10f);
     initialWine.setDescription(changed);
 
-    Wine updatedWine = wineDAO.getAll().getFirst();
+    Wine updatedWine = wineDao.getAll().getFirst();
     assertEquals(changed, updatedWine.getDescription());
   }
 
@@ -167,7 +167,7 @@ public class WineDAOTest {
         "winery", "red", 2011, "description", initial, 25f, 10f);
     initialWine.setScorePercent(changed);
 
-    Wine updatedWine = wineDAO.getAll().getFirst();
+    Wine updatedWine = wineDao.getAll().getFirst();
     assertEquals(changed, updatedWine.getScorePercent());
   }
 
@@ -179,7 +179,7 @@ public class WineDAOTest {
         "winery", "red", 2011, "description", 99, initial, 10f);
     initialWine.setAbv(changed);
 
-    Wine updatedWine = wineDAO.getAll().getFirst();
+    Wine updatedWine = wineDao.getAll().getFirst();
     assertEquals(changed, updatedWine.getAbv(), 0.001);
   }
 
@@ -191,7 +191,7 @@ public class WineDAOTest {
         "winery", "red", 2011, "description", 99, 13.5f, initial);
     initialWine.setPrice(changed);
 
-    Wine updatedWine = wineDAO.getAll().getFirst();
+    Wine updatedWine = wineDao.getAll().getFirst();
     assertEquals(changed, updatedWine.getPrice(), 0.001);
   }
 
@@ -202,7 +202,7 @@ public class WineDAOTest {
           new Wine(-1, "wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011,
               "na", 99, 25f, (float) i, null));
     }
-    wineDAO.addAll(wines);
+    wineDao.addAll(wines);
   }
 
   private Wine createWine(String title,
@@ -218,7 +218,7 @@ public class WineDAOTest {
       float price) {
     Wine wine = new Wine(1, title, variety, country, region, winery, color, vintage, description,
         scorePercent, abv, price, null);
-    wineDAO.add(wine);
-    return wineDAO.getAll().getFirst();
+    wineDao.add(wine);
+    return wineDao.getAll().getFirst();
   }
 }

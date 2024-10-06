@@ -1,7 +1,6 @@
 package seng202.team6.dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +14,7 @@ import seng202.team6.model.VineyardTour;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
-public class VineyardTourDAO extends DAO {
+public class VineyardTourDao extends DAO {
 
   /**
    * Cache to store and reuse WineList objects to avoid duplication
@@ -27,8 +26,8 @@ public class VineyardTourDAO extends DAO {
    *
    * @param connection The database connection to be used for wine tour operations.
    */
-  public VineyardTourDAO(Connection connection) {
-    super(connection, VineyardTourDAO.class);
+  public VineyardTourDao(Connection connection) {
+    super(connection, VineyardTourDao.class);
   }
 
   @Override

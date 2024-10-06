@@ -56,7 +56,7 @@ public class WineFilteringStepDefinitions {
         abv,
         price,
         null);
-    databaseManager.getWineDAO().addAll(List.of(wine));
+    databaseManager.getWineDao().addAll(List.of(wine));
   }
 
   @When("the user searches for title containing {string}")
@@ -153,7 +153,7 @@ public class WineFilteringStepDefinitions {
   }
 
   private void applySearch() {
-    filteredWines = databaseManager.getWineDAO().getAllInRange(0, Integer.MAX_VALUE, wineFilters);
+    filteredWines = databaseManager.getWineDao().getAllInRange(0, Integer.MAX_VALUE, wineFilters);
   }
 
   @And("the list of wines has size {int}")

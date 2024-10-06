@@ -11,23 +11,27 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import seng202.team6.model.GeoLocation;
+import seng202.team6.util.ProcessCsv;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import seng202.team6.model.GeoLocation;
-import seng202.team6.util.ProcessCSV;
+import seng202.team6.util.ProcessCsv;
 import seng202.team6.util.Timer;
 
 /**
  * Data Access Object (DAO) for handling geolocation related database operations.
  */
-public class GeoLocationDAO extends DAO {
+public class GeoLocationDao extends Dao {
 
   /**
    * Constructs a new GeoLocationDAO with the given database connection.
    *
    * @param connection The database connection to be used for geolocation operations.
    */
-  public GeoLocationDAO(Connection connection) {
-    super(connection, GeoLocationDAO.class);
+  public GeoLocationDao(Connection connection) {
+    super(connection, GeoLocationDao.class);
   }
 
   /**
@@ -38,11 +42,11 @@ public class GeoLocationDAO extends DAO {
   @Override
   public String[] getInitialiseStatements() {
     return new String[]{
-        "CREATE TABLE IF NOT EXISTS GEOLOCATION (" +
-            "NAME           VARCHAR(64)   PRIMARY KEY," +
-            "LATITUDE       DECIMAL       NOT NULL," +
-            "LONGITUDE      DECIMAL       NOT NULL" +
-            ")"
+        "CREATE TABLE IF NOT EXISTS GEOLOCATION ("
+            + "NAME           VARCHAR(64)   PRIMARY KEY,"
+            + "LATITUDE       DECIMAL       NOT NULL,"
+            + "LONGITUDE      DECIMAL       NOT NULL"
+            + ")"
     };
   }
 
@@ -54,17 +58,17 @@ public class GeoLocationDAO extends DAO {
     Timer timer = new Timer();
     if (geoLocationTableHasData()) {
       log.info("Skip loading default geolocations as the GEOLOCATION table is not empty in {}ms",
-          timer.stop());
+          timer.currentOffsetMilliseconds());
       return;
     }
 
     String sql = "INSERT INTO GEOLOCATION values (?, ?, ?);";
-    List<String[]> rows = ProcessCSV.getCSVRows(
+    List<String[]> rows = ProcessCsv.getCsvRows(
         getClass().getResourceAsStream("/data/nz_geolocations.csv"));
 
     int rowsAffected = batchInsertGeoLocations(sql, rows);
     log.info("Successfully added {} out of {} default geolocations in {}ms",
-        rowsAffected, rows.size(), timer.stop());
+        rowsAffected, rows.size(), timer.currentOffsetMilliseconds());
   }
 
   public void addAll(Map<String, GeoLocation> geoLocations) {
@@ -80,7 +84,7 @@ public class GeoLocationDAO extends DAO {
 
       int rowsAffected = Arrays.stream(statement.executeBatch()).sum();
       log.info("Successfully added {} geolocations in {}ms",
-          rowsAffected, rowsAffected, timer.stop());
+          rowsAffected, rowsAffected, timer.currentOffsetMilliseconds());
     } catch (SQLException error) {
       log.error("Failed to add geolocations", error);
     }
@@ -105,7 +109,7 @@ public class GeoLocationDAO extends DAO {
         }
       }
       log.info("Successfully found {} out of {} location names in {}ms",
-          existingLocationNames.size(), locationNames.size(), timer.stop());
+          existingLocationNames.size(), locationNames.size(), timer.currentOffsetMilliseconds());
     } catch (SQLException error) {
       log.error("Failed to retrieve locations names that match", error);
     }

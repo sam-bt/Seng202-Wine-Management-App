@@ -13,6 +13,9 @@ import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
 
+/**
+ * Controller for the wine review popup.
+ */
 public class WineReviewPopupController extends Controller {
 
   private final WineReviewsService wineReviewsService;
@@ -32,6 +35,12 @@ public class WineReviewPopupController extends Controller {
   private Label characterCountLabel;
   private Rating ratingStars;
 
+  /**
+   * Constructor.
+   *
+   * @param context manager context
+   * @param wineReviewsService wine review service
+   */
   public WineReviewPopupController(ManagerContext context, WineReviewsService wineReviewsService) {
     super(context);
     this.wineReviewsService = wineReviewsService;
@@ -74,13 +83,13 @@ public class WineReviewPopupController extends Controller {
 
   @FXML
   void onBackButtonClick() {
-    managerContext.GUIManager.mainController.closePopup();
+    managerContext.getGuiManager().mainController.closePopup();
   }
 
   @FXML
   void onDeleteButtonClick() {
     wineReviewsService.deleteUsersReview();
-    managerContext.GUIManager.mainController.closePopup();
+    managerContext.getGuiManager().mainController.closePopup();
   }
 
   @FXML
@@ -88,6 +97,6 @@ public class WineReviewPopupController extends Controller {
     double rating = ratingStars.getRating();
     String description = descriptionTextArea.getText();
     wineReviewsService.addOrUpdateUserReview(rating, description);
-    managerContext.GUIManager.mainController.closePopup();
+    managerContext.getGuiManager().mainController.closePopup();
   }
 }

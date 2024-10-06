@@ -6,10 +6,19 @@ import javafx.scene.image.Image;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Class to manage reading an image.
+ */
 public class ImageReader {
 
   private static final Logger log = LogManager.getLogger(ImageReader.class);
 
+  /**
+   * Loads an image from disk.
+   *
+   * @param path image path
+   * @return image
+   */
   public static Image loadImage(String path) {
     try (InputStream inputStream = ImageReader.class.getResourceAsStream(path)) {
       if (inputStream != null) {

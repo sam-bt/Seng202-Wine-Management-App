@@ -16,7 +16,7 @@ import seng202.team6.model.VineyardTour;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
-public class VineyardDAO extends DAO {
+public class VineyardDao extends DAO {
 
   /**
    * Cache to store and reuse Vineyard objects to avoid duplication
@@ -28,8 +28,8 @@ public class VineyardDAO extends DAO {
    *
    * @param connection The database connection to be used for vineyard operations
    */
-  public VineyardDAO(Connection connection) {
-    super(connection, VineyardDAO.class);
+  public VineyardDao(Connection connection) {
+    super(connection, VineyardDao.class);
   }
 
   /**

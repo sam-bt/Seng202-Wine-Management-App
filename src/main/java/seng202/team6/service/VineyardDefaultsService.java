@@ -8,23 +8,25 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.dao.GeoLocationDAO;
-import seng202.team6.dao.VineyardDAO;
+import seng202.team6.dao.GeoLocationDao;
+import seng202.team6.dao.VineyardDao;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.util.GeolocationResolver;
 import seng202.team6.util.ProcessCSV;
+import seng202.team6.util.ProcessCsv;
 import seng202.team6.util.Timer;
 
 public class VineyardDefaultsService {
   private final Logger log = LogManager.getLogger(getClass());
   private final GeolocationResolver geolocationResolver;
-  private final GeoLocationDAO geoLocationDAO;
-  private final VineyardDAO vineyardDAO;
+  private final GeoLocationDao geoLocationDao;
+  private final VineyardDao vineyardDAO;
   private final boolean resolveMissingAddresses;
 
-  public VineyardDefaultsService(GeoLocationDAO geoLocationDAO, VineyardDAO vineyardDAO,
+  public VineyardDefaultsService(GeoLocationDao geoLocationDao, VineyardDao vineyardDAO,
       boolean resolveMissingAddresses) {
-    this.geoLocationDAO = geoLocationDAO;
+    this.geoLocationDao = geoLocationDao;
     this.vineyardDAO = vineyardDAO;
     this.resolveMissingAddresses = resolveMissingAddresses;
     // only initialise the resolver if we are using it
@@ -37,7 +39,7 @@ public class VineyardDefaultsService {
     Timer timer = new Timer();
     if (vineyardDAO.vineyardsTableHasData()) {
       log.info("Skip loading default vineyards as the VINEYARD table is not empty in {}ms",
-          timer.stop());
+          timer.currentOffsetMilliseconds());
       return;
     }
 
@@ -45,12 +47,12 @@ public class VineyardDefaultsService {
     if (resolveMissingAddresses) {
       Set<String> addresses = vineyards.stream().map(Vineyard::getAddress)
           .collect(Collectors.toSet());
-      Set<String> addressesInDatabase = geoLocationDAO.getExistingLocationNames(addresses);
+      Set<String> addressesInDatabase = geoLocationDao.getExistingLocationNames(addresses);
       List<String> missingAddresses = findMissingAddresses(addresses, addressesInDatabase);
       if (!missingAddresses.isEmpty()) {
         Map<String, GeoLocation> missingAddressesGeolocations = geolocationResolver.resolveAll(
             missingAddresses);
-        geoLocationDAO.addAll(missingAddressesGeolocations);
+        geoLocationDao.addAll(missingAddressesGeolocations);
       }
     }
     vineyardDAO.addAll(vineyards);
@@ -58,7 +60,7 @@ public class VineyardDefaultsService {
 
   private List<Vineyard> loadDefaultVineyards() {
     List<Vineyard> vineyards = new ArrayList<>();
-    List<String[]> rows = ProcessCSV.getCSVRows(
+    List<String[]> rows = ProcessCsv.getCsvRows(
         getClass().getResourceAsStream("/data/nz_vineyards.csv"));
     for (int i = 1; i < rows.size(); i++) {
       String[] row = rows.get(i);

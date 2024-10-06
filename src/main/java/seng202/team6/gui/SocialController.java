@@ -17,20 +17,27 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
 
+/**
+ * Controller for the social screen.
+ */
 public class SocialController extends Controller {
 
   @FXML
   TableView<Pair<WineReview, Wine>> reviewTableView;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context
    */
   public SocialController(ManagerContext managerContext) {
-    super(managerContext);// TODO allow upvotes/downvotes/user search/review search
+    super(managerContext);
   }
 
+  /**
+   * Initializes this controller.
+   */
+  @Override
   public void init() {
     setupReviewTableColumns();
     openReviewInRange(0, 100);
@@ -38,22 +45,25 @@ public class SocialController extends Controller {
   }
 
   /**
-   * Opens a page of reviews from the database according to filters
+   * Opens a page of reviews from the database according to filters.
    *
    * @param begin first element
    * @param end   last element + 1
    */
-  private void openReviewInRange(int begin, int end) { // TODO, add filtering
+  private void openReviewInRange(int begin, int end) {
     // Clear existing data
     reviewTableView.getItems().clear();
 
-    ObservableList<Pair<WineReview, Wine>>  reviews = managerContext.databaseManager
-        .getAggregatedDAO().getWineReviewsAndWines(begin, end);
+    ObservableList<Pair<WineReview, Wine>>  reviews = managerContext.getDatabaseManager()
+        .getAggregatedDao().getWineReviewsAndWines(begin, end);
 
     // Set fetched data to the table
     reviewTableView.setItems(reviews);
   }
 
+  /**
+   * Sets up the review table columns.
+   */
   public void setupReviewTableColumns() {
     // Clear any existing cols
     reviewTableView.getColumns().clear();
@@ -61,15 +71,19 @@ public class SocialController extends Controller {
     // Create and config cols
     reviewTableView.setEditable(true);
 
-    TableColumn<Pair<WineReview, Wine>, String> titleColumn = new TableColumn<>("Wine Name");
-    TableColumn<Pair<WineReview, Wine>, String> usernameColumn = new TableColumn<>("By");
-    TableColumn<Pair<WineReview, Wine>, Double> ratingsColumn = new TableColumn<>("Score");
-    TableColumn<Pair<WineReview, Wine>, Date> dateColumn = new TableColumn<>("Date");
+    final TableColumn<Pair<WineReview, Wine>, String> titleColumn = new TableColumn<>("Wine Name");
+    final TableColumn<Pair<WineReview, Wine>, String> usernameColumn = new TableColumn<>("By");
+    final TableColumn<Pair<WineReview, Wine>, Double> ratingsColumn = new TableColumn<>("Score");
+    final TableColumn<Pair<WineReview, Wine>, Date> dateColumn = new TableColumn<>("Date");
 
-    titleColumn.setCellValueFactory(cellData -> cellData.getValue().getSecond().titleProperty());
-    usernameColumn.setCellValueFactory(cellData -> cellData.getValue().getFirst().usernameProperty());
-    ratingsColumn.setCellValueFactory(cellData -> cellData.getValue().getFirst().ratingProperty().asObject());
-    dateColumn.setCellValueFactory(cellData -> cellData.getValue().getFirst().dateProperty().orElse(null));
+    titleColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getSecond().titleProperty());
+    usernameColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getFirst().usernameProperty());
+    ratingsColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getFirst().ratingProperty().asObject());
+    dateColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getFirst().dateProperty().orElse(null));
 
     ratingsColumn.setCellFactory(column -> new TableCell<>() {
       private final HBox starBox = new HBox(5);
@@ -82,7 +96,7 @@ public class SocialController extends Controller {
           setGraphic(null);
         } else {
           starBox.getChildren().clear();
-          Rating ratingStars = setRating(rating);
+          Rating ratingStars = createRating(rating);
           starBox.getChildren().addFirst(ratingStars);
           setGraphic(starBox);
         }
@@ -95,7 +109,13 @@ public class SocialController extends Controller {
     reviewTableView.getColumns().add(dateColumn);
   }
 
-  private Rating setRating(double rating) {
+  /**
+   * Creates the rating for a given rating.
+   *
+   * @param rating rating
+   * @return rating object
+   */
+  private Rating createRating(double rating) {
     Rating ratingStars = new Rating();
     ratingStars.setUpdateOnHover(false);
     ratingStars.setMouseTransparent(true);
@@ -106,9 +126,13 @@ public class SocialController extends Controller {
     return ratingStars;
   }
 
+  /**
+   * Opens a review when clicked.
+   *
+   * @param event mouse event
+   */
   @FXML
-  public void openReviewOnClick(
-      MouseEvent event) { //TODO take to review screen (upvote/downvote reviews)
+  public void openReviewOnClick(MouseEvent event) {
     if (event.getClickCount() != 2) {
       return;
     }
@@ -120,10 +144,15 @@ public class SocialController extends Controller {
 
     String reviewerUsername = selectedReview.getFirst().getUsername();
     Wine selectedWine = selectedReview.getSecond();
-    User reviewer = managerContext.databaseManager.getUserDAO().get(reviewerUsername);
+    User reviewer = managerContext.getDatabaseManager().getUserDao().get(reviewerUsername);
     WineReviewsService wineReviewsService = new WineReviewsService(
-        managerContext.authenticationManager, managerContext.databaseManager, selectedWine);
-    managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview.getFirst(), selectedWine);
+        managerContext.getAuthenticationManager(),
+        managerContext.getDatabaseManager(),
+        selectedWine);
+    managerContext
+        .getGuiManager()
+        .mainController
+        .openPopupReviewView(wineReviewsService, reviewer, selectedReview.getFirst(), selectedWine);
   }
 
 }
