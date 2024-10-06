@@ -158,6 +158,35 @@ public class GeolocationResolver {
       coordinatesArray.add(coordinate);
     }
 
+    HttpResponse<String> response = sendRouteRequest(coordinatesArray);
+
+    if (response.statusCode() != 200) {
+      return null;
+    }
+
+    try {
+
+      JSONParser parser = new JSONParser();
+      JSONObject parsedRespone = (JSONObject) parser.parse(response.body());
+
+      JSONArray routesArray = (JSONArray) parsedRespone.get("routes");
+
+      JSONObject firstRoute = (JSONObject) routesArray.getFirst();
+
+      geometry = (String) firstRoute.get("geometry");
+    } catch (ParseException e) {
+      throw new RuntimeException(e);
+    }
+
+    if (geometry != null) {
+      return geometry;
+    } else {
+      throw new RuntimeException("error");
+    }
+  }
+
+  private HttpResponse<String> sendRouteRequest(JSONArray coordinatesArray) {
+
     JSONObject routeBody = new JSONObject();
     routeBody.put("coordinates", coordinatesArray);
 
@@ -171,36 +200,11 @@ public class GeolocationResolver {
 
       HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+      return response;
 
-      JSONParser parser = new JSONParser();
-      JSONObject parsedRespone = (JSONObject) parser.parse(response.body());
-
-      JSONArray routesArray = (JSONArray) parsedRespone.get("routes");
-
-      JSONObject firstRoute = (JSONObject) routesArray.get(0);
-
-      geometry = (String) firstRoute.get("geometry");
-
-    } catch (URISyntaxException | IOException | InterruptedException | ParseException e) {
+    } catch (URISyntaxException | IOException | InterruptedException e) {
       throw new RuntimeException(e);
     }
-
-    if (geometry != null) {
-      return geometry;
-    } else {
-      throw new RuntimeException("error");
-    }
-
   }
-
-//  public static void main(String[] args) {
-//    GeolocationResolver geolocationResolver = new GeolocationResolver();
-//    String route = geolocationResolver.getRoute(Arrays.asList(
-//            new GeoLocation(-43.522442, 172.580683),
-//            new GeoLocation(-43.530542, 172.626466),
-//            new GeoLocation(-43.52556, 172.57944),
-//            new GeoLocation(-43.52907, 172.60660)
-//    ));
-//  }
 
 }

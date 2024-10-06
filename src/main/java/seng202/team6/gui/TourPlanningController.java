@@ -101,13 +101,22 @@ public class TourPlanningController extends Controller {
   @FXML
   public void onCalculateTourClick() {
     tabPane.getSelectionModel().select(viewTourTab);
-    mapController.clearWineMarkers();
-    List<GeoLocation> list = currentTourPlanningService.getVineyards().stream()
+    List<GeoLocation> vineyardList = currentTourPlanningService.getVineyards().stream()
             .peek(vineyard -> mapController.addVineyardMaker(vineyard, false))
             .map(Vineyard::getGeoLocation)
             .toList();
-    String geometry = geolocation.getRoute(list);
-    mapController.addRoute(geometry);
+    mapController.clearWineMarkers();
+    if (vineyardList.size() >= 2) {
+      String geometry = geolocation.getRoute(vineyardList);
+      if (geometry != null) {
+        mapController.addRoute(geometry);
+      } else {
+        System.out.println("There was an error finding a route between your selected vineyards");
+      }
+    } else {
+      System.out.println("Please select at least 2 vineyards");
+    }
+
   }
 
   public void openVineyardTour(VineyardTour vineyardTour) {
