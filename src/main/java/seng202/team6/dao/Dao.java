@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 public abstract class Dao {
 
   /**
-   * The database connected used by this DAO
+   * The database connected used by this DAO.
    */
   protected final Connection connection;
 
@@ -44,7 +44,7 @@ public abstract class Dao {
    * statements.
    *
    * @return an array of SQL statements for table initialization, or null if no statements are
-   * needed.
+   *      needed.
    */
   public String[] getInitialiseStatements() {
     return null;

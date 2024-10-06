@@ -8,6 +8,9 @@ import javafx.scene.input.KeyCode;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.AuthenticationResponse;
 
+/**
+ * controller to handle updating passwords.
+ */
 public class UpdatePasswordController extends Controller {
 
   @FXML
@@ -24,7 +27,7 @@ public class UpdatePasswordController extends Controller {
   private boolean disabled;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context
    */
@@ -32,6 +35,9 @@ public class UpdatePasswordController extends Controller {
     super(managerContext);
   }
 
+  /**
+   * Initializes the controller.
+   */
   public void initialize() {
     disabled = managerContext.getGuiManager().mainController.isDisabled();
     if (disabled) {

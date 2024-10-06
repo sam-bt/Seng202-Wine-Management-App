@@ -53,6 +53,7 @@ public class FxWrapper {
 
   /**
    * Sets the window title.
+   *
    * @param title title to set
    */
   public void setWindowTitle(String title) {

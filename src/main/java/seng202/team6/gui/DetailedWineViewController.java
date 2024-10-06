@@ -43,10 +43,10 @@ public class DetailedWineViewController extends Controller {
   private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage("/img/default_wine.png");
   private static final Map<String, Image> wineImages = new HashMap<>() {
     {
-        put("red", RED_WINE_IMAGE);
-        put("white", WHITE_WINE_IMAGE);
-        put("rose", ROSE_WINE_IMAGE);
-        put("rosé", ROSE_WINE_IMAGE);
+      put("red", RED_WINE_IMAGE);
+      put("white", WHITE_WINE_IMAGE);
+      put("rose", ROSE_WINE_IMAGE);
+      put("rosé", ROSE_WINE_IMAGE);
     }
   };
   private final WineReviewsService wineReviewsService;

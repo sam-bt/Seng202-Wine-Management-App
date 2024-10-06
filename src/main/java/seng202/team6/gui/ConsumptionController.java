@@ -118,7 +118,8 @@ public class ConsumptionController extends Controller {
    * @return all wines consumed in the past week
    */
   private ObservableList<WineDatePair> getPastWeekConsumption() {
-    ObservableList<WineDatePair> wineHistory = managerContext.getDatabaseManager().getAggregatedDao()
+    ObservableList<WineDatePair> wineHistory =
+        managerContext.getDatabaseManager().getAggregatedDao()
         .getWinesMappedWithDatesFromList(getHistoryList());
     wineHistory.sort(Comparator.comparing(WineDatePair::date));
     long oneWeek = 1000 * 60 * 60 * 24 * 7;
@@ -137,7 +138,9 @@ public class ConsumptionController extends Controller {
     }
     float normalizedProgress = Math.min(1f, drinks / ALCOHOLIC_STD_DRINKS);
     winesInPastWeekBar.setProgress(normalizedProgress);
-    winesInPastWeekLabel.setText((drinks > ALCOHOLIC_STD_DRINKS ? (int)ALCOHOLIC_STD_DRINKS + "+" : (int) drinks) + " Drinks");
+    winesInPastWeekLabel.setText(
+        (drinks > ALCOHOLIC_STD_DRINKS ? (int) ALCOHOLIC_STD_DRINKS + "+" : (int) drinks)
+            + " Drinks");
   }
 
   /**

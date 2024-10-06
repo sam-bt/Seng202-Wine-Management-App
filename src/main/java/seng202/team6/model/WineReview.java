@@ -24,7 +24,7 @@ public class WineReview {
   private final Property<Date> date;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param id id
    * @param wineId id
@@ -54,7 +54,7 @@ public class WineReview {
    *
    * @return id
    */
-  public long getID() {
+  public long getId() {
     return id.get();
   }
 
@@ -72,7 +72,7 @@ public class WineReview {
    *
    * @return wine id
    */
-  public long getWineID() {
+  public long getWineId() {
     return wineId.get();
   }
 
@@ -81,7 +81,7 @@ public class WineReview {
    *
    * @return id
    */
-  public ReadOnlyLongProperty wineIDProperty() {
+  public ReadOnlyLongProperty wineIdProperty() {
     return wineId;
   }
 
@@ -114,6 +114,7 @@ public class WineReview {
 
   /**
    * Sets the rating.
+   *
    * @param rating rating
    */
   public void setRating(double rating) {
@@ -121,7 +122,7 @@ public class WineReview {
   }
 
   /**
-   * Gets the rating property
+   * Gets the rating property.
    *
    * @return rating
    */

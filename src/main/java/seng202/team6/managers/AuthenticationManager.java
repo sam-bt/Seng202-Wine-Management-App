@@ -20,7 +20,7 @@ public class AuthenticationManager {
   private boolean adminFirstLogin;
 
   /**
-   * Constructs an AuthenticationManager
+   * Constructs an AuthenticationManager.
    */
   public AuthenticationManager(DatabaseManager databaseManager) {
     this.databaseManager = databaseManager;

@@ -14,6 +14,9 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
 
+/**
+ * Controller for the review view popup.
+ */
 public class ReviewViewPopupController extends Controller {
 
   private final WineReviewsService wineReviewsService;
@@ -33,6 +36,15 @@ public class ReviewViewPopupController extends Controller {
   @FXML
   private Label dateLabel;
 
+  /**
+   * Constructor.
+   *
+   * @param context context
+   * @param wineReviewsService wine reviews service
+   * @param reviewer reviewing user
+   * @param selectedReview selected review
+   * @param wine wine
+   */
   public ReviewViewPopupController(ManagerContext context, WineReviewsService wineReviewsService,
       User reviewer, WineReview selectedReview, Wine wine) {
     super(context);

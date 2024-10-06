@@ -60,7 +60,7 @@ public class WineReviewDao extends Dao {
    *
    * @param wine The wine whose wine reviews should be returned
    * @return An ObservableList of all WineReview objects in the database belonging to the specified
-   * wine
+   *        wine
    */
   public ObservableList<WineReview> getAll(Wine wine) {
     Timer timer = new Timer();
@@ -71,7 +71,7 @@ public class WineReviewDao extends Dao {
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<WineReview> wineReviews = extractAllWineReviewsFromResultSet(resultSet);
         log.info("Successfully retrieved all {} reviews for wine with ID {} in {}ms",
-            wineReviews.size(), wine.getKey(), timer.stop());
+            wineReviews.size(), wine.getKey(), timer.currentOffsetMilliseconds());
         return wineReviews;
       }
     } catch (SQLException error) {
@@ -85,7 +85,7 @@ public class WineReviewDao extends Dao {
    *
    * @param user The user whose wine reviews should be returned
    * @return An ObservableList of all WineReview objects in the database belonging to the specified
-   * user
+   *        user
    */
   public ObservableList<WineReview> getAll(User user) {
     Timer timer = new Timer();
@@ -96,7 +96,7 @@ public class WineReviewDao extends Dao {
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<WineReview> wineReviews = extractAllWineReviewsFromResultSet(resultSet);
         log.info("Successfully retrieved all {} reviews for user '{}' in {}ms",
-            wineReviews.size(), user.getUsername(), timer.stop());
+            wineReviews.size(), user.getUsername(), timer.currentOffsetMilliseconds());
         return wineReviews;
       }
     } catch (SQLException error) {
@@ -114,9 +114,7 @@ public class WineReviewDao extends Dao {
    */
   public ObservableList<WineReview> getAllInRange(int begin, int end) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE_REVIEW " +
-        "LIMIT ? " +
-        "OFFSET ?";
+    String sql = "SELECT * FROM WINE_REVIEW LIMIT ? OFFSET ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setInt(1, end - begin);
       statement.setInt(2, begin);
@@ -124,7 +122,7 @@ public class WineReviewDao extends Dao {
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<WineReview> wineReviews = extractAllWineReviewsFromResultSet(resultSet);
         log.info("Successfully retrieved {} reviews in range {}-{} for user '{}' in {}ms",
-            wineReviews.size(), begin, end, timer.stop());
+            wineReviews.size(), begin, end, timer.currentOffsetMilliseconds());
         return wineReviews;
       }
     } catch (SQLException error) {
@@ -159,8 +157,9 @@ public class WineReviewDao extends Dao {
         if (generatedKeys.next()) {
           long id = generatedKeys.getLong(1);
           log.info(
-              "Successfully created wine review with ID {} for user '{}' and wine with ID {} in {}ms",
-              id, user.getUsername(), wine.getKey(), timer.stop());
+              "Successfully created wine review with ID {} for user '{}' "
+                  + "and wine with ID {} in {}ms",
+              id, user.getUsername(), wine.getKey(), timer.currentOffsetMilliseconds());
           WineReview wineReview = new WineReview(
               id,
               wine.getKey(),
@@ -176,7 +175,7 @@ public class WineReviewDao extends Dao {
           return wineReview;
         }
         log.warn("Could not create wine review for user '{}' and wine with ID {} in {}ms",
-            user.getUsername(), wine.getKey(), timer.stop());
+            user.getUsername(), wine.getKey(), timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
       log.info("Failed to create review for user '{}' and wine with ID {}",
@@ -194,18 +193,18 @@ public class WineReviewDao extends Dao {
     Timer timer = new Timer();
     String sql = "DELETE FROM WINE_REVIEW WHERE ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
-      statement.setLong(1, wineReview.getID());
+      statement.setLong(1, wineReview.getId());
 
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
-        log.info("Successfully deleted wine review with ID {} in {}ms", wineReview.getID(),
-            timer.stop());
+        log.info("Successfully deleted wine review with ID {} in {}ms", wineReview.getId(),
+            timer.currentOffsetMilliseconds());
       } else {
-        log.warn("Could not delete wine review with ID {} in {}ms", wineReview.getID(),
-            timer.stop());
+        log.warn("Could not delete wine review with ID {} in {}ms", wineReview.getId(),
+            timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
-      log.error("Failed to delete wine review with ID {}", wineReview.getID(), error);
+      log.error("Failed to delete wine review with ID {}", wineReview.getId(), error);
     }
   }
 
@@ -261,12 +260,12 @@ public class WineReviewDao extends Dao {
    */
   private void bindUpdater(WineReview wineReview) {
     wineReview.ratingProperty().addListener(((observableValue, before, after) -> {
-      updateAttribute(wineReview.getID(), "RATING", update -> {
+      updateAttribute(wineReview.getId(), "RATING", update -> {
         update.setDouble(1, after.doubleValue());
       });
     }));
     wineReview.descriptionProperty().addListener(((observableValue, before, after) -> {
-      updateAttribute(wineReview.getID(), "DESCRIPTION", update -> {
+      updateAttribute(wineReview.getId(), "DESCRIPTION", update -> {
         update.setString(1, after);
       });
     }));
@@ -289,14 +288,14 @@ public class WineReviewDao extends Dao {
       int rowsAffected = update.executeUpdate();
       if (rowsAffected == 1) {
         log.info("Successfully updated attribute '{}' for wine review with ID {} in {}ms",
-            attributeName, id, timer.stop());
+            attributeName, id, timer.currentOffsetMilliseconds());
       } else {
         log.info("Could not update attribute '{}' for wine review with ID {} in {}ms",
-            attributeName, id, timer.stop());
+            attributeName, id, timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
       log.error("Failed to update attribute '{}' for wine review with ID {} in {}ms",
-          attributeName, id, timer.stop(), error);
+          attributeName, id, timer.currentOffsetMilliseconds(), error);
     }
   }
 }

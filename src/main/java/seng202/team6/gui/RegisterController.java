@@ -8,7 +8,7 @@ import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.AuthenticationResponse;
 
 /**
- * Register Controller
+ * Register Controller.
  */
 public class RegisterController extends Controller {
 
@@ -22,7 +22,7 @@ public class RegisterController extends Controller {
   private Label registerMessageLabel;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context
    */
@@ -58,7 +58,8 @@ public class RegisterController extends Controller {
     String username = usernameField.getText();
     String password = passwordField.getText();
     String confirmPassword = confirmPasswordField.getText();
-    AuthenticationResponse response = managerContext.getAuthenticationManager().validateRegistration(
+    AuthenticationResponse response
+        = managerContext.getAuthenticationManager().validateRegistration(
         username, password, confirmPassword);
     if (response == AuthenticationResponse.REGISTER_SUCCESS) {
       managerContext.getAuthenticationManager().validateLogin(username, password);

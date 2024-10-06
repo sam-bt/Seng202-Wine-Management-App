@@ -133,10 +133,12 @@ public class WineImportController extends Controller {
    */
   private void parseWines(boolean replace) {
     List<Wine> parsedWines = new ArrayList<>();
-    Map<WinePropertyName, Integer> valid = new HashMap<>() {{
-      selectedWineProperties.forEach(((integer, winePropertyName) ->
-          put(winePropertyName, integer)));
-    }};
+    Map<WinePropertyName, Integer> valid = new HashMap<>() {
+      {
+        selectedWineProperties.forEach(((integer, winePropertyName) ->
+            put(winePropertyName, integer)));
+      }
+    };
     currentFileRows.forEach(row -> {
       try {
         parsedWines.add(WineValidator.parseWine(
@@ -247,8 +249,8 @@ public class WineImportController extends Controller {
     int column = 0;
     for (int i = 0; i < columnNames.length; i++) {
       String columnName = columnNames[i];
-      if (columnName.isBlank()) // skip if the column name is empty
-      {
+      // skip if the column name is empty
+      if (columnName.isBlank()) {
         continue;
       }
       if (column >= columns) {

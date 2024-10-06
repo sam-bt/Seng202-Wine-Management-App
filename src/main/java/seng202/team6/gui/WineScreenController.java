@@ -248,9 +248,9 @@ public class WineScreenController extends Controller {
     // Enable editing if admin
     if (managerContext.getAuthenticationManager().isAdmin()) {
 
-      StringConverter<String> stringConverter = new DefaultStringConverter();
-      StringConverter<Integer> intConverter = new IntegerStringConverter();
-      StringConverter<Float> floatConverter = new FloatStringConverter();
+      final StringConverter<String> stringConverter = new DefaultStringConverter();
+      final StringConverter<Integer> intConverter = new IntegerStringConverter();
+      final StringConverter<Float> floatConverter = new FloatStringConverter();
 
       titleColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
@@ -263,8 +263,6 @@ public class WineScreenController extends Controller {
       colorColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       vintageColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
-      //descriptionColumn.setCellFactory(
-      //wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       scoreColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(intConverter));
       abvColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
       priceColumn.setCellFactory(wineStringTableColumn -> new TextFieldTableCell<>(floatConverter));
@@ -287,7 +285,6 @@ public class WineScreenController extends Controller {
    * @param wine wine
    */
   public void createWineCard(Wine wine) {
-    // todo use same styling as detailed wine view review cards
     VBox wrapper = new VBox();
     wrapper.setPadding(new Insets(10));
     wrapper.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
@@ -326,7 +323,7 @@ public class WineScreenController extends Controller {
   }
 
   /**
-   * Called after the constructor for when fxml is loaded
+   * Called after the constructor for when fxml is loaded.
    * <p>
    * Gets, loads, and displays a table from a list of wines from the controller layer
    * </p>
@@ -408,6 +405,13 @@ public class WineScreenController extends Controller {
     return rangeSlider;
   }
 
+  /**
+   * Creates an auto complete field at a location.
+   *
+   * @param layoutX x location
+   * @param layoutY y location
+   * @return auto complete field
+   */
   public AutoCompletionTextField createAutoCompleteTextField(double layoutX, double layoutY) {
     AutoCompletionTextField autoCompleteTextField = new AutoCompletionTextField();
     autoCompleteTextField.setLayoutX(layoutX);

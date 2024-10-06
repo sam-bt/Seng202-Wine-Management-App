@@ -71,15 +71,19 @@ public class SocialController extends Controller {
     // Create and config cols
     reviewTableView.setEditable(true);
 
-    TableColumn<Pair<WineReview, Wine>, String> titleColumn = new TableColumn<>("Wine Name");
-    TableColumn<Pair<WineReview, Wine>, String> usernameColumn = new TableColumn<>("By");
-    TableColumn<Pair<WineReview, Wine>, Double> ratingsColumn = new TableColumn<>("Score");
-    TableColumn<Pair<WineReview, Wine>, Date> dateColumn = new TableColumn<>("Date");
+    final TableColumn<Pair<WineReview, Wine>, String> titleColumn = new TableColumn<>("Wine Name");
+    final TableColumn<Pair<WineReview, Wine>, String> usernameColumn = new TableColumn<>("By");
+    final TableColumn<Pair<WineReview, Wine>, Double> ratingsColumn = new TableColumn<>("Score");
+    final TableColumn<Pair<WineReview, Wine>, Date> dateColumn = new TableColumn<>("Date");
 
-    titleColumn.setCellValueFactory(cellData -> cellData.getValue().getSecond().titleProperty());
-    usernameColumn.setCellValueFactory(cellData -> cellData.getValue().getFirst().usernameProperty());
-    ratingsColumn.setCellValueFactory(cellData -> cellData.getValue().getFirst().ratingProperty().asObject());
-    dateColumn.setCellValueFactory(cellData -> cellData.getValue().getFirst().dateProperty().orElse(null));
+    titleColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getSecond().titleProperty());
+    usernameColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getFirst().usernameProperty());
+    ratingsColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getFirst().ratingProperty().asObject());
+    dateColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getFirst().dateProperty().orElse(null));
 
     ratingsColumn.setCellFactory(column -> new TableCell<>() {
       private final HBox starBox = new HBox(5);
@@ -142,8 +146,13 @@ public class SocialController extends Controller {
     Wine selectedWine = selectedReview.getSecond();
     User reviewer = managerContext.getDatabaseManager().getUserDao().get(reviewerUsername);
     WineReviewsService wineReviewsService = new WineReviewsService(
-        managerContext.getAuthenticationManager(), managerContext.getDatabaseManager(), selectedWine);
-    managerContext.getGuiManager().mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview.getFirst(), selectedWine);
+        managerContext.getAuthenticationManager(),
+        managerContext.getDatabaseManager(),
+        selectedWine);
+    managerContext
+        .getGuiManager()
+        .mainController
+        .openPopupReviewView(wineReviewsService, reviewer, selectedReview.getFirst(), selectedWine);
   }
 
 }

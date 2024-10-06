@@ -22,6 +22,9 @@ import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 
 
+/**
+ * Controller for notes.
+ */
 public class NotesController extends Controller {
 
   @FXML
@@ -44,6 +47,7 @@ public class NotesController extends Controller {
 
   /**
    * Constructor.
+   *
    * @param managerContext context
    */
   public NotesController(ManagerContext managerContext) {
@@ -111,9 +115,9 @@ public class NotesController extends Controller {
   @FXML
   public void openNoteOnClick(MouseEvent event) {
     Entry<Wine, Note> selectedItem = notesTable.getSelectionModel().getSelectedItem();
-      if (selectedItem == null) {
-          return;
-      }
+    if (selectedItem == null) {
+      return;
+    }
 
     openedNote = selectedItem.getValue();
     noteWine = selectedItem.getKey();

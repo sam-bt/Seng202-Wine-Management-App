@@ -7,6 +7,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import seng202.team6.managers.ManagerContext;
 
+/**
+ * Controller for the admin screen.
+ */
 public class AdminController extends Controller {
 
   @FXML
@@ -24,10 +27,18 @@ public class AdminController extends Controller {
   @FXML
   private VBox importWinesScreenContainer;
 
+  /**
+   * Constructor.
+   *
+   * @param managerContext manager context
+   */
   public AdminController(ManagerContext managerContext) {
     super(managerContext);
   }
 
+  /**
+   * Initializes the controller.
+   */
   public void initialize() {
     noButton.setVisible(false);
     yesButton.setVisible(false);

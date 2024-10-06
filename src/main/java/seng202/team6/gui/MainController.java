@@ -292,7 +292,7 @@ public class MainController extends Controller {
   }
 
   /**
-   * Launches the detailed wine view
+   * Launches the detailed wine view.
    *
    * @param wine wine
    * @param backButtonAction object to run when back button is pressed

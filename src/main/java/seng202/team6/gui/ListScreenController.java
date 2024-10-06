@@ -78,9 +78,9 @@ public class ListScreenController extends Controller {
       button.getStyleClass().add("primary-button");
       button.setFont(new Font("System Bold", 18));
       button.setDisable(false);
-      int iCopy = i++;
+      int listIndex = i++;
       button.setOnAction(actionEvent -> {
-        selected = iCopy;
+        selected = listIndex;
         render();
       });
 

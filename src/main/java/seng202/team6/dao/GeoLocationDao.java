@@ -31,11 +31,11 @@ public class GeoLocationDao extends Dao {
   @Override
   public String[] getInitialiseStatements() {
     return new String[]{
-        "CREATE TABLE IF NOT EXISTS GEOLOCATION (" +
-            "NAME           VARCHAR(64)   PRIMARY KEY," +
-            "LATITUDE       DECIMAL       NOT NULL," +
-            "LONGITUDE      DECIMAL       NOT NULL" +
-            ")"
+        "CREATE TABLE IF NOT EXISTS GEOLOCATION ("
+            + "NAME           VARCHAR(64)   PRIMARY KEY,"
+            + "LATITUDE       DECIMAL       NOT NULL,"
+            + "LONGITUDE      DECIMAL       NOT NULL"
+            + ")"
     };
   }
 
@@ -47,7 +47,7 @@ public class GeoLocationDao extends Dao {
     Timer timer = new Timer();
     if (geoLocationTableHasData()) {
       log.info("Skip loading default geolocations as the GEOLOCATION table is not empty in {}ms",
-          timer.stop());
+          timer.currentOffsetMilliseconds());
       return;
     }
 
@@ -57,7 +57,7 @@ public class GeoLocationDao extends Dao {
 
     int rowsAffected = batchInsertGeoLocations(sql, rows);
     log.info("Successfully added {} out of {} default geolocations in {}ms",
-        rowsAffected, rows.size() - 1, timer.stop());
+        rowsAffected, rows.size() - 1, timer.currentOffsetMilliseconds());
   }
 
   /**

@@ -9,7 +9,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 
 /**
- * Wine list service.
+ * Service to manage wine lists.
  */
 public class WineListService {
 
@@ -19,6 +19,7 @@ public class WineListService {
 
   /**
    * Constructor.
+   *
    * @param authenticationManager authentication manager
    * @param databaseManager database manager
    */

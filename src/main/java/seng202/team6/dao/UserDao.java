@@ -34,12 +34,12 @@ public class UserDao extends Dao {
     String salt = EncryptionUtil.generateSalt();
     String hashedAdminPassword = EncryptionUtil.hashPassword("admin", salt);
     return new String[]{
-        "CREATE TABLE IF NOT EXISTS USER (" +
-            "USERNAME       VARCHAR(64)   PRIMARY KEY," +
-            "PASSWORD       VARCHAR(64)   NOT NULL," +
-            "ROLE           VARCHAR(8)    NOT NULL," +
-            "SALT           VARCHAR(32)" +
-            ")"
+        "CREATE TABLE IF NOT EXISTS USER ("
+            + "USERNAME       VARCHAR(64)   PRIMARY KEY,"
+            + "PASSWORD       VARCHAR(64)   NOT NULL,"
+            + "ROLE           VARCHAR(8)    NOT NULL,"
+            + "SALT           VARCHAR(32)"
+            + ")"
     };
   }
 
@@ -55,7 +55,7 @@ public class UserDao extends Dao {
       try (ResultSet resultSet = statement.executeQuery(sql)) {
         if (resultSet.next()) {
           int count = resultSet.getInt(1);
-          log.info("Counted {} users in {}ms", count, timer.stop());
+          log.info("Counted {} users in {}ms", count, timer.currentOffsetMilliseconds());
           return count;
         }
       }
@@ -79,7 +79,8 @@ public class UserDao extends Dao {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         if (resultSet.next()) {
-          log.info("Successfully found user '{}' in {}ms", username, timer.stop());
+          log.info("Successfully found user '{}' in {}ms", username,
+              timer.currentOffsetMilliseconds());
           User user = new User(
               resultSet.getString("USERNAME"),
               resultSet.getString("PASSWORD"),
@@ -89,7 +90,8 @@ public class UserDao extends Dao {
           bindUpdater(user);
           return user;
         } else {
-          log.warn("Could not find user '{}' in {}ms", username, timer.stop());
+          log.warn("Could not find user '{}' in {}ms", username,
+              timer.currentOffsetMilliseconds());
         }
       }
     } catch (SQLException error) {
@@ -114,9 +116,11 @@ public class UserDao extends Dao {
 
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
-        log.info("Successfully added user '{}' in {}ms", user.getUsername(), timer.stop());
+        log.info("Successfully added user '{}' in {}ms", user.getUsername(),
+            timer.currentOffsetMilliseconds());
       } else {
-        log.warn("Failed to add user '{}' in {}ms", user.getUsername(), timer.stop());
+        log.warn("Failed to add user '{}' in {}ms", user.getUsername(),
+            timer.currentOffsetMilliseconds());
       }
       bindUpdater(user);
     } catch (SQLException error) {
@@ -137,9 +141,11 @@ public class UserDao extends Dao {
 
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
-        log.info("Successfully deleted user '{}' in {}ms", user.getUsername(), timer.stop());
+        log.info("Successfully deleted user '{}' in {}ms", user.getUsername(),
+            timer.currentOffsetMilliseconds());
       } else {
-        log.warn("Failed to delete user '{}' in {}ms", user.getUsername(), timer.stop());
+        log.warn("Failed to delete user '{}' in {}ms", user.getUsername(),
+            timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
       log.error("Unable to delete user '{}'", user.getUsername(), error);
@@ -155,7 +161,8 @@ public class UserDao extends Dao {
     try (Statement statement = connection.createStatement()) {
       int rowsAffected = statement.executeUpdate(sql);
 
-      log.info("Successfully deleted {} users in {}ms", rowsAffected, timer.stop());
+      log.info("Successfully deleted {} users in {}ms", rowsAffected,
+          timer.currentOffsetMilliseconds());
     } catch (SQLException error) {
       log.error("Unable to delete all users in the USER table", error);
     }
@@ -186,7 +193,7 @@ public class UserDao extends Dao {
   }
 
   /**
-   * Updates a specific attribute of the user in the USER table
+   * Updates a specific attribute of the user in the USER table.
    *
    * @param attributeName   name of attribute
    * @param attributeSetter callback to set attribute
@@ -202,14 +209,14 @@ public class UserDao extends Dao {
       int rowsAffected = update.executeUpdate();
       if (rowsAffected == 1) {
         log.info("Successfully updated attribute '{}' for user '{}' in {}ms",
-            attributeName, username, timer.stop());
+            attributeName, username, timer.currentOffsetMilliseconds());
       } else {
         log.info("Could not update attribute '{}' for user '{}' in {}ms",
-            attributeName, username, timer.stop());
+            attributeName, username, timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
       log.error("Failed to update attribute '{}' for user '{}' in {}ms",
-          attributeName, username, timer.stop(), error);
+          attributeName, username, timer.currentOffsetMilliseconds(), error);
     }
   }
 }

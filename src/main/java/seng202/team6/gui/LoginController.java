@@ -8,7 +8,7 @@ import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.AuthenticationResponse;
 
 /**
- * Login Controller (MORE DETAIL HERE!)
+ * Login Controller.
  */
 public class LoginController extends Controller {
 
@@ -20,7 +20,7 @@ public class LoginController extends Controller {
   private Label loginMessageLabel;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context
    */
@@ -52,13 +52,13 @@ public class LoginController extends Controller {
   }
 
   /**
-   * Logs a user into the system
+   * Logs a user into the system.
    */
   private void login() {
     String username = usernameField.getText();
     String password = passwordField.getText();
-    AuthenticationResponse response = managerContext.getAuthenticationManager().validateLogin(username,
-        password);
+    AuthenticationResponse response =
+        managerContext.getAuthenticationManager().validateLogin(username, password);
     if (response == AuthenticationResponse.LOGIN_SUCCESS) {
       if (managerContext.getAuthenticationManager().isAdminFirstLogin()) {
         managerContext.getGuiManager().mainController.setDisable(true);

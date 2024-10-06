@@ -17,6 +17,7 @@ import seng202.team6.model.WineReview;
  * Wine review service for a given wine.
  */
 public class WineReviewsService {
+
   public static final int MAX_DESCRIPTION_CHARACTERS = 255;
   private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
@@ -26,7 +27,7 @@ public class WineReviewsService {
   private final DoubleProperty averageRating = new SimpleDoubleProperty();
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param authenticationManager authentication manager
    * @param databaseManager database manager
@@ -53,7 +54,7 @@ public class WineReviewsService {
   }
 
   /**
-   * Adds or removes a user review
+   * Adds or removes a user review.
    *
    * @param rating rating
    * @param description description
@@ -91,7 +92,7 @@ public class WineReviewsService {
   }
 
   /**
-   * Checks if this wine has any reviews
+   * Checks if this wine has any reviews.
    *
    * @return if this wine has a review
    */

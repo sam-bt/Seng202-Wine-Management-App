@@ -36,12 +36,13 @@ public class WineListDao extends Dao {
 
   /**
    * Returns the SQL statements required to initialise the LIST_NAME and LIST_ITEMS table.
+   *
    * <p>
-   * The LIST_NAME table is responsible for holding the username of who owns the list and the name
-   * of the list.
-   * <p>
-   * The LIST_ITEMS table is responsible for holding the WINE_ID of a wine which belongs to a list
-   * from LIST_NAME with ID
+   *   The LIST_NAME table is responsible for holding the username of who owns the list and the name
+   *   of the list.
+   *   The LIST_ITEMS table is responsible for holding the WINE_ID of a wine which belongs to a list
+   *   from LIST_NAME with ID
+   * </p>
    *
    * @return Array of SQL statements for initialising the USER table
    */
@@ -81,7 +82,7 @@ public class WineListDao extends Dao {
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<WineList> wineLists = extractAllWineListsFromResultSet(resultSet);
         log.info("Successfully retrieved all {} wine lists for user '{}' in {}ms",
-            wineLists.size(), user.getUsername(), timer.stop());
+            wineLists.size(), user.getUsername(), timer.currentOffsetMilliseconds());
         return wineLists;
       }
     } catch (SQLException error) {
@@ -110,7 +111,7 @@ public class WineListDao extends Dao {
         if (generatedKeys.next()) {
           long id = generatedKeys.getLong(1);
           log.info("Successfully created list '{}' with ID {} for user '{}' in {}ms", listName,
-              id, listName, user.getUsername(), timer.stop());
+              id, listName, user.getUsername(), timer.currentOffsetMilliseconds());
           return new WineList(id, listName);
         }
         log.warn("Could not create list '{}' for user '{}'", listName, user.getUsername());
@@ -135,7 +136,7 @@ public class WineListDao extends Dao {
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
         log.info("Successfully deleted list '{}' with ID {} in {}ms", wineList.name(),
-            wineList.id(), timer.stop());
+            wineList.id(), timer.currentOffsetMilliseconds());
       } else {
         log.warn("Could not delete list '{}' with ID {}", wineList.name(),
             wineList.id());
@@ -163,7 +164,8 @@ public class WineListDao extends Dao {
       try (ResultSet resultSet = statement.executeQuery()) {
         boolean found = resultSet.next();
         log.info("Successfully found wine with ID {} is {} list with ID {} in {}ms",
-            wine.getKey(), found ? "in" : "not in", wineList.id(), timer.stop());
+            wine.getKey(), found ? "in" : "not in", wineList.id(),
+            timer.currentOffsetMilliseconds());
         return resultSet.next();
       }
     } catch (SQLException error) {
@@ -191,10 +193,10 @@ public class WineListDao extends Dao {
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
         log.info("Successfully added wine with ID {} to list with ID {} in {}ms",
-            wine.getKey(), wineList.id(), timer.stop());
+            wine.getKey(), wineList.id(), timer.currentOffsetMilliseconds());
       } else {
         log.warn("Could not add wine with ID {} to list with ID {} in {}ms",
-            wine.getKey(), wineList.id(), timer.stop());
+            wine.getKey(), wineList.id(), timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
       log.error("Failed to add wine with ID {} to list with ID {}",
@@ -218,10 +220,10 @@ public class WineListDao extends Dao {
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
         log.info("Successfully removed wine with ID {} from list with ID {} in {}ms",
-            wine.getKey(), wineList.id(), timer.stop());
+            wine.getKey(), wineList.id(), timer.currentOffsetMilliseconds());
       } else {
         log.warn("Could not remove wine with ID {} from list with ID {} in {}ms",
-            wine.getKey(), wineList.id(), timer.stop());
+            wine.getKey(), wineList.id(), timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
       log.error("Failed to remove wine with ID {} from list with ID {}",

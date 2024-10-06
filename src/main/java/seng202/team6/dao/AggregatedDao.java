@@ -35,7 +35,10 @@ public class AggregatedDao extends Dao {
    * @param wineNotesDao The DAO responsible for handling operations related to wine notes.
    * @param wineDao      The DAO responsible for handling operations related to wines.
    */
-  public AggregatedDao(Connection connection, WineReviewDao wineReviewDao, WineNotesDao wineNotesDao, WineDao wineDao) {
+  public AggregatedDao(Connection connection,
+      WineReviewDao wineReviewDao,
+      WineNotesDao wineNotesDao,
+      WineDao wineDao) {
     super(connection, AggregatedDao.class);
     this.wineReviewDao = wineReviewDao;
     this.wineNotesDao = wineNotesDao;
@@ -49,13 +52,13 @@ public class AggregatedDao extends Dao {
    *
    * @param user The user for whom to retrieve the notes and wines.
    * @return An ObservableMap where the key is a Wine object and the value is the associated Note
-   * object.
+   *      object.
    */
   public ObservableMap<Wine, Note> getAllNotesMappedWithWinesByUser(User user) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM NOTES " +
-        "INNER JOIN WINE ON NOTES.WINE_ID = WINE.ID " +
-        "WHERE NOTES.USERNAME = ?";
+    String sql = "SELECT * FROM NOTES "
+        + "INNER JOIN WINE ON NOTES.WINE_ID = WINE.ID "
+        + "WHERE NOTES.USERNAME = ?";
     ObservableMap<Wine, Note> wineAndNotes = FXCollections.observableHashMap();
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setString(1, user.getUsername());
@@ -68,7 +71,7 @@ public class AggregatedDao extends Dao {
         }
       }
       log.info("Successfully retrieves {} wines with notes by user '{}' in {}ms",
-          wineAndNotes.size(), user.getUsername(), timer.stop());
+          wineAndNotes.size(), user.getUsername(), timer.currentOffsetMilliseconds());
     } catch (SQLException e) {
       log.error("Failed to retrieve wines with notes by user '{}'", user.getUsername());
     }
@@ -83,8 +86,8 @@ public class AggregatedDao extends Dao {
    */
   public ObservableList<WineDatePair> getWinesMappedWithDatesFromList(WineList wineList) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE " +
-        "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID "
+    String sql = "SELECT * FROM WINE "
+        + "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID "
         + "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID "
         + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
         + "WHERE LIST_NAME.ID = ?";
@@ -100,7 +103,7 @@ public class AggregatedDao extends Dao {
         }
       }
       log.info("Successfully retrieves {} wines with dates in list {} in {}ms",
-          winesAndDates.size(), wineList.id(), timer.stop());
+          winesAndDates.size(), wineList.id(), timer.currentOffsetMilliseconds());
     } catch (SQLException e) {
       log.error("Failed to retrieve wines with dates in list {}", wineList.id());
     }
@@ -131,7 +134,7 @@ public class AggregatedDao extends Dao {
         }
       }
       log.info("Successfully retrieves {} wines in list {} in {}ms",
-          wines.size(), wineList.id(), timer.stop());
+          wines.size(), wineList.id(), timer.currentOffsetMilliseconds());
     } catch (SQLException e) {
       log.error("Failed to retrieve wines in list {}", wineList.id());
     }
@@ -161,10 +164,10 @@ public class AggregatedDao extends Dao {
         while (resultSet.next()) {
           WineReview wineReview = wineReviewDao.extractWineReviewFromResultSet(resultSet);
           Wine wine = wineDao.extractWineFromResultSet(resultSet);
-         wineReviewPairs.add(new Pair<>(wineReview, wine));
+          wineReviewPairs.add(new Pair<>(wineReview, wine));
         }
         log.info("Successfully retrieved {} reviews with wines in range {}-{} in {}ms",
-            wineReviewPairs.size(), begin, end, timer.stop());
+            wineReviewPairs.size(), begin, end, timer.currentOffsetMilliseconds());
         return wineReviewPairs;
       }
     } catch (SQLException e) {
