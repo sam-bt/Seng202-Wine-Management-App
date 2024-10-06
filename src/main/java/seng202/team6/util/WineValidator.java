@@ -6,7 +6,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.util.Exceptions.ValidationException;
 
 /**
- * Validator is used validating and unmarshalling data
+ * Validator is used validating and unmarshalling data.
  * <p>
  * The API of this is deliberately made so you validate/construct in one call. This is to prevent
  * scenarios where one forgets to validate an input or constructs a broken object.
@@ -16,7 +16,7 @@ public class WineValidator {
 
 
   /**
-   * Parses a vintage
+   * Parses a vintage.
    * <p>
    * Decanter sometimes does not have a number for the vintage
    * </p>
@@ -33,7 +33,7 @@ public class WineValidator {
   }
 
   /**
-   * Creates a wine from a list of attributes
+   * Creates a wine from a list of attributes.
    *
    * @param title        title
    * @param variety      variety

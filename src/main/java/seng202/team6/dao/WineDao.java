@@ -22,10 +22,10 @@ import seng202.team6.util.Timer;
 /**
  * Data Access Object (DAO) for handling wine related database operations.
  */
-public class WineDAO extends DAO {
+public class WineDao extends Dao {
 
   /**
-   * Cache to store and reuse Wine objects to avoid duplication
+   * Cache to store and reuse Wine objects to avoid duplication.
    */
   private final DatabaseObjectUniquer<Wine> wineCache = new DatabaseObjectUniquer<>();
 
@@ -37,8 +37,8 @@ public class WineDAO extends DAO {
    *
    * @param connection The database connection to be used for wine operations.
    */
-  public WineDAO(Connection connection, WineDataStatService wineDataStatService) {
-    super(connection, WineDAO.class);
+  public WineDao(Connection connection, WineDataStatService wineDataStatService) {
+    super(connection, WineDao.class);
     this.wineDataStatService = wineDataStatService;
   }
 
@@ -50,20 +50,20 @@ public class WineDAO extends DAO {
   @Override
   public String[] getInitialiseStatements() {
     return new String[]{
-        "CREATE TABLE IF NOT EXISTS WINE (" +
-            "ID             INTEGER       PRIMARY KEY," +
-            "TITLE          VARCHAR(64)   NOT NULL," +
-            "VARIETY        VARCHAR(32)," +
-            "COUNTRY        VARCHAR(32)," +
-            "REGION         VARCHAR(32)," +
-            "WINERY         VARCHAR(64)," +
-            "COLOR          VARCHAR(32)," +
-            "VINTAGE        INTEGER," +
-            "DESCRIPTION    INTEGER," +
-            "SCORE_PERCENT  INTEGER," +
-            "ABV            FLOAT," +
-            "PRICE          FLOAT" +
-            ")"
+        "CREATE TABLE IF NOT EXISTS WINE ("
+            + "ID             INTEGER       PRIMARY KEY,"
+            + "TITLE          VARCHAR(64)   NOT NULL,"
+            + "VARIETY        VARCHAR(32),"
+            + "COUNTRY        VARCHAR(32),"
+            + "REGION         VARCHAR(32),"
+            + "WINERY         VARCHAR(64),"
+            + "COLOR          VARCHAR(32),"
+            + "VINTAGE        INTEGER,"
+            + "DESCRIPTION    INTEGER,"
+            + "SCORE_PERCENT  INTEGER,"
+            + "ABV            FLOAT,"
+            + "PRICE          FLOAT"
+            + ")"
     };
   }
 
@@ -79,7 +79,7 @@ public class WineDAO extends DAO {
       try (ResultSet resultSet = statement.executeQuery(sql)) {
         if (resultSet.next()) {
           int count = resultSet.getInt(1);
-          log.info("Counted {} wines in {}ms", count, timer.stop());
+          log.info("Counted {} wines in {}ms", count, timer.currentOffsetMilliseconds());
           return count;
         }
       }
@@ -152,17 +152,14 @@ public class WineDAO extends DAO {
     try (Statement statement = connection.createStatement()) {
       try (ResultSet resultSet = statement.executeQuery(sql)) {
         ObservableList<Wine> wines = extractAllWinesFromResultSet(resultSet);
-        log.info("Successfully retrieved all {} wines in {}ms", wines.size(), timer.stop());
+        log.info("Successfully retrieved all {} wines in {}ms", wines.size(),
+            timer.currentOffsetMilliseconds());
         return wines;
       }
     } catch (SQLException error) {
       log.info("Failed to retrieve wines in range", error);
     }
     return FXCollections.emptyObservableList();
-  }
-
-  public ObservableList<Wine> getAllInRange(int begin, int end) {
-    return getAllInRange(begin, end, null);
   }
 
   /**
@@ -226,13 +223,40 @@ public class WineDAO extends DAO {
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<Wine> wines = extractAllWinesFromResultSet(resultSet);
         log.info("Successfully retrieved {} wines in range {}-{} in {}ms", wines.size(),
-            begin, end, timer.stop());
+            begin, end, timer.currentOffsetMilliseconds());
         return wines;
       }
     } catch (SQLException error) {
       log.info("Failed to retrieve wines in range {}-{}", begin, end, error);
     }
     return FXCollections.emptyObservableList();
+  }
+
+  /**
+   * Gets a wine with a specific id.
+   *
+   * @param id id of wine
+   * @return wine of given id or null
+   */
+  public Wine get(long id) {
+    String sql = "SELECT * FROM WINE WHERE ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setLong(1, id);
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        if (resultSet.next()) {
+          Wine wine = extractWineFromResultSet(resultSet);
+          if (wine != null) {
+            log.info("Successfully retrieved wine with ID {}", id);
+            return wine;
+          }
+          log.info("Could not retrieve wine with ID {}", id);
+        }
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve wine with ID {}", id);
+    }
+    return null;
   }
 
   /**
@@ -246,6 +270,11 @@ public class WineDAO extends DAO {
     addAll(wines);
   }
 
+  /**
+   * Adds a wine to the database.
+   *
+   * @param wine wine
+   */
   public void add(Wine wine) {
     Timer timer = new Timer();
     String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -257,13 +286,15 @@ public class WineDAO extends DAO {
       try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
         if (generatedKeys.next()) {
           wine.setKey(generatedKeys.getLong(1));
-          log.info("Successfully added wine with ID {} in {}ms", wine.getKey(), timer.stop());
+          log.info("Successfully added wine with ID {} in {}ms", wine.getKey(),
+              timer.currentOffsetMilliseconds());
           if (useCache()) {
             wineCache.addObject(wine.getKey(), wine);
           }
           bindUpdater(wine);
         } else {
-          log.info("Could not add wine with ID {} in {}ms", wine.getKey(), timer.stop());
+          log.info("Could not add wine with ID {} in {}ms", wine.getKey(),
+              timer.currentOffsetMilliseconds());
         }
       }
     } catch (SQLException error) {
@@ -315,7 +346,7 @@ public class WineDAO extends DAO {
       return;
     }
     log.info("Successfully added {} out of {} wines using {} batches in {}ms", rowsAffected,
-        wines.size(), numberOfBatches, timer.stop());
+        wines.size(), numberOfBatches, timer.currentOffsetMilliseconds());
   }
 
   /**
@@ -326,7 +357,8 @@ public class WineDAO extends DAO {
     String sql = "DELETE FROM WINE";
     try (Statement statement = connection.createStatement()) {
       int rowsAffected = statement.executeUpdate(sql);
-      log.info("Successfully removed {} wines in {}ms", rowsAffected, timer.stop());
+      log.info("Successfully removed {} wines in {}ms", rowsAffected,
+          timer.currentOffsetMilliseconds());
     } catch (SQLException error) {
       log.error("Failed to remove all wines", error);
     }
@@ -391,11 +423,11 @@ public class WineDAO extends DAO {
 
   /**
    * Extracts the latitude and longitude from the provided ResultSet and creates a new GeoLocation
-   * object
+   *      object.
    *
    * @param set The ResultSet from which geolocations are to be extracted
    * @return The extract Geolocation if available, otherwise null if either the latitude or
-   * longitude were null
+   *      longitude were null
    * @throws SQLException If an error occurs while processing the ResultSet
    */
   private GeoLocation createGeoLocation(ResultSet set) throws SQLException {
@@ -500,7 +532,7 @@ public class WineDAO extends DAO {
   }
 
   /**
-   * Updates a specific attribute of the user in the WINE table
+   * Updates a specific attribute of the user in the WINE table.
    *
    * @param attributeName   name of attribute
    * @param attributeSetter callback to set attribute
@@ -521,14 +553,14 @@ public class WineDAO extends DAO {
       int rowsAffected = update.executeUpdate();
       if (rowsAffected == 1) {
         log.info("Successfully updated attribute '{}' for wine with ID {} in {}ms",
-            attributeName, id, timer.stop());
+            attributeName, id, timer.currentOffsetMilliseconds());
       } else {
         log.info("Could not update attribute '{}' for wine with ID {} in {}ms",
-            attributeName, id, timer.stop());
+            attributeName, id, timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
       log.error("Failed to update attribute '{}' for wine with ID {} in {}ms",
-          attributeName, id, timer.stop(), error);
+          attributeName, id, timer.currentOffsetMilliseconds(), error);
     }
   }
 

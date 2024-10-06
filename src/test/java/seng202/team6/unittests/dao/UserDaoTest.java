@@ -8,20 +8,20 @@ import java.sql.SQLException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import seng202.team6.dao.UserDAO;
+import seng202.team6.dao.UserDao;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;
 
-public class UserDAOTest {
+public class UserDaoTest {
 
   private DatabaseManager databaseManager;
-  private UserDAO userDAO;
+  private UserDao userDao;
 
   @BeforeEach
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
     databaseManager.init();
-    userDAO = databaseManager.getUserDAO();
+    userDao = databaseManager.getUserDao();
   }
 
   @AfterEach
@@ -31,16 +31,16 @@ public class UserDAOTest {
 
   @Test
   void testAdminAccountCreated() {
-    User user = userDAO.get("admin");
+    User user = userDao.get("admin");
     assertNotNull(user);
   }
 
   @Test
   void testAddUser() {
     User initialUser = new User("user", "password", "user", "salt");
-    userDAO.add(initialUser);
+    userDao.add(initialUser);
 
-    User retrievedUser = userDAO.get(initialUser.getUsername());
+    User retrievedUser = userDao.get(initialUser.getUsername());
     assertNotNull(retrievedUser);
     assertEquals(initialUser.getUsername(), retrievedUser.getUsername());
   }
@@ -48,44 +48,44 @@ public class UserDAOTest {
   @Test
   void testAddMultipleUsers() {
     User initialUser1 = new User("user1", "password", "user", "salt");
-    userDAO.add(initialUser1);
+    userDao.add(initialUser1);
 
     User initialUser2 = new User("user2", "password", "user", "salt");
-    userDAO.add(initialUser2);
+    userDao.add(initialUser2);
 
     // two users plus admin
-    assertEquals(3, userDAO.getCount());
+    assertEquals(3, userDao.getCount());
   }
 
   @Test
   void testRemoveUser() {
     User initialUser = new User("user", "password", "user", "salt");
-    userDAO.add(initialUser);
-    userDAO.delete(initialUser);
+    userDao.add(initialUser);
+    userDao.delete(initialUser);
 
-    User retrievedUser = userDAO.get(initialUser.getUsername());
+    User retrievedUser = userDao.get(initialUser.getUsername());
     assertNull(retrievedUser);
   }
 
   @Test
   void testRemoveAllUsersDoesNotRemoveAdmin() {
-    userDAO.deleteAll();
+    userDao.deleteAll();
 
-    User user = userDAO.get("admin");
+    User user = userDao.get("admin");
     assertNotNull(user);
   }
 
   @Test
   void testRemoveAllUsers() {
     User initialUser1 = new User("user1", "password", "user", "salt");
-    userDAO.add(initialUser1);
+    userDao.add(initialUser1);
 
     User initialUser2 = new User("user2", "password", "user", "salt");
-    userDAO.add(initialUser2);
+    userDao.add(initialUser2);
 
-    userDAO.deleteAll();
+    userDao.deleteAll();
     // deletes all users apart from admin
-    assertEquals(1, userDAO.getCount());
+    assertEquals(1, userDao.getCount());
   }
 
   @Test
@@ -95,7 +95,7 @@ public class UserDAOTest {
     User initialUser = createUser("testUser", initial, "USER", "salt123");
     initialUser.setPassword(changed);
 
-    User updatedUser = userDAO.get("testUser");
+    User updatedUser = userDao.get("testUser");
     assertEquals(changed, updatedUser.getPassword());
   }
 
@@ -106,7 +106,7 @@ public class UserDAOTest {
     User initialUser = createUser("testUser", "password123", initial, "salt123");
     initialUser.setRole(changed);
 
-    User updatedUser = userDAO.get("testUser");
+    User updatedUser = userDao.get("testUser");
     assertEquals(changed, updatedUser.getRole());
   }
 
@@ -117,13 +117,13 @@ public class UserDAOTest {
     User initialUser = createUser("testUser", "password123", "USER", initial);
     initialUser.setSalt(changed);
 
-    User updatedUser = userDAO.get("testUser");
+    User updatedUser = userDao.get("testUser");
     assertEquals(changed, updatedUser.getSalt());
   }
 
   private User createUser(String username, String password, String role, String salt) {
     User user = new User(username, password, role, salt);
-    userDAO.add(user);
+    userDao.add(user);
     return user;
   }
 }

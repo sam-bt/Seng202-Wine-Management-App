@@ -10,14 +10,19 @@ import org.controlsfx.control.Rating;
 import seng202.team6.gui.Controller;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
+import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
 
+/**
+ * Controller for the review view popup.
+ */
 public class ReviewViewPopupController extends Controller {
 
   private final WineReviewsService wineReviewsService;
   private final User reviewer;
   private final WineReview selectedReview;
+  private final Wine wine;
   @FXML
   private Pane ratingPane;
   @FXML
@@ -31,19 +36,29 @@ public class ReviewViewPopupController extends Controller {
   @FXML
   private Label dateLabel;
 
+  /**
+   * Constructor.
+   *
+   * @param context context
+   * @param wineReviewsService wine reviews service
+   * @param reviewer reviewing user
+   * @param selectedReview selected review
+   * @param wine wine
+   */
   public ReviewViewPopupController(ManagerContext context, WineReviewsService wineReviewsService,
-      User reviewer, WineReview selectedReview) {
+      User reviewer, WineReview selectedReview, Wine wine) {
     super(context);
     this.wineReviewsService = wineReviewsService;
     this.reviewer = reviewer;
     this.selectedReview = selectedReview;
+    this.wine = wine;
   }
 
   @Override
   public void init() { // TODO add your personal rating to this screen
 
     reviewTitlePane.setText(
-        "Review by " + reviewer.getUsername() + " for " + selectedReview.getWineName().get());
+        "Review by " + reviewer.getUsername() + " for " + wine.getTitle());
     dateLabel.setText(selectedReview.getDate().toString());
 
     Rating ratingStars = new Rating();
@@ -65,20 +80,20 @@ public class ReviewViewPopupController extends Controller {
 
   @FXML
   void onBackButtonClick() {
-    managerContext.GUIManager.mainController.closePopup();
+    managerContext.getGuiManager().mainController.closePopup();
   }
 
   @FXML
   void onWineButtonClick() {
-    Runnable backAction = () -> managerContext.GUIManager.mainController.openSocialScreen();
-    managerContext.GUIManager.mainController.closePopup();
-    managerContext.GUIManager.mainController.openDetailedWineView(wineReviewsService.getWine(),
+    Runnable backAction = () -> managerContext.getGuiManager().mainController.openSocialScreen();
+    managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().mainController.openDetailedWineView(wineReviewsService.getWine(),
         backAction);
   }
 
   @FXML
   void onUserButtonClick() {
-    managerContext.GUIManager.mainController.closePopup();
+    managerContext.getGuiManager().mainController.closePopup();
   }
 
 

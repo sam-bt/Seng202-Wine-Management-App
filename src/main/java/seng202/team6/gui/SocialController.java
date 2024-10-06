@@ -1,133 +1,69 @@
 package seng202.team6.gui;
 
-import java.util.Date;
+import java.sql.Date;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import kotlin.Pair;
 import org.controlsfx.control.Rating;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
+import seng202.team6.service.WineReviewsService;
 
+/**
+ * Controller for the social screen.
+ */
 public class SocialController extends Controller {
 
   @FXML
-  TableView<Wine> wineTableView;
-
-  @FXML
-  TableView<WineReview> reviewTableView;
+  TableView<Pair<WineReview, Wine>> reviewTableView;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context
    */
   public SocialController(ManagerContext managerContext) {
-    super(managerContext);// TODO allow upvotes/downvotes/user search/review search
+    super(managerContext);
   }
 
+  /**
+   * Initializes this controller.
+   */
+  @Override
   public void init() {
-    setupWineTableColumns();
-    openWineRange(0, 100);
-
     setupReviewTableColumns();
     openReviewInRange(0, 100);
-
     reviewTableView.setOnMouseClicked(this::openReviewOnClick);
-    wineTableView.setOnMouseClicked(this::openWineOnClick);
   }
 
   /**
-   * Opens a page of wines from the database according to filters
+   * Opens a page of reviews from the database according to filters.
    *
    * @param begin first element
    * @param end   last element + 1
    */
-  private void openWineRange(int begin, int end) { // TODO, add filtering by num reviews/rating
-    // Clear existing data
-    wineTableView.getItems().clear();
-
-    ObservableList<Wine> wines;
-
-    // todo - find solution to this
-//    wines = managerContext.databaseManager.getWinesInRangeWithReviewInfo(begin, end);
-    // Set fetched data to the table
-//    wineTableView.setItems(wines);
-
-  }
-
-  /**
-   * Opens a page of reviews from the database according to filters
-   *
-   * @param begin first element
-   * @param end   last element + 1
-   */
-  private void openReviewInRange(int begin, int end) { // TODO, add filtering
+  private void openReviewInRange(int begin, int end) {
     // Clear existing data
     reviewTableView.getItems().clear();
 
-    ObservableList<WineReview> reviews;
-
-    reviews = managerContext.databaseManager.getWineReviewDAO().getAllInRange(begin, end);
+    ObservableList<Pair<WineReview, Wine>>  reviews = managerContext.getDatabaseManager()
+        .getAggregatedDao().getWineReviewsAndWines(begin, end);
 
     // Set fetched data to the table
     reviewTableView.setItems(reviews);
-
   }
 
-
-  public void setupWineTableColumns() {
-    // Clear any existing cols
-    wineTableView.getColumns().clear();
-
-    // Create and config cols
-    wineTableView.setEditable(true);
-
-    TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
-    TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
-    TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
-    TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Critic Score");
-    TableColumn<Wine, Integer> reviewsColumn = new TableColumn<>("Reviews");
-    TableColumn<Wine, Double> ratingsColumn = new TableColumn<>("Average User Rating");
-
-    titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-    regionColumn.setCellValueFactory(new PropertyValueFactory<>("region"));
-    colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
-    scoreColumn.setCellValueFactory(new PropertyValueFactory<>("scorePercent"));
-    reviewsColumn.setCellValueFactory(cellData -> cellData.getValue().getReviewCount().asObject());
-    ratingsColumn.setCellValueFactory(cellData -> cellData.getValue().getRating().asObject());
-    ratingsColumn.setCellFactory(column -> new TableCell<Wine, Double>() {
-      private final HBox starBox = new HBox(5);
-
-      @Override
-      protected void updateItem(Double rating, boolean empty) {
-        super.updateItem(rating, empty);
-        if (empty || rating == null) {
-          setGraphic(null);
-        } else {
-          starBox.getChildren().clear();
-          Rating ratingStars = setRating(rating);
-          starBox.getChildren().addFirst(ratingStars);
-          setGraphic(starBox);
-        }
-      }
-    });
-
-    wineTableView.getColumns().add(titleColumn);
-    wineTableView.getColumns().add(regionColumn);
-    wineTableView.getColumns().add(colorColumn);
-    wineTableView.getColumns().add(scoreColumn);
-    wineTableView.getColumns().add(reviewsColumn);
-    wineTableView.getColumns().add(ratingsColumn);
-
-  }
-
+  /**
+   * Sets up the review table columns.
+   */
   public void setupReviewTableColumns() {
     // Clear any existing cols
     reviewTableView.getColumns().clear();
@@ -135,17 +71,21 @@ public class SocialController extends Controller {
     // Create and config cols
     reviewTableView.setEditable(true);
 
-    TableColumn<WineReview, String> titleColumn = new TableColumn<>("Wine Name");
-    TableColumn<WineReview, String> usernameColumn = new TableColumn<>("By");
-    TableColumn<WineReview, Double> ratingsColumn = new TableColumn<>("Score");
-    TableColumn<WineReview, Date> dateColumn = new TableColumn<>("Date");
+    final TableColumn<Pair<WineReview, Wine>, String> titleColumn = new TableColumn<>("Wine Name");
+    final TableColumn<Pair<WineReview, Wine>, String> usernameColumn = new TableColumn<>("By");
+    final TableColumn<Pair<WineReview, Wine>, Double> ratingsColumn = new TableColumn<>("Score");
+    final TableColumn<Pair<WineReview, Wine>, Date> dateColumn = new TableColumn<>("Date");
 
-    titleColumn.setCellValueFactory(cellData -> cellData.getValue().getWineName());
-    usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
-    ratingsColumn.setCellValueFactory(new PropertyValueFactory<>("rating"));
-    dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+    titleColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getSecond().titleProperty());
+    usernameColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getFirst().usernameProperty());
+    ratingsColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getFirst().ratingProperty().asObject());
+    dateColumn.setCellValueFactory(cellData ->
+        cellData.getValue().getFirst().dateProperty().orElse(null));
 
-    ratingsColumn.setCellFactory(column -> new TableCell<WineReview, Double>() {
+    ratingsColumn.setCellFactory(column -> new TableCell<>() {
       private final HBox starBox = new HBox(5);
 
       @Override
@@ -156,7 +96,7 @@ public class SocialController extends Controller {
           setGraphic(null);
         } else {
           starBox.getChildren().clear();
-          Rating ratingStars = setRating(rating);
+          Rating ratingStars = createRating(rating);
           starBox.getChildren().addFirst(ratingStars);
           setGraphic(starBox);
         }
@@ -169,7 +109,13 @@ public class SocialController extends Controller {
     reviewTableView.getColumns().add(dateColumn);
   }
 
-  private Rating setRating(double rating) {
+  /**
+   * Creates the rating for a given rating.
+   *
+   * @param rating rating
+   * @return rating object
+   */
+  private Rating createRating(double rating) {
     Rating ratingStars = new Rating();
     ratingStars.setUpdateOnHover(false);
     ratingStars.setMouseTransparent(true);
@@ -180,38 +126,33 @@ public class SocialController extends Controller {
     return ratingStars;
   }
 
+  /**
+   * Opens a review when clicked.
+   *
+   * @param event mouse event
+   */
   @FXML
-  public void openWineOnClick(MouseEvent event) {
+  public void openReviewOnClick(MouseEvent event) {
     if (event.getClickCount() != 2) {
       return;
     }
 
-    Wine selectedWine = wineTableView.getSelectionModel().getSelectedItem();
-    if (selectedWine == null) {
-      return;
-    }
-
-    Runnable backAction = () -> managerContext.GUIManager.mainController.openSocialScreen();
-    managerContext.GUIManager.mainController.openDetailedWineView(selectedWine, backAction);
-  }
-
-  @FXML
-  public void openReviewOnClick(
-      MouseEvent event) { //TODO take to review screen (upvote/downvote reviews)
-    if (event.getClickCount() != 2) {
-      return;
-    }
-
-    WineReview selectedReview = reviewTableView.getSelectionModel().getSelectedItem();
+    Pair<WineReview, Wine> selectedReview = reviewTableView.getSelectionModel().getSelectedItem();
     if (selectedReview == null) {
       return;
     }
 
-    // todo - find solution to this
-//    Wine selectedWine = managerContext.databaseManager.getWineWithReviewInfoById(selectedReview.getWineID());
-//    User reviewer = managerContext.databaseManager.getUser(selectedReview.getUsername());
-//    WineReviewsService wineReviewsService = new WineReviewsService(managerContext.authenticationManager, managerContext.databaseManager, selectedWine);
-//    managerContext.GUIManager.mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview);
+    String reviewerUsername = selectedReview.getFirst().getUsername();
+    Wine selectedWine = selectedReview.getSecond();
+    User reviewer = managerContext.getDatabaseManager().getUserDao().get(reviewerUsername);
+    WineReviewsService wineReviewsService = new WineReviewsService(
+        managerContext.getAuthenticationManager(),
+        managerContext.getDatabaseManager(),
+        selectedWine);
+    managerContext
+        .getGuiManager()
+        .mainController
+        .openPopupReviewView(wineReviewsService, reviewer, selectedReview.getFirst(), selectedWine);
   }
 
 }

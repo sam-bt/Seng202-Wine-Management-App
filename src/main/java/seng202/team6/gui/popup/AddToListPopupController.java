@@ -22,6 +22,9 @@ import seng202.team6.model.WineList;
 import seng202.team6.service.WineListService;
 import seng202.team6.util.IconPaths;
 
+/**
+ * Controller for the adding to list popup.
+ */
 public class AddToListPopupController extends Controller {
 
   private final WineListService wineListService;
@@ -30,14 +33,23 @@ public class AddToListPopupController extends Controller {
   @FXML
   private VBox listsContainer;
 
+  /**
+   * Constructor.
+   *
+   * @param context context
+   * @param wine wine
+   */
   public AddToListPopupController(ManagerContext context, Wine wine) {
     super(context);
     this.wine = wine;
-    this.wineListService = new WineListService(managerContext.authenticationManager,
-        context.databaseManager);
+    this.wineListService = new WineListService(managerContext.getAuthenticationManager(),
+        context.getDatabaseManager());
     bindToWineListService();
   }
 
+  /**
+   * Initializes the controller.
+   */
   @Override
   public void init() {
     wineListService.init();
@@ -45,17 +57,17 @@ public class AddToListPopupController extends Controller {
 
   @FXML
   void onBackButtonClick() {
-    managerContext.GUIManager.mainController.closePopup();
+    managerContext.getGuiManager().mainController.closePopup();
   }
 
   private void onAddButtonClick(WineList wineList, Button button) {
     updateWineListButton(button, wineList, true);
-    managerContext.databaseManager.getWineListDAO().addWine(wineList, wine);
+    managerContext.getDatabaseManager().getWineListDao().addWine(wineList, wine);
   }
 
   private void onRemoveButtonClick(WineList wineList, Button button) {
     updateWineListButton(button, wineList, false);
-    managerContext.databaseManager.getWineListDAO().removeWine(wineList, wine);
+    managerContext.getDatabaseManager().getWineListDao().removeWine(wineList, wine);
   }
 
   private void bindToWineListService() {
@@ -69,9 +81,9 @@ public class AddToListPopupController extends Controller {
   }
 
   private void createWineListElement(WineList wineList) {
-    boolean listContainsWine = wineListService.isWineInList(wineList, wine);
-    GridPane wrapper = new GridPane();
-    RowConstraints firstRow = new RowConstraints();
+    final boolean listContainsWine = wineListService.isWineInList(wineList, wine);
+    final GridPane wrapper = new GridPane();
+    final RowConstraints firstRow = new RowConstraints();
     ColumnConstraints firstColumn = new ColumnConstraints();
     ColumnConstraints secondColumn = new ColumnConstraints();
     firstColumn.setPercentWidth(80);
@@ -112,7 +124,8 @@ public class AddToListPopupController extends Controller {
     svgPath.setScaleX(0.05);
     svgPath.setScaleY(0.05);
     button.setGraphic(svgPath);
-    button.setOnMouseClicked(listContainsWine ?
+    button.setOnMouseClicked(listContainsWine
+        ?
         (event) -> onRemoveButtonClick(wineList, button) :
         (event) -> onAddButtonClick(wineList, button));
   }
