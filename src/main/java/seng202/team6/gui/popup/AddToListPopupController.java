@@ -16,12 +16,11 @@ import seng202.team6.service.WineListService;
 
 public class AddToListPopupController extends Controller {
 
-  @FXML
-  ScrollPane wineListsContainer;
-
   private final WineListService wineListService;
   private final ObservableMap<WineList, VBox> wineListWrappers = FXCollections.observableHashMap();
   private final Wine wine;
+  @FXML
+  ScrollPane wineListsContainer;
   private AddRemoveCardsContainer<WineList> addRemoveCardsContainer;
 
   public AddToListPopupController(ManagerContext context, Wine wine) {
@@ -53,8 +52,9 @@ public class AddToListPopupController extends Controller {
           change.getAddedSubList().forEach(wineList -> {
             addRemoveCardsContainer.add(wineList, new SimpleStringProperty(wineList.name()),
                 !wineListService.isWineInList(wineList, wine),
-                () ->  managerContext.getDatabaseManager().getWineListDao().addWine(wineList, wine),
-                () -> managerContext.getDatabaseManager().getWineListDao().removeWine(wineList, wine));
+                () -> managerContext.getDatabaseManager().getWineListDao().addWine(wineList, wine),
+                () -> managerContext.getDatabaseManager().getWineListDao()
+                    .removeWine(wineList, wine));
           });
         }
       }

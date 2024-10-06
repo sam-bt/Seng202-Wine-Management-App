@@ -54,7 +54,7 @@ public class SocialController extends Controller {
     // Clear existing data
     reviewTableView.getItems().clear();
 
-    ObservableList<Pair<WineReview, Wine>>  reviews = managerContext.getDatabaseManager()
+    ObservableList<Pair<WineReview, Wine>> reviews = managerContext.getDatabaseManager()
         .getAggregatedDao().getWineReviewsAndWines(begin, end);
 
     // Set fetched data to the table

@@ -10,7 +10,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.web.WebView;
-import seng202.team6.gui.controls.*;
+import seng202.team6.gui.controls.ButtonsList;
 import seng202.team6.gui.controls.card.AddRemoveCard;
 import seng202.team6.gui.controls.card.Card;
 import seng202.team6.gui.controls.cardcontent.ItineraryItemCardContent;
@@ -26,15 +26,16 @@ import seng202.team6.service.VineyardToursService;
 import seng202.team6.util.GeolocationResolver;
 
 public class TourPlanningController extends Controller {
+
+  private final VineyardToursService vineyardToursService;
+  private final VineyardService vineyardService;
+  private final GeolocationResolver geolocationResolver;
   @FXML
   private Label viewingTourLabel;
-
   @FXML
   private ScrollPane vineyardToursContainer;
-
   @FXML
   private ScrollPane vineyardsContainer;
-
   @FXML
   private ScrollPane itineraryContainer;
   @FXML
@@ -48,13 +49,8 @@ public class TourPlanningController extends Controller {
   private ButtonsList<VineyardTour> vineyardTourButtonsList;
   private CardsContainer<Vineyard> vineyardCardsContainer;
   private CardsContainer<Vineyard> itineraryCardsContainer;
-
-  private final VineyardToursService vineyardToursService;
-  private final VineyardService vineyardService;
   private LeafletOsmController mapController;
   private TourPlanningService currentTourPlanningService;
-
-  private final GeolocationResolver geolocationResolver;
 
   /**
    * Constructs a new TourPlanningController.
@@ -78,9 +74,9 @@ public class TourPlanningController extends Controller {
           change.getAddedSubList().forEach(vineyardTour ->
               vineyardTourButtonsList.add(vineyardTour, vineyardTour.nameProperty(),
                   () -> {
-                openVineyardTour(vineyardTour);
-                tabPane.getSelectionModel().select(planTourTab);
-              }));
+                    openVineyardTour(vineyardTour);
+                    tabPane.getSelectionModel().select(planTourTab);
+                  }));
         }
         if (change.wasRemoved()) {
           change.getRemoved().forEach(vineyardTour -> vineyardTourButtonsList.remove(vineyardTour));
@@ -129,9 +125,9 @@ public class TourPlanningController extends Controller {
     }
 
     List<GeoLocation> vineyardLocations = currentTourPlanningService.getVineyards().stream()
-            .peek(vineyard -> mapController.addVineyardMaker(vineyard, false))
-            .map(Vineyard::getGeoLocation)
-            .toList();
+        .peek(vineyard -> mapController.addVineyardMaker(vineyard, false))
+        .map(Vineyard::getGeoLocation)
+        .toList();
     String geometry = geolocationResolver.resolveRoute(vineyardLocations);
     if (geometry == null) {
       // todo - add popup to say failed to find route
@@ -156,13 +152,16 @@ public class TourPlanningController extends Controller {
           "Add winery to tour", "Remove winery from tour");
       vineyardCardsContainer.addCard(vineyard, addRemoveCard);
     });
-    currentTourPlanningService = new TourPlanningService(managerContext.getDatabaseManager(), vineyardTour);
+    currentTourPlanningService = new TourPlanningService(managerContext.getDatabaseManager(),
+        vineyardTour);
     currentTourPlanningService.getVineyards().addListener((ListChangeListener<Vineyard>) change -> {
       while (change.next()) {
         if (change.wasAdded()) {
           change.getAddedSubList().forEach(vineyard -> {
-            ItineraryItemCardContent itineraryItemCardContent = new ItineraryItemCardContent(vineyard);
-            Card card = new Card(itineraryCardsContainer.widthProperty(), new SimpleDoubleProperty());
+            ItineraryItemCardContent itineraryItemCardContent = new ItineraryItemCardContent(
+                vineyard);
+            Card card = new Card(itineraryCardsContainer.widthProperty(),
+                new SimpleDoubleProperty());
             card.getChildren().add(itineraryItemCardContent);
             itineraryCardsContainer.addCard(vineyard, card);
           });

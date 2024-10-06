@@ -39,11 +39,11 @@ public class ReviewViewPopupController extends Controller {
   /**
    * Constructor.
    *
-   * @param context context
+   * @param context            context
    * @param wineReviewsService wine reviews service
-   * @param reviewer reviewing user
-   * @param selectedReview selected review
-   * @param wine wine
+   * @param reviewer           reviewing user
+   * @param selectedReview     selected review
+   * @param wine               wine
    */
   public ReviewViewPopupController(ManagerContext context, WineReviewsService wineReviewsService,
       User reviewer, WineReview selectedReview, Wine wine) {

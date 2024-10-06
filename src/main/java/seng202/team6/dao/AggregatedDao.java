@@ -53,7 +53,7 @@ public class AggregatedDao extends Dao {
    *
    * @param user The user for whom to retrieve the notes and wines.
    * @return An ObservableMap where the key is a Wine object and the value is the associated Note
-   *      object.
+   * object.
    */
   public ObservableMap<Wine, Note> getAllNotesMappedWithWinesByUser(User user) {
     Timer timer = new Timer();
@@ -146,7 +146,7 @@ public class AggregatedDao extends Dao {
    * Gets a list of wine reviews and wines.
    *
    * @param begin begin
-   * @param end end
+   * @param end   end
    * @return sub range of pairs between begin and end
    */
   public ObservableList<Pair<WineReview, Wine>> getWineReviewsAndWines(int begin, int end) {
@@ -179,9 +179,9 @@ public class AggregatedDao extends Dao {
 
   public ObservableList<Wine> getWinesFromVineyard(Vineyard vineyard) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE " +
-        "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) " +
-        "WHERE WINERY = ?";
+    String sql = "SELECT * FROM WINE "
+        + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+        + "WHERE WINERY = ?";
     ObservableList<Wine> wines = FXCollections.observableArrayList();
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setString(1, vineyard.getName());

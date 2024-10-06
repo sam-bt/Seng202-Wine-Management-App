@@ -6,38 +6,36 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TourPlanningService {
-    private final DatabaseManager databaseManager;
-    private final VineyardTour vineyardTour;
-    private final ObservableList<Vineyard> vineyards = FXCollections.observableArrayList();
 
-    public TourPlanningService(DatabaseManager databaseManager, VineyardTour vineyardTour) {
-        this.databaseManager = databaseManager;
-        this.vineyardTour = vineyardTour;
-    }
+  private final DatabaseManager databaseManager;
+  private final VineyardTour vineyardTour;
+  private final ObservableList<Vineyard> vineyards = FXCollections.observableArrayList();
 
-    public void init() {
-        vineyards.addAll(databaseManager.getVineyardsDao().getAllFromTour(vineyardTour));
-    }
+  public TourPlanningService(DatabaseManager databaseManager, VineyardTour vineyardTour) {
+    this.databaseManager = databaseManager;
+    this.vineyardTour = vineyardTour;
+  }
 
-    public VineyardTour getVineyardTour() {
-        return vineyardTour;
-    }
+  public void init() {
+    vineyards.addAll(databaseManager.getVineyardsDao().getAllFromTour(vineyardTour));
+  }
 
-    public ObservableList<Vineyard> getVineyards() {
-        return vineyards;
-    }
+  public VineyardTour getVineyardTour() {
+    return vineyardTour;
+  }
 
-    public void addVineyard(Vineyard vineyard) {
-        databaseManager.getVineyardTourDao().addVineyard(vineyardTour, vineyard);
-        vineyards.add(vineyard);
-    }
+  public ObservableList<Vineyard> getVineyards() {
+    return vineyards;
+  }
 
-    public void removeVineyard(Vineyard vineyard) {
-        databaseManager.getVineyardTourDao().removeVineyard(vineyardTour, vineyard);
-        vineyards.remove(vineyard);
-    }
+  public void addVineyard(Vineyard vineyard) {
+    databaseManager.getVineyardTourDao().addVineyard(vineyardTour, vineyard);
+    vineyards.add(vineyard);
+  }
+
+  public void removeVineyard(Vineyard vineyard) {
+    databaseManager.getVineyardTourDao().removeVineyard(vineyardTour, vineyard);
+    vineyards.remove(vineyard);
+  }
 }

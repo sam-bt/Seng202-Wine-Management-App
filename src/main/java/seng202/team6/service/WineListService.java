@@ -21,7 +21,7 @@ public class WineListService {
    * Constructor.
    *
    * @param authenticationManager authentication manager
-   * @param databaseManager database manager
+   * @param databaseManager       database manager
    */
   public WineListService(AuthenticationManager authenticationManager,
       DatabaseManager databaseManager) {
@@ -41,7 +41,7 @@ public class WineListService {
    * Checks if the wine is in the list.
    *
    * @param wineList wine list
-   * @param wine wine
+   * @param wine     wine
    * @return if wine is in list
    */
   public boolean isWineInList(WineList wineList, Wine wine) {

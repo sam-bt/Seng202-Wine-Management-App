@@ -37,6 +37,36 @@ public enum Island {
   }
 
   /**
+   * Determines the island based on the given postcode.
+   *
+   * @param postcode the postcode to check
+   * @return the Island enum corresponding to the postcode, otherwise null
+   */
+  public static Island byPostcode(int postcode) {
+    for (Island value : values()) {
+      if (postcode >= value.getMinPostcode() && postcode <= value.getMaxPostcode()) {
+        return value;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Determines the island based on the given code.
+   *
+   * @param code the code to check
+   * @return the Island enum corresponding to the code, otherwise null
+   */
+  public static Island byCode(char code) {
+    for (Island value : values()) {
+      if (value.getCode() == code) {
+        return value;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Gets the full name of the island.
    *
    * @return the name of the island
@@ -75,35 +105,5 @@ public enum Island {
   @Override
   public String toString() {
     return name;
-  }
-
-  /**
-   * Determines the island based on the given postcode.
-   *
-   * @param postcode the postcode to check
-   * @return the Island enum corresponding to the postcode, otherwise null
-   */
-  public static Island byPostcode(int postcode) {
-    for (Island value : values()) {
-      if (postcode >= value.getMinPostcode() && postcode <= value.getMaxPostcode()) {
-        return value;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Determines the island based on the given code.
-   *
-   * @param code the code to check
-   * @return the Island enum corresponding to the code, otherwise null
-   */
-  public static Island byCode(char code) {
-    for (Island value : values()) {
-      if (value.getCode() == code) {
-        return value;
-      }
-    }
-    return null;
   }
 }

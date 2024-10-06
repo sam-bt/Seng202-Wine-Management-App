@@ -1,6 +1,5 @@
 package seng202.team6.gui;
 
-import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -27,11 +26,9 @@ import org.controlsfx.control.RangeSlider;
 import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.model.WineFilters;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineFilters;
 import seng202.team6.service.PageService;
-import seng202.team6.util.ImageReader;
-import seng202.team6.util.WineWidgets;
 import seng202.team6.util.YearStringConverter;
 
 /**

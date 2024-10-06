@@ -22,6 +22,9 @@ import seng202.team6.service.VineyardService;
 import seng202.team6.util.ImageReader;
 
 public class VineyardsController extends Controller {
+
+  private final ObservableMap<Vineyard, Card> vineyardCards = FXCollections.observableHashMap();
+  private final VineyardService vineyardService;
   @FXML
   AnchorPane filtersPane;
   @FXML
@@ -32,9 +35,6 @@ public class VineyardsController extends Controller {
   private AutoCompletionTextField addressTextField;
   private AutoCompletionTextField regionTextField;
   private LeafletOsmController mapController;
-
-  private final ObservableMap<Vineyard, Card> vineyardCards = FXCollections.observableHashMap();
-  private final VineyardService vineyardService;
 
   /**
    * Constructs the Vineyards Controller

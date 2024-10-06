@@ -14,6 +14,9 @@ import seng202.team6.model.VineyardTour;
 import seng202.team6.service.VineyardToursService;
 
 public class VineyardTourPopupController extends Controller {
+
+  private final VineyardToursService vineyardToursService;
+  private final VineyardTour modifyingVineyard;
   @FXML
   private HBox buttonsContainer;
   @FXML
@@ -26,9 +29,6 @@ public class VineyardTourPopupController extends Controller {
   private Button submitButton;
   @FXML
   private TextField tourNameTextfield;
-
-  private final VineyardToursService vineyardToursService;
-  private final VineyardTour modifyingVineyard;
 
   /**
    * Constructs a new VineyardTourPopupController.

@@ -8,16 +8,15 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.dao.GeoLocationDao;
-import seng202.team6.dao.GeoLocationDao;
 import seng202.team6.dao.VineyardDao;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.util.GeolocationResolver;
 import seng202.team6.util.ProcessCsv;
-import seng202.team6.util.ProcessCsv;
 import seng202.team6.util.Timer;
 
 public class VineyardDefaultsService {
+
   private final Logger log = LogManager.getLogger(getClass());
   private final GeolocationResolver geolocationResolver;
   private final GeoLocationDao geoLocationDao;
@@ -77,7 +76,8 @@ public class VineyardDefaultsService {
     return vineyards;
   }
 
-  private List<String> findMissingAddresses(Set<String> addresses, Set<String> addressesInDatabase) {
+  private List<String> findMissingAddresses(Set<String> addresses,
+      Set<String> addressesInDatabase) {
     List<String> missingAddresses = new ArrayList<>();
     for (String address : addresses) {
       if (!addressesInDatabase.contains(address)) {

@@ -38,10 +38,9 @@ public class WineListDao extends Dao {
    * Returns the SQL statements required to initialise the LIST_NAME and LIST_ITEMS table.
    *
    * <p>
-   *   The LIST_NAME table is responsible for holding the username of who owns the list and the name
-   *   of the list.
-   *   The LIST_ITEMS table is responsible for holding the WINE_ID of a wine which belongs to a list
-   *   from LIST_NAME with ID
+   * The LIST_NAME table is responsible for holding the username of who owns the list and the name
+   * of the list. The LIST_ITEMS table is responsible for holding the WINE_ID of a wine which
+   * belongs to a list from LIST_NAME with ID
    * </p>
    *
    * @return Array of SQL statements for initialising the USER table
@@ -168,7 +167,8 @@ public class WineListDao extends Dao {
       try (ResultSet resultSet = statement.executeQuery()) {
         boolean found = resultSet.next();
         log.info("Successfully found wine with ID {} is {} list with ID {} in {}ms",
-            wine.getKey(), found ? "in" : "not in", wineList.id(), timer.currentOffsetMilliseconds());
+            wine.getKey(), found ? "in" : "not in", wineList.id(),
+            timer.currentOffsetMilliseconds());
         return found;
       }
     } catch (SQLException error) {

@@ -4,6 +4,7 @@ import javafx.event.Event;
 import org.controlsfx.control.Rating;
 
 public class UnmodifiableRating extends Rating {
+
   public UnmodifiableRating() {
     setUpdateOnHover(false);
     setMouseTransparent(true);

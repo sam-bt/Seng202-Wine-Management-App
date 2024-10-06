@@ -18,6 +18,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.util.ImageReader;
 
 public class WineCard extends Card {
+
   private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine_cropped.png");
   private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage(
       "/img/white_wine_cropped.png");

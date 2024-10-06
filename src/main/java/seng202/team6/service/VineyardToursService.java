@@ -10,6 +10,7 @@ import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
 
 public class VineyardToursService {
+
   private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
   private final ObservableList<VineyardTour> vineyardTours = FXCollections.observableArrayList();

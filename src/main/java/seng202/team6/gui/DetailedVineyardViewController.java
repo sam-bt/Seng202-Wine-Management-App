@@ -17,6 +17,8 @@ import seng202.team6.util.ImageReader;
 
 public class DetailedVineyardViewController extends Controller {
 
+  private final Vineyard vineyard;
+  private final Runnable backButtonAction;
   @FXML
   TitledPane viewingVineyardTitledPane;
   @FXML
@@ -29,10 +31,6 @@ public class DetailedVineyardViewController extends Controller {
   TextField websiteTextbox;
   @FXML
   TextArea descriptionTextbox;
-
-
-  private final Vineyard vineyard;
-  private final Runnable backButtonAction;
 
   /**
    * Constructs the Detailed Vineyard View Controller

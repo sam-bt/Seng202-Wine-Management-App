@@ -40,15 +40,15 @@ public class VineyardDao extends Dao {
   @Override
   public String[] getInitialiseStatements() {
     return new String[]{
-        "CREATE TABLE IF NOT EXISTS VINEYARD (" +
-            "ID             INTEGER       PRIMARY KEY," +
-            "NAME           VARCHAR(64)   NOT NULL," +
-            "ADDRESS        VARCHAR(64)   NOT NULL," +
-            "REGION         VARCHAR(32)   NOT NULL," +
-            "WEBSITE        TEXT," +
-            "DESCRIPTION    TEXT," +
-            "LOGO_URL       TEXT" +
-            ")"
+        "CREATE TABLE IF NOT EXISTS VINEYARD ("
+            + "ID             INTEGER       PRIMARY KEY,"
+            + "NAME           VARCHAR(64)   NOT NULL,"
+            + "ADDRESS        VARCHAR(64)   NOT NULL,"
+            + "REGION         VARCHAR(32)   NOT NULL,"
+            + "WEBSITE        TEXT,"
+            + "DESCRIPTION    TEXT,"
+            + "LOGO_URL       TEXT"
+            + ")"
     };
   }
 
@@ -77,8 +77,8 @@ public class VineyardDao extends Dao {
   /**
    * Retrieves a range of vineyards from the VINEYARD table.
    *
-   * @param begin The start index of the range (inclusive)
-   * @param end   The end index of the range (exclusive)
+   * @param begin           The start index of the range (inclusive)
+   * @param end             The end index of the range (exclusive)
    * @param vineyardFilters The vineyard filters to be applied
    * @return An ObservableList of Vineyard objects within the specified range
    */
@@ -100,7 +100,8 @@ public class VineyardDao extends Dao {
         statement.setString(paramIndex++,
             vineyardFilters.getName().isEmpty() ? "%" : "%" + vineyardFilters.getName() + "%");
         statement.setString(paramIndex++,
-            vineyardFilters.getAddress().isEmpty() ? "%" : "%" + vineyardFilters.getAddress() + "%");
+            vineyardFilters.getAddress().isEmpty() ? "%"
+                : "%" + vineyardFilters.getAddress() + "%");
         statement.setString(paramIndex++,
             vineyardFilters.getRegion().isEmpty() ? "%" : "%" + vineyardFilters.getRegion() + "%");
       }
@@ -121,9 +122,9 @@ public class VineyardDao extends Dao {
 
   public Vineyard get(String name) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM VINEYARD " +
-        "LEFT JOIN GEOLOCATION ON LOWER(VINEYARD.ADDRESS) LIKE LOWER(GEOLOCATION.NAME) " +
-        "WHERE VINEYARD.NAME = ?";
+    String sql = "SELECT * FROM VINEYARD "
+        + "LEFT JOIN GEOLOCATION ON LOWER(VINEYARD.ADDRESS) LIKE LOWER(GEOLOCATION.NAME) "
+        + "WHERE VINEYARD.NAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setString(1, name);
       try (ResultSet resultSet = statement.executeQuery()) {
@@ -165,16 +166,16 @@ public class VineyardDao extends Dao {
 
   public List<Vineyard> getAllFromTour(VineyardTour vineyardTour) {
     Timer timer = new Timer();
-    String sql = "SELECT ID FROM VINEYARD_TOUR_ITEM " +
-            "LEFT JOIN VINEYARD ON VINEYARD.ID = VINEYARD_TOUR_ITEM.VINEYARD_ID " +
-            "WHERE TOUR_ID = ?";
+    String sql = "SELECT ID FROM VINEYARD_TOUR_ITEM "
+        + "LEFT JOIN VINEYARD ON VINEYARD.ID = VINEYARD_TOUR_ITEM.VINEYARD_ID "
+        + "WHERE TOUR_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setLong(1, vineyardTour.getId());
 
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet);
         log.info("Successfully retrieved all {} vineyards in tour '{}' in {}ms",
-                vineyards.size(),  vineyardTour.getName(), timer.currentOffsetMilliseconds());
+            vineyards.size(), vineyardTour.getName(), timer.currentOffsetMilliseconds());
         return vineyards;
       }
     } catch (SQLException error) {

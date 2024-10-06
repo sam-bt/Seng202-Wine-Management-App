@@ -13,6 +13,7 @@ import seng202.team6.enums.Island;
  * tour, and the island the tour is in.
  */
 public class VineyardTour {
+
   private final ReadOnlyLongProperty id;
   private final StringProperty username;
   private final StringProperty name;

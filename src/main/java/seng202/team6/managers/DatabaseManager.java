@@ -8,15 +8,12 @@ import java.security.InvalidParameterException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.Set;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +30,6 @@ import seng202.team6.dao.WineReviewDao;
 import seng202.team6.service.VineyardDefaultsService;
 import seng202.team6.service.WineDataStatService;
 import seng202.team6.util.EncryptionUtil;
-import seng202.team6.util.Timer;
 
 /**
  * Manages the creation, initialization, and teardown of a database. Provides methods for setting up
@@ -41,6 +37,7 @@ import seng202.team6.util.Timer;
  * for interacting with different database tables.
  */
 public class DatabaseManager {
+
   private static final Logger log = LogManager.getLogger(DatabaseManager.class);
   private final Connection connection;
   private final UserDao userDao;
@@ -168,24 +165,24 @@ public class DatabaseManager {
     String salt = EncryptionUtil.generateSalt();
     String hashedAdminPassword = EncryptionUtil.hashPassword("admin", salt);
     List<String> triggersAndDefaultStatements = List.of(
-        "CREATE TRIGGER IF NOT EXISTS FAVOURITES_LIST" +
-            "AFTER INSERT ON USER " +
-            "FOR EACH ROW " +
-            "BEGIN " +
-            "INSERT INTO LIST_NAME (USERNAME, NAME) " +
-            "VALUES (NEW.USERNAME, 'Favourites'); " +
-            "END",
-        "CREATE TRIGGER IF NOT EXISTS HISTORY_LIST" +
-            "AFTER INSERT ON USER " +
-            "FOR EACH ROW " +
-            "BEGIN " +
-            "INSERT INTO LIST_NAME (USERNAME, NAME) " +
-            "VALUES (NEW.USERNAME, 'History'); " +
-            "END",
-        "INSERT INTO USER (USERNAME, PASSWORD, ROLE, SALT) " +
-            "SELECT 'admin', '" + hashedAdminPassword + "', 'admin', '" + salt + "' " +
-            "WHERE NOT EXISTS (" +
-            "SELECT 1 FROM USER WHERE USERNAME = 'admin')"
+        "CREATE TRIGGER IF NOT EXISTS FAVOURITES_LIST"
+            + "AFTER INSERT ON USER "
+            + "FOR EACH ROW "
+            + "BEGIN "
+            + "INSERT INTO LIST_NAME (USERNAME, NAME) "
+            + "VALUES (NEW.USERNAME, 'Favourites'); "
+            + "END",
+        "CREATE TRIGGER IF NOT EXISTS HISTORY_LIST"
+            + "AFTER INSERT ON USER "
+            + "FOR EACH ROW "
+            + "BEGIN "
+            + "INSERT INTO LIST_NAME (USERNAME, NAME) "
+            + "VALUES (NEW.USERNAME, 'History'); "
+            + "END",
+        "INSERT INTO USER (USERNAME, PASSWORD, ROLE, SALT) "
+            + "SELECT 'admin', '" + hashedAdminPassword + "', 'admin', '" + salt + "' "
+            + "WHERE NOT EXISTS ("
+            + "SELECT 1 FROM USER WHERE USERNAME = 'admin')"
     );
 
     try (Statement statement = connection.createStatement()) {

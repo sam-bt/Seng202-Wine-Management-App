@@ -11,6 +11,7 @@ import javafx.beans.property.StringProperty;
  * The Vineyard class represents a vineyard.
  */
 public class Vineyard {
+
   private final ReadOnlyLongProperty id;
   private final StringProperty name;
   private final StringProperty address;

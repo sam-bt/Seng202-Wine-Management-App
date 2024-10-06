@@ -20,8 +20,8 @@ public class WineNoteService {
    * Constructor.
    *
    * @param authenticationManager authentication manager
-   * @param databaseManager database manager
-   * @param wine wine
+   * @param databaseManager       database manager
+   * @param wine                  wine
    */
   public WineNoteService(AuthenticationManager authenticationManager,
       DatabaseManager databaseManager, Wine wine) {

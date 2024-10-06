@@ -9,6 +9,7 @@ import seng202.team6.model.Vineyard;
 import seng202.team6.util.ImageReader;
 
 public class VineyardCardContent extends VBox {
+
   public VineyardCardContent(Vineyard vineyard, int logoWidth, int logoHeight) {
     Image logo = ImageReader.loadImageFromURL(vineyard.getLogoUrl());
     ImageView logoView = new ImageView(logo);

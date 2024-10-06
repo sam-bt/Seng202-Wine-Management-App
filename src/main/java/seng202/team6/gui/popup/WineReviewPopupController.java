@@ -38,7 +38,7 @@ public class WineReviewPopupController extends Controller {
   /**
    * Constructor.
    *
-   * @param context manager context
+   * @param context            manager context
    * @param wineReviewsService wine review service
    */
   public WineReviewPopupController(ManagerContext context, WineReviewsService wineReviewsService) {

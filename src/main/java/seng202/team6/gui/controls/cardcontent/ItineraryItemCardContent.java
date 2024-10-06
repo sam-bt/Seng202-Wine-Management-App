@@ -1,11 +1,11 @@
 package seng202.team6.gui.controls.cardcontent;
 
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import seng202.team6.model.Vineyard;
 
 public class ItineraryItemCardContent extends VBox {
+
   public ItineraryItemCardContent(Vineyard vineyard) {
     Label name = new Label();
     name.textProperty().bind(vineyard.nameProperty());

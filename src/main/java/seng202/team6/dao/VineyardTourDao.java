@@ -33,20 +33,20 @@ public class VineyardTourDao extends Dao {
   @Override
   public String[] getInitialiseStatements() {
     return new String[]{
-        "CREATE TABLE IF NOT EXISTS VINEYARD_TOUR (" +
-            "ID             INTEGER       PRIMARY KEY," +
-            "USERNAME       VARCHAR(64)   NOT NULL," +
-            "NAME           VARCHAR(32)   NOT NULL," +
-            "ISLAND         CHAR(1)       NOT NULL," +
-            "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE" +
-            ")",
-        "CREATE TABLE IF NOT EXISTS VINEYARD_TOUR_ITEM (" +
-            "TOUR_ID        INTEGER       NOT NULL," +
-            "VINEYARD_ID    INTEGER       NOT NULL," +
-            "PRIMARY KEY (TOUR_ID, VINEYARD_ID)," +
-            "FOREIGN KEY (TOUR_ID) REFERENCES VINEYARD_TOUR(ID) ON DELETE CASCADE," +
-            "FOREIGN KEY (VINEYARD_ID) REFERENCES VINEYARD(ID) ON DELETE CASCADE" +
-            ")"
+        "CREATE TABLE IF NOT EXISTS VINEYARD_TOUR ("
+            + "ID             INTEGER       PRIMARY KEY,"
+            + "USERNAME       VARCHAR(64)   NOT NULL,"
+            + "NAME           VARCHAR(32)   NOT NULL,"
+            + "ISLAND         CHAR(1)       NOT NULL,"
+            + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE"
+            + ")",
+        "CREATE TABLE IF NOT EXISTS VINEYARD_TOUR_ITEM ("
+            + "TOUR_ID        INTEGER       NOT NULL,"
+            + "VINEYARD_ID    INTEGER       NOT NULL,"
+            + "PRIMARY KEY (TOUR_ID, VINEYARD_ID),"
+            + "FOREIGN KEY (TOUR_ID) REFERENCES VINEYARD_TOUR(ID) ON DELETE CASCADE,"
+            + "FOREIGN KEY (VINEYARD_ID) REFERENCES VINEYARD(ID) ON DELETE CASCADE"
+            + ")"
     };
   }
 
@@ -109,7 +109,8 @@ public class VineyardTourDao extends Dao {
       try (ResultSet resultSet = statement.executeQuery()) {
         boolean found = resultSet.next();
         log.info("Successfully found vineyard with ID {} is {} list with ID {} in {}ms",
-            vineyard.getId(), found ? "in" : "not in", vineyardTour.getId(), timer.currentOffsetMilliseconds());
+            vineyard.getId(), found ? "in" : "not in", vineyardTour.getId(),
+            timer.currentOffsetMilliseconds());
         return found;
       }
     } catch (SQLException error) {
@@ -136,7 +137,7 @@ public class VineyardTourDao extends Dao {
       }
     } catch (SQLException error) {
       log.error("Failed to add vineyard with ID {} to tour with ID {}",
-          vineyard.getId(),vineyardTour.getId(), error);
+          vineyard.getId(), vineyardTour.getId(), error);
     }
   }
 
@@ -150,14 +151,14 @@ public class VineyardTourDao extends Dao {
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
         log.info("Successfully removed vineyard with ID {} from tour with ID {} in {}ms",
-            vineyard.getId(),vineyardTour.getId(), timer.currentOffsetMilliseconds());
+            vineyard.getId(), vineyardTour.getId(), timer.currentOffsetMilliseconds());
       } else {
         log.warn("Could not remove vineyard with ID {} from tour with ID {} in {}ms",
-            vineyard.getId(),vineyardTour.getId(), timer.currentOffsetMilliseconds());
+            vineyard.getId(), vineyardTour.getId(), timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
       log.error("Failed to remove vineyard with ID {} from tour with ID {}",
-          vineyard.getId(),vineyardTour.getId(), error);
+          vineyard.getId(), vineyardTour.getId(), error);
     }
   }
 

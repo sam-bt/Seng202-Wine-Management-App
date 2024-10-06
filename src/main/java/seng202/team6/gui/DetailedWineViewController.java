@@ -35,7 +35,8 @@ import seng202.team6.util.DateFormatter;
 import seng202.team6.util.ImageReader;
 
 /**
- * The DetailedWineViewController is responsible for managing the detailed wine view within the GUI.
+ * The DetailedWineViewController is responsible for managing the detailed wine view within the
+ * GUI.
  */
 public class DetailedWineViewController extends Controller {
 
@@ -101,8 +102,8 @@ public class DetailedWineViewController extends Controller {
   private GridPane descriptionScoreNotesGridPane;
   @FXML
   private WebView webView;
-  private Rating ratingStars;
-  private CircularScoreIndicator scoreIndicator;
+  private final Rating ratingStars;
+  private final CircularScoreIndicator scoreIndicator;
   private LeafletOsmController mapController;
 
   /**
@@ -262,7 +263,7 @@ public class DetailedWineViewController extends Controller {
   @FXML
   void onViewVineyardClick() {
     // fixme - circular back buttons idk how to fix
-    managerContext.getGuiManager().mainController.openDetailedVineyardView(wineVineyard ,
+    managerContext.getGuiManager().mainController.openDetailedVineyardView(wineVineyard,
         () -> managerContext.getGuiManager().mainController.openDetailedWineView(viewedWine, null));
   }
 

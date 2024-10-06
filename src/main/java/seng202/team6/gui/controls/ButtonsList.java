@@ -12,8 +12,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 /**
- * A generic class that creates and manages a list of buttons, each associated with a unique element.
- * The buttons are displayed within a VBox, with their width dynamically bound to the parent's width.
+ * A generic class that creates and manages a list of buttons, each associated with a unique
+ * element. The buttons are displayed within a VBox, with their width dynamically bound to the
+ * parent's width.
  *
  * @param <T> the type of the elements that the buttons are associated with
  */
@@ -24,7 +25,8 @@ public class ButtonsList<T> extends VBox {
    */
   private final Map<T, Button> buttons = new HashMap<>();
 
-  public ButtonsList(ReadOnlyObjectProperty<Bounds> viewportBounds, ReadOnlyDoubleProperty scrollPaneWidth) {
+  public ButtonsList(ReadOnlyObjectProperty<Bounds> viewportBounds,
+      ReadOnlyDoubleProperty scrollPaneWidth) {
     setSpacing(10);
     setFillWidth(true);
 
@@ -49,7 +51,7 @@ public class ButtonsList<T> extends VBox {
    * the provided StringProperty.
    *
    * @param element the element associated with the button
-   * @param text the StringProperty that the button's text will be bound to
+   * @param text    the StringProperty that the button's text will be bound to
    */
   public void add(T element, StringProperty text, Runnable clickAction) {
     Button button = new Button();

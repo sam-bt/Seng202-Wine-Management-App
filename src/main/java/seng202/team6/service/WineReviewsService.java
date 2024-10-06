@@ -30,8 +30,8 @@ public class WineReviewsService {
    * Constructor.
    *
    * @param authenticationManager authentication manager
-   * @param databaseManager database manager
-   * @param wine wine
+   * @param databaseManager       database manager
+   * @param wine                  wine
    */
   public WineReviewsService(AuthenticationManager authenticationManager,
       DatabaseManager databaseManager, Wine wine) {
@@ -56,7 +56,7 @@ public class WineReviewsService {
   /**
    * Adds or removes a user review.
    *
-   * @param rating rating
+   * @param rating      rating
    * @param description description
    */
   public void addOrUpdateUserReview(double rating, String description) {

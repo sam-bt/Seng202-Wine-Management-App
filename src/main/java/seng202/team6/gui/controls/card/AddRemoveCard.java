@@ -9,8 +9,10 @@ import javafx.scene.layout.Priority;
 import seng202.team6.gui.controls.AddRemoveButton;
 
 public class AddRemoveCard extends Card {
-  public AddRemoveCard(ReadOnlyDoubleProperty containerWidth,  DoubleProperty hGap, Node content,
-      boolean centerContent, boolean shouldAdd, boolean white, Runnable addClickRunnable, Runnable removeClickRunnable, String addTooltipText, String removeTooltipText) {
+
+  public AddRemoveCard(ReadOnlyDoubleProperty containerWidth, DoubleProperty hGap, Node content,
+      boolean centerContent, boolean shouldAdd, boolean white, Runnable addClickRunnable,
+      Runnable removeClickRunnable, String addTooltipText, String removeTooltipText) {
     super(containerWidth, hGap);
 
     HBox contentWrapper = new HBox(content);

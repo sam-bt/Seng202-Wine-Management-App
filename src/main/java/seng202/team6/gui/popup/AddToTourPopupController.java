@@ -12,11 +12,10 @@ import seng202.team6.service.VineyardToursService;
 
 public class AddToTourPopupController extends Controller {
 
-  @FXML
-  ScrollPane vineyardToursContainer;
-
   private final VineyardToursService vineyardToursService;
   private final Vineyard vineyard;
+  @FXML
+  ScrollPane vineyardToursContainer;
   private AddRemoveCardsContainer<VineyardTour> addRemoveCardsContainer;
 
   /**
@@ -47,17 +46,20 @@ public class AddToTourPopupController extends Controller {
   }
 
   private void bindToVineyardToursService() {
-    vineyardToursService.getVineyardTours().addListener((ListChangeListener<VineyardTour>) change -> {
-      while (change.next()) {
-        if (change.wasAdded()) {
-          change.getAddedSubList().forEach(vineyardTour -> {
-            addRemoveCardsContainer.add(vineyardTour, vineyardTour.nameProperty(),
-                !vineyardToursService.isVineyardInTour(vineyardTour, vineyard),
-                () ->  managerContext.getDatabaseManager().getVineyardTourDao().addVineyard(vineyardTour, vineyard),
-                () -> managerContext.getDatabaseManager().getVineyardTourDao().removeVineyard(vineyardTour, vineyard));
-          });
-        }
-      }
-    });
+    vineyardToursService.getVineyardTours()
+        .addListener((ListChangeListener<VineyardTour>) change -> {
+          while (change.next()) {
+            if (change.wasAdded()) {
+              change.getAddedSubList().forEach(vineyardTour -> {
+                addRemoveCardsContainer.add(vineyardTour, vineyardTour.nameProperty(),
+                    !vineyardToursService.isVineyardInTour(vineyardTour, vineyard),
+                    () -> managerContext.getDatabaseManager().getVineyardTourDao()
+                        .addVineyard(vineyardTour, vineyard),
+                    () -> managerContext.getDatabaseManager().getVineyardTourDao()
+                        .removeVineyard(vineyardTour, vineyard));
+              });
+            }
+          }
+        });
   }
 }

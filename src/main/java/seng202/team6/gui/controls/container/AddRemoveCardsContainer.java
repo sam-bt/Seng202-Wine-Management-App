@@ -21,12 +21,14 @@ import javafx.scene.shape.SVGPath;
 import seng202.team6.util.IconPaths;
 
 public class AddRemoveCardsContainer<T> extends VBox {
+
   /**
    * Stores a mapping of elements to their corresponding buttons.
    */
   private final Map<T, GridPane> buttons = new HashMap<>();
 
-  public AddRemoveCardsContainer(ReadOnlyObjectProperty<Bounds> viewportBounds, ReadOnlyDoubleProperty scrollPaneWidth) {
+  public AddRemoveCardsContainer(ReadOnlyObjectProperty<Bounds> viewportBounds,
+      ReadOnlyDoubleProperty scrollPaneWidth) {
     setSpacing(10);
     setFillWidth(true);
 
@@ -84,11 +86,13 @@ public class AddRemoveCardsContainer<T> extends VBox {
   }
 
   static class CardWrapper extends GridPane {
-    private final Button button;
+
     protected final Runnable addClickRunnable;
     protected final Runnable removeClickRunnable;
+    private final Button button;
 
-    CardWrapper(Button button, boolean shouldAdd, Runnable addClickRunnable, Runnable removeClickRunnable) {
+    CardWrapper(Button button, boolean shouldAdd, Runnable addClickRunnable,
+        Runnable removeClickRunnable) {
       this.button = button;
       this.addClickRunnable = addClickRunnable;
       this.removeClickRunnable = removeClickRunnable;

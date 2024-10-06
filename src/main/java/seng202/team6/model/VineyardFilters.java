@@ -1,6 +1,7 @@
 package seng202.team6.model;
 
 public class VineyardFilters {
+
   private String name;
   private String address;
   private String region;

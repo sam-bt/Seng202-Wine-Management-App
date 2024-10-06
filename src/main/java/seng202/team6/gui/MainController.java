@@ -133,8 +133,8 @@ public class MainController extends Controller {
   /**
    * Switches the current scene.
    *
-   * @param fxml fxml resource path
-   * @param title window title
+   * @param fxml    fxml resource path
+   * @param title   window title
    * @param builder controller builder
    */
   public void switchScene(String fxml, String title, Builder<?> builder) {
@@ -147,8 +147,8 @@ public class MainController extends Controller {
   /**
    * Loads a scene from a fxml resource.
    *
-   * @param fxml fxml resource path
-   * @param builder controller builder
+   * @param fxml        fxml resource path
+   * @param builder     controller builder
    * @param parentToAdd parent to add scene to
    * @return added node
    */
@@ -173,7 +173,7 @@ public class MainController extends Controller {
   /**
    * Opens a popup.
    *
-   * @param fxml fxml resource path
+   * @param fxml    fxml resource path
    * @param builder controller builder
    */
   public void openPopup(String fxml, Builder<?> builder) {
@@ -212,7 +212,6 @@ public class MainController extends Controller {
     navBarBox.getChildren().remove(listScreenButton);
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
-
 
     openWineScreen();
   }
@@ -299,7 +298,7 @@ public class MainController extends Controller {
   /**
    * Launches the detailed wine view.
    *
-   * @param wine wine
+   * @param wine             wine
    * @param backButtonAction action to run when back button is pressed
    */
   public void openDetailedWineView(Wine wine, Runnable backButtonAction) {
@@ -309,7 +308,8 @@ public class MainController extends Controller {
 
   /**
    * Launches the detailed wine view
-   * @param vineyard the vineyard to view
+   *
+   * @param vineyard         the vineyard to view
    * @param backButtonAction action to run when back button is pressed
    */
   public void openDetailedVineyardView(Vineyard vineyard, Runnable backButtonAction) {
@@ -376,9 +376,9 @@ public class MainController extends Controller {
    * Launches the popup to review a wine.
    *
    * @param wineReviewsService service
-   * @param reviewer reviewer
-   * @param selectedReview selected review
-   * @param wine wine
+   * @param reviewer           reviewer
+   * @param selectedReview     selected review
+   * @param wine               wine
    */
   public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer,
       WineReview selectedReview, Wine wine) {
@@ -390,7 +390,8 @@ public class MainController extends Controller {
   public void openVineyardTourPopup(VineyardToursService vineyardToursService,
       VineyardTour modifyingVineyardTour) {
     openPopup("/fxml/popup/create_vineyard_tour_popup.fxml",
-        () -> new VineyardTourPopupController(managerContext, vineyardToursService, modifyingVineyardTour));
+        () -> new VineyardTourPopupController(managerContext, vineyardToursService,
+            modifyingVineyardTour));
   }
 
   /**
