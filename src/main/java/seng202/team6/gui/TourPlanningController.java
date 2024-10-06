@@ -101,13 +101,13 @@ public class TourPlanningController extends Controller {
   @FXML
   public void onCalculateTourClick() {
     tabPane.getSelectionModel().select(viewTourTab);
-    List<GeoLocation> list = currentTourPlanningService.getVineyards().stream().map(
-        vineyard -> vineyard.getGeoLocation()
-    ).toList();
+    mapController.clearWineMarkers();
+    List<GeoLocation> list = currentTourPlanningService.getVineyards().stream()
+            .peek(vineyard -> mapController.addVineyardMaker(vineyard, false))
+            .map(Vineyard::getGeoLocation)
+            .toList();
     String geometry = geolocation.getRoute(list);
-//    String vineyards = geolocation.addmarker
     mapController.addRoute(geometry);
-
   }
 
   public void openVineyardTour(VineyardTour vineyardTour) {
@@ -131,5 +131,6 @@ public class TourPlanningController extends Controller {
       vineyardCardsContainer.addCard(vineyard, card);
     });
     currentTourPlanningService = new TourPlanningService(managerContext.databaseManager, vineyardTour);
+    currentTourPlanningService.init();
   }
 }

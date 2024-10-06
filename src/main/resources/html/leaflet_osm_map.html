@@ -111,7 +111,7 @@
       zoom: 6,
   };
 
-  let map, wineMarkersLayer, vineyardMarkersLayer, heatMapLayer;
+  let map, wineMarkersLayer, vineyardMarkersLayer, heatMapLayer, routePolyline;
   let markers = [];
   let heatMapData = [];
   // let roads/route
@@ -310,8 +310,12 @@
   }
 
   function displayRoute(geometry) {
+    if (routePolyline) {
+      routePolyline.remove();
+    }
     const polylinePoints = L.Polyline.fromEncoded(geometry).getLatLngs();
-    const routePolyline = L.polyline(polylinePoints, { color: 'blue' }).addTo(map);
+    routePolyline = L.polyline(polylinePoints, { color: 'blue' }).addTo(map);
+    routePolyline.addTo(map);
     map.fitBounds(routePolyline.getBounds());
   }
 

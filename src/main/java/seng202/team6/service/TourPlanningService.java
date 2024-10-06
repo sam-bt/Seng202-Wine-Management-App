@@ -17,6 +17,10 @@ public class TourPlanningService {
         this.vineyardTour = vineyardTour;
     }
 
+    public void init() {
+        vineyards.addAll(databaseManager.getVineyardsDAO().getAllFromTour(vineyardTour));
+    }
+
     public VineyardTour getVineyardTour() {
         return vineyardTour;
     }

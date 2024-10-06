@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardFilters;
+import seng202.team6.model.VineyardTour;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
@@ -160,6 +161,26 @@ public class VineyardDAO extends DAO {
     } catch (SQLException error) {
       log.error("Failed to add vineyards", error);
     }
+  }
+
+  public List<Vineyard> getAllFromTour(VineyardTour vineyardTour) {
+    Timer timer = new Timer();
+    String sql = "SELECT ID FROM VINEYARD_TOUR_ITEM " +
+            "LEFT JOIN VINEYARD ON VINEYARD.ID = VINEYARD_TOUR_ITEM.VINEYARD_ID " +
+            "WHERE TOUR_ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setLong(1, vineyardTour.getId());
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet);
+        log.info("Successfully retrieved all {} vineyards in tour '{}' in {}ms",
+                vineyards.size(),  vineyardTour.getName(), timer.stop());
+        return vineyards;
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve vineyards in tour '{}'", vineyardTour.getName(), error);
+    }
+    return FXCollections.emptyObservableList();
   }
 
   /**
