@@ -143,8 +143,8 @@ public class LeafletOSMController {
     }
   }
 
-  public void addRoute() {
-
+  public void addRoute(ArrayList<String> route) {
+    javaScriptConnector.call("addRoute", route);
   }
 
   /**

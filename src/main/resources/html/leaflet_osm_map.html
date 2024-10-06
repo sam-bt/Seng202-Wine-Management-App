@@ -318,8 +318,11 @@
 
   function addRoute(route) {
     clearMarkers();
-
+    // Geometry = route.getsomething or other
+    displayGeometryLine(route);
+    //add markers for the vineyards
   }
+
   function setView(latitude, longitude) {
     map.setView(new L.LatLng(latitude, longitude), 5);
   }
