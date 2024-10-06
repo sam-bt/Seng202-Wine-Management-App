@@ -152,7 +152,8 @@ public class TourPlanningController extends Controller {
           new SimpleDoubleProperty(), vineyardCardContent, true,
           !vineyardToursService.isVineyardInTour(vineyardTour, vineyard), false,
           () -> currentTourPlanningService.addVineyard(vineyard),
-          () -> currentTourPlanningService.removeVineyard(vineyard));
+          () -> currentTourPlanningService.removeVineyard(vineyard),
+          "Add winery to tour", "Remove winery from tour");
       vineyardCardsContainer.addCard(vineyard, addRemoveCard);
     });
     currentTourPlanningService = new TourPlanningService(managerContext.databaseManager, vineyardTour);

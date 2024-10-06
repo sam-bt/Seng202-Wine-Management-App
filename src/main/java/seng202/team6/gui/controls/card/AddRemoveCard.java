@@ -10,7 +10,7 @@ import seng202.team6.gui.controls.AddRemoveButton;
 
 public class AddRemoveCard extends Card {
   public AddRemoveCard(ReadOnlyDoubleProperty containerWidth,  DoubleProperty hGap, Node content,
-      boolean centerContent, boolean shouldAdd, boolean white, Runnable addClickRunnable, Runnable removeClickRunnable) {
+      boolean centerContent, boolean shouldAdd, boolean white, Runnable addClickRunnable, Runnable removeClickRunnable, String addTooltipText, String removeTooltipText) {
     super(containerWidth, hGap);
 
     HBox contentWrapper = new HBox(content);
@@ -19,7 +19,7 @@ public class AddRemoveCard extends Card {
     HBox.setHgrow(content, Priority.ALWAYS);
 
     AddRemoveButton addRemoveButton = new AddRemoveButton(shouldAdd, addClickRunnable,
-        removeClickRunnable, white);
+        removeClickRunnable, addTooltipText, removeTooltipText);
     setAlignment(Pos.CENTER);
     getChildren().addAll(contentWrapper, addRemoveButton);
   }
