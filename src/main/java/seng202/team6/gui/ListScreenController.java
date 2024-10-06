@@ -141,8 +141,8 @@ public class ListScreenController extends Controller {
 
   }
   @FXML
-  void onDeleteListRequestClick() {
-    managerContext.GUIManager.mainController.openDeleteListPopUp();
+  void onDeleteListRequestClick(WineList wineList, WineListService wineListService) {
+    managerContext.GUIManager.mainController.openDeleteListPopUp(wineList, wineListService);
   }
   /**
    * creates the lists, adding it to the array and updates relevant information on screen
@@ -185,7 +185,7 @@ public class ListScreenController extends Controller {
     if (!wineListService.canRemove(wineList)) {
       return;
     }
-    onDeleteListRequestClick();
+    onDeleteListRequestClick(wineList, wineListService);
 
   }
 

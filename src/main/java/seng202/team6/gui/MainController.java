@@ -16,7 +16,9 @@ import seng202.team6.gui.popup.*;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
+import seng202.team6.service.WineListService;
 import seng202.team6.service.WineReviewsService;
 
 /**
@@ -263,9 +265,9 @@ public class MainController extends Controller {
   }
 */
 
-  public void openDeleteListPopUp() {
+  public void openDeleteListPopUp(WineList wineList, WineListService wineListService) {
     openPopup("/fxml/popup/delete_list_popup.fxml",
-            () -> new DeleteListPopupController(managerContext));
+            () -> new DeleteListPopupController(managerContext, wineList, wineListService));
   }
 
   public void openAddToListPopup(Wine wine) {
@@ -293,6 +295,8 @@ public class MainController extends Controller {
     popupContent.setDisable(true);
     popupContent.getChildren().clear();
   }
+
+
 
   public Parent loadImportWineScreen(Pane parent) {
     return loadFXML("/fxml/wine_import_screen.fxml",
