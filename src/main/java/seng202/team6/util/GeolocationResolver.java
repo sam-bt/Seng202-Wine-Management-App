@@ -10,6 +10,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -143,7 +144,7 @@ public class GeolocationResolver {
     return null;
   }
 
-  private JSONObject getRoute(ArrayList<GeoLocation> vineyards) {
+  private JSONObject getRoute(List<GeoLocation> vineyards) {
     JSONArray coordinatesArray = new JSONArray();
 
     for (GeoLocation vineyard : vineyards) {
@@ -174,6 +175,17 @@ public class GeolocationResolver {
       throw new RuntimeException(e);
     }
     return routeBody;
+  }
+
+  public static void main(String[] args) {
+    GeolocationResolver geolocationResolver = new GeolocationResolver();
+    JSONObject route = geolocationResolver.getRoute(Arrays.asList(
+            new GeoLocation(-43.522442, 172.580683),
+            new GeoLocation(-43.530542, 172.626466),
+            new GeoLocation(-43.52556, 172.57944),
+            new GeoLocation(-43.52907, 172.60660)
+    ));
+//    System.out.println(route.toJSONString());
   }
 
 }

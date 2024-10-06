@@ -8,6 +8,10 @@
     -fx-fill: white;
 }
 
+.icon-red {
+    -fx-fill: #F87171;
+}
+
 .button:hover .icon {
   -fx-fill: lightgray;
 }

@@ -80,10 +80,13 @@
 <!-- https://github.com/Leaflet/Leaflet.markercluster -->
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
+<script src=" https://cdn.jsdelivr.net/npm/polyline-encoded@0.0.9/Polyline.encoded.min.js "></script>
+
 <!-- https://github.com/pa7/heatmap.js -->
 <script src="https://unpkg.com/heatmap.js@2.0.5/build/heatmap.min.js"></script>
 <script
     src="https://unpkg.com/heatmap.js@2.0.5/plugins/leaflet-heatmap/leaflet-heatmap.js"></script>
+
 
 <!-- script which handles the WINO additions to the leaflet map-->
 <script>
@@ -124,7 +127,8 @@
       setView: setView,
       clearMarkers: clearMarkers,
       clearHeatMap: clearHeatMap,
-      addRoute: addroute
+      addRoute: addRoute,
+    displayGeometryLine: displayGeometryLine,
   };
 
   // creates the leaflet map and adds the tile layer to it
@@ -139,6 +143,12 @@
       heatMapLayer.setData({ data: heatMapData });
       heatMapEnabled = false;
       markersEnabled = true;
+  }
+
+  function displayGeometryLine(geometry) {
+    const polylinePoints = L.Polyline.fromEncoded(geometry).getLatLngs();
+    const routePolyline = L.polyline(polylinePoints, { color: 'blue' }).addTo(map);
+    map.fitBounds(routePolyline.getBounds());
   }
 
   // returns a full wine glass image in the specified color

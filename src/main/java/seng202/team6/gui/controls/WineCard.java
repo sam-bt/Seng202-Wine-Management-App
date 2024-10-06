@@ -32,7 +32,7 @@ public class WineCard extends CardContainer {
   }};
 
   public WineCard(ReadOnlyDoubleProperty containerWidth,
-      DoubleProperty hGap, Wine wine) {
+      DoubleProperty hGap, Wine wine, boolean showReview) {
     super(containerWidth, hGap);
     Image wineImage = WINE_IMAGES.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
     ImageView imageView = new ImageView(wineImage);
@@ -45,17 +45,17 @@ public class WineCard extends CardContainer {
     wineTitle.setStyle("-fx-font-size: 16px;");
     wineTitle.setWrapText(true);
 
-    Rating rating = new UnmodifiableRating();
-    rating.setRating(0.0);
-    rating.getStyleClass().add("small-rating");
-
-//    Region spacer = new Region(); // act as a spacer between title and rating so rating is at bottom
-//    VBox.setVgrow(spacer, Priority.ALWAYS);
-
-    VBox titleReview = new VBox(wineTitle, rating);
+    VBox titleReview = new VBox(wineTitle);
     titleReview.setOpaqueInsets(new Insets(0, 10, 0, 10));
     titleReview.setSpacing(10);
     titleReview.setAlignment(Pos.CENTER_LEFT);
+
+    if (showReview) {
+      Rating rating = new UnmodifiableRating();
+      rating.setRating(0.0);
+      rating.getStyleClass().add("small-rating");
+      titleReview.getChildren().add(rating);
+    }
 
     HBox header = new HBox(imageView, titleReview);
     header.setAlignment(Pos.CENTER_LEFT);

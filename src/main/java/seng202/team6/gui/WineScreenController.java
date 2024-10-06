@@ -273,7 +273,7 @@ public class WineScreenController extends Controller {
 
   public void createWineCard(Wine wine) {
     WineCard card = new WineCard(winesViewContainer.widthProperty(),
-        winesViewContainer.hgapProperty(), wine);
+        winesViewContainer.hgapProperty(), wine, true);
     card.setOnMouseClicked(event -> {
       if (event.getClickCount() == 2) {
         openDetailedWineView(wine);

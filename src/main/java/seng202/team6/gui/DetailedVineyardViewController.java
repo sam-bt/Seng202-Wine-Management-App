@@ -77,7 +77,7 @@ public class DetailedVineyardViewController extends Controller {
 
   public void createWineCard(Wine wine) {
     WineCard card = new WineCard(winesContainer.widthProperty(),
-        new SimpleDoubleProperty(), wine);
+        new SimpleDoubleProperty(), wine, true);
     card.setOnMouseClicked(event -> {
       if (event.getClickCount() == 2) {
         openDetailedWineView(wine);
