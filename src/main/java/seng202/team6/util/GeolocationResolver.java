@@ -148,10 +148,6 @@ public class GeolocationResolver {
   public String getRoute(List<GeoLocation> vineyards) {
     String geometry;
 
-    for (GeoLocation location: vineyards) {
-      System.out.println(location.getLatitude());
-      System.out.println(location.getLongitude());
-    }
     JSONArray coordinatesArray = new JSONArray();
 
     for (GeoLocation vineyard : vineyards) {
@@ -174,9 +170,6 @@ public class GeolocationResolver {
           .build();
 
       HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-      System.out.println(response.statusCode());
-      System.out.println(response.body());
 
 
       JSONParser parser = new JSONParser();
