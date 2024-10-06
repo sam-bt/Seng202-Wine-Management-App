@@ -7,7 +7,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
@@ -22,6 +21,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
@@ -147,8 +147,7 @@ public class WineScreenController extends Controller {
 
     for (Wine wine : wines) {
 
-      Node node = WineWidgets.createWineCard(wine);
-
+      Pane node = WineWidgets.createWineCard(wine);
       node.setOnMouseClicked(event -> {
         if (event.getClickCount() == 2) {
           openDetailedWineView(wine);
@@ -286,19 +285,6 @@ public class WineScreenController extends Controller {
     colorTextField.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.TAB) {
         applyFiltersButton.requestFocus();
-      }
-    });
-
-    // we need to listen to the width property
-    // because in the init() method, the winesViewContainer does not yet have a width
-    winesViewContainer.widthProperty().addListener((obs, oldVal, newVal) -> {
-      double totalWidth = newVal.doubleValue();
-      // minus 10 for insets
-      double tileWidth = (totalWidth - winesViewContainer.getHgap() * 2) / 3 - 10;
-      for (Node child : winesViewContainer.getChildren()) {
-        if (child instanceof VBox) {
-          ((VBox) child).setPrefWidth(tileWidth);
-        }
       }
     });
 
