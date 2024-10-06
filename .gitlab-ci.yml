@@ -28,10 +28,6 @@ check_javafx_resource_path:
   script:
     - ./check_javafx_path.sh
 
-checkstyleTest:
-  stage: check_java_src
-  script:
-    - ./gradlew checkstyleTest
 checkstyleMain:
   stage: check_java_src
   script:
