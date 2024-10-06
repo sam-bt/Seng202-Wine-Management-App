@@ -133,11 +133,11 @@ public class GeolocationResolver {
         double lon = (double) coordinates.get(0);
         double lat = (double) coordinates.get(1);
         log.info("Successfully resolved geolocation for location '{}' in {}ms", locationName,
-            timer.stop());
+            timer.currentOffsetMilliseconds());
         return new GeoLocation(lat, lon);
       }
       log.error("Could not resolve location with search string '{}' in {}ms", locationName,
-          timer.stop());
+          timer.currentOffsetMilliseconds());
     } catch (Exception e) {
       log.error("Failed to resolve location with search string '{}'", locationName, e);
     }

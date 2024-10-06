@@ -22,16 +22,16 @@ public class VineyardToursService {
 
   public void init() {
     User user = authenticationManager.getAuthenticatedUser();
-    vineyardTours.addAll(databaseManager.getVineyardTourDAO().getAll(user));
+    vineyardTours.addAll(databaseManager.getVineyardTourDao().getAll(user));
   }
 
   public boolean isVineyardInTour(VineyardTour vineyardTour, Vineyard vineyard) {
-    return databaseManager.getVineyardTourDAO().isVineyardInTour(vineyardTour, vineyard);
+    return databaseManager.getVineyardTourDao().isVineyardInTour(vineyardTour, vineyard);
   }
 
   public void createVineyardTour(String name, Island island) {
     User user = authenticationManager.getAuthenticatedUser();
-    VineyardTour vineyardTour = databaseManager.getVineyardTourDAO().create(user, name, island);
+    VineyardTour vineyardTour = databaseManager.getVineyardTourDao().create(user, name, island);
     if (vineyardTour != null) {
       vineyardTours.add(vineyardTour);
     }

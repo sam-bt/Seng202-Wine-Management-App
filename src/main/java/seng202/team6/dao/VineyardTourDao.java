@@ -14,7 +14,7 @@ import seng202.team6.model.VineyardTour;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
-public class VineyardTourDao extends DAO {
+public class VineyardTourDao extends Dao {
 
   /**
    * Cache to store and reuse WineList objects to avoid duplication
@@ -59,7 +59,7 @@ public class VineyardTourDao extends DAO {
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<VineyardTour> vineyardTours = extractVineyardToursFromResultSet(resultSet);
         log.info("Successfully retrieved all {} vineyard tours for user '{}' in {}ms",
-            vineyardTours.size(), user.getUsername(), timer.stop());
+            vineyardTours.size(), user.getUsername(), timer.currentOffsetMilliseconds());
         return vineyardTours;
       }
     } catch (SQLException error) {
@@ -82,7 +82,7 @@ public class VineyardTourDao extends DAO {
         if (generatedKeys.next()) {
           long id = generatedKeys.getLong(1);
           log.info("Successfully created wine tour '{}' with ID {} for user '{}' in {}ms", tourName,
-              id, user.getUsername(), timer.stop());
+              id, user.getUsername(), timer.currentOffsetMilliseconds());
           VineyardTour vineyardTour = new VineyardTour(id, user.getUsername(), tourName, island);
           if (useCache()) {
             wineTourCache.addObject(id, vineyardTour);
@@ -109,7 +109,7 @@ public class VineyardTourDao extends DAO {
       try (ResultSet resultSet = statement.executeQuery()) {
         boolean found = resultSet.next();
         log.info("Successfully found vineyard with ID {} is {} list with ID {} in {}ms",
-            vineyard.getId(), found ? "in" : "not in", vineyardTour.getId(), timer.stop());
+            vineyard.getId(), found ? "in" : "not in", vineyardTour.getId(), timer.currentOffsetMilliseconds());
         return found;
       }
     } catch (SQLException error) {
@@ -129,10 +129,10 @@ public class VineyardTourDao extends DAO {
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
         log.info("Successfully added vineyard with ID {} to tour with ID {} in {}ms",
-            vineyard.getId(), vineyardTour.getId(), timer.stop());
+            vineyard.getId(), vineyardTour.getId(), timer.currentOffsetMilliseconds());
       } else {
         log.warn("Could not add vineyard with ID {} to tour with ID {} in {}ms",
-            vineyard.getId(), vineyardTour.getId(), timer.stop());
+            vineyard.getId(), vineyardTour.getId(), timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
       log.error("Failed to add vineyard with ID {} to tour with ID {}",
@@ -150,10 +150,10 @@ public class VineyardTourDao extends DAO {
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected == 1) {
         log.info("Successfully removed vineyard with ID {} from tour with ID {} in {}ms",
-            vineyard.getId(),vineyardTour.getId(), timer.stop());
+            vineyard.getId(),vineyardTour.getId(), timer.currentOffsetMilliseconds());
       } else {
         log.warn("Could not remove vineyard with ID {} from tour with ID {} in {}ms",
-            vineyard.getId(),vineyardTour.getId(), timer.stop());
+            vineyard.getId(),vineyardTour.getId(), timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
       log.error("Failed to remove vineyard with ID {} from tour with ID {}",

@@ -7,13 +7,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import seng202.team6.dao.GeoLocationDAO;
+import seng202.team6.dao.GeoLocationDao;
 import seng202.team6.dao.GeoLocationDao;
 import seng202.team6.dao.VineyardDao;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.util.GeolocationResolver;
-import seng202.team6.util.ProcessCSV;
+import seng202.team6.util.ProcessCsv;
 import seng202.team6.util.ProcessCsv;
 import seng202.team6.util.Timer;
 

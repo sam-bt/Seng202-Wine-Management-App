@@ -15,19 +15,20 @@ public class VineyardService {
   }
 
   public void init() {
-    ObservableList<Vineyard> vineyards = databaseManager.getVineyardsDAO()
+    ObservableList<Vineyard> vineyards = databaseManager.getVineyardsDao()
         .getAllInRange(0, 100, null);
     this.vineyards.addAll(vineyards);
   }
 
   public void addDistinctValues(SortedSet<String> nameValues, SortedSet<String> addressValues,
       SortedSet<String> regionValues) {
-    nameValues.addAll(databaseManager
-        .getDistinctStringValues("NAME", "VINEYARD"));
-    addressValues.addAll(databaseManager
-        .getDistinctStringValues("ADDRESS", "VINEYARD"));
-    regionValues.addAll(databaseManager
-        .getDistinctStringValues("REGION", "VINEYARD"));
+    // fixme - angus merge conflict deleted this
+//    nameValues.addAll(databaseManager
+//        .getD("NAME", "VINEYARD"));
+//    addressValues.addAll(databaseManager
+//        .getDistinctStringValues("ADDRESS", "VINEYARD"));
+//    regionValues.addAll(databaseManager
+//        .getDistinctStringValues("REGION", "VINEYARD"));
   }
 
   public ObservableList<Vineyard> get() {

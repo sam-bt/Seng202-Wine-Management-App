@@ -31,7 +31,7 @@ public class VineyardsController extends Controller {
   private AutoCompletionTextField nameTextField;
   private AutoCompletionTextField addressTextField;
   private AutoCompletionTextField regionTextField;
-  private LeafletOSMController mapController;
+  private LeafletOsmController mapController;
 
   private final ObservableMap<Vineyard, Card> vineyardCards = FXCollections.observableHashMap();
   private final VineyardService vineyardService;
@@ -43,13 +43,13 @@ public class VineyardsController extends Controller {
    */
   public VineyardsController(ManagerContext context) {
     super(context);
-    this.vineyardService = new VineyardService(context.databaseManager);
+    this.vineyardService = new VineyardService(context.getDatabaseManager());
     bindToVineyardService();
   }
 
   @Override
   public void init() {
-    mapController = new LeafletOSMController(webView.getEngine());
+    mapController = new LeafletOsmController(webView.getEngine());
     mapController.initMap();
     vineyardService.init();
     nameTextField = createAutoCompleteTextField(9, 45);
@@ -85,7 +85,7 @@ public class VineyardsController extends Controller {
 
   @FXML
   public void onPlanATourClick() {
-    managerContext.GUIManager.mainController.openTourPlanningScreen();
+    managerContext.getGuiManager().mainController.openTourPlanningScreen();
   }
 
   private Card createVineyardCard(Vineyard vineyard) {
@@ -131,7 +131,7 @@ public class VineyardsController extends Controller {
   }
 
   private void openDetailedVineyardView(Vineyard vineyard) {
-    Runnable backAction = () -> managerContext.GUIManager.mainController.openVineyardsScreen();
-    managerContext.GUIManager.mainController.openDetailedVineyardView(vineyard, backAction);
+    Runnable backAction = () -> managerContext.getGuiManager().mainController.openVineyardsScreen();
+    managerContext.getGuiManager().mainController.openDetailedVineyardView(vineyard, backAction);
   }
 }

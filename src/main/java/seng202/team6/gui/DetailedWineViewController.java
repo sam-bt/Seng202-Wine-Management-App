@@ -55,13 +55,8 @@ public class DetailedWineViewController extends Controller {
   private final WineNoteService wineNoteService;
   private final Wine viewedWine;
   private final Runnable backButtonAction;
-<<<<<<< HEAD
   private final ObservableMap<WineReview, VBox> wineReviewCards = FXCollections.observableHashMap();
   private Vineyard wineVineyard;
-=======
-  private final ObservableMap<WineReview, VBox> wineReviewWrappers
-      = FXCollections.observableHashMap();
->>>>>>> Development
   @FXML
   private Button saveNotes;
   @FXML
@@ -108,7 +103,7 @@ public class DetailedWineViewController extends Controller {
   private WebView webView;
   private Rating ratingStars;
   private CircularScoreIndicator scoreIndicator;
-  private LeafletOSMController mapController;
+  private LeafletOsmController mapController;
 
   /**
    * Constructs a DetailedWineViewController wth the provided ManagerContext, Wine to view, and the
@@ -133,7 +128,7 @@ public class DetailedWineViewController extends Controller {
 
     String winery = viewedWine.getWinery();
     if (winery != null && !winery.isEmpty()) {
-      wineVineyard = managerContext.databaseManager.getVineyardsDAO().get(winery);
+      wineVineyard = managerContext.getDatabaseManager().getVineyardsDao().get(winery);
     }
   }
 
@@ -184,22 +179,14 @@ public class DetailedWineViewController extends Controller {
     scoreIndicator.setScore(viewedWine.getScorePercent());
     descriptionScoreNotesGridPane.add(scoreIndicator, 2, 1);
 
-<<<<<<< HEAD
     if (wineVineyard != null) {
-      mapController = new LeafletOSMController(webView.getEngine());
+      mapController = new LeafletOsmController(webView.getEngine());
       mapController.initMap();
       mapController.runOrQueueWhenReady(() -> {
         mapController.addVineyardMaker(wineVineyard, true);
       });
     } else {
       buttonsContainer.getChildren().remove(viewVineyardButton);
-=======
-    if (!managerContext.getAuthenticationManager().isAuthenticated()) {
-      addReviewButton.setDisable(true);
-      addReviewButton.setVisible(false);
-      loginToReviewLabel.setVisible(true);
-      loginToReviewLabel.setDisable(false);
->>>>>>> Development
     }
 
     // everything is ready so now the wine reviews can be loaded
@@ -275,8 +262,8 @@ public class DetailedWineViewController extends Controller {
   @FXML
   void onViewVineyardClick() {
     // fixme - circular back buttons idk how to fix
-    managerContext.GUIManager.mainController.openDetailedVineyardView(wineVineyard ,
-        () -> managerContext.GUIManager.mainController.openDetailedWineView(viewedWine, null));
+    managerContext.getGuiManager().mainController.openDetailedVineyardView(wineVineyard ,
+        () -> managerContext.getGuiManager().mainController.openDetailedWineView(viewedWine, null));
   }
 
   /**
@@ -295,20 +282,9 @@ public class DetailedWineViewController extends Controller {
         + "-fx-border-color: black; "
         + "-fx-border-insets: 10;");
 
-<<<<<<< HEAD
     Rating rating = new UnmodifiableRating();
-=======
-    // setup the star rating, disable interaction so reviews cannot be modified
-    Rating rating = new Rating();
-    rating.ratingProperty().bind(wineReview.ratingProperty());
-    rating.setUpdateOnHover(false);
-    rating.setMouseTransparent(true);
-    rating.setOnMouseClicked(Event::consume);
-    rating.setOnMouseDragEntered(Event::consume);
-
     String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
 
->>>>>>> Development
     Label reviewCaptionLabel = new Label(
         "From " + wineReview.getUsername() + " on " + formattedDate);
     reviewCaptionLabel.textProperty().bind(Bindings.createStringBinding(

@@ -237,6 +237,14 @@ public class DatabaseManager {
     return geoLocationDao;
   }
 
+  public VineyardDao getVineyardsDao() {
+    return vineyardsDao;
+  }
+
+  public VineyardTourDao getVineyardTourDao() {
+    return vineyardTourDao;
+  }
+
   public AggregatedDao getAggregatedDao() {
     return aggregatedDao;
   }

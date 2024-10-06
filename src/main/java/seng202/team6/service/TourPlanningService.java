@@ -20,7 +20,7 @@ public class TourPlanningService {
     }
 
     public void init() {
-        vineyards.addAll(databaseManager.getVineyardsDAO().getAllFromTour(vineyardTour));
+        vineyards.addAll(databaseManager.getVineyardsDao().getAllFromTour(vineyardTour));
     }
 
     public VineyardTour getVineyardTour() {
@@ -32,12 +32,12 @@ public class TourPlanningService {
     }
 
     public void addVineyard(Vineyard vineyard) {
-        databaseManager.getVineyardTourDAO().addVineyard(vineyardTour, vineyard);
+        databaseManager.getVineyardTourDao().addVineyard(vineyardTour, vineyard);
         vineyards.add(vineyard);
     }
 
     public void removeVineyard(Vineyard vineyard) {
-        databaseManager.getVineyardTourDAO().removeVineyard(vineyardTour, vineyard);
+        databaseManager.getVineyardTourDao().removeVineyard(vineyardTour, vineyard);
         vineyards.remove(vineyard);
     }
 }

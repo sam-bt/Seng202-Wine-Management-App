@@ -16,7 +16,7 @@ import seng202.team6.model.VineyardTour;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
-public class VineyardDao extends DAO {
+public class VineyardDao extends Dao {
 
   /**
    * Cache to store and reuse Vineyard objects to avoid duplication
@@ -64,7 +64,7 @@ public class VineyardDao extends DAO {
       try (ResultSet resultSet = statement.executeQuery(sql)) {
         if (resultSet.next()) {
           int count = resultSet.getInt(1);
-          log.info("Counted {} vineyards in {}ms", count, timer.stop());
+          log.info("Counted {} vineyards in {}ms", count, timer.currentOffsetMilliseconds());
           return count;
         }
       }
@@ -110,7 +110,7 @@ public class VineyardDao extends DAO {
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet);
         log.info("Successfully retrieved {} vineyards in range {}-{} in {}ms",
-            vineyards.size(), begin, end, timer.stop());
+            vineyards.size(), begin, end, timer.currentOffsetMilliseconds());
         return vineyards;
       }
     } catch (SQLException error) {
@@ -129,11 +129,11 @@ public class VineyardDao extends DAO {
       try (ResultSet resultSet = statement.executeQuery()) {
         if (resultSet.next()) {
           log.info("Successfully retrieved vineyard with name '{}' in {}ms", name,
-              timer.stop());
+              timer.currentOffsetMilliseconds());
           return extractVineyardFromResultSet(resultSet);
         }
         log.warn("Could not retrieve vineyard with name '{}' in {}ms", name,
-            timer.stop());
+            timer.currentOffsetMilliseconds());
       }
     } catch (SQLException error) {
       log.info("Failed to retrieve vineyard with name {}", name, error);
@@ -157,7 +157,7 @@ public class VineyardDao extends DAO {
 
       int rowsAffected = Arrays.stream(statement.executeBatch()).sum();
       log.info("Successfully added {} vineyards in {}ms",
-          rowsAffected, rowsAffected, timer.stop());
+          rowsAffected, rowsAffected, timer.currentOffsetMilliseconds());
     } catch (SQLException error) {
       log.error("Failed to add vineyards", error);
     }
@@ -174,7 +174,7 @@ public class VineyardDao extends DAO {
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet);
         log.info("Successfully retrieved all {} vineyards in tour '{}' in {}ms",
-                vineyards.size(),  vineyardTour.getName(), timer.stop());
+                vineyards.size(),  vineyardTour.getName(), timer.currentOffsetMilliseconds());
         return vineyards;
       }
     } catch (SQLException error) {

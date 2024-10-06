@@ -57,7 +57,7 @@ public class DetailedVineyardViewController extends Controller {
     imageView.setImage(image);
     imageView.setPreserveRatio(true);
 
-    ObservableList<Wine> wines = managerContext.databaseManager.getAggregatedDAO()
+    ObservableList<Wine> wines = managerContext.getDatabaseManager().getAggregatedDao()
         .getWinesFromVineyard(vineyard);
     wines.forEach(this::createWineCard);
   }
@@ -72,7 +72,7 @@ public class DetailedVineyardViewController extends Controller {
 
   @FXML
   void onOpenToursClick() {
-    managerContext.GUIManager.mainController.openAddToTourPopup(vineyard);
+    managerContext.getGuiManager().mainController.openAddToTourPopup(vineyard);
   }
 
   public void createWineCard(Wine wine) {
@@ -87,7 +87,7 @@ public class DetailedVineyardViewController extends Controller {
   }
 
   private void openDetailedWineView(Wine wine) {
-    Runnable backAction = () -> managerContext.GUIManager.mainController.openVineyardsScreen();
-    managerContext.GUIManager.mainController.openDetailedWineView(wine, backAction);
+    Runnable backAction = () -> managerContext.getGuiManager().mainController.openVineyardsScreen();
+    managerContext.getGuiManager().mainController.openDetailedWineView(wine, backAction);
   }
 }

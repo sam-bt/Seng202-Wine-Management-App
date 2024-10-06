@@ -56,7 +56,7 @@ public class VineyardTourPopupController extends Controller {
 
   @FXML
   void onBackButtonClick() {
-    managerContext.GUIManager.mainController.closePopup();
+    managerContext.getGuiManager().mainController.closePopup();
   }
 
   @FXML
@@ -78,6 +78,6 @@ public class VineyardTourPopupController extends Controller {
 
     // todo - when the user is modifying, update the name via attribute setter
     vineyardToursService.createVineyardTour(name, island);
-    managerContext.GUIManager.mainController.closePopup();
+    managerContext.getGuiManager().mainController.closePopup();
   }
 }

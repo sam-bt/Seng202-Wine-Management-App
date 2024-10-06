@@ -51,7 +51,7 @@ public class TourPlanningController extends Controller {
 
   private final VineyardToursService vineyardToursService;
   private final VineyardService vineyardService;
-  private LeafletOSMController mapController;
+  private LeafletOsmController mapController;
   private TourPlanningService currentTourPlanningService;
 
   private final GeolocationResolver geolocationResolver;
@@ -63,9 +63,9 @@ public class TourPlanningController extends Controller {
    */
   public TourPlanningController(ManagerContext context) {
     super(context);
-    vineyardToursService = new VineyardToursService(managerContext.authenticationManager,
-        managerContext.databaseManager);
-    vineyardService = new VineyardService(managerContext.databaseManager);
+    vineyardToursService = new VineyardToursService(managerContext.getAuthenticationManager(),
+        managerContext.getDatabaseManager());
+    vineyardService = new VineyardService(managerContext.getDatabaseManager());
     geolocationResolver = new GeolocationResolver();
     bindToVineyardToursService();
   }
@@ -106,13 +106,13 @@ public class TourPlanningController extends Controller {
     vineyardToursService.init();
     vineyardService.init();
 
-    mapController = new LeafletOSMController(webView.getEngine());
+    mapController = new LeafletOsmController(webView.getEngine());
     mapController.initMap();
   }
 
   @FXML
   public void onCreateTourButtonClick() {
-    managerContext.GUIManager.mainController.openVineyardTourPopup(vineyardToursService, null);
+    managerContext.getGuiManager().mainController.openVineyardTourPopup(vineyardToursService, null);
   }
 
   @FXML
@@ -156,7 +156,7 @@ public class TourPlanningController extends Controller {
           "Add winery to tour", "Remove winery from tour");
       vineyardCardsContainer.addCard(vineyard, addRemoveCard);
     });
-    currentTourPlanningService = new TourPlanningService(managerContext.databaseManager, vineyardTour);
+    currentTourPlanningService = new TourPlanningService(managerContext.getDatabaseManager(), vineyardTour);
     currentTourPlanningService.getVineyards().addListener((ListChangeListener<Vineyard>) change -> {
       while (change.next()) {
         if (change.wasAdded()) {
