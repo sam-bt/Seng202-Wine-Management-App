@@ -143,6 +143,10 @@ public class LeafletOSMController {
     }
   }
 
+  public void addRoute() {
+
+  }
+
   /**
    * Sets the on ready action
    * <p>

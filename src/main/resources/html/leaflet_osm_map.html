@@ -111,6 +111,7 @@
   let map, wineMarkersLayer, vineyardMarkersLayer, heatMapLayer;
   let markers = [];
   let heatMapData = [];
+  // let roads/route
 
   let heatMapEnabled;
   let markersEnabled;
@@ -123,6 +124,7 @@
       setView: setView,
       clearMarkers: clearMarkers,
       clearHeatMap: clearHeatMap,
+      addRoute: addroute
   };
 
   // creates the leaflet map and adds the tile layer to it
@@ -304,6 +306,10 @@
       heatMapLayer.setData({ data: heatMapData });
   }
 
+  function addRoute(route) {
+    clearMarkers();
+
+  }
   function setView(latitude, longitude) {
     map.setView(new L.LatLng(latitude, longitude), 5);
   }

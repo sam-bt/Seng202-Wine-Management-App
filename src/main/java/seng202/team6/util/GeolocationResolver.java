@@ -1,6 +1,7 @@
 package seng202.team6.util;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -24,15 +25,20 @@ import org.json.simple.parser.JSONParser;
 import seng202.team6.model.GeoLocation;
 
 public class GeolocationResolver {
+
   private static final int MAX_REQUESTS_PER_MINUTE = 40; // ORS has a cap of 40 requests per min
   private final String LOCATION_RESOLVER_API_URL;
+  private final String ROUTE_RESOLVER_API_URL;
+  private final String API_KEY;
   private final HttpClient client = HttpClient.newHttpClient();
   private final Logger log = LogManager.getLogger(getClass());
 
   public GeolocationResolver() {
     Dotenv dotenv = Dotenv.load();
-    String apiKey = dotenv.get("ORS_API_KEY");
-    LOCATION_RESOLVER_API_URL = "https://api.openrouteservice.org/geocode/search?api_key=" + apiKey + "&boundary.country=NZ&size=1";
+    API_KEY = dotenv.get("ORS_API_KEY");
+    LOCATION_RESOLVER_API_URL = "https://api.openrouteservice.org/geocode/search?api_key=" + API_KEY
+        + "&boundary.country=NZ&size=1";
+    ROUTE_RESOLVER_API_URL = "https://api.openrouteservice.org/v2/directions/driving-car";
   }
 
   public Map<String, GeoLocation> resolveAll(List<String> locations) {
@@ -42,7 +48,8 @@ public class GeolocationResolver {
     List<CompletableFuture<Void>> allBatches = new ArrayList<>();
 
     for (int i = 0; i < totalRequests; i += MAX_REQUESTS_PER_MINUTE) {
-      List<String> batch = locations.subList(i, Math.min(i + MAX_REQUESTS_PER_MINUTE, totalRequests));
+      List<String> batch = locations.subList(i,
+          Math.min(i + MAX_REQUESTS_PER_MINUTE, totalRequests));
 
       batch.forEach(location -> {
         CompletableFuture<GeoLocation> future = resolveLocation(location);
@@ -135,4 +142,38 @@ public class GeolocationResolver {
     }
     return null;
   }
+
+  private JSONObject getRoute(ArrayList<GeoLocation> vineyards) {
+    JSONArray coordinatesArray = new JSONArray();
+
+    for (GeoLocation vineyard : vineyards) {
+      JSONArray coordinate = new JSONArray();
+      coordinate.add(vineyard.getLongitude());
+      coordinate.add(vineyard.getLatitude());
+
+      coordinatesArray.add(coordinate);
+    }
+
+    JSONObject routeBody = new JSONObject();
+    routeBody.put("coordinates", coordinatesArray);
+
+    try {
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(new URI(ROUTE_RESOLVER_API_URL))
+          .header("Authorization", API_KEY)
+          .header("Content-Type", "application/json")
+          .POST(HttpRequest.BodyPublishers.ofString(routeBody.toString(), StandardCharsets.UTF_8))
+          .build();
+
+      HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+      System.out.println(response.statusCode());
+      System.out.println(response.body());
+
+    } catch (URISyntaxException | IOException | InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+    return routeBody;
+  }
+
 }
