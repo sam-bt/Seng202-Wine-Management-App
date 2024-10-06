@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import seng202.team6.model.GeoLocation;
 
 public class GeolocationResolver {
@@ -144,7 +145,13 @@ public class GeolocationResolver {
     return null;
   }
 
-  private JSONObject getRoute(List<GeoLocation> vineyards) {
+  public String getRoute(List<GeoLocation> vineyards) {
+    String geometry;
+
+    for (GeoLocation location: vineyards) {
+      System.out.println(location.getLatitude());
+      System.out.println(location.getLongitude());
+    }
     JSONArray coordinatesArray = new JSONArray();
 
     for (GeoLocation vineyard : vineyards) {
@@ -171,21 +178,37 @@ public class GeolocationResolver {
       System.out.println(response.statusCode());
       System.out.println(response.body());
 
-    } catch (URISyntaxException | IOException | InterruptedException e) {
+
+      JSONParser parser = new JSONParser();
+      JSONObject parsedRespone = (JSONObject) parser.parse(response.body());
+
+      JSONArray routesArray = (JSONArray) parsedRespone.get("routes");
+
+      JSONObject firstRoute = (JSONObject) routesArray.get(0);
+
+      geometry = (String) firstRoute.get("geometry");
+
+    } catch (URISyntaxException | IOException | InterruptedException | ParseException e) {
       throw new RuntimeException(e);
     }
-    return routeBody;
+
+    if (geometry != null) {
+      return geometry;
+    } else {
+      throw new RuntimeException("error");
+    }
+
   }
 
-  public static void main(String[] args) {
-    GeolocationResolver geolocationResolver = new GeolocationResolver();
-    JSONObject route = geolocationResolver.getRoute(Arrays.asList(
-            new GeoLocation(-43.522442, 172.580683),
-            new GeoLocation(-43.530542, 172.626466),
-            new GeoLocation(-43.52556, 172.57944),
-            new GeoLocation(-43.52907, 172.60660)
-    ));
-//    System.out.println(route.toJSONString());
-  }
+//  public static void main(String[] args) {
+//    GeolocationResolver geolocationResolver = new GeolocationResolver();
+//    String route = geolocationResolver.getRoute(Arrays.asList(
+//            new GeoLocation(-43.522442, 172.580683),
+//            new GeoLocation(-43.530542, 172.626466),
+//            new GeoLocation(-43.52556, 172.57944),
+//            new GeoLocation(-43.52907, 172.60660)
+//    ));
+////    System.out.println(route.toJSONString());
+//  }
 
 }

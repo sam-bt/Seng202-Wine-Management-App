@@ -127,8 +127,7 @@
       setView: setView,
       clearMarkers: clearMarkers,
       clearHeatMap: clearHeatMap,
-      addRoute: addRoute,
-    displayGeometryLine: displayGeometryLine,
+    displayRoute: displayRoute,
   };
 
   // creates the leaflet map and adds the tile layer to it
@@ -143,12 +142,6 @@
       heatMapLayer.setData({ data: heatMapData });
       heatMapEnabled = false;
       markersEnabled = true;
-  }
-
-  function displayGeometryLine(geometry) {
-    const polylinePoints = L.Polyline.fromEncoded(geometry).getLatLngs();
-    const routePolyline = L.polyline(polylinePoints, { color: 'blue' }).addTo(map);
-    map.fitBounds(routePolyline.getBounds());
   }
 
   // returns a full wine glass image in the specified color
@@ -316,11 +309,10 @@
       heatMapLayer.setData({ data: heatMapData });
   }
 
-  function addRoute(route) {
-    clearMarkers();
-    // Geometry = route.getsomething or other
-    displayGeometryLine(route);
-    //add markers for the vineyards
+  function displayRoute(geometry) {
+    const polylinePoints = L.Polyline.fromEncoded(geometry).getLatLngs();
+    const routePolyline = L.polyline(polylinePoints, { color: 'blue' }).addTo(map);
+    map.fitBounds(routePolyline.getBounds());
   }
 
   function setView(latitude, longitude) {

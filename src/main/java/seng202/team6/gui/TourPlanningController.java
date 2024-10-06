@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.util.List;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -14,11 +15,13 @@ import javafx.scene.layout.Priority;
 import javafx.scene.web.WebView;
 import seng202.team6.gui.controls.*;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
 import seng202.team6.service.TourPlanningService;
 import seng202.team6.service.VineyardService;
 import seng202.team6.service.VineyardToursService;
+import seng202.team6.util.GeolocationResolver;
 
 public class TourPlanningController extends Controller {
 
@@ -41,6 +44,8 @@ public class TourPlanningController extends Controller {
   private LeafletOSMController mapController;
   private TourPlanningService currentTourPlanningService;
 
+  private final GeolocationResolver geolocation;
+
   /**
    * Constructs a new TourPlanningController.
    *
@@ -52,6 +57,7 @@ public class TourPlanningController extends Controller {
         managerContext.databaseManager);
     vineyardService = new VineyardService(managerContext.databaseManager);
     bindToVineyardToursService();
+    geolocation = new GeolocationResolver();
   }
 
   private void bindToVineyardToursService() {
@@ -95,6 +101,13 @@ public class TourPlanningController extends Controller {
   @FXML
   public void onCalculateTourClick() {
     tabPane.getSelectionModel().select(viewTourTab);
+    List<GeoLocation> list = currentTourPlanningService.getVineyards().stream().map(
+        vineyard -> vineyard.getGeoLocation()
+    ).toList();
+    String geometry = geolocation.getRoute(list);
+//    String vineyards = geolocation.addmarker
+    mapController.addRoute(geometry);
+
   }
 
   public void openVineyardTour(VineyardTour vineyardTour) {
