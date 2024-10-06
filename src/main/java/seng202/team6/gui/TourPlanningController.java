@@ -54,7 +54,7 @@ public class TourPlanningController extends Controller {
   private LeafletOSMController mapController;
   private TourPlanningService currentTourPlanningService;
 
-  private final GeolocationResolver geolocation;
+  private final GeolocationResolver geolocationResolver;
 
   /**
    * Constructs a new TourPlanningController.
@@ -66,7 +66,7 @@ public class TourPlanningController extends Controller {
     vineyardToursService = new VineyardToursService(managerContext.authenticationManager,
         managerContext.databaseManager);
     vineyardService = new VineyardService(managerContext.databaseManager);
-    geolocation = new GeolocationResolver();
+    geolocationResolver = new GeolocationResolver();
     bindToVineyardToursService();
   }
 
@@ -132,7 +132,7 @@ public class TourPlanningController extends Controller {
             .peek(vineyard -> mapController.addVineyardMaker(vineyard, false))
             .map(Vineyard::getGeoLocation)
             .toList();
-    String geometry = geolocation.resolveRoute(vineyardLocations);
+    String geometry = geolocationResolver.resolveRoute(vineyardLocations);
     if (geometry == null) {
       // todo - add popup to say failed to find route
       return;
