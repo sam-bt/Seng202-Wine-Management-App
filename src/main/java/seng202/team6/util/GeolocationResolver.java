@@ -201,7 +201,6 @@ public class GeolocationResolver {
 //            new GeoLocation(-43.52556, 172.57944),
 //            new GeoLocation(-43.52907, 172.60660)
 //    ));
-////    System.out.println(route.toJSONString());
 //  }
 
 }
