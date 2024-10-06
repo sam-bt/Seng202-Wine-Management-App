@@ -77,6 +77,7 @@ public class ListScreenController extends Controller {
             Button button = createWineListElement(wineList);
             buttonList.getChildren().add(button);
             winelistButtons.put(wineList, button);
+            setSelected(wineLists.getLast());
           });
         }
         if (change.wasRemoved()) {
@@ -85,6 +86,9 @@ public class ListScreenController extends Controller {
             if (button != null)
               buttonList.getChildren().remove(button);
           });
+          setSelected(wineLists.getFirst());
+          createListRequestButton.setDisable(wineLists.size() > 2);
+
         }
       }
     });
