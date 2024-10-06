@@ -5,13 +5,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.logging.log4j.LogManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Filters;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
+import seng202.team6.service.WineDataStatService;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
@@ -25,13 +29,17 @@ public class WineDao extends Dao {
    */
   private final DatabaseObjectUniquer<Wine> wineCache = new DatabaseObjectUniquer<>();
 
+  private final WineDataStatService wineDataStatService;
+
+
   /**
    * Constructs a new WineDAO with the given database connection.
    *
    * @param connection The database connection to be used for wine operations.
    */
-  public WineDao(Connection connection) {
+  public WineDao(Connection connection, WineDataStatService wineDataStatService) {
     super(connection, WineDao.class);
+    this.wineDataStatService = wineDataStatService;
   }
 
   /**
@@ -82,6 +90,56 @@ public class WineDao extends Dao {
   }
 
   /**
+   * Retrieves total number of wines after applying filters.
+   *
+   * @param filters filters to apply to wines before counting
+   * @return number of wines after filtering
+   */
+  public int getCount(Filters filters) {
+    Timer timer = new Timer();
+    String sql = "SELECT count(*) from WINE "
+        + "where TITLE like ? "
+        + "and COUNTRY like ? "
+        + "and WINERY like ? "
+        + "and COLOR like ? "
+        + "and VINTAGE between ? and ? "
+        + "and SCORE_PERCENT between ? and ? "
+        + "and ABV between ? and ? "
+        + "and PRICE between ? and ? "
+        + "ORDER BY WINE.ID ;";
+
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      int paramIndex = 1;
+      statement.setString(paramIndex++,
+          filters.getTitle().isEmpty() ? "%" : "%" + filters.getTitle() + "%");
+      statement.setString(paramIndex++,
+          filters.getCountry().isEmpty() ? "%" : "%" + filters.getCountry() + "%");
+      statement.setString(paramIndex++,
+          filters.getWinery().isEmpty() ? "%" : "%" + filters.getWinery() + "%");
+      statement.setString(paramIndex++,
+          filters.getColor().isEmpty() ? "%" : "%" + filters.getColor() + "%");
+      statement.setInt(paramIndex++, filters.getMinVintage());
+      statement.setInt(paramIndex++, filters.getMaxVintage());
+      statement.setDouble(paramIndex++, filters.getMinScore());
+      statement.setDouble(paramIndex++, filters.getMaxScore());
+      statement.setDouble(paramIndex++, filters.getMinAbv());
+      statement.setDouble(paramIndex++, filters.getMaxAbv());
+      statement.setDouble(paramIndex++, filters.getMinPrice());
+      statement.setDouble(paramIndex++, filters.getMaxPrice());
+
+      ResultSet resultSet = statement.executeQuery();
+      return resultSet.getInt(1);
+
+    } catch (SQLException e) {
+      LogManager.getLogger(this.getClass().getName())
+          .error("Unable to execute filtered count query", e);
+    }
+
+    LogManager.getLogger(this.getClass().getName()).info("No wines found");
+    return -1; // <- Error occurred
+  }
+
+  /**
    * Retrieves all wines from the WINE table.
    *
    * @return An ObservableList of all Wine objects in the database
@@ -113,20 +171,29 @@ public class WineDao extends Dao {
    */
   public ObservableList<Wine> getAllInRange(int begin, int end, Filters filters) {
     Timer timer = new Timer();
-    String sql = "SELECT * from WINE "
-        + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME)"
-        + (filters == null ? "" :
-        "where TITLE like ? "
-            + "and COUNTRY like ? "
-            + "and WINERY like ? "
-            + "and COLOR like ? "
-            + "and VINTAGE between ? and ?"
-            + "and SCORE_PERCENT between ? and ? "
-            + "and ABV between ? and ? "
-            + "and PRICE between ? and ? ")
-        + "ORDER BY WINE.ID "
-        + "LIMIT ? "
-        + "OFFSET ?";
+    String sql = "SELECT * from "
+        + (filters == null ? "WINE " : "( " // Subquery for filtering
+        + "SELECT * from WINE "
+        + "where TITLE like ? "
+        + "and COUNTRY like ? "
+        + "and WINERY like ? "
+        + "and COLOR like ? "
+        + "and VINTAGE between ? and ? "
+        + "and SCORE_PERCENT between ? and ? "
+        + "and ABV between ? and ? "
+        + "and PRICE between ? and ? "
+        + ") "
+        + "AS filteredResults ")
+        + (filters == null
+        ? // table definition changes if subquery used or not
+        "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME) "
+            + "WHERE ID > ? "
+            + "ORDER BY WINE.ID " :
+        "LEFT JOIN GEOLOCATION ON LOWER(filteredResults.REGION) LIKE LOWER(GEOLOCATION.NAME) "
+            + "WHERE ID > ? "
+            + "ORDER BY filteredResults.ID ")
+        + "LIMIT ? ;";
+
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       int paramIndex = 1;
       if (filters != null) {
@@ -146,10 +213,11 @@ public class WineDao extends Dao {
         statement.setDouble(paramIndex++, filters.getMaxAbv());
         statement.setDouble(paramIndex++, filters.getMinPrice());
         statement.setDouble(paramIndex++, filters.getMaxPrice());
-
+        statement.setInt(paramIndex++, begin);
+      } else {
+        statement.setInt(paramIndex++, begin);
       }
-      statement.setInt(paramIndex++, end - begin);
-      statement.setInt(paramIndex, begin);
+      statement.setInt(paramIndex, end - begin);
 
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<Wine> wines = extractAllWinesFromResultSet(resultSet);
@@ -493,5 +561,97 @@ public class WineDao extends Dao {
       log.error("Failed to update attribute '{}' for wine with ID {} in {}ms",
           attributeName, id, timer.currentOffsetMilliseconds(), error);
     }
+  }
+
+  /**
+   * Updates a range of unique values using the wineDataStatService.
+   *
+   */
+  public void updateUniques() {
+    wineDataStatService.reset();
+    String query = "SELECT country, winery, color, vintage, score_percent, abv, price FROM wine";
+    try (PreparedStatement statement = connection.prepareStatement(query);
+        ResultSet set = statement.executeQuery()) {
+
+      // Go through results and add to lists
+      while (set.next()) {
+        final String country = set.getString("country");
+        final String winery = set.getString("winery");
+        final String color = set.getString("color");
+        final int vintage = set.getInt("vintage");
+        final int score = set.getInt("score_percent");
+        final float abv = set.getFloat("abv");
+        final float price = set.getFloat("price");
+
+        // Add to sets
+        this.wineDataStatService.getUniqueCountries().add(country);
+        this.wineDataStatService.getUniqueWineries().add(winery);
+        this.wineDataStatService.getUniqueColors().add(color);
+
+        // Update mins and maxes
+        updateMinMax("vintage", vintage);
+        updateMinMax("score", score);
+        updateMinMax("abv", abv);
+        updateMinMax("price", price);
+      }
+      log.info("Successfully updated unique values wine cache");
+
+    } catch (SQLException e) {
+      log.error("Failed to update unique values wine cache", e);
+
+    }
+  }
+
+  /**
+   * Helper function for the update uniques, just abstracts the min and max checks.
+   * <p>
+   * Updates the specified value if the new value is smaller than current min or<br> greater than
+   * current max.
+   * </p>
+   *
+   * @param name  name of the variable to update
+   * @param value new value
+   */
+  private void updateMinMax(String name, float value) {
+    switch (name) {
+      case "vintage":
+        if (value > this.wineDataStatService.getMaxVintage()) {
+          this.wineDataStatService.setMaxVintage((int) value);
+
+          // In decanter, some vintages are NV which defaults to 0
+          // In the 130k dataset, some values don't have vintage that defaults to -1
+        } else if (value < this.wineDataStatService.getMinVintage() && value > 0) {
+          this.wineDataStatService.setMinVintage((int) value);
+        }
+        break;
+      case "score":
+        if (value > this.wineDataStatService.getMaxScore()) {
+          this.wineDataStatService.setMaxScore((int) value);
+        } else if (value < this.wineDataStatService.getMinScore()) {
+          this.wineDataStatService.setMinScore((int) value);
+        }
+        break;
+      case "abv":
+        if (value > this.wineDataStatService.getMaxAbv()) {
+          this.wineDataStatService.setMaxAbv(value);
+        } else if (value < this.wineDataStatService.getMinAbv()) {
+          this.wineDataStatService.setMinAbv(value);
+        }
+        break;
+      case "price":
+        if (value > this.wineDataStatService.getMaxPrice()) {
+          this.wineDataStatService.setMaxPrice(value);
+        } else if (value < this.wineDataStatService.getMinPrice()) {
+          this.wineDataStatService.setMinPrice(value);
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  public WineDataStatService getWineDataStatService() {
+    return wineDataStatService;
   }
 }

@@ -19,12 +19,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0"
+  minHeight="780.0"
   minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
   xmlns="http://javafx.com/javafx/21" fx:controller="seng202.team6.gui.WineScreenController">
   <children>
     <TabPane layoutX="332.0" prefHeight="780.0" prefWidth="1040.0"
-      stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
+      stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0" fx:id="tabPane">
       <tabs>
         <Tab text="Wines">
           <content>
@@ -54,6 +55,17 @@
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                   </rowConstraints>
                 </GridPane>
+                <HBox alignment="CENTER" prefHeight="50.0" prefWidth="914.0" spacing="2" style="-fx-padding: 2px">
+                  <children>
+                    <Button styleClass="secondary-button" stylesheets="@../css/global.css" text="&lt;"
+                            fx:id="prevPageButtonSimpleView" style="-fx-border-width: 0"/>
+                    <TextField alignment="CENTER" prefHeight="25.0" prefWidth="60.0"
+                               promptText="Page" text="1" fx:id="pageNumberTextFieldSimpleView"/>
+                    <Label text="/maxPages" fx:id="maxPageNumberSimpleView"/>
+                    <Button alignment="CENTER" styleClass="secondary-button" stylesheets="@../css/global.css"
+                            text="&gt;" fx:id="nextPageButtonSimpleView" style="-fx-border-width: 0"/>
+                  </children>
+                </HBox>
               </children>
             </VBox>
           </content>
@@ -83,6 +95,17 @@
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                   </rowConstraints>
                 </GridPane>
+                <HBox alignment="CENTER" prefHeight="50.0" prefWidth="914.0" spacing="2" style="-fx-padding: 2px">
+                  <children>
+                    <Button styleClass="secondary-button" stylesheets="@../css/global.css" text="&lt;"
+                            fx:id="prevPageButtonRawViewer" style="-fx-border-width: 0"/>
+                    <TextField alignment="CENTER" prefHeight="25.0" prefWidth="60.0"
+                               promptText="Page" text="1" fx:id="pageNumberTextFieldRawViewer"/>
+                    <Label text="/maxPages" fx:id="maxPageNumberRawViewer"/>
+                    <Button alignment="CENTER" styleClass="secondary-button" stylesheets="@../css/global.css"
+                            text="&gt;" fx:id="nextPageButtonRawViewer" style="-fx-border-width: 0"/>
+                  </children>
+                </HBox>
               </children>
             </VBox>
           </content>

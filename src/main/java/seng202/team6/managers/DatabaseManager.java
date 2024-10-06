@@ -25,6 +25,7 @@ import seng202.team6.dao.WineDao;
 import seng202.team6.dao.WineListDao;
 import seng202.team6.dao.WineNotesDao;
 import seng202.team6.dao.WineReviewDao;
+import seng202.team6.service.WineDataStatService;
 import seng202.team6.util.EncryptionUtil;
 
 /**
@@ -43,6 +44,7 @@ public class DatabaseManager {
   private final WineReviewDao wineReviewDao;
   private final GeoLocationDao geoLocationDao;
   private final AggregatedDao aggregatedDao;
+  private final WineDataStatService wineDataStatService;
 
   /**
    * Constructs a NewDatabaseManager with an in-memory SQLite database connection.
@@ -76,8 +78,9 @@ public class DatabaseManager {
     }
     this.connection = connection;
     log.info("Successfully opened a connection to the database");
+    this.wineDataStatService = new WineDataStatService();
     this.userDao = new UserDao(connection);
-    this.wineDao = new WineDao(connection);
+    this.wineDao = new WineDao(connection, wineDataStatService);
     this.wineListDao = new WineListDao(connection);
     this.wineNotesDao = new WineNotesDao(connection);
     this.wineReviewDao = new WineReviewDao(connection);
