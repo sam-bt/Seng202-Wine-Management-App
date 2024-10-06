@@ -31,6 +31,7 @@ import seng202.team6.dao.WineListDao;
 import seng202.team6.dao.WineNotesDao;
 import seng202.team6.dao.WineReviewDao;
 import seng202.team6.service.VineyardDefaultsService;
+import seng202.team6.service.WineDataStatService;
 import seng202.team6.util.EncryptionUtil;
 import seng202.team6.util.Timer;
 
@@ -51,6 +52,7 @@ public class DatabaseManager {
   private final GeoLocationDao geoLocationDao;
   private final VineyardTourDao vineyardTourDao;
   private final AggregatedDao aggregatedDao;
+  private final WineDataStatService wineDataStatService;
 
   /**
    * Constructs a NewDatabaseManager with an in-memory SQLite database connection.
@@ -84,8 +86,9 @@ public class DatabaseManager {
     }
     this.connection = connection;
     log.info("Successfully opened a connection to the database");
+    this.wineDataStatService = new WineDataStatService();
     this.userDao = new UserDao(connection);
-    this.wineDao = new WineDao(connection);
+    this.wineDao = new WineDao(connection, wineDataStatService);
     this.wineListDao = new WineListDao(connection);
     this.vineyardsDao = new VineyardDao(connection);
     this.wineNotesDao = new WineNotesDao(connection);
@@ -103,14 +106,14 @@ public class DatabaseManager {
   /**
    * Sets up a database connection using the given JDBC URL.
    *
-   * @param jdbcURL the JDBC URL to connect to
+   * @param jdbcUrl the JDBC URL to connect to
    * @return a Connection object to the database
    * @throws SQLException if a database access error occurs
    */
-  private static Connection setupConnection(String jdbcURL) throws SQLException {
+  private static Connection setupConnection(String jdbcUrl) throws SQLException {
     Properties properties = new Properties();
     properties.setProperty("foreign_keys", "true");
-    return DriverManager.getConnection(jdbcURL, properties);
+    return DriverManager.getConnection(jdbcUrl, properties);
   }
 
   /**
