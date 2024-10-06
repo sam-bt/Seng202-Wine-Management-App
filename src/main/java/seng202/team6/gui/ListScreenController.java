@@ -1,6 +1,9 @@
 package seng202.team6.gui;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +22,7 @@ import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
+import seng202.team6.model.WineReview;
 import seng202.team6.service.WineListService;
 
 /**
@@ -49,7 +53,8 @@ public class ListScreenController extends Controller {
   private Tab tabDeleting;
   @FXML
   private Label deleteListLabel;
-  private int selected = 0;
+  private WineList selectedWinelist;
+  private final Map<WineList, Button> winelistButtons = new HashMap<>();
 
   /**
    * Constructor
@@ -60,50 +65,53 @@ public class ListScreenController extends Controller {
     super(managerContext);
     this.wineListService = new WineListService(managerContext.authenticationManager,
         managerContext.databaseManager);
+    bindToWineListsService();
   }
 
-  /**
-   * Updates all the buttons
-   *
-   * @param wineLists list of wine lists
-   */
-  public void updateButtons(List<WineList> wineLists) {
-    buttonList.getChildren().clear();
-    int i = 0;
-    for (WineList wineList : wineLists) {
-      Button button = new Button();
-      button.setText(wineList.name());
-      button.setMinSize(220, 70);
-      button.setPrefWidth(100000);
-      button.getStyleClass().add("primary-button");
-      button.setFont(new Font("System Bold", 18));
-      button.setDisable(false);
-      int iCopy = i++;
-      button.setOnAction(actionEvent -> {
-        selected = iCopy;
-        render();
-      });
-
-      buttonList.getChildren().add(button);
-    }
-
-    deleteListRequestButton.setDisable(!wineListService.canRemove(wineLists.get(selected)));
-
-    createListRequestButton.setDisable(false);
+  private void bindToWineListsService() {
+    ObservableList<WineList> wineLists = wineListService.getWineLists();
+    wineLists.addListener((ListChangeListener<WineList>) change -> {
+      while (change.next()) {
+        if (change.wasAdded()) {
+          change.getAddedSubList().forEach(wineList -> {
+            Button button = createWineListElement(wineList);
+            buttonList.getChildren().add(button);
+            winelistButtons.put(wineList, button);
+          });
+        }
+        if (change.wasRemoved()) {
+          change.getRemoved().forEach(wineList -> {
+            Button button = winelistButtons.remove(wineList);
+            if (button != null)
+              buttonList.getChildren().remove(button);
+          });
+        }
+      }
+    });
   }
 
-  /**
-   * Refreshes all the buttons & UI state when there is an update
-   */
-  public void render() {
-
-    List<WineList> wineLists = wineListService.getWineLists();
-    selected = Math.min(selected, wineLists.size() - 1);
-    updateButtons(wineLists);
-    tabViewing.setText("VIEWING: " + wineLists.get(selected));
-    changeSelected();
+  private Button createWineListElement(WineList wineList) {
+    Button button = new Button();
+    button.setText(wineList.name());
+    button.setMinSize(220, 70);
+    button.setPrefWidth(100000);
+    button.getStyleClass().add("primary-button");
+    button.setFont(new Font("System Bold", 18));
+    button.setDisable(false);
+    button.setOnAction(actionEvent -> setSelected(wineList));
+    return button;
   }
 
+  private void setSelected(WineList selectedWineList) {
+    this.selectedWinelist = selectedWineList;
+
+    boolean canRemoveSelected = wineListService.canRemove(selectedWineList);
+    deleteListRequestButton.setDisable(!canRemoveSelected);
+    tabViewing.setText("VIEWING: " + selectedWineList.name());
+    ObservableList<Wine> observableList = managerContext.databaseManager.getAggregatedDAO()
+        .getWinesInList(selectedWineList);
+    setupTableView(observableList);
+  }
 
   /**
    * Initializes the page making sure the tab for creating lists is hidden.
@@ -111,8 +119,6 @@ public class ListScreenController extends Controller {
   public void initialize() {
     listScreenTabs.getTabs().remove(tabCreating);
     wineListService.init();
-    selected = 0;
-    render();
   }
 
   /**
@@ -137,13 +143,13 @@ public class ListScreenController extends Controller {
   public void onBackButton(ActionEvent actionEvent) {
     listScreenTabs.getTabs().add(tabViewing);
     listScreenTabs.getTabs().remove(tabCreating);
-    render();
-
   }
+
   @FXML
   void onDeleteListRequestClick() {
     managerContext.GUIManager.mainController.openDeleteListPopUp();
   }
+
   /**
    * creates the lists, adding it to the array and updates relevant information on screen
    *
@@ -168,8 +174,7 @@ public class ListScreenController extends Controller {
         wineListService.createWineList(user, name);
 
         listName.setText("");
-        selected = wineLists.size() - 1;
-        render();
+        setSelected(wineLists.getFirst());
         onBackButton(actionEvent);
       }
     }
@@ -181,30 +186,12 @@ public class ListScreenController extends Controller {
    * @param actionEvent triggers this function when on action.
    */
   public void onDeleteListRequestButton(ActionEvent actionEvent) {
-    WineList wineList = wineListService.getWineLists().get(selected);
-    if (!wineListService.canRemove(wineList)) {
+    if (selectedWinelist == null)
+      return;
+    if (!wineListService.canRemove(selectedWinelist)) {
       return;
     }
     onDeleteListRequestClick();
-
-  }
-
-  public void onDeleteListConfirm() {
-    WineList wineList = wineListService.getWineLists().get(selected);
-    wineListService.deleteWineList(wineList);
-    managerContext.databaseManager.getWineListDAO().delete(wineList);
-    render();
-  }
-
-
-  /**
-   * Changes the selected list.
-   */
-  public void changeSelected() {
-    WineList selectedWineList = wineListService.getWineLists().get(selected);
-    ObservableList<Wine> observableList = managerContext.databaseManager.getAggregatedDAO()
-        .getWinesInList(selectedWineList);
-    setupTableView(observableList);
   }
 
   /**
