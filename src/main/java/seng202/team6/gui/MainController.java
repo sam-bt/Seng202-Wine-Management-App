@@ -324,7 +324,6 @@ public class MainController extends Controller {
   }
 
   public void openUserProfilePopup(User user) {
-    System.out.println("opening user profile");
     openPopup("/fxml/popup/user_view_popup.fxml",
         () -> new UserViewPopupController(managerContext, user));
   }

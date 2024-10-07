@@ -43,7 +43,6 @@ public class UserViewPopupController extends Controller {
 
   @Override
   public void init() {
-    System.out.println("opening user profile");
     userTitlePane.setText("Viewing " + user.getUsername() + "'s Reviews");
 
     reviewsBox.setHgap(10);
