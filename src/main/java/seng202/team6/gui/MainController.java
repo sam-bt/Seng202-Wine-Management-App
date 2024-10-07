@@ -12,12 +12,17 @@ import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.gui.popup.AddToListPopupController;
+import seng202.team6.gui.popup.AddToTourPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
+import seng202.team6.gui.popup.VineyardTourPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
+import seng202.team6.model.Vineyard;
+import seng202.team6.model.VineyardTour;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
+import seng202.team6.service.VineyardToursService;
 import seng202.team6.service.WineReviewsService;
 
 /**
@@ -128,8 +133,8 @@ public class MainController extends Controller {
   /**
    * Switches the current scene.
    *
-   * @param fxml fxml resource path
-   * @param title window title
+   * @param fxml    fxml resource path
+   * @param title   window title
    * @param builder controller builder
    */
   public void switchScene(String fxml, String title, Builder<?> builder) {
@@ -142,8 +147,8 @@ public class MainController extends Controller {
   /**
    * Loads a scene from a fxml resource.
    *
-   * @param fxml fxml resource path
-   * @param builder controller builder
+   * @param fxml        fxml resource path
+   * @param builder     controller builder
    * @param parentToAdd parent to add scene to
    * @return added node
    */
@@ -168,7 +173,7 @@ public class MainController extends Controller {
   /**
    * Opens a popup.
    *
-   * @param fxml fxml resource path
+   * @param fxml    fxml resource path
    * @param builder controller builder
    */
   public void openPopup(String fxml, Builder<?> builder) {
@@ -207,7 +212,6 @@ public class MainController extends Controller {
     navBarBox.getChildren().remove(listScreenButton);
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
-
 
     openWineScreen();
   }
@@ -294,12 +298,23 @@ public class MainController extends Controller {
   /**
    * Launches the detailed wine view.
    *
-   * @param wine wine
-   * @param backButtonAction object to run when back button is pressed
+   * @param wine             wine
+   * @param backButtonAction action to run when back button is pressed
    */
   public void openDetailedWineView(Wine wine, Runnable backButtonAction) {
     switchScene("/fxml/detailed_wine_view.fxml", "Detailed Wine View",
         () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
+  }
+
+  /**
+   * Launches the detailed wine view.
+   *
+   * @param vineyard         the vineyard to view
+   * @param backButtonAction action to run when back button is pressed
+   */
+  public void openDetailedVineyardView(Vineyard vineyard, Runnable backButtonAction) {
+    switchScene("/fxml/detailed_vineyard_view.fxml", "Detailed Wine View",
+        () -> new DetailedVineyardViewController(managerContext, vineyard, backButtonAction));
   }
 
   /**
@@ -309,6 +324,24 @@ public class MainController extends Controller {
   public void openSocialScreen() {
     switchScene("/fxml/social_screen.fxml", "Social",
         () -> new SocialController(managerContext));
+  }
+
+  /**
+   * Launches the vineyards screen.
+   */
+  @FXML
+  public void openVineyardsScreen() {
+    switchScene("/fxml/vineyards_screen.fxml", "Vineyards",
+        () -> new VineyardsController(managerContext));
+  }
+
+  /**
+   * Launches the tour planning screen.
+   */
+  @FXML
+  public void openTourPlanningScreen() {
+    switchScene("/fxml/tour_planning_screen.fxml", "Tour Planning",
+        () -> new TourPlanningController(managerContext));
   }
 
   /**
@@ -340,20 +373,42 @@ public class MainController extends Controller {
         () -> new ConsumptionController(managerContext));
   }
 
+  /**
+   * Launches the popup to add the specified vineyard to a tour.
+   *
+   * @param vineyard The vineyard to be added to a tour.
+   */
+  public void openAddToTourPopup(Vineyard vineyard) {
+    openPopup("/fxml/popup/add_to_tour_popup.fxml",
+        () -> new AddToTourPopupController(managerContext, vineyard));
+  }
 
   /**
    * Launches the popup to review a wine.
    *
-   * @param wineReviewsService service
-   * @param reviewer reviewer
-   * @param selectedReview selected review
-   * @param wine wine
+   * @param wineReviewsService the service used for managing wine reviews.
+   * @param reviewer the user reviewing the wine.
+   * @param selectedReview the currently selected wine review, or null if creating a new review.
+   * @param wine the wine being reviewed.
    */
   public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer,
       WineReview selectedReview, Wine wine) {
     openPopup("/fxml/popup/view_review_popup.fxml",
         () -> new ReviewViewPopupController(managerContext, wineReviewsService, reviewer,
             selectedReview, wine));
+  }
+
+  /**
+   * Launches the popup to create a vineyard tour.
+   *
+   * @param vineyardToursService the service used for managing vineyard tours.
+   * @param modifyingVineyardTour the vineyard tour to be modified, or null if creating a new tour.
+   */
+  public void openVineyardTourPopup(VineyardToursService vineyardToursService,
+      VineyardTour modifyingVineyardTour) {
+    openPopup("/fxml/popup/create_vineyard_tour_popup.fxml",
+        () -> new VineyardTourPopupController(managerContext, vineyardToursService,
+            modifyingVineyardTour));
   }
 
   /**

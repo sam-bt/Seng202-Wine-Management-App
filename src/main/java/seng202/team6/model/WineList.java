@@ -3,7 +3,7 @@ package seng202.team6.model;
 /**
  * This class represents a list of wines in the database.
  *
- * @param id id
+ * @param id   id
  * @param name name
  */
 public record WineList(long id, String name) {

@@ -1,7 +1,5 @@
 package seng202.team6.gui;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,8 +13,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -24,7 +20,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
@@ -34,12 +29,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
 import seng202.team6.gui.controls.AutoCompletionTextField;
+import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.model.Filters;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineFilters;
 import seng202.team6.service.PageService;
-import seng202.team6.util.ImageReader;
-import seng202.team6.util.WineWidgets;
 import seng202.team6.util.YearStringConverter;
 
 /**
@@ -48,20 +42,6 @@ import seng202.team6.util.YearStringConverter;
 
 public class WineScreenController extends Controller {
 
-  private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine_cropped.png");
-  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage(
-      "/img/white_wine_cropped.png");
-  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine_cropped.png");
-  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage(
-      "/img/default_wine_cropped.png");
-  private static final Map<String, Image> wineImages = new HashMap<>() {
-    {
-      put("red", RED_WINE_IMAGE);
-      put("white", WHITE_WINE_IMAGE);
-      put("rose", ROSE_WINE_IMAGE);
-      put("rosé", ROSE_WINE_IMAGE);
-    }
-  };
   private final Logger log = LogManager.getLogger(WineScreenController.class);
   private final PageService pageService = new PageService(100);
   public TabPane tabPane;
@@ -102,7 +82,7 @@ public class WineScreenController extends Controller {
   private TextField pageNumberTextFieldRawViewer;
 
   @FXML
-  private Filters currentFilters;
+  private WineFilters currentFilters;
 
   @FXML
   private Label maxPageNumberRawViewer;
@@ -122,7 +102,7 @@ public class WineScreenController extends Controller {
    *
    * @param filters list of filters
    */
-  private void openWineRange(Filters filters) {
+  private void openWineRange(WineFilters filters) {
     // Clear existing data
     tableView.getItems().clear();
 
@@ -135,7 +115,7 @@ public class WineScreenController extends Controller {
         .getAllInRange(begin, end, filters);
 
     // send the wines to the map if they have a geo location
-    mapController.setOnReadyAction(() -> {
+    mapController.runOrQueueWhenReady(() -> {
       mapController.clearWineMarkers();
       mapController.clearHeatmap();
       wines.stream()
@@ -144,6 +124,7 @@ public class WineScreenController extends Controller {
     });
 
     winesViewContainer.getChildren().clear();
+    wines.forEach(this::createWineCard);
 
     for (Wine wine : wines) {
 
@@ -159,16 +140,6 @@ public class WineScreenController extends Controller {
 
     // Set fetched data to the table
     tableView.setItems(wines);
-
-    // Only update autocomplete if NOT filtering
-    /*
-    Don't think we need to do this but commenting in case
-
-    if (filters == null) {
-      setFilterValues();
-    }
-    */
-
   }
 
   /**
@@ -177,6 +148,10 @@ public class WineScreenController extends Controller {
   public void setupTableColumns() {
     // Clear any existing cols
     tableView.getColumns().clear();
+
+    final StringConverter<String> stringConverter = new DefaultStringConverter();
+    final StringConverter<Integer> intConverter = new IntegerStringConverter();
+    final StringConverter<Float> floatConverter = new FloatStringConverter();
 
     // Create and config cols
     tableView.setEditable(true);
@@ -203,11 +178,6 @@ public class WineScreenController extends Controller {
 
     // Enable editing if admin
     if (managerContext.getAuthenticationManager().isAdmin()) {
-
-      final StringConverter<String> stringConverter = new DefaultStringConverter();
-      final StringConverter<Integer> intConverter = new IntegerStringConverter();
-      final StringConverter<Float> floatConverter = new FloatStringConverter();
-
       titleColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       varietyColumn.setCellFactory(
@@ -241,26 +211,14 @@ public class WineScreenController extends Controller {
    * @param wine wine
    */
   public void createWineCard(Wine wine) {
-    VBox wrapper = new VBox();
-    wrapper.setPadding(new Insets(10));
-    wrapper.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
-
-    Image wineImage = wineImages.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
-    ImageView imageView = new ImageView(wineImage);
-    imageView.setFitHeight(100);
-    imageView.setPreserveRatio(true);
-    HBox.setHgrow(imageView, Priority.NEVER);
-
-    Label wineTitle = new Label();
-    wineTitle.textProperty().bind(wine.titleProperty());
-    wineTitle.setStyle("-fx-font-size: 16px;");
-    wineTitle.setWrapText(true);
-
-    HBox header = new HBox(imageView, wineTitle);
-    header.setAlignment(Pos.CENTER_LEFT);
-    header.setSpacing(20);
-    wrapper.getChildren().add(header);
-    winesViewContainer.getChildren().add(wrapper);
+    WineCard card = new WineCard(winesViewContainer.widthProperty(),
+        winesViewContainer.hgapProperty(), wine, true);
+    card.setOnMouseClicked(event -> {
+      if (event.getClickCount() == 2) {
+        openDetailedWineView(wine);
+      }
+    });
+    winesViewContainer.getChildren().add(card);
   }
 
   /**
@@ -413,7 +371,7 @@ public class WineScreenController extends Controller {
    * Is called when the apply button is pressed<br> Updates table with filtered data.
    */
   public void onApplyFiltersButtonPressed() {
-    Filters filters = new Filters(
+    currentFilters = new WineFilters(
         titleTextField.getText(),
         countryTextField.getText(),
         wineryTextField.getText(),
@@ -427,15 +385,13 @@ public class WineScreenController extends Controller {
         priceSlider.getLowValue(),
         priceSlider.getHighValue()
     );
-    // Save current filters for pagination
-    this.currentFilters = filters;
 
     // update max pages
     this.pageService.setTotalItems(
-        managerContext.getDatabaseManager().getWineDao().getCount(filters));
+        managerContext.getDatabaseManager().getWineDao().getCount(currentFilters));
 
     // Update table with filtered wines
-    openWineRange(filters);
+    openWineRange(currentFilters);
   }
 
   /**
@@ -623,3 +579,4 @@ public class WineScreenController extends Controller {
     }
   }
 }
+

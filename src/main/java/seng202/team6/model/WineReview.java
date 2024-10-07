@@ -26,12 +26,12 @@ public class WineReview {
   /**
    * Constructor.
    *
-   * @param id id
-   * @param wineId id
-   * @param username username of user
-   * @param rating rating
+   * @param id          id
+   * @param wineId      id
+   * @param username    username of user
+   * @param rating      rating
    * @param description description
-   * @param date date
+   * @param date        date
    */
   public WineReview(
       long id,

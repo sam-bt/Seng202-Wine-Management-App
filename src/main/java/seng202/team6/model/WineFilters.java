@@ -4,7 +4,7 @@ package seng202.team6.model;
  * Represents a set of filters for querying or filtering wine data. This class encapsulates various
  * criteria that can be used to filter wines
  */
-public class Filters {
+public class WineFilters {
 
   /**
    * The title of the wine to filter by.
@@ -82,7 +82,7 @@ public class Filters {
    * @param minPrice   The minimum price.
    * @param maxPrice   The maximum price.
    */
-  public Filters(
+  public WineFilters(
       String title,
       String country,
       String winery,
@@ -114,7 +114,7 @@ public class Filters {
    * Constructs a Filters object with default values. String fields are set to empty strings, and
    * numeric fields are set to their respective MIN_VALUE and MAX_VALUE to represent no filtering.
    */
-  public Filters() {
+  public WineFilters() {
     this(
         "",
         "",

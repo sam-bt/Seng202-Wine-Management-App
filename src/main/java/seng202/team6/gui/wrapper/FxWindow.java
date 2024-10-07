@@ -5,7 +5,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import seng202.team6.util.GeolocationResolver;
 
 /**
  * Class starts the javaFX application window.
@@ -32,6 +34,15 @@ public class FxWindow extends Application {
    */
   @Override
   public void start(Stage primaryStage) throws IOException {
+    if (!GeolocationResolver.hasValidApiKey()) {
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setHeaderText("Invalid or missing ORS API Key");
+      alert.setContentText("An ORS API key was not found in an .env file or was invalid. "
+              + "Please check the readme or manual to find out more.");
+      alert.showAndWait();
+      return;
+    }
+
     FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/fx_wrapper.fxml"));
     Parent root = baseLoader.load();
 

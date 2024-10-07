@@ -11,6 +11,7 @@ import javafx.collections.ObservableMap;
 import kotlin.Pair;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
+import seng202.team6.model.Vineyard;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineDatePair;
 import seng202.team6.model.WineList;
@@ -52,7 +53,7 @@ public class AggregatedDao extends Dao {
    *
    * @param user The user for whom to retrieve the notes and wines.
    * @return An ObservableMap where the key is a Wine object and the value is the associated Note
-   *      object.
+   *        object.
    */
   public ObservableMap<Wine, Note> getAllNotesMappedWithWinesByUser(User user) {
     Timer timer = new Timer();
@@ -133,7 +134,7 @@ public class AggregatedDao extends Dao {
           wines.add(wine);
         }
       }
-      log.info("Successfully retrieves {} wines in list {} in {}ms",
+      log.info("Successfully retrieved {} wines in list {} in {}ms",
           wines.size(), wineList.id(), timer.currentOffsetMilliseconds());
     } catch (SQLException e) {
       log.error("Failed to retrieve wines in list {}", wineList.id());
@@ -145,7 +146,7 @@ public class AggregatedDao extends Dao {
    * Gets a list of wine reviews and wines.
    *
    * @param begin begin
-   * @param end end
+   * @param end   end
    * @return sub range of pairs between begin and end
    */
   public ObservableList<Pair<WineReview, Wine>> getWineReviewsAndWines(int begin, int end) {
@@ -174,5 +175,34 @@ public class AggregatedDao extends Dao {
       log.error("Failed to retrieve with wines in range {}-{}", begin, end, e);
     }
     return wineReviewPairs;
+  }
+
+  /**
+   * Retrieves all wines which are associated with a vineyard.
+   *
+   * @param vineyard The Vineyard object representing the vineyard from which to retrieve wines.
+   * @return An ObservableList of Wine objects associated with the specified vineyard.
+   */
+  public ObservableList<Wine> getWinesFromVineyard(Vineyard vineyard) {
+    Timer timer = new Timer();
+    String sql = "SELECT * FROM WINE "
+        + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+        + "WHERE WINERY = ?";
+    ObservableList<Wine> wines = FXCollections.observableArrayList();
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setString(1, vineyard.getName());
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          Wine wine = wineDao.extractWineFromResultSet(resultSet);
+          wines.add(wine);
+        }
+      }
+      log.info("Successfully retrieved {} wines from vineyard {} in {}ms",
+          wines.size(), vineyard.getName(), timer.currentOffsetMilliseconds());
+    } catch (SQLException e) {
+      log.error("Failed to retrieve wines from vineyard {}", vineyard.getName());
+    }
+    return wines;
   }
 }

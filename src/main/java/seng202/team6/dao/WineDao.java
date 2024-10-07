@@ -5,16 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.Filters;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineFilters;
 import seng202.team6.service.WineDataStatService;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
@@ -95,7 +93,7 @@ public class WineDao extends Dao {
    * @param filters filters to apply to wines before counting
    * @return number of wines after filtering
    */
-  public int getCount(Filters filters) {
+  public int getCount(WineFilters filters) {
     Timer timer = new Timer();
     String sql = "SELECT count(*) from WINE "
         + "where TITLE like ? "
@@ -165,11 +163,12 @@ public class WineDao extends Dao {
   /**
    * Retrieves a range of wines from the WINE table.
    *
-   * @param begin The start index of the range (inclusive)
-   * @param end   The end index of the range (exclusive)
+   * @param begin   The start index of the range (inclusive)
+   * @param end     The end index of the range (exclusive)
+   * @param filters The wine filters to be applied
    * @return An ObservableList of Wine objects within the specified range
    */
-  public ObservableList<Wine> getAllInRange(int begin, int end, Filters filters) {
+  public ObservableList<Wine> getAllInRange(int begin, int end, WineFilters filters) {
     Timer timer = new Timer();
     String sql = "SELECT * from "
         + (filters == null ? "WINE " : "( " // Subquery for filtering
@@ -399,8 +398,7 @@ public class WineDao extends Dao {
       }
     }
 
-    GeoLocation geoLocation = createGeoLocation(
-        resultSet); // todo - change this to grab the geolocation when required
+    GeoLocation geoLocation = createGeoLocation(resultSet);
     Wine wine = new Wine(
         id,
         resultSet.getString("TITLE"),
@@ -425,11 +423,11 @@ public class WineDao extends Dao {
 
   /**
    * Extracts the latitude and longitude from the provided ResultSet and creates a new GeoLocation
-   *      object.
+   * object.
    *
    * @param set The ResultSet from which geolocations are to be extracted
    * @return The extract Geolocation if available, otherwise null if either the latitude or
-   *      longitude were null
+   *        longitude were null
    * @throws SQLException If an error occurs while processing the ResultSet
    */
   private GeoLocation createGeoLocation(ResultSet set) throws SQLException {
