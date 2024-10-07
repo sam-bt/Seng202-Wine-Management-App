@@ -288,10 +288,19 @@ public class WineScreenController extends Controller {
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
 
     // Ensures the sliders are rendered before installing tooltips (Needed for css lookups)
-    Platform.runLater(() -> installRangeSliderTooltip(this.vintageSlider));
-    Platform.runLater(() -> installRangeSliderTooltip(this.scoreSlider));
-    Platform.runLater(() -> installRangeSliderTooltip(this.abvSlider));
-    Platform.runLater(() -> installRangeSliderTooltip(this.priceSlider));
+    Platform.runLater(() -> {
+      installRangeSliderTooltip(this.vintageSlider);
+      installRangeSliderTooltip(this.scoreSlider);
+      installRangeSliderTooltip(this.abvSlider);
+      installRangeSliderTooltip(this.priceSlider);
+    });
+
+    // Set snap to ticks
+    vintageSlider.setSnapToTicks(true);
+    scoreSlider.setSnapToTicks(true);
+    abvSlider.setSnapToTicks(true);
+    priceSlider.setSnapToTicks(true);
+
 
     colorTextField.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.TAB) {
@@ -315,12 +324,6 @@ public class WineScreenController extends Controller {
     // Ensure uniques are up to date
     managerContext.getDatabaseManager().getWineDao().updateUniques();
     setFilterValues();
-
-    // Set snap to ticks
-    vintageSlider.setSnapToTicks(true);
-    scoreSlider.setSnapToTicks(true);
-    abvSlider.setSnapToTicks(true);
-    priceSlider.setSnapToTicks(true);
 
     // Set button functions
     applyFiltersButton.setOnAction(event -> onApplyFiltersButtonPressed());
@@ -626,6 +629,7 @@ public class WineScreenController extends Controller {
     scoreSlider.setMajorTickUnit(1);
     vintageSlider.setMajorTickUnit(1);
     vintageSlider.setMinorTickCount(0);
+    priceSlider.setMajorTickUnit(100);
 
     YearStringConverter yearStringConverter = new YearStringConverter();
     vintageSlider.setLabelFormatter(yearStringConverter);
