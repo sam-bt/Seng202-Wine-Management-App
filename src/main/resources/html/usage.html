@@ -5,20 +5,41 @@
     <title>Link Testing Page</title>
 </head>
 <body>
-<div class="title-block">
-    <h1>Basic Usage</h1>
+    <div class="title-block">
+        <h1>Basic Usage</h1>
 
-</div>
-<div class="nav-container">
-    <div class="nav-button">
-        <a class="manual-link" href="ManualIndex.html">Home</a>
     </div>
-</div>
-<div class="content-block">
-<div class="manual-item" >
-    <h3>Viewing Wine Data:</h3>
-    <p>You can view all wines available in the database by clicking on the 'Wines' tab. By double clicking on any of the wines shown, you will be taken to the details page, where you can see the score, reviews, and other data, as well as add that wine to your <a href="notes_lists.html>">lists</a> or take notes if you are signed in.</p>
-</div>
+    <div class="nav-container">
+
+        <div class="nav-button fl-left">
+            <a class="manual-link" href="javascript:history.back()">Go Back</a>
+        </div>
+
+        <div class="nav-button fl-right">
+            <a class="manual-link" href="ManualIndex.html">Home</a>
+        </div>
+
+    </div>
+    <div style="clear: both"></div>
+    <div class="content-block">
+    <div class="manual-item" >
+        <h3 class="card-title">Viewing Wine Data:</h3>
+        <p class="card-content">You can view all wines available in the database by clicking on the 'Wines' tab. This view can be <a class="link" href="filtering.html">filtered</a> using the panel on the left. By double clicking on any of the wines shown, you will be taken to the details page, where you can see the score, reviews, and other data, as well as add that wine to your <a class="link" href="note_list.html">lists</a> or <a class="link" href="note_list.html">take notes</a> if you are signed in. Once logged in, you can click the Logout button to log out.</p>
+    </div>
+
+    <div class="manual-item" >
+        <h3 class="card-title">Signing In:</h3>
+        <p class="card-content">You can sign in to your account by clicking on the login button, then entering your username and password. Signing in allows you to access the note-taking and list features, leave reviews, use the consumption calculator, and access the social page. You can create an account by registering.</p>
+    </div>
+    <div class="manual-item" >
+        <h3 class="card-title">Registering for an account:</h3>
+        <p class="card-content">You can register for an account by clicking on the Register button. You will be prompted to enter your new username, then your password twice to confirm. Your password must contain at least one uppercase letter, at least one lowercase letter, at least one number, at least one symbol, and be between 8 and 30 characters long. Once you have registered, you will be logged in automatically. In the future, you can log into your account by clicking the Login button in the top right.</p>
+    </div>
+
+    <div class="manual-item" >
+        <h3 class="card-title">Account Settings</h3>
+        <p class="card-content">If you want to change your password, you can do so by clicking the Settings button while logged in, then clicking update password. You will be prompted to enter your old password, then the new password twice.</p>
+    </div>
 </div>
 
 </body>

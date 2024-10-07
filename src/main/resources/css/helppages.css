@@ -47,20 +47,17 @@ body {
 .nav-button {
     display:block;
     text-align: center;
-    margin: 10px;
-    margin-left: auto;
-    margin-right: auto;
     background-color: #f68585;
     border-radius: 5px;
     width: 100px;
+    align-items: center;
+    margin: 10px;
 }
 
 .nav-button:hover {
     display:block;
+    align-items: center;
     text-align: center;
-    margin: 10px;
-    margin-left: auto;
-    margin-right: auto;
     background-color: #fca5a5;
     border-radius: 5px;
     width: 100px;
@@ -75,4 +72,41 @@ body {
 
 .manual-item {
     width: 600px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    margin: auto;
+    border-radius: 5px;
+}
+
+.card-title {
+    display: block;
+    background-color: #f68585;
+    border-radius: 5px 5px 0 0;
+    color: white;
+    padding: 10px;
+}
+
+.card-content {
+    padding: 10px;
+}
+
+.link {
+    color: #DC2626;
+    text-decoration: none;
+}
+
+.link:visited {
+    color: #DC2626;
+}
+
+.nav-container {
+    margin: auto;
+    width: 300px;
+}
+
+.fl-left {
+    float: left;
+}
+
+.fl-right {
+    float:right;
 }
