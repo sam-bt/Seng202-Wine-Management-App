@@ -359,6 +359,9 @@ public class WineDao extends Dao {
           timer.currentOffsetMilliseconds());
     } catch (SQLException error) {
       log.error("Failed to remove all wines", error);
+    } finally {
+      wineCache.clear();
+      updateUniques();
     }
   }
 
@@ -563,6 +566,11 @@ public class WineDao extends Dao {
 
   /**
    * Updates a range of unique values using the wineDataStatService.
+   *
+   * <p>
+   *   When the cache is invalidated by write operations to the database this must be called.
+   * </p>
+   *
    */
   public void updateUniques() {
     wineDataStatService.reset();
