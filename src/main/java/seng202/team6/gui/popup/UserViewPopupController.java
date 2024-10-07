@@ -92,7 +92,7 @@ public class UserViewPopupController extends Controller {
    * @param wineReview The wine review object representing the review
    * @return A VBox containing the wine review UI
    */
-  private VBox createWineReviewElement(WineReview wineReview) { //TODO maybe factor out as duplicate
+  private VBox createWineReviewElement(WineReview wineReview) {
     VBox wrapper = new VBox();
     wrapper.setMaxWidth(320);
     wrapper.setMinWidth(320);
@@ -103,24 +103,27 @@ public class UserViewPopupController extends Controller {
         + "-fx-border-insets: 10;");
 
     Wine wine = managerContext.getDatabaseManager().getWineDao().get(wineReview.getWineId());
-    Label titleLabel = new Label(wine.getTitle());
-    titleLabel.textProperty().bind(wine.titleProperty());
-    titleLabel.setMaxWidth(wrapper.getMaxWidth());
-    titleLabel.setWrapText(true);
-    titleLabel.setStyle("-fx-padding: 10 0 0 0; -fx-font-size: 14px; -fx-font-weight: bold;");
+    if (wine != null) {
+      Label titleLabel = new Label(wine.getTitle());
+      titleLabel.textProperty().bind(wine.titleProperty());
+      titleLabel.setMaxWidth(wrapper.getMaxWidth());
+      titleLabel.setWrapText(true);
+      titleLabel.setStyle("-fx-padding: 10 0 0 0; -fx-font-size: 14px; -fx-font-weight: bold;");
 
-    VBox.setMargin(titleLabel, new Insets(0, 0, 5, 0));
+      VBox.setMargin(titleLabel, new Insets(0, 0, 5, 0));
 
-    Rating rating = new UnmodifiableRating();
-    rating.setRating(wineReview.getRating());
+      Rating rating = new UnmodifiableRating();
+      rating.setRating(wineReview.getRating());
 
-    wrapper.setOnMouseClicked(event -> {
-      if (event.getClickCount() == 2) {
-        openReviewView(wineReview, wine);
-      }
-    });
+      wrapper.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2) {
+          openReviewView(wineReview, wine);
+        }
+      });
 
-    wrapper.getChildren().addAll(titleLabel, rating);
+      wrapper.getChildren().addAll(titleLabel, rating);
+    }
+
     return wrapper;
   }
 

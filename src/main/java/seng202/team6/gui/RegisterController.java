@@ -53,7 +53,7 @@ public class RegisterController extends Controller {
   }
 
   @FXML
-  private void onConfirm() {
+  private void onConfirm() { // TODO EXTRACT
 
     String username = usernameField.getText();
     String password = passwordField.getText();
