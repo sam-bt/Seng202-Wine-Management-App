@@ -66,7 +66,7 @@ public class WineCard extends Card {
 
     if (showReview) {
       Rating rating = new UnmodifiableRating();
-      rating.setRating(0.0);
+      rating.ratingProperty().bind(wine.averageRatingProperty());
       rating.getStyleClass().add("small-rating");
       titleReview.getChildren().add(rating);
     }

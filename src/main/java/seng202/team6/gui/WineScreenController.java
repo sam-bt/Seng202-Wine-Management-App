@@ -127,19 +127,6 @@ public class WineScreenController extends Controller {
     winesViewContainer.getChildren().clear();
     wines.forEach(this::createWineCard);
 
-    for (Wine wine : wines) {
-
-      Pane node = new WineCard(
-          winesViewContainer.widthProperty(), new SimpleDoubleProperty(), wine, false);
-      node.setOnMouseClicked(event -> {
-        if (event.getClickCount() == 2) {
-          openDetailedWineView(wine);
-        }
-      });
-
-      winesViewContainer.getChildren().add(node);
-    }
-
     // Set fetched data to the table
     tableView.setItems(wines);
   }

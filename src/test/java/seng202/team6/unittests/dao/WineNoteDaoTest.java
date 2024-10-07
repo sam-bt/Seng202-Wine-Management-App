@@ -36,7 +36,7 @@ public class WineNoteDaoTest {
     userDao.add(user);
 
     wine = new Wine(-1, "wine", "blue", "nz", "christchurch", "", "", 1024, "na", 99, 25.0f,
-        50f, null);
+        50f, null, 0.0);
     wineDao.add(wine);
   }
 
