@@ -5,6 +5,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.web.WebView;
@@ -97,6 +98,7 @@ public class VineyardsController extends Controller {
         openDetailedVineyardView(vineyard);
       }
     });
+    card.setAlignment(Pos.CENTER);
     card.getChildren().add(cardContent);
     return card;
   }

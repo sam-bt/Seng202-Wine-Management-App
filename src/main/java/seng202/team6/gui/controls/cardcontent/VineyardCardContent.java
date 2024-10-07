@@ -28,10 +28,10 @@ public class VineyardCardContent extends VBox {
     logoView.setPreserveRatio(true);
 
     HBox wrapper = new HBox(logoView);
-    wrapper.setAlignment(Pos.CENTER);
     wrapper.setMaxHeight(logoHeight);
     wrapper.setPrefHeight(logoHeight);
     wrapper.setMinHeight(logoHeight);
+    wrapper.setAlignment(Pos.CENTER);
     getChildren().add(wrapper);
   }
 }
