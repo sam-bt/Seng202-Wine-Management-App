@@ -85,7 +85,8 @@ public class AddRemoveCardsContainer<T> extends VBox {
     button.getStylesheets().add("css/add_remove_buttons.css");
     GridPane.setHalignment(button, HPos.CENTER);
 
-    final CardWrapper wrapper = new CardWrapper(button, shouldAdd, addClickAction, removeClickAction);
+    final CardWrapper wrapper = new CardWrapper(button, shouldAdd, addClickAction,
+            removeClickAction);
     final RowConstraints firstRow = new RowConstraints();
     final ColumnConstraints firstColumn = new ColumnConstraints();
     final ColumnConstraints secondColumn = new ColumnConstraints();

@@ -226,6 +226,7 @@ public class GeolocationResolver {
    */
   private String parseRouteResponse(HttpResponse<String> response) {
     if (response.statusCode() != 200) {
+      log.error("Failed to resolve route to vineyard. Error code {}", response.statusCode());
       return null;
     }
     JSONParser parser = new JSONParser();

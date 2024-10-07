@@ -16,11 +16,15 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.web.WebView;
 import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.gui.controls.card.Card;
+import seng202.team6.gui.controls.cardcontent.VineyardCardContent;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Vineyard;
 import seng202.team6.service.VineyardService;
 import seng202.team6.util.ImageReader;
 
+/**
+ * Controller for the screen that displays vineyards.
+ */
 public class VineyardsController extends Controller {
 
   private final ObservableMap<Vineyard, Card> vineyardCards = FXCollections.observableHashMap();
@@ -37,7 +41,7 @@ public class VineyardsController extends Controller {
   private LeafletOsmController mapController;
 
   /**
-   * Constructs the Vineyards Controller
+   * Constructs the Vineyards Controller.
    *
    * @param context The manager context
    */
@@ -83,39 +87,24 @@ public class VineyardsController extends Controller {
     });
   }
 
+  /**
+   * Handles when the plan a tour button is clicked.
+   */
   @FXML
-  public void onPlanATourClick() {
+  public void onPlanTourClick() {
     managerContext.getGuiManager().mainController.openTourPlanningScreen();
   }
 
   private Card createVineyardCard(Vineyard vineyard) {
     Card card = new Card(vineyardsViewContainer.widthProperty(),
         vineyardsViewContainer.hgapProperty());
+    VineyardCardContent cardContent = new VineyardCardContent(vineyard, 200, 150);
     card.setOnMouseClicked(event -> {
       if (event.getClickCount() == 2) {
         openDetailedVineyardView(vineyard);
       }
     });
-
-    int logoWidth = 200, logoHeight = 150;
-    Image logo = ImageReader.loadImageFromUrl(vineyard.getLogoUrl());
-    ImageView logoView = new ImageView(logo);
-    HBox imageContainer = new HBox(logoView);
-    logoView.setFitWidth(logoWidth);
-    logoView.setFitHeight(logoHeight);
-    logoView.setPreserveRatio(true);
-    imageContainer.setAlignment(Pos.CENTER);
-    imageContainer.setMaxHeight(logoHeight);
-    imageContainer.setPrefHeight(logoHeight);
-    imageContainer.setMinHeight(logoHeight);
-    HBox.setHgrow(imageContainer, Priority.ALWAYS);
-
-    Label vineyardName = new Label();
-    vineyardName.textProperty().bind(vineyard.nameProperty());
-    vineyardName.setStyle("-fx-font-size: 16px;");
-    vineyardName.setWrapText(true);
-
-    card.getChildren().add(imageContainer);
+    card.getChildren().add(cardContent);
     return card;
   }
 
