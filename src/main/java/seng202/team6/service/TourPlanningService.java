@@ -7,7 +7,8 @@ import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
 
 /**
- * The TourPlanningService class is responsible for managing the vineyards in a given vineyard tour.
+ * The TourPlanningService class is responsible for managing the vineyards in a given vineyard
+ * tour.
  */
 public class TourPlanningService {
 
@@ -19,7 +20,7 @@ public class TourPlanningService {
    * Constructs a TourPlanningService instance.
    *
    * @param databaseManager the DatabaseManager used to interact with the database
-   * @param vineyardTour the VineyardTour that this service manages
+   * @param vineyardTour    the VineyardTour that this service manages
    */
   public TourPlanningService(DatabaseManager databaseManager, VineyardTour vineyardTour) {
     this.databaseManager = databaseManager;
@@ -27,8 +28,8 @@ public class TourPlanningService {
   }
 
   /**
-   * Initializes the service by loading all vineyards associated with the current vineyard tour
-   * from the database.
+   * Initializes the service by loading all vineyards associated with the current vineyard tour from
+   * the database.
    */
   public void init() {
     vineyards.addAll(databaseManager.getVineyardsDao().getAllFromTour(vineyardTour));

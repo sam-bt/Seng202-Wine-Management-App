@@ -3,7 +3,6 @@ package seng202.team6.gui.popup;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
@@ -14,8 +13,8 @@ import seng202.team6.model.VineyardTour;
 import seng202.team6.service.VineyardToursService;
 
 /**
- * Controller for the vineyard tours popup controller which allows modification or creation of
- * a vineyard tour.
+ * Controller for the vineyard tours popup controller which allows modification or creation of a
+ * vineyard tour.
  */
 public class VineyardTourPopupController extends Controller {
 

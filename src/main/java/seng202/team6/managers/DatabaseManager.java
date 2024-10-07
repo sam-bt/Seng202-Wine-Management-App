@@ -155,7 +155,7 @@ public class DatabaseManager {
    */
   public void init() {
     List<String> sqlStatements = Stream.of(userDao, wineDao, wineListDao, wineNotesDao,
-            wineReviewDao, geoLocationDao)
+            wineReviewDao, geoLocationDao, vineyardsDao, vineyardTourDao)
         .filter(Objects::nonNull)  // Filter out null Daos
         .map(Dao::getInitialiseStatements)
         .filter(Objects::nonNull)  // Filter out null statements

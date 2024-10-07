@@ -14,6 +14,7 @@ import seng202.team6.service.VineyardToursService;
  * Controller for the add to tour popup.
  */
 public class AddToTourPopupController extends Controller {
+
   private final VineyardToursService vineyardToursService;
   private final Vineyard vineyard;
   @FXML

@@ -41,7 +41,7 @@ public class WineReview {
       String description,
       Date date
   ) {
-    this.id = new ReadOnlyLongWrapper(wineId);
+    this.id = new ReadOnlyLongWrapper(id);
     this.wineId = new ReadOnlyLongWrapper(wineId);
     this.username = new ReadOnlyStringWrapper(username);
     this.rating = new SimpleDoubleProperty(rating);

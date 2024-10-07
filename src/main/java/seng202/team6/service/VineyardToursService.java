@@ -24,8 +24,9 @@ public class VineyardToursService {
    * Constructs a VineyardToursService instance.
    *
    * @param authenticationManager the authentication manager used to retrieve the authenticated
-   *        user.
-   * @param databaseManager the database manager used to interact with the vineyard tours database.
+   *                              user.
+   * @param databaseManager       the database manager used to interact with the vineyard tours
+   *                              database.
    */
   public VineyardToursService(AuthenticationManager authenticationManager,
       DatabaseManager databaseManager) {
@@ -46,7 +47,7 @@ public class VineyardToursService {
    * Checks if a specified vineyard is part of the given vineyard tour.
    *
    * @param vineyardTour the vineyard tour to check
-   * @param vineyard the vineyard to check for
+   * @param vineyard     the vineyard to check for
    * @return true if the vineyard is part of the tour, false otherwise
    */
   public boolean isVineyardInTour(VineyardTour vineyardTour, Vineyard vineyard) {
@@ -56,7 +57,7 @@ public class VineyardToursService {
   /**
    * Creates a new vineyard tour for the authenticated user.
    *
-   * @param name the name of the vineyard tour
+   * @param name   the name of the vineyard tour
    * @param island the island where the tour is located
    */
   public void createVineyardTour(String name, Island island) {
