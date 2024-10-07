@@ -13,24 +13,7 @@
 
 <HBox spacing="15.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.ListScreenController">
   <children>
-    <TabPane fx:id="listScreenTabs" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
-      <tabs>
-        <Tab fx:id="tabViewing" text="VIEWING &lt;LIST_NAME&gt;">
-          <content>
-            <HBox>
-              <children>
-                <TableView fx:id="tableView" prefHeight="10000.0" prefWidth="100000.0">
-                  <columns>
-                    <TableColumn minWidth="-1.0" prefWidth="-1.0" />
-                  </columns>
-                </TableView>
-              </children>
-            </HBox>
-          </content>
-        </Tab>
-      </tabs>
-    </TabPane>
-    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Lists">
+    <TitledPane animated="false" collapsible="false" focusTraversable="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Lists">
       <content>
         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="50.0">
           <children>
@@ -41,12 +24,12 @@
             </ScrollPane>
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
               <children>
-                <Button fx:id="createListRequestButton" mnemonicParsing="false" onAction="#onCreateListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Create List">
+                <Button fx:id="createListRequestButton" focusTraversable="false" mnemonicParsing="false" onAction="#onCreateListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Create List">
                   <font>
                     <Font name="System Bold" size="16.0" />
                   </font>
                 </Button>
-                <Button fx:id="deleteListRequestButton" mnemonicParsing="false" onAction="#onDeleteListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Delete List">
+                <Button fx:id="deleteListRequestButton" focusTraversable="false" mnemonicParsing="false" onAction="#onDeleteListRequestButton" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Delete List">
                   <font>
                     <Font name="System Bold" size="16.0" />
                   </font>
@@ -60,5 +43,22 @@
         <Font name="System Bold" size="24.0" />
       </font>
     </TitledPane>
+    <TabPane fx:id="listScreenTabs" focusTraversable="false" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="50.0">
+      <tabs>
+        <Tab fx:id="tabViewing" text="VIEWING &lt;LIST_NAME&gt;">
+          <content>
+            <HBox>
+              <children>
+                <TableView fx:id="tableView" focusTraversable="false" prefHeight="10000.0" prefWidth="100000.0">
+                  <columns>
+                    <TableColumn minWidth="-1.0" prefWidth="-1.0" />
+                  </columns>
+                </TableView>
+              </children>
+            </HBox>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
   </children>
 </HBox>

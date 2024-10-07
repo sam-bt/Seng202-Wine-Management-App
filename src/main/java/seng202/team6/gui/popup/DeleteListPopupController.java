@@ -7,6 +7,9 @@ import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.WineList;
 import seng202.team6.service.WineListService;
 
+/**
+ * Class for deleting a list popup.
+ */
 public class DeleteListPopupController extends Controller {
 
   private final WineList wineListToDelete;
@@ -16,6 +19,8 @@ public class DeleteListPopupController extends Controller {
   private Label deleteLabel;
 
   /**
+   * Constructor.
+   *
    * @param managerContext  manager Context.
    * @param wineList        The selected list to delete.
    * @param wineListService The service class which holds the functionality to delete the list.

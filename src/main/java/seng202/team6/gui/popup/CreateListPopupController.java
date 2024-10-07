@@ -11,6 +11,9 @@ import seng202.team6.model.User;
 import seng202.team6.model.WineList;
 import seng202.team6.service.WineListService;
 
+/**
+ * Controller for the creating list popup.
+ */
 public class CreateListPopupController extends Controller {
 
   private final WineListService wineListService;
@@ -20,6 +23,8 @@ public class CreateListPopupController extends Controller {
   private Label errorText;
 
   /**
+   * Constructor.
+   *
    * @param managerContext  manager context.
    * @param wineListService the service class which handles creating the list.
    */
@@ -36,7 +41,7 @@ public class CreateListPopupController extends Controller {
   }
 
   /**
-   * creates the lists, adding it to the array and updates relevant information on screen
+   * Creates the lists, adding it to the array and updates relevant information on screen.
    *
    * @param actionEvent triggers this function when on action.
    */

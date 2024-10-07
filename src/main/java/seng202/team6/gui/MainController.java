@@ -12,9 +12,9 @@ import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.gui.popup.AddToListPopupController;
+import seng202.team6.gui.popup.AddToTourPopupController;
 import seng202.team6.gui.popup.CreateListPopupController;
 import seng202.team6.gui.popup.DeleteListPopupController;
-import seng202.team6.gui.popup.AddToTourPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.VineyardTourPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
@@ -25,8 +25,8 @@ import seng202.team6.model.VineyardTour;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
-import seng202.team6.service.WineListService;
 import seng202.team6.service.VineyardToursService;
+import seng202.team6.service.WineListService;
 import seng202.team6.service.WineReviewsService;
 
 /**
@@ -358,13 +358,22 @@ public class MainController extends Controller {
         () -> new WineReviewPopupController(managerContext, wineReviewsService));
   }
 
-
+  /**
+   * Launches the popup create list.
+   *
+   * @param wineListService service class for wine lists.
+   */
   public void openCreateListPopUp(WineListService wineListService) {
     openPopup("/fxml/popup/create_list_popup.fxml",
         () -> new CreateListPopupController(managerContext, wineListService));
   }
 
-
+  /**
+   * Launches the popup delete list.
+   *
+   * @param wineList the wineList to delete.
+   * @param wineListService service class for wine lists.
+   */
   public void openDeleteListPopUp(WineList wineList, WineListService wineListService) {
     openPopup("/fxml/popup/delete_list_popup.fxml",
         () -> new DeleteListPopupController(managerContext, wineList, wineListService));
