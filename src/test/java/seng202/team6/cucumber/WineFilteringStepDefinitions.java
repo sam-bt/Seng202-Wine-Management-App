@@ -55,7 +55,8 @@ public class WineFilteringStepDefinitions {
         score,
         abv,
         price,
-        null);
+        null,
+        0.0);
     databaseManager.getWineDao().addAll(List.of(wine));
   }
 

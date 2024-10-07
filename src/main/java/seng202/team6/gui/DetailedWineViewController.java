@@ -224,7 +224,7 @@ public class DetailedWineViewController extends Controller {
         .addListener((observableValue, oldValue, usersReview) -> {
           addReviewButton.setText((usersReview == null ? "Add" : "Modify") + " Review");
         });
-    ratingStars.ratingProperty().bind(wineReviewsService.averageRatingProperty());
+    ratingStars.ratingProperty().bind(viewedWine.averageRatingProperty());
     ratingStars.ratingProperty().addListener((observableValue, oldValue, newAverageRating) -> {
       if (wineReviewsService.hasReviews()) {
         int numberOfRatings = wineReviewsService.getWineReviews().size();

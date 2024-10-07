@@ -21,7 +21,7 @@ class WineTest {
    */
   @BeforeEach
   void setUp() throws SQLException {
-    wine = new Wine(-1, "", "", "", "", "", "", -1, "", 0, 0f, 0f, null);
+    wine = new Wine(-1, "", "", "", "", "", "", -1, "", 0, 0f, 0f, null, 0.0);
   }
 
   /**

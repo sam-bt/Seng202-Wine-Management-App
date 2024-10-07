@@ -27,7 +27,6 @@ public class WineReviewsService {
   private final ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
   private final Wine wine;
   private final Property<WineReview> usersReview = new SimpleObjectProperty<>();
-  private final DoubleProperty averageRating = new SimpleDoubleProperty();
 
   /**
    * Constructor.
@@ -53,7 +52,6 @@ public class WineReviewsService {
         .filter(wineReview -> wineReview.getUsername().equals(username))
         .findFirst()
         .orElse(null));
-    calculateAverageReview();
   }
 
   /**
@@ -179,34 +177,12 @@ public class WineReviewsService {
   }
 
   /**
-   * Gets the average rating property.
-   *
-   * @return average rating property
-   */
-  public DoubleProperty averageRatingProperty() {
-    return averageRating;
-  }
-
-  /**
-   * Gets the average rating.
-   *
-   * @return average rating
-   */
-  public double getAverageRating() {
-    return averageRating.get();
-  }
-
-  /**
    * Updates the average rating.
    */
   private void calculateAverageReview() {
-    if (!hasReviews()) {
-      averageRating.set(0);
-    }
-
     double sum = wineReviews.stream()
         .mapToDouble(WineReview::getRating)
         .sum();
-    averageRating.set(sum / getWineReviews().size());
+    wine.setAverageRating(sum / getWineReviews().size());
   }
 }
