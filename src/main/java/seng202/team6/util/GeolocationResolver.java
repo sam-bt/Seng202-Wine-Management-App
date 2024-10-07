@@ -31,24 +31,46 @@ import seng202.team6.model.GeoLocation;
  * It interacts with the OpenRouteService (ORS) API to perform geocoding and routing requests.
  */
 public class GeolocationResolver {
-
   private static final int MAX_REQUESTS_PER_MINUTE = 100; // ORS has a cap of 100 requests per min
-  private final String locationResolverApiUrl;
-  private final String routeResolverApiUrl;
-  private final String apiKey;
+  private static final String API_KEY;
+  private static final String GEOLOCATION_API_URL;
+  private static final String ROUTING_API_URL;
   private final HttpClient client = HttpClient.newHttpClient();
   private final Logger log = LogManager.getLogger(getClass());
 
+  static {
+    Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+    API_KEY = dotenv.get("ORS_API_KEY");
+    GEOLOCATION_API_URL = "https://api.openrouteservice.org/geocode/search?api_key=" + API_KEY
+            + "&boundary.country=NZ&size=1";
+    ROUTING_API_URL = "https://api.openrouteservice.org/v2/directions/driving-car";
+  }
+
   /**
-   * Constructs a new GeolocationResolver. Loads the ORS API key from environment variables.
-   * Initializes the URLs for both geolocation and route resolution.
+   * Tests if an API key is present in a .env file and sends a dummy request in order to
+   * check if its valid key.
+   *
+   * @return true if the key is present and valid, false otherwise.
    */
-  public GeolocationResolver() {
-    Dotenv dotenv = Dotenv.load();
-    apiKey = dotenv.get("ORS_API_KEY");
-    locationResolverApiUrl = "https://api.openrouteservice.org/geocode/search?api_key=" + apiKey
-        + "&boundary.country=NZ&size=1";
-    routeResolverApiUrl = "https://api.openrouteservice.org/v2/directions/driving-car";
+  public static boolean hasValidApiKey() {
+    if (API_KEY == null) {
+      return false;
+    }
+
+    try (HttpClient client = HttpClient.newHttpClient()) {
+      HttpRequest request = HttpRequest.newBuilder()
+              .uri(new URI(GEOLOCATION_API_URL))
+              .header("User-Agent", "Java 21 Http Client")
+              .header("content-type", "application/json")
+              .GET()
+              .build();
+      HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+      JSONParser jsonParser = new JSONParser();
+      JSONObject responseObject = (JSONObject) jsonParser.parse(response.body());
+      return !responseObject.containsKey("error");
+    } catch (IOException | InterruptedException | ParseException | URISyntaxException e) {
+      return false;
+    }
   }
 
   /**
@@ -119,7 +141,7 @@ public class GeolocationResolver {
   public CompletableFuture<GeoLocation> resolveLocation(String locationName) {
     Timer timer = new Timer();
     String encodedLocationName = URLEncoder.encode(locationName, StandardCharsets.UTF_8);
-    String url = locationResolverApiUrl + "&text=" + encodedLocationName;
+    String url = GEOLOCATION_API_URL + "&text=" + encodedLocationName;
     try {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(new URI(url))
@@ -200,8 +222,8 @@ public class GeolocationResolver {
 
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(new URI(routeResolverApiUrl))
-          .header("Authorization", apiKey)
+          .uri(new URI(ROUTING_API_URL))
+          .header("Authorization", API_KEY)
           .header("Content-Type", "application/json")
           .POST(HttpRequest.BodyPublishers.ofString(content.toString(), StandardCharsets.UTF_8))
           .build();
