@@ -73,8 +73,8 @@ public class UpdatePasswordController extends Controller {
     if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
       managerContext.getGuiManager().mainController.openWineScreen();
       if (managerContext.getAuthenticationManager().isAdminFirstLogin()) {
-        managerContext.getGuiManager().mainController.onLogin();
-        managerContext.getGuiManager().mainController.setDisable(false);
+        managerContext.getGuiManager().mainController.updateNavigation();
+        managerContext.getGuiManager().mainController.disableNavigation(false);
         managerContext.getAuthenticationManager().setAdminFirstLogin(false);
         disabled = true;
       }

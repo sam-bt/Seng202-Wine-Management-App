@@ -1,14 +1,31 @@
 package seng202.team6.gui;
 
 import java.io.IOException;
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 import javafx.util.Builder;
+import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.gui.popup.AddToListPopupController;
@@ -36,41 +53,36 @@ import seng202.team6.service.WineReviewsService;
 public class MainController extends Controller {
 
   private final Logger log = LogManager.getLogger(getClass());
-  @FXML
-  private AnchorPane page;
 
   @FXML
   private AnchorPane pageContent;
-
-  @FXML
-  private Button wineScreenButton;
-
-  @FXML
-  private Button listScreenButton;
-  @FXML
-  private Button adminScreenButton;
-
-  @FXML
-  private Button noteScreenButton;
-
-  @FXML
-  private Button consumptionScreenButton;
-  @FXML
-  private Button dataSetsScreenButton;
-  @FXML
-  private Button loginButton;
-
-  @FXML
-  private Button registerButton;
-
-  @FXML
-  private HBox navBarBox;
 
   @FXML
   private AnchorPane popupActionBlocker;
 
   @FXML
   private AnchorPane popupContent;
+
+  @FXML
+  private MenuBar menuBar;
+
+  @FXML
+  private Menu profileMenu;
+
+  @FXML
+  private Menu adminMenu;
+
+  @FXML
+  private VBox profileMenuGraphic;
+
+  @FXML
+  private VBox profileContextMenu;
+
+  @FXML
+  private Button loginButton;
+
+  @FXML
+  private Button registerButton;
 
   private boolean disabled = false;
 
@@ -91,49 +103,111 @@ public class MainController extends Controller {
    */
   @Override
   public void init() {
-    adminScreenButton.setVisible(false);
-    navBarBox.getChildren().remove(listScreenButton);
-    navBarBox.getChildren().add(3, listScreenButton);
-    listScreenButton.setVisible(false);
-    noteScreenButton.setVisible(false);
-    consumptionScreenButton.setVisible(false);
+    profileMenuGraphic.setOnMouseEntered(event -> showProfileMenuContext());
+    profileMenuGraphic.setOnMouseExited(event -> {
+      hideProfileMenuContextIfNotInside(event.getScreenX(), event.getScreenY());
+    });
+    profileContextMenu.setOnMouseExited(event -> {
+      hideProfileMenuContextIfNotInside(event.getScreenX(), event.getScreenY());
+    });
+    profileContextMenu.setDisable(true);
+    profileContextMenu.setVisible(false);
 
+    updateNavigation();
     openWineScreen();
   }
 
   /**
-   * Handles login.
+   * Displays the profile context menu near the profile graphic node. The position of the context
+   * menu is determined based on the layout of the graphic node.
    */
-  public void onLogin() {
-    if (managerContext.getAuthenticationManager().isAuthenticated()) {
-      adminScreenButton.setVisible(managerContext.getAuthenticationManager().isAdmin());
-      noteScreenButton.setVisible(true);
-      loginButton.setText("Settings");
-      registerButton.setText("Logout");
+  private void showProfileMenuContext() {
+    VBox graphicNode = (VBox) profileMenuGraphic;
+    Point2D position = graphicNode.localToScene(0, graphicNode.getLayoutBounds().getMaxY());
 
-      navBarBox.getChildren().remove(listScreenButton);
-      navBarBox.getChildren().add(1, listScreenButton);
-      listScreenButton.setVisible(true);
-      consumptionScreenButton.setVisible(true);
+    profileContextMenu.setLayoutX(position.getX());
+    profileContextMenu.setLayoutY(position.getY());
+    profileContextMenu.setPrefWidth(graphicNode.getWidth());
+    profileContextMenu.setDisable(false);
+    profileContextMenu.setVisible(true);
+  }
 
-      loginButton.setOnMouseClicked(event -> openSettingsScreen());
-      registerButton.setOnMouseClicked(event -> logout());
-    } else {
-      adminScreenButton.setVisible(false);
+  /**
+   * Hides the profile context menu if the mouse is not inside the menu or the graphic node.
+   *
+   * @param mouseX the X coordinate of the mouse cursor
+   * @param mouseY the Y coordinate of the mouse cursor
+   */
+  private void hideProfileMenuContextIfNotInside(double mouseX, double mouseY) {
+    if (!isMouseInsideComponents(mouseX, mouseY)) {
+      profileContextMenu.setDisable(true);
+      profileContextMenu.setVisible(false);
     }
   }
 
   /**
-   * Disables toolbar.
+   * Checks if the mouse cursor is inside the graphic node or the profile context menu.
    *
-   * @param status enabled or not
+   * @param mouseX the X coordinate of the mouse cursor
+   * @param mouseY the Y coordinate of the mouse cursor
+   * @return true if the mouse is inside the components, false otherwise
    */
-  public void setDisable(boolean status) {
-    disabled = status;
-    wineScreenButton.setDisable(status);
-    listScreenButton.setDisable(status);
-    adminScreenButton.setDisable(status);
-    consumptionScreenButton.setVisible(status);
+  private boolean isMouseInsideComponents(double mouseX, double mouseY) {
+    VBox graphicNode = (VBox) profileMenuGraphic;
+    Point2D graphicScreenPos = graphicNode.localToScreen(0, 0);
+    double minX = graphicScreenPos.getX();
+    double maxX = minX + profileMenuGraphic.getWidth();
+    double minY = graphicScreenPos.getY();
+    double maxY = minY + profileMenuGraphic.getHeight() + profileContextMenu.getHeight();
+
+    return mouseX > minX && mouseX < maxX && mouseY > minY && mouseY < maxY;
+  }
+
+  /**
+   * Updates the navigation menu based on the current authentication state of the user.
+   * If the user is authenticated, the profile menu and settings options are shown.
+   * If the user is not authenticated, the login and registration options are displayed.
+   */
+  public void updateNavigation() {
+    if (managerContext.getAuthenticationManager().isAuthenticated()) {
+      addIfNotPresent(profileMenu);
+      loginButton.setText("Settings");
+      registerButton.setText("Logout");
+      loginButton.setOnMouseClicked(event -> openSettingsScreen());
+      registerButton.setOnMouseClicked(event -> logout());
+    } else {
+      menuBar.getMenus().remove(profileMenu);
+      loginButton.setText("Login");
+      registerButton.setText("Register");
+      loginButton.setOnMouseClicked(event -> openLoginScreen());
+      registerButton.setOnMouseClicked(event -> openRegisterScreen());
+    }
+
+    if (managerContext.getAuthenticationManager().isAdmin()) {
+      addIfNotPresent(adminMenu);
+    } else {
+      menuBar.getMenus().remove(adminMenu);
+    }
+  }
+
+  /**
+   * Adds a menu to the menu bar if it is not already present.
+   *
+   * @param menu the menu to be added
+   */
+  private void addIfNotPresent(Menu menu) {
+    if (!menuBar.getMenus().contains(menu)) {
+      menuBar.getMenus().add(menu);
+    }
+  }
+
+  /**
+   * Enables or disables the navigation menu bar.
+   *
+   * @param disable true to disable the menu bar, false to enable it
+   */
+  public void disableNavigation(boolean disable) {
+    menuBar.setDisable(disable);
   }
 
   /**
@@ -205,21 +279,10 @@ public class MainController extends Controller {
   /**
    * Logout the current user.
    */
+  @FXML
   public void logout() {
     managerContext.getAuthenticationManager().logout();
-    loginButton.setText("Login");
-    registerButton.setText("Register");
-    loginButton.setOnMouseClicked(event -> openLoginScreen());
-    registerButton.setOnMouseClicked(event -> openRegisterScreen());
-    adminScreenButton.setVisible(false);
-    noteScreenButton.setVisible(false);
-    dataSetsScreenButton.setVisible(false);
-    consumptionScreenButton.setVisible(false);
-
-    navBarBox.getChildren().remove(listScreenButton);
-    navBarBox.getChildren().add(3, listScreenButton);
-    listScreenButton.setVisible(false);
-
+    updateNavigation();
     openWineScreen();
   }
 
