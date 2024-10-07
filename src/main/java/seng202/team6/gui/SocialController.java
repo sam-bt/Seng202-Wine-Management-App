@@ -6,6 +6,14 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.beans.binding.Bindings;
+import javafx.collections.ListChangeListener;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import seng202.team6.gui.controls.UnmodifiableRating;
+import seng202.team6.service.SocialService;
+import seng202.team6.util.DateFormatter;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -16,6 +24,7 @@ import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
+
 
 /**
  * Controller for the social screen.

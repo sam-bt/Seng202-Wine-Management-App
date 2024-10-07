@@ -11,106 +11,82 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0"
-  minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
-  styleClass="popup" stylesheets="@../../css/popup_pane_action_blocker.css"
-  xmlns="http://javafx.com/javafx/21"
-  fx:controller="seng202.team6.gui.popup.ReviewViewPopupController">
+
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" styleClass="popup" stylesheets="@../../css/popup_pane_action_blocker.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.popup.ReviewViewPopupController">
   <children>
-    <TitledPane animated="false" collapsible="false" layoutX="457.0" layoutY="198.0"
-      maxWidth="456.0" minWidth="456.0" prefHeight="384.0" prefWidth="456.0" stylesheets="@../../css/titled_pane.css"
-      text="Review by {user} for {wine}" fx:id="reviewTitlePane">
+    <TitledPane fx:id="reviewTitlePane" animated="false" collapsible="false" layoutX="457.0" layoutY="198.0" maxWidth="456.0" minWidth="456.0" prefHeight="384.0" prefWidth="456.0" stylesheets="@../../css/titled_pane.css" text="Review by {user} for {wine}">
       <content>
         <GridPane prefWidth="454.0">
           <children>
-            <HBox GridPane.rowIndex="6" alignment="CENTER" prefHeight="100.0" prefWidth="200.0"
-              fx:id="buttonsContainer">
+            <HBox fx:id="buttonsContainer" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="6">
               <children>
-                <Button maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onMouseClicked="#onBackButtonClick"
-                  prefWidth="125.0" styleClass="secondary-button"
-                  stylesheets="@../../css/global.css" text="Back" fx:id="backButton">
+                <Button fx:id="backButton" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onMouseClicked="#onBackButtonClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Back">
                   <HBox.margin>
-                    <Insets left="10.0" right="10.0"/>
+                    <Insets left="10.0" right="10.0" />
                   </HBox.margin>
                   <font>
-                    <Font name="System Bold" size="16.0"/>
+                    <Font name="System Bold" size="16.0" />
                   </font>
                 </Button>
-                <Button maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onMouseClicked="#onWineButtonClick"
-                  prefWidth="125.0" styleClass="secondary-button"
-                  stylesheets="@../../css/global.css" text="View Wine"
-                  fx:id="wineButton">
+                <Button fx:id="wineButton" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onMouseClicked="#onWineButtonClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="View Wine">
                   <HBox.margin>
-                    <Insets left="10.0" right="10.0"/>
+                    <Insets left="10.0" right="10.0" />
                   </HBox.margin>
                   <font>
-                    <Font name="System Bold" size="16.0"/>
+                    <Font name="System Bold" size="16.0" />
                   </font>
                 </Button>
-                <Button maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onMouseClicked="#onUserButtonClick"
-                  prefWidth="125.0" styleClass="secondary-button"
-                  stylesheets="@../../css/global.css" text="View User"
-                  fx:id="userButton">
+                <Button fx:id="userButton" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onMouseClicked="#onUserButtonClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="View User">
                   <HBox.margin>
-                    <Insets left="10.0" right="10.0"/>
+                    <Insets left="10.0" right="10.0" />
                   </HBox.margin>
                   <font>
-                    <Font name="System Bold" size="16.0"/>
+                    <Font name="System Bold" size="16.0" />
                   </font>
                 </Button>
               </children>
             </HBox>
-            <Label GridPane.rowIndex="2" text="Rating">
+            <Label text="Rating" GridPane.rowIndex="2">
               <GridPane.margin>
-                <Insets/>
+                <Insets />
               </GridPane.margin>
               <font>
-                <Font size="16.0"/>
+                <Font size="16.0" />
               </font>
             </Label>
-            <Label GridPane.rowIndex="4" text="Description">
+            <Label text="Description" GridPane.rowIndex="4">
               <GridPane.margin>
-                <Insets/>
+                <Insets />
               </GridPane.margin>
               <font>
-                <Font size="16.0"/>
+                <Font size="16.0" />
               </font>
             </Label>
-            <Label GridPane.rowIndex="5" GridPane.valignment="TOP" alignment="TOP_LEFT" ellipsisString=""
-              prefHeight="80.0" prefWidth="428.0" wrapText="true" fx:id="descriptionLabel"/>
+            <Label fx:id="descriptionLabel" alignment="TOP_LEFT" ellipsisString="" prefHeight="80.0" prefWidth="428.0" wrapText="true" GridPane.rowIndex="5" GridPane.valignment="TOP" />
             <Label prefHeight="20.0" prefWidth="112.0" text="Date Published">
               <font>
-                <Font size="16.0"/>
+                <Font size="16.0" />
               </font>
             </Label>
-            <Label GridPane.rowIndex="1" alignment="TOP_LEFT" ellipsisString="" prefHeight="23.0"
-              prefWidth="185.0" wrapText="true" fx:id="dateLabel"/>
-            <Label GridPane.halignment="CENTER" alignment="CENTER_RIGHT" prefHeight="20.0" prefWidth="191.0"
-              text="Likes">
-              <font>
-                <Font size="16.0"/>
-              </font>
-            </Label>
-            <Pane GridPane.rowIndex="3" GridPane.valignment="TOP" maxHeight="45.0" maxWidth="284.0"
-              minHeight="45.0" minWidth="284.0" prefHeight="45.0" prefWidth="284.0"
-              fx:id="ratingPane"/>
+            <Label fx:id="dateLabel" alignment="TOP_LEFT" ellipsisString="" prefHeight="23.0" prefWidth="185.0" wrapText="true" GridPane.rowIndex="1" />
+            <Pane fx:id="ratingPane" maxHeight="45.0" maxWidth="284.0" minHeight="45.0" minWidth="284.0" prefHeight="45.0" prefWidth="284.0" GridPane.rowIndex="3" GridPane.valignment="TOP" />
           </children>
           <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           </columnConstraints>
           <rowConstraints>
-            <RowConstraints maxHeight="81.0" minHeight="26.0" prefHeight="41.0" vgrow="SOMETIMES"/>
-            <RowConstraints maxHeight="82.0" minHeight="23.0" prefHeight="23.0" vgrow="SOMETIMES"/>
-            <RowConstraints maxHeight="66.0" minHeight="30.0" prefHeight="47.0" vgrow="SOMETIMES"/>
-            <RowConstraints maxHeight="97.0" minHeight="42.0" prefHeight="42.0" vgrow="SOMETIMES"/>
-            <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-            <RowConstraints maxHeight="97.0" minHeight="10.0" prefHeight="84.0" vgrow="SOMETIMES"/>
-            <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="63.0" vgrow="SOMETIMES"/>
+            <RowConstraints maxHeight="81.0" minHeight="26.0" prefHeight="41.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="82.0" minHeight="23.0" prefHeight="23.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="66.0" minHeight="30.0" prefHeight="47.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="97.0" minHeight="42.0" prefHeight="42.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="97.0" minHeight="10.0" prefHeight="84.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="63.0" vgrow="SOMETIMES" />
           </rowConstraints>
         </GridPane>
       </content>
       <font>
-        <Font name="System Bold" size="16.0"/>
+        <Font name="System Bold" size="16.0" />
       </font>
     </TitledPane>
   </children>

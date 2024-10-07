@@ -19,6 +19,10 @@ import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
+import seng202.team6.gui.popup.ReviewViewPopupController;
+import seng202.team6.gui.popup.UserSearchPopupController;
+import seng202.team6.gui.popup.UserViewPopupController;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.model.VineyardTour;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
@@ -50,7 +54,8 @@ public class MainController extends Controller {
 
   @FXML
   private Button consumptionScreenButton;
-
+  @FXML
+  private Button dataSetsScreenButton;
   @FXML
   private Button loginButton;
 
@@ -207,6 +212,7 @@ public class MainController extends Controller {
     registerButton.setOnMouseClicked(event -> openRegisterScreen());
     adminScreenButton.setVisible(false);
     noteScreenButton.setVisible(false);
+    dataSetsScreenButton.setVisible(false);
     consumptionScreenButton.setVisible(false);
 
     navBarBox.getChildren().remove(listScreenButton);
@@ -315,6 +321,12 @@ public class MainController extends Controller {
   public void openDetailedVineyardView(Vineyard vineyard, Runnable backButtonAction) {
     switchScene("/fxml/detailed_vineyard_view.fxml", "Detailed Wine View",
         () -> new DetailedVineyardViewController(managerContext, vineyard, backButtonAction));
+  }
+
+  public void openUserProfilePopup(User user) {
+    System.out.println("opening user profile");
+    openPopup("/fxml/popup/user_view_popup.fxml",
+        () -> new UserViewPopupController(managerContext, user));
   }
 
   /**
