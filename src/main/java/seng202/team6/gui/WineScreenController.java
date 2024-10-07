@@ -288,12 +288,11 @@ public class WineScreenController extends Controller {
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
 
     // Ensures the sliders are rendered before installing tooltips (Needed for css lookups)
-    Platform.runLater(() -> {
-      installRangeSliderTooltip(this.vintageSlider);
-      installRangeSliderTooltip(this.scoreSlider);
-      installRangeSliderTooltip(this.abvSlider);
-      installRangeSliderTooltip(this.priceSlider);
-    });
+    // Needs to be separated into separate Platform.runlater calls for linux (don't ask me why)
+    Platform.runLater(() -> installRangeSliderTooltip(this.vintageSlider));
+    Platform.runLater(() -> installRangeSliderTooltip(this.scoreSlider));
+    Platform.runLater(() -> installRangeSliderTooltip(this.abvSlider));
+    Platform.runLater(() -> installRangeSliderTooltip(this.priceSlider));
 
     // Set snap to ticks
     vintageSlider.setSnapToTicks(true);
