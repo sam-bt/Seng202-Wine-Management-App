@@ -9,7 +9,7 @@ import java.util.HashMap;
  * Database objects are required to be unique in memory to assure consistency.
  * <p>
  * This class implements a simple weak cache to resolve that problem. Objects are stored with weak
- * references to prevent memory leaks. Map is auto cleared by java
+ * references to prevent memory leaks.
  * </p>
  *
  * @param <T> Object type
@@ -83,8 +83,15 @@ public class DatabaseObjectUniquer<T> {
    *
    * @return number of objects in map
    */
-  int size() {
+  public int size() {
     return objects.size();
+  }
+
+  /**
+   * Clears all objects in cache.
+   */
+  public void clear() {
+    objects.clear();
   }
 
 
