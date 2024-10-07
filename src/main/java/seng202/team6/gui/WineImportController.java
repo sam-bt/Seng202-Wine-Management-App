@@ -25,6 +25,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
@@ -46,7 +47,7 @@ public class WineImportController extends Controller {
   private final Logger log = LogManager.getLogger(getClass());
   private final Map<Integer, WinePropertyName> selectedWineProperties = new HashMap<>();
   @FXML
-  private GridPane dataColumnsContainer;
+  private TilePane dataColumnsContainer;
   @FXML
   private CheckBox extractVintageFromTitleCheckbox;
   private List<String[]> currentFileRows;
@@ -65,7 +66,6 @@ public class WineImportController extends Controller {
    */
   @Override
   public void init() {
-    dataColumnsContainer.getRowConstraints().clear();
     dataColumnsContainer.setHgap(10);
     dataColumnsContainer.setVgap(20);
   }
@@ -119,8 +119,6 @@ public class WineImportController extends Controller {
    */
   private void reset() {
     dataColumnsContainer.getChildren().clear();
-    dataColumnsContainer.getRowConstraints().clear();
-    dataColumnsContainer.getColumnConstraints().clear();
     extractVintageFromTitleCheckbox.setSelected(false);
     selectedWineProperties.clear();
     currentFileRows = null;
@@ -245,19 +243,12 @@ public class WineImportController extends Controller {
    * @param rows        rows
    */
   private void makeColumnRemapList(String[] columnNames, List<String[]> rows) {
-    int columns = 4; //todo extract
-    int row = 0;
-    int column = 0;
+    dataColumnsContainer.getChildren().clear();
     for (int i = 0; i < columnNames.length; i++) {
       String columnName = columnNames[i];
       // skip if the column name is empty
       if (columnName.isBlank()) {
         continue;
-      }
-      if (column >= columns) {
-        addRow();
-        row++;
-        column = 0;
       }
 
       ObservableList<String> sampleValues = FXCollections.observableArrayList();
@@ -267,18 +258,8 @@ public class WineImportController extends Controller {
 
       WinePropertyName possiblePropertyName = WinePropertyName.tryMatch(columnName);
       GridPane wrapper = createImportBox(i, columnName, possiblePropertyName, sampleValues);
-      dataColumnsContainer.add(wrapper, column, row);
-      column++;
+      dataColumnsContainer.getChildren().add(wrapper);
     }
-  }
-
-  /**
-   * Adds a row.
-   */
-  private void addRow() {
-    RowConstraints rowConstraint = new RowConstraints();
-    rowConstraint.setVgrow(Priority.ALWAYS);
-    dataColumnsContainer.getRowConstraints().add(rowConstraint);
   }
 
   /**

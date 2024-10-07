@@ -1,8 +1,11 @@
 package seng202.team6.gui;
 
 import java.util.Set;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
@@ -14,6 +17,9 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.web.WebView;
 import javafx.util.StringConverter;
@@ -120,6 +126,19 @@ public class WineScreenController extends Controller {
 
     winesViewContainer.getChildren().clear();
     wines.forEach(this::createWineCard);
+
+    for (Wine wine : wines) {
+
+      Pane node = new WineCard(
+          winesViewContainer.widthProperty(), new SimpleDoubleProperty(), wine, false);
+      node.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2) {
+          openDetailedWineView(wine);
+        }
+      });
+
+      winesViewContainer.getChildren().add(node);
+    }
 
     // Set fetched data to the table
     tableView.setItems(wines);
@@ -228,6 +247,10 @@ public class WineScreenController extends Controller {
         applyFiltersButton.requestFocus();
       }
     });
+
+    // Ensure uniques are up to date
+    managerContext.getDatabaseManager().getWineDao().updateUniques();
+    setFilterValues();
 
     // Set snap to ticks
     vintageSlider.setSnapToTicks(true);
