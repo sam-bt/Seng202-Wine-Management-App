@@ -131,7 +131,7 @@ public class WineImportController extends Controller {
    *
    * @param replace whether to replace
    */
-  private void parseWines(boolean replace) {
+  private void parseWines(boolean replace) { //TODO extract
     List<Wine> parsedWines = new ArrayList<>();
     Map<WinePropertyName, Integer> valid = new HashMap<>() {
       {
@@ -181,7 +181,7 @@ public class WineImportController extends Controller {
   private String extractPropertyFromRowOrDefault(Map<WinePropertyName, Integer> valid, String[] row,
       WinePropertyName winePropertyName) {
     return valid.containsKey(winePropertyName) ? row[valid.get(winePropertyName)] : "";
-  }
+  } //todo util
 
   /**
    * Validates the current table.
@@ -191,6 +191,7 @@ public class WineImportController extends Controller {
   private boolean validate() {
     return checkContainsTitleProperty() && checkDuplicateProperties();
   }
+  //todo put into util
 
   /**
    * Checks if the importer contains the title property.
@@ -215,7 +216,7 @@ public class WineImportController extends Controller {
    * @return true if valid
    */
   private boolean checkDuplicateProperties() {
-    Set<WinePropertyName> duplicatedProperties = new HashSet<>();
+    Set<WinePropertyName> duplicatedProperties = new HashSet<>(); //todo extract
     Set<WinePropertyName> selectedProperties = new HashSet<>();
     selectedWineProperties.forEach((index, winePropertyName) -> {
       if (!selectedProperties.add(winePropertyName)) { // returns false if the set already contained
@@ -244,7 +245,7 @@ public class WineImportController extends Controller {
    * @param rows        rows
    */
   private void makeColumnRemapList(String[] columnNames, List<String[]> rows) {
-    int columns = 4;
+    int columns = 4; //todo extract
     int row = 0;
     int column = 0;
     for (int i = 0; i < columnNames.length; i++) {

@@ -283,7 +283,7 @@ public class DetailedWineViewController extends Controller {
         + "-fx-border-color: black; "
         + "-fx-border-insets: 10;");
 
-    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
+    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate()); //todo extract
 
     Label reviewCaptionLabel = new Label(
         "From " + wineReview.getUsername() + " on " + formattedDate);
