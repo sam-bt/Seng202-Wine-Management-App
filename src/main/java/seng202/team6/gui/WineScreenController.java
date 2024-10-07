@@ -3,7 +3,6 @@ package seng202.team6.gui;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -288,18 +287,18 @@ public class WineScreenController extends Controller {
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
 
     // Ensures the sliders are rendered before installing tooltips (Needed for css lookups)
-    // Needs to be separated into separate Platform.runlater calls for linux (don't ask me why)
-    Platform.runLater(() -> installRangeSliderTooltip(this.vintageSlider));
-    Platform.runLater(() -> installRangeSliderTooltip(this.scoreSlider));
-    Platform.runLater(() -> installRangeSliderTooltip(this.abvSlider));
-    Platform.runLater(() -> installRangeSliderTooltip(this.priceSlider));
+    filtersPane.sceneProperty().addListener((observable, oldScene, newScene) -> {
+      installRangeSliderTooltip(this.vintageSlider);
+      installRangeSliderTooltip(this.scoreSlider);
+      installRangeSliderTooltip(this.abvSlider);
+      installRangeSliderTooltip(this.priceSlider);
+    });
 
     // Set snap to ticks
     vintageSlider.setSnapToTicks(true);
     scoreSlider.setSnapToTicks(true);
     abvSlider.setSnapToTicks(true);
     priceSlider.setSnapToTicks(true);
-
 
     colorTextField.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.TAB) {
@@ -684,7 +683,7 @@ public class WineScreenController extends Controller {
   /**
    * Adds required tooltip logic through event handlers.
    *
-   * @param thumb the thumb node to attach the tool tip too
+   * @param thumb   the thumb node to attach the tool tip too
    * @param tooltip tool tip to attach
    */
   private void addEventHandlersToThumb(Node thumb, Tooltip tooltip) {
