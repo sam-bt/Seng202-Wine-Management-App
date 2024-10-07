@@ -1,6 +1,8 @@
 package seng202.team6.service;
 
 import java.sql.Date;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -12,6 +14,7 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
+import seng202.team6.util.DateFormatter;
 
 /**
  * Wine review service for a given wine.
@@ -89,6 +92,36 @@ public class WineReviewsService {
       wineReviews.remove(wineReview);
       calculateAverageReview();
     }
+  }
+
+//todo test
+  /**
+   * Gets the caption for the wine review label given the review info.
+   *
+   * @param wineReview the review for that review card
+   *
+   * @return the formatted label text
+   */
+  public String getCaptionWithDateFormatted(WineReview wineReview) {
+    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
+    return "From " + wineReview.getUsername() + " on " + formattedDate;
+  }
+
+
+  /**
+   * Gets the StringBinding property for the wine review label given the review info.
+   *
+   * @param wineReview the review for that review card
+   *
+   * @return the binding property for that review card
+   */
+  public StringBinding getCaptionBinding(WineReview wineReview) {
+    return Bindings.createStringBinding(
+        () ->
+            "From " + wineReview.getUsername() + " on " + DateFormatter.DATE_FORMAT.format(
+                wineReview.getDate()),
+        wineReview.dateProperty()
+    );
   }
 
   /**

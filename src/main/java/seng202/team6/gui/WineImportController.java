@@ -50,6 +50,9 @@ public class WineImportController extends Controller {
   @FXML
   private CheckBox extractVintageFromTitleCheckbox;
   private List<String[]> currentFileRows;
+  private final int NUM_COLUMNS = 4;
+  private final int ROW = 0;
+  private final int COLUMN = 0;
 
   /**
    * Constructor.
@@ -245,16 +248,15 @@ public class WineImportController extends Controller {
    * @param rows        rows
    */
   private void makeColumnRemapList(String[] columnNames, List<String[]> rows) {
-    int columns = 4; //todo extract
-    int row = 0;
-    int column = 0;
+    int row = ROW;
+    int column = COLUMN;
     for (int i = 0; i < columnNames.length; i++) {
       String columnName = columnNames[i];
       // skip if the column name is empty
       if (columnName.isBlank()) {
         continue;
       }
-      if (column >= columns) {
+      if (column >= NUM_COLUMNS) {
         addRow();
         row++;
         column = 0;

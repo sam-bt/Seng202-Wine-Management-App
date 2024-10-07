@@ -25,7 +25,7 @@ public class EncryptionUtilTest {
   public void testAlgorithmExists() {
     String password = "password";
     String salt = "salt";
-    String hashedPassword = EncryptionUtil.hashPassword(password, salt);
+    String hashedPassword = PasswordUtil.hashPassword(password, salt);
     assertNotNull(hashedPassword);
     assertFalse(hashedPassword.isEmpty());
   }
@@ -37,11 +37,11 @@ public class EncryptionUtilTest {
   public void testConsistentHash() {
     String password = "password";
     String salt = "salt";
-    String hashedPassword = EncryptionUtil.hashPassword(password, salt);
+    String hashedPassword = PasswordUtil.hashPassword(password, salt);
     assertNotNull(hashedPassword);
     assertFalse(hashedPassword.isEmpty());
     for (int i = 0; i < 10; i++) {
-      assertEquals(hashedPassword, EncryptionUtil.hashPassword(password, salt));
+      assertEquals(hashedPassword, PasswordUtil.hashPassword(password, salt));
     }
   }
 
@@ -52,7 +52,7 @@ public class EncryptionUtilTest {
   public void testRandomSalts() {
     Set<String> salts = new HashSet<>();
     for (int i = 0; i < 1000; i++) {
-      salts.add(EncryptionUtil.generateSalt());
+      salts.add(PasswordUtil.generateSalt());
     }
     assertTrue(salts.size() > 1);
   }
@@ -65,8 +65,8 @@ public class EncryptionUtilTest {
     String password = "password";
     String salt1 = Base64.getEncoder().encodeToString("salt1".getBytes());
     String salt2 = Base64.getEncoder().encodeToString("salt2".getBytes());
-    String hashedPassword1 = EncryptionUtil.hashPassword(password, salt1);
-    String hashedPassword2 = EncryptionUtil.hashPassword(password, salt2);
+    String hashedPassword1 = PasswordUtil.hashPassword(password, salt1);
+    String hashedPassword2 = PasswordUtil.hashPassword(password, salt2);
     assertNotEquals(hashedPassword1, hashedPassword2);
   }
 
@@ -76,9 +76,9 @@ public class EncryptionUtilTest {
   @Test
   public void validateValidPassword() {
     String password = "password";
-    String salt = EncryptionUtil.generateSalt();
-    String hashedPassword = EncryptionUtil.hashPassword(password, salt);
-    assertTrue(EncryptionUtil.verifyPassword(password, hashedPassword, salt));
+    String salt = PasswordUtil.generateSalt();
+    String hashedPassword = PasswordUtil.hashPassword(password, salt);
+    assertTrue(PasswordUtil.verifyPassword(password, hashedPassword, salt));
   }
 
   /**
@@ -87,10 +87,10 @@ public class EncryptionUtilTest {
   @Test
   public void validateInvalidPassword() {
     String password = "password";
-    String salt = EncryptionUtil.generateSalt();
-    String hashedPassword = EncryptionUtil.hashPassword(password, salt);
+    String salt = PasswordUtil.generateSalt();
+    String hashedPassword = PasswordUtil.hashPassword(password, salt);
     password = "otherpassword";
-    assertFalse(EncryptionUtil.verifyPassword(password, hashedPassword, salt));
+    assertFalse(PasswordUtil.verifyPassword(password, hashedPassword, salt));
   }
 
   /**
@@ -99,9 +99,9 @@ public class EncryptionUtilTest {
   @Test
   public void validateNullHashedPassword() {
     String password = "password";
-    String salt = EncryptionUtil.generateSalt();
+    String salt = PasswordUtil.generateSalt();
     String hashedPassword = null;
     password = "otherpassword";
-    assertFalse(EncryptionUtil.verifyPassword(password, hashedPassword, salt));
+    assertFalse(PasswordUtil.verifyPassword(password, hashedPassword, salt));
   }
 }

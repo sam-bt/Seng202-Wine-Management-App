@@ -6,7 +6,7 @@ import static seng202.team6.enums.AuthenticationResponse.USERNAME_ALREADY_REGIST
 import seng202.team6.dao.UserDao;
 import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.model.User;
-import seng202.team6.util.EncryptionUtil;
+import seng202.team6.util.PasswordUtil;
 
 /**
  * Manager class responsible for handling authentication-related operations. This class provides
@@ -57,8 +57,8 @@ public class AuthenticationManager {
       return USERNAME_ALREADY_REGISTERED;
     }
 
-    String salt = EncryptionUtil.generateSalt();
-    String hashedPassword = EncryptionUtil.hashPassword(password, salt);
+    String salt = PasswordUtil.generateSalt();
+    String hashedPassword = PasswordUtil.hashPassword(password, salt);
     userDao.add(new User(username, hashedPassword, "user", salt));
     return AuthenticationResponse.REGISTER_SUCCESS;
   }
@@ -81,7 +81,7 @@ public class AuthenticationManager {
       return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
     }
 
-    boolean validPassword = EncryptionUtil.verifyPassword(password, user.getPassword(),
+    boolean validPassword = PasswordUtil.verifyPassword(password, user.getPassword(),
         user.getSalt());
     if (validPassword) {
       setAuthenticatedUser(user);
@@ -111,7 +111,7 @@ public class AuthenticationManager {
 
     User user = databaseManager.getUserDao().get(username);
     if (user != null) {
-      boolean validPassword = EncryptionUtil.verifyPassword(oldPassword, user.getPassword(),
+      boolean validPassword = PasswordUtil.verifyPassword(oldPassword, user.getPassword(),
           user.getSalt());
       if (!validPassword) {
         return AuthenticationResponse.INCORRECT_OLD_PASSWORD;
@@ -130,8 +130,8 @@ public class AuthenticationManager {
         return AuthenticationResponse.INVALID_PASSWORD;
       }
 
-      String salt = EncryptionUtil.generateSalt();
-      String hashedPassword = EncryptionUtil.hashPassword(newPassword, salt);
+      String salt = PasswordUtil.generateSalt();
+      String hashedPassword = PasswordUtil.hashPassword(newPassword, salt);
       user.setPassword(hashedPassword);
       user.setSalt(salt);
       return PASSWORD_CHANGED_SUCCESS;

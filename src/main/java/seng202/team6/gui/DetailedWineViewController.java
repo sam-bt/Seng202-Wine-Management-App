@@ -3,6 +3,7 @@ package seng202.team6.gui;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -283,16 +284,13 @@ public class DetailedWineViewController extends Controller {
         + "-fx-border-color: black; "
         + "-fx-border-insets: 10;");
 
-    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate()); //todo extract
 
-    Label reviewCaptionLabel = new Label(
-        "From " + wineReview.getUsername() + " on " + formattedDate);
-    reviewCaptionLabel.textProperty().bind(Bindings.createStringBinding(
-        () ->
-            "From " + wineReview.getUsername() + " on " + DateFormatter.DATE_FORMAT.format(
-                wineReview.getDate()),
-        wineReview.dateProperty()
-    ));
+    String caption = wineReviewsService.getCaptionWithDateFormatted(wineReview);
+    Label reviewCaptionLabel = new Label(caption);
+
+    StringBinding labelBind = wineReviewsService.getCaptionBinding(wineReview);
+    reviewCaptionLabel.textProperty().bind(labelBind);
+
     reviewCaptionLabel.setMaxWidth(wrapper.getMaxWidth());
     reviewCaptionLabel.setWrapText(true);
 
