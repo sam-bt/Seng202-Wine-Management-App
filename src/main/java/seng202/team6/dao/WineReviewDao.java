@@ -208,6 +208,11 @@ public class WineReviewDao extends Dao {
     }
   }
 
+  /**
+   * Delete all reviews from a given user.
+   *
+   * @param user is the user whose reviews will be removed
+   */
   public void deleteAllFromUser(User user) {
     Timer timer = new Timer();
     String sql = "DELETE FROM WINE_REVIEW WHERE USERNAME = ?";
@@ -215,7 +220,8 @@ public class WineReviewDao extends Dao {
       statement.setString(1, user.getUsername());
       int rowsAffected = statement.executeUpdate();
       if (rowsAffected >= 1) {
-        log.info("Successfully removed {} reviews in {}ms", rowsAffected, timer.currentOffsetMilliseconds());
+        log.info("Successfully removed {} reviews in {}ms",
+            rowsAffected, timer.currentOffsetMilliseconds());
       }
     } catch (SQLException e) {
       log.error("Failed to delete reviews in {}ms", timer.currentOffsetMilliseconds());

@@ -1,17 +1,21 @@
 package seng202.team6.gui;
 
+import java.util.Optional;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.input.MouseEvent;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
-import seng202.team6.model.Wine;
 
-import java.util.Optional;
 
 /**
  * Controller for the admin screen.
@@ -44,7 +48,7 @@ public class AdminController extends Controller {
   @FXML
   private VBox importWinesScreenContainer;
 
-  private DatabaseManager databaseManager;
+  private final DatabaseManager databaseManager;
 
   private User workingUser = null;
 
@@ -102,7 +106,7 @@ public class AdminController extends Controller {
   }
 
   /**
-   * Delete a user and their data
+   * Delete a user and their data.
    */
   @FXML
   private void onDeletePressed() {
@@ -124,11 +128,12 @@ public class AdminController extends Controller {
     Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
     confirmation.setTitle("Confirm Deletion");
     confirmation.setHeaderText("Deleting reviws for: " + workingUser.getUsername());
-    confirmation.setContentText("Are you sure you want to delete all reviews left by this user?\n This action cannot be undone");
+    confirmation.setContentText(
+        "Are you sure you want to delete all reviews left by this user?\n"
+            + "This action cannot be undone");
     Optional<ButtonType> result = confirmation.showAndWait();
     if (result.get() == ButtonType.OK) {
       databaseManager.getWineReviewDao().deleteAllFromUser(workingUser);
-      resetView();
     }
   }
 
@@ -157,7 +162,8 @@ public class AdminController extends Controller {
 
   /**
    * Select a user from the list by double clicking on them.
-   * @param event
+   *
+   * @param event is the MouseEvent.
    */
   @FXML
   private void selectUser(MouseEvent event) {

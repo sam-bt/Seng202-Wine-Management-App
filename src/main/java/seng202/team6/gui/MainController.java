@@ -306,10 +306,6 @@ public class MainController extends Controller {
         () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
   }
 
-  public void openUserManagementView(Runnable backButtonAction) {
-    switchScene("/fxml/user_management.fxml", "Detailed Wine View",
-            () -> new UserManagementController(managerContext, backButtonAction));
-  }
 
   /**
    * Launches the detailed wine view.
