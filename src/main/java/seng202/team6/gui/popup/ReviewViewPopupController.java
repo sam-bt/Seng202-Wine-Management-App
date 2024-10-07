@@ -9,7 +9,6 @@ import javafx.scene.layout.Pane;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.Controller;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.service.SocialService;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;

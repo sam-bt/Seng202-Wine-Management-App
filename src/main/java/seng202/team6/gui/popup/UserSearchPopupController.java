@@ -6,8 +6,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import seng202.team6.gui.Controller;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.service.WineReviewsService;
 
+
+/**
+ * Controller for the user search popup.
+ */
 public class UserSearchPopupController extends Controller {
 
   @FXML
@@ -19,6 +22,9 @@ public class UserSearchPopupController extends Controller {
   @FXML
   private TableColumn userTableColumn;
 
+  /**
+   * Constructor for the user search popup.
+   */
   public UserSearchPopupController(ManagerContext context) {
     super(context);
   }

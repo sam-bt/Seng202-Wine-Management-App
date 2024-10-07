@@ -29,12 +29,6 @@ public class LeafletOsmController {
    * Web engine with allows loading and rendering of a single web page.
    */
   private final WebEngine webEngine;
-
-  /**
-   * The JavaScript program which is created during the Java run time.
-   */
-  private JSObject javaScriptConnector;
-
   /**
    * The actions to run when the map is ready.
    * <p>
@@ -43,6 +37,10 @@ public class LeafletOsmController {
    * </p>
    */
   private final List<Runnable> onReadyActions = new ArrayList<>();
+  /**
+   * The JavaScript program which is created during the Java run time.
+   */
+  private JSObject javaScriptConnector;
 
   /**
    * Constructs the controller for the map.

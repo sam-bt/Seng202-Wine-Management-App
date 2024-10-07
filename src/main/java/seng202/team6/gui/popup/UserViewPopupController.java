@@ -1,6 +1,5 @@
 package seng202.team6.gui.popup;
 
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -21,18 +20,23 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.SocialService;
 import seng202.team6.service.WineReviewsService;
-import seng202.team6.util.DateFormatter;
 
+/**
+ * Controller for the user view popup.
+ */
 public class UserViewPopupController extends Controller {
 
+  private final SocialService socialService;
+  private final User user;
+  private final ObservableMap<WineReview, VBox> wineReviewCards = FXCollections.observableHashMap();
   @FXML
   private TitledPane userTitlePane;
   @FXML
   private FlowPane reviewsBox;
-  private final SocialService socialService;
-  private final User user;
-  private final ObservableMap<WineReview, VBox> wineReviewCards = FXCollections.observableHashMap();
 
+  /**
+   * Constructor for the user view popup.
+   */
   public UserViewPopupController(ManagerContext context, User user) {
     super(context);
     this.socialService = new SocialService(managerContext.getAuthenticationManager(),
@@ -98,8 +102,6 @@ public class UserViewPopupController extends Controller {
         + "-fx-border-color: black; "
         + "-fx-border-insets: 10;");
 
-    Rating rating = new UnmodifiableRating();
-
     Wine wine = managerContext.getDatabaseManager().getWineDao().get(wineReview.getWineId());
     Label titleLabel = new Label(wine.getTitle());
     titleLabel.textProperty().bind(wine.titleProperty());
@@ -109,6 +111,7 @@ public class UserViewPopupController extends Controller {
 
     VBox.setMargin(titleLabel, new Insets(0, 0, 5, 0));
 
+    Rating rating = new UnmodifiableRating();
     rating.setRating(wineReview.getRating());
 
     wrapper.setOnMouseClicked(event -> {

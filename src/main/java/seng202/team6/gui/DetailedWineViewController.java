@@ -57,6 +57,8 @@ public class DetailedWineViewController extends Controller {
   private final Wine viewedWine;
   private final Runnable backButtonAction;
   private final ObservableMap<WineReview, VBox> wineReviewCards = FXCollections.observableHashMap();
+  private final Rating ratingStars;
+  private final CircularScoreIndicator scoreIndicator;
   private Vineyard wineVineyard;
   @FXML
   private Button saveNotes;
@@ -102,8 +104,6 @@ public class DetailedWineViewController extends Controller {
   private GridPane descriptionScoreNotesGridPane;
   @FXML
   private WebView webView;
-  private final Rating ratingStars;
-  private final CircularScoreIndicator scoreIndicator;
   private LeafletOsmController mapController;
 
   /**

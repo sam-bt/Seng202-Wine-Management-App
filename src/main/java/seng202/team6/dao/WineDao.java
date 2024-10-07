@@ -424,7 +424,7 @@ public class WineDao extends Dao {
    *
    * @param set The ResultSet from which geolocations are to be extracted
    * @return The extract Geolocation if available, otherwise null if either the latitude or
-   * longitude were null
+   *        longitude were null
    * @throws SQLException If an error occurs while processing the ResultSet
    */
   private GeoLocation createGeoLocation(ResultSet set) throws SQLException {

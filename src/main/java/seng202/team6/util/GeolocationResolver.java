@@ -36,8 +36,6 @@ public class GeolocationResolver {
   private static final String API_KEY;
   private static final String GEOLOCATION_API_URL;
   private static final String ROUTING_API_URL;
-  private final HttpClient client = HttpClient.newHttpClient();
-  private final Logger log = LogManager.getLogger(getClass());
 
   static {
     Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
@@ -46,6 +44,9 @@ public class GeolocationResolver {
         + "&boundary.country=NZ&size=1";
     ROUTING_API_URL = "https://api.openrouteservice.org/v2/directions/driving-car";
   }
+
+  private final HttpClient client = HttpClient.newHttpClient();
+  private final Logger log = LogManager.getLogger(getClass());
 
   /**
    * Tests if an API key is present in a .env file and sends a dummy request in order to check if
@@ -173,7 +174,7 @@ public class GeolocationResolver {
    * @param responseBody the response body from the ORS API.
    * @param timer        a timer object to measure the time taken for the request.
    * @return a GeoLocation object containing the latitude and longitude of the location, or null if
-   * the location could not be resolved.
+   *        the location could not be resolved.
    */
   private GeoLocation parseResponse(String locationName, String responseBody, Timer timer) {
     JSONParser jsonParser = new JSONParser();
