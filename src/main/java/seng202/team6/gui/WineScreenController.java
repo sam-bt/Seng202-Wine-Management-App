@@ -567,13 +567,13 @@ public class WineScreenController extends Controller {
   public void setFilterValues() {
     // Auto Complete boxes and range sliders
     // Update filter checkboxes
-    Set<String> winerySet = managerContext.getDatabaseManager().getWineDao()
+    final Set<String> winerySet = managerContext.getDatabaseManager().getWineDao()
         .getWineDataStatService()
         .getUniqueWineries();
-    Set<String> countrySet = managerContext.getDatabaseManager().getWineDao()
+    final Set<String> countrySet = managerContext.getDatabaseManager().getWineDao()
         .getWineDataStatService()
         .getUniqueCountries();
-    Set<String> colorSet = managerContext.getDatabaseManager().getWineDao()
+    final Set<String> colorSet = managerContext.getDatabaseManager().getWineDao()
         .getWineDataStatService()
         .getUniqueColors();
     final int minVintage = managerContext.getDatabaseManager().getWineDao()
@@ -594,6 +594,18 @@ public class WineScreenController extends Controller {
     final double maxPrice = managerContext.getDatabaseManager().getWineDao()
         .getWineDataStatService()
         .getMaxPrice();
+    final double maxAbv = managerContext.getDatabaseManager().getWineDao()
+        .getWineDataStatService()
+        .getMaxAbv();
+    final double minAbv = managerContext.getDatabaseManager().getWineDao()
+        .getWineDataStatService()
+        .getMinAbv();
+
+    // Ensure sliders are valid and disable if not
+    validateSlider(vintageSlider, minVintage, maxVintage);
+    validateSlider(scoreSlider, minScore, maxScore);
+    validateSlider(priceSlider, minPrice, maxPrice);
+    validateSlider(abvSlider, minAbv, maxAbv);
 
     // Clear old list data
     wineryTextField.getEntries().clear();
@@ -613,6 +625,8 @@ public class WineScreenController extends Controller {
     vintageSlider.setMax(maxVintage);
     priceSlider.setMin(minPrice);
     priceSlider.setMax(maxPrice);
+    abvSlider.setMin(minAbv);
+    abvSlider.setMax(maxAbv);
 
     // Set slider handles to min and max values
     // Fixes a graphic issue where the slider values don't change with the min and max adjustments
@@ -622,16 +636,42 @@ public class WineScreenController extends Controller {
     vintageSlider.setLowValue(vintageSlider.getMin());
     priceSlider.setHighValue(priceSlider.getMax());
     priceSlider.setLowValue(priceSlider.getMin());
+    abvSlider.setHighValue(abvSlider.getMax());
+    abvSlider.setLowValue(abvSlider.getMin());
 
     // Ensure the sliders display properly
     scoreSlider.setMajorTickUnit(1);
     vintageSlider.setMajorTickUnit(1);
     vintageSlider.setMinorTickCount(0);
     priceSlider.setMajorTickUnit(100);
+    priceSlider.setMinorTickCount(5);
 
     YearStringConverter yearStringConverter = new YearStringConverter();
     vintageSlider.setLabelFormatter(yearStringConverter);
 
+  }
+
+  /**
+   * Ensures a slider is valid and the user is allowed to interact.
+   * <p>
+   * Disables the slider if it is unable to be used and displays this to the user.
+   * </p>
+   *
+   * @param slider the target slider
+   * @param min    min value to check
+   * @param max    max value to check
+   */
+  private void validateSlider(RangeSlider slider, double min, double max) {
+    if (min == 0 && max == 0) {
+      slider.setDisable(true);
+      Tooltip tooltip = new Tooltip();
+      tooltip.setText("No data!");
+      tooltip.setShowDelay(Duration.ZERO);
+      tooltip.setHideDelay(Duration.millis(500));
+      Tooltip.install(slider, tooltip);
+    } else {
+      slider.setDisable(false);
+    }
   }
 
   /**
