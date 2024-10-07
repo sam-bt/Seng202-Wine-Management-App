@@ -8,10 +8,11 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.WineImportController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.WineImportController">
 <children>
 <GridPane prefWidth="1374.0">
   <columnConstraints>
@@ -62,22 +63,9 @@
          </padding>
       </HBox>
 <ScrollPane fitToWidth="true" prefHeight="685.0" prefWidth="1370.0" stylesheets="@../css/scroll_pane.css">
-  <content>
-    <GridPane fx:id="dataColumnsContainer" prefWidth="1368.0">
-      <columnConstraints>
-        <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      </columnConstraints>
-      <rowConstraints>
-        <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-      </rowConstraints>
-      <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-      </padding>
-    </GridPane>
-  </content>
+         <content>
+            <TilePane fx:id="dataColumnsContainer" prefColumns="3" prefHeight="200.0" prefRows="4" prefTileHeight="400.0" prefTileWidth="400.0" prefWidth="200.0" />
+         </content>
 </ScrollPane>
 </children>
   </VBox>
