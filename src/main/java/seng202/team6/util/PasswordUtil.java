@@ -75,7 +75,6 @@ public class PasswordUtil {
     String hashOfEnteredPassword = hashPassword(enteredPassword, salt);
     return hashOfEnteredPassword != null && hashOfEnteredPassword.equals(storedHash);
   }
-//todo test
 
   /**
    * Checks if it is the admin first time login scenario.

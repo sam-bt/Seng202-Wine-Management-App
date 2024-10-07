@@ -64,7 +64,7 @@ public class UpdatePasswordController extends Controller {
   }
 
   @FXML
-  private void onConfirm() { //todo extract
+  private void onConfirm() {
     String username = managerContext.getAuthenticationManager().getAuthenticatedUsername();
     String oldPassword = oldPasswordField.getText();
     String newPassword = newPasswordField.getText();

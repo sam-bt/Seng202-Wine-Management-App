@@ -1,22 +1,56 @@
-package seng202.team6.util;
+package seng202.team6.unittests.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import seng202.team6.gui.MainController;
+import seng202.team6.managers.AuthenticationManager;
+import seng202.team6.managers.GuiManager;
+import seng202.team6.managers.ManagerContext;
+import seng202.team6.util.PasswordUtil;
 
 /**
  * Test class for the EncryptionUtil class. This class contains unit tests to verify the
  * functionality of the encryption utilities, including password hashing, salt generation, and
  * password verification.
  */
-public class EncryptionUtilTest {
+class PasswordUtilTest {
+
+  private ManagerContext managerContext;
+  private AuthenticationManager authenticationManager;
+  private GuiManager guiManager;
+
+  @BeforeEach
+  void setUp() {
+    managerContext = mock(ManagerContext.class);
+    authenticationManager = mock(AuthenticationManager.class);
+    guiManager = mock(GuiManager.class);
+
+    when(managerContext.getAuthenticationManager()).thenReturn(authenticationManager);
+    when(managerContext.getGuiManager()).thenReturn(guiManager);
+  }
+
+  /**
+   * Tests that disabled is unchanged when it is not the admin's first login.
+   */
+  @Test
+  void testCheckAdminLoginNotFirstLogin() {
+    when(authenticationManager.isAdminFirstLogin()).thenReturn(false);
+    boolean result = PasswordUtil.checkAdminLogin(managerContext, true);
+    assertTrue(result);
+    result = PasswordUtil.checkAdminLogin(managerContext, false);
+    assertFalse(result);
+  }
 
   /**
    * Tests that the hashing algorithm exists and produces a non-null, non-empty result.
@@ -104,4 +138,11 @@ public class EncryptionUtilTest {
     password = "otherpassword";
     assertFalse(PasswordUtil.verifyPassword(password, hashedPassword, salt));
   }
+
+
+
+
+
+
+
 }
