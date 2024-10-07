@@ -11,7 +11,7 @@ import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.model.User;
 
 public class UserRegistrationStepDefinitions {
@@ -51,7 +51,7 @@ public class UserRegistrationStepDefinitions {
     String existingUsername = "MyAccount";
     String existingPassword = "ValidPassword1!";
     User user = new User(username, password, "user", "salt");
-    databaseManager.getUserDAO().add(user);
+    databaseManager.getUserDao().add(user);
     username = existingUsername;
     password = "OtherValidPass1!";
     confirmedPassword = password;

@@ -32,7 +32,7 @@ public class CreateListPopupController extends Controller {
    * Closes the popup without creating a list.
    */
   public void onBackButtonClick() {
-    managerContext.GUIManager.mainController.closePopup();
+    managerContext.getGuiManager().mainController.closePopup();
   }
 
   /**
@@ -55,7 +55,7 @@ public class CreateListPopupController extends Controller {
       } else {
         errorText.setVisible(false);
 
-        User user = managerContext.authenticationManager.getAuthenticatedUser();
+        User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
         wineListService.createWineList(user, name);
 
         listNameTextField.setText("");

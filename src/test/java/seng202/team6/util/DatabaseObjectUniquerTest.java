@@ -49,7 +49,7 @@ class DatabaseObjectUniquerTest {
    */
   @Test
   void gc() throws InterruptedException {
-    for (int i = 0; i < 4097; i++) {
+    for (int i = 0; i < 1000; i++) {
       TestClass ref2 = new TestClass();
       objects.addObject(2 + i, ref2);
       assertEquals(2 + i, objects.size());

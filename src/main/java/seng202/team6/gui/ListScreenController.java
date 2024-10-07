@@ -20,7 +20,7 @@ import seng202.team6.model.WineList;
 import seng202.team6.service.WineListService;
 
 /**
- * Controller to display the user defined lists of wines
+ * Controller to display the user defined lists of wines.
  */
 public class ListScreenController extends Controller {
 
@@ -41,14 +41,14 @@ public class ListScreenController extends Controller {
   private WineList selectedWinelist;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context.
    */
   public ListScreenController(ManagerContext managerContext) {
     super(managerContext);
-    this.wineListService = new WineListService(managerContext.authenticationManager,
-        managerContext.databaseManager);
+    this.wineListService = new WineListService(managerContext.getAuthenticationManager(),
+        managerContext.getDatabaseManager());
     bindToWineListsService();
   }
 
@@ -100,7 +100,7 @@ public class ListScreenController extends Controller {
     boolean canRemoveSelected = wineListService.canRemove(selectedWineList);
     deleteListRequestButton.setDisable(!canRemoveSelected);
     tabViewing.setText("VIEWING: " + selectedWineList.name());
-    ObservableList<Wine> observableList = managerContext.databaseManager.getAggregatedDAO()
+    ObservableList<Wine> observableList = managerContext.getDatabaseManager().getAggregatedDao()
         .getWinesInList(selectedWineList);
     setupTableView(observableList);
   }
@@ -113,18 +113,18 @@ public class ListScreenController extends Controller {
   }
 
   /**
-   * opens the tab for creating lists and hides the tab for viewing lists.
+   * Opens the tab for creating lists and hides the tab for viewing lists.
    *
    * @param actionEvent triggers this function when on action.
    */
   @FXML
   public void onCreateListRequestButton(ActionEvent actionEvent) {
-    managerContext.GUIManager.mainController.openCreateListPopUp(wineListService);
+    managerContext.getGuiManager().mainController.openCreateListPopUp(wineListService);
   }
 
   @FXML
   void onDeleteListRequestClick(WineList wineList) {
-    managerContext.GUIManager.mainController.openDeleteListPopUp(wineList, wineListService);
+    managerContext.getGuiManager().mainController.openDeleteListPopUp(wineList, wineListService);
   }
 
   /**
@@ -143,7 +143,7 @@ public class ListScreenController extends Controller {
   }
 
   /**
-   * Sets up the table of wines
+   * Sets up the table of wines.
    *
    * @param wines list of wines
    */
@@ -153,25 +153,25 @@ public class ListScreenController extends Controller {
 
     tableView.setEditable(false);
 
-    TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
+    final TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
 
-    TableColumn<Wine, String> varietyColumn = new TableColumn<>("Variety");
+    final TableColumn<Wine, String> varietyColumn = new TableColumn<>("Variety");
 
-    TableColumn<Wine, String> wineryColumn = new TableColumn<>("Winery");
+    final TableColumn<Wine, String> wineryColumn = new TableColumn<>("Winery");
 
-    TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
+    final TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
 
-    TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
+    final TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
 
-    TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
+    final TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
 
-    TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
+    final TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
 
-    TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
+    final TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
 
-    TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
+    final TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
 
-    TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
+    final TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
 
     titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
     varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));

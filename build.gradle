@@ -3,6 +3,7 @@ plugins {
     id 'java'
     id "org.openjfx.javafxplugin" version "0.0.14"
     id 'jacoco'
+    id 'checkstyle'
 }
 
 archivesBaseName = 'wino'
@@ -86,11 +87,15 @@ dependencies {
     implementation 'com.ibm.icu:icu4j:75.1'
 }
 
+checkstyle {
+    toolVersion '10.18.2'
+    configFile file("config/checkstyle/checkstyle.xml")
+}
+
 application {
     // Define the main class for the application.
     mainClass = "${mainClassName}"
 }
-
 javafx {
     version = "${javafxVersion}"
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.web']
@@ -100,12 +105,11 @@ test {
     useJUnitPlatform()
 
     filter {
-        //includeTestsMatching "seng202.team0.unittests.*"
+        includeTestsMatching "seng202.team6.unittests.*"
     }
 
     finalizedBy jacocoTestReport
 }
-
 
 tasks.register("cucumber", Test) {
     group = "verification"

@@ -3,23 +3,26 @@ package seng202.team6.gui;
 import seng202.team6.managers.ManagerContext;
 
 /**
- * Generic controller class parent
+ * Generic controller base class.
  */
 public abstract class Controller {
 
+  /**
+   * Shared state between controllers.
+   */
   protected ManagerContext managerContext;
 
   /**
-   * Constructor
+   * Constructor.
    *
-   * @param context Manager context (MORE DETAIL REQUIRED HERE!)
+   * @param context Manager context
    */
   public Controller(ManagerContext context) {
     this.managerContext = context;
   }
 
   /**
-   * Called after the constructor for when fxml is loaded
+   * Called after the constructor for when fxml is loaded.
    */
   public void init() {
   }

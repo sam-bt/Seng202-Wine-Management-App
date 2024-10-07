@@ -15,13 +15,16 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
-import seng202.team6.dao.AggregatedDAO;
+import seng202.team6.dao.AggregatedDao;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 
 
+/**
+ * Controller for notes.
+ */
 public class NotesController extends Controller {
 
   @FXML
@@ -42,10 +45,20 @@ public class NotesController extends Controller {
   private Note openedNote;
   private Wine noteWine;
 
+  /**
+   * Constructor.
+   *
+   * @param managerContext context
+   */
   public NotesController(ManagerContext managerContext) {
     super(managerContext);
   }
 
+
+  /**
+   * Initializes the note controller.
+   */
+  @Override
   public void init() {
     populateTable();
     deleteButton.setDisable(true);
@@ -57,9 +70,9 @@ public class NotesController extends Controller {
    * refresh the notes in the table.
    */
   private void populateTable() {
-    User user = managerContext.authenticationManager.getAuthenticatedUser();
-    AggregatedDAO aggregatedDAO = managerContext.databaseManager.getAggregatedDAO();
-    ObservableMap<Wine, Note> allNotesMappedWithWinesByUser = aggregatedDAO
+    User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
+    AggregatedDao aggregatedDao = managerContext.getDatabaseManager().getAggregatedDao();
+    ObservableMap<Wine, Note> allNotesMappedWithWinesByUser = aggregatedDao
         .getAllNotesMappedWithWinesByUser(user);
     ObservableList<Map.Entry<Wine, Note>> noteList = FXCollections.observableArrayList(
         allNotesMappedWithWinesByUser.entrySet());
@@ -94,12 +107,17 @@ public class NotesController extends Controller {
     saveButton.setDisable(true);
   }
 
+  /**
+   * Opens a note when mouse button is clicked.
+   *
+   * @param event mouse event
+   */
   @FXML
   public void openNoteOnClick(MouseEvent event) {
     Entry<Wine, Note> selectedItem = notesTable.getSelectionModel().getSelectedItem();
-      if (selectedItem == null) {
-          return;
-      }
+    if (selectedItem == null) {
+      return;
+    }
 
     openedNote = selectedItem.getValue();
     noteWine = selectedItem.getKey();
@@ -109,11 +127,17 @@ public class NotesController extends Controller {
     deleteButton.setDisable(false);
   }
 
+  /**
+   * Called when save is clicked..
+   */
   @FXML
   public void onSaveClicked() {
     openedNote.setNote(noteArea.getText());
   }
 
+  /**
+   * Called when delete is clicked.
+   */
   @FXML
   public void onDeleteClicked() {
     Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
