@@ -94,7 +94,7 @@ public class UserViewPopupController extends Controller {
    */
   private VBox createWineReviewElement(WineReview wineReview) { //TODO maybe factor out as duplicate
     VBox wrapper = new VBox();
-    wrapper.setMaxWidth(reviewsBox.getMaxWidth());
+    wrapper.setMaxWidth(320);
     wrapper.setMinWidth(320);
     wrapper.setMaxHeight(Double.MAX_VALUE);
     wrapper.setPadding(new Insets(10));
