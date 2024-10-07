@@ -13,6 +13,9 @@ import seng202.team6.model.Wine;
 
 import java.util.Optional;
 
+/**
+ * Controller for the admin screen.
+ */
 public class AdminController extends Controller {
 
   @FXML
@@ -43,16 +46,24 @@ public class AdminController extends Controller {
 
   private User workingUser = null;
 
+  /**
+   * Constructor.
+   *
+   * @param managerContext manager context
+   */
   public AdminController(ManagerContext managerContext) {
     super(managerContext);
     this.databaseManager = managerContext.databaseManager;
   }
 
+  /**
+   * Initializes the controller.
+   */
   public void initialize() {
     noButton.setVisible(false);
     yesButton.setVisible(false);
 
-    VBox parent = (VBox) managerContext.GUIManager.mainController.loadImportWineScreen(
+    VBox parent = (VBox) managerContext.getGuiManager().mainController.loadImportWineScreen(
         importWinesScreenContainer);
     VBox.setVgrow(parent, Priority.ALWAYS);
     parent.minHeightProperty().bind(importWinesScreenContainer.minHeightProperty());
@@ -76,8 +87,8 @@ public class AdminController extends Controller {
 
   @FXML
   private void onYes() {
-    managerContext.databaseManager.getUserDAO().deleteAll();
-    managerContext.GUIManager.mainController.openWineScreen();
+    managerContext.getDatabaseManager().getUserDao().deleteAll();
+    managerContext.getGuiManager().mainController.openWineScreen();
   }
 
   @FXML

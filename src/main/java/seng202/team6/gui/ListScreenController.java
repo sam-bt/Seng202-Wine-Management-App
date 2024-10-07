@@ -9,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -22,7 +21,7 @@ import seng202.team6.model.WineList;
 import seng202.team6.service.WineListService;
 
 /**
- * Controller to display the user defined lists of wines
+ * Controller to display the user defined lists of wines.
  */
 public class ListScreenController extends Controller {
 
@@ -52,18 +51,18 @@ public class ListScreenController extends Controller {
   private int selected = 0;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context
    */
   public ListScreenController(ManagerContext managerContext) {
     super(managerContext);
-    this.wineListService = new WineListService(managerContext.authenticationManager,
-        managerContext.databaseManager);
+    this.wineListService = new WineListService(managerContext.getAuthenticationManager(),
+        managerContext.getDatabaseManager());
   }
 
   /**
-   * Updates all the buttons
+   * Updates all the buttons.
    *
    * @param wineLists list of wine lists
    */
@@ -78,9 +77,9 @@ public class ListScreenController extends Controller {
       button.getStyleClass().add("primary-button");
       button.setFont(new Font("System Bold", 18));
       button.setDisable(false);
-      int iCopy = i++;
+      int listIndex = i++;
       button.setOnAction(actionEvent -> {
-        selected = iCopy;
+        selected = listIndex;
         render();
       });
 
@@ -93,7 +92,7 @@ public class ListScreenController extends Controller {
   }
 
   /**
-   * Refreshes all the buttons & UI state when there is an update
+   * Refreshes all the buttons & UI state when there is an update.
    */
   public void render() {
 
@@ -116,7 +115,7 @@ public class ListScreenController extends Controller {
   }
 
   /**
-   * opens the tab for creating lists and hides the tab for viewing lists.
+   * Opens the tab for creating lists and hides the tab for viewing lists.
    *
    * @param actionEvent triggers this function when on action.
    */
@@ -129,7 +128,7 @@ public class ListScreenController extends Controller {
   }
 
   /**
-   * opens the tab for viewing lists and hides the tab for creating lists.
+   * Opens the tab for viewing lists and hides the tab for creating lists.
    *
    * @param actionEvent triggers this function when on action.
    */
@@ -142,7 +141,7 @@ public class ListScreenController extends Controller {
   }
 
   /**
-   * creates the lists, adding it to the array and updates relevant information on screen
+   * Creates the lists, adding it to the array and updates relevant information on screen.
    *
    * @param actionEvent triggers this function when on action.
    */
@@ -161,7 +160,7 @@ public class ListScreenController extends Controller {
       } else {
         errorText.setVisible(false);
 
-        User user = managerContext.authenticationManager.getAuthenticatedUser();
+        User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
         wineListService.createWineList(user, name);
 
         listName.setText("");
@@ -184,7 +183,7 @@ public class ListScreenController extends Controller {
     }
 
     wineListService.deleteWineList(wineList);
-    managerContext.databaseManager.getWineListDAO().delete(wineList);
+    managerContext.getDatabaseManager().getWineListDao().delete(wineList);
     render();
   }
 
@@ -193,13 +192,13 @@ public class ListScreenController extends Controller {
    */
   public void changeSelected() {
     WineList selectedWineList = wineListService.getWineLists().get(selected);
-    ObservableList<Wine> observableList = managerContext.databaseManager.getAggregatedDAO()
+    ObservableList<Wine> observableList = managerContext.getDatabaseManager().getAggregatedDao()
         .getWinesInList(selectedWineList);
     setupTableView(observableList);
   }
 
   /**
-   * Sets up the table of wines
+   * Sets up the table of wines.
    *
    * @param wines list of wines
    */
@@ -209,25 +208,25 @@ public class ListScreenController extends Controller {
 
     tableView.setEditable(false);
 
-    TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
+    final TableColumn<Wine, String> titleColumn = new TableColumn<>("Title");
 
-    TableColumn<Wine, String> varietyColumn = new TableColumn<>("Variety");
+    final TableColumn<Wine, String> varietyColumn = new TableColumn<>("Variety");
 
-    TableColumn<Wine, String> wineryColumn = new TableColumn<>("Winery");
+    final TableColumn<Wine, String> wineryColumn = new TableColumn<>("Winery");
 
-    TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
+    final TableColumn<Wine, String> regionColumn = new TableColumn<>("Region");
 
-    TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
+    final TableColumn<Wine, String> colorColumn = new TableColumn<>("Color");
 
-    TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
+    final TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
 
-    TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
+    final TableColumn<Wine, String> descriptionColumn = new TableColumn<>("Description");
 
-    TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
+    final TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
 
-    TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
+    final TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
 
-    TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
+    final TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
 
     titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
     varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));
@@ -251,35 +250,8 @@ public class ListScreenController extends Controller {
     tableView.getColumns().add(abvColumn);
     tableView.getColumns().add(priceColumn);
 
-    tableView.setRowFactory((tableView) -> {
-      TableRow<Wine> tableRow = new TableRow<>();
-      tableRow.setOnMouseClicked(event -> {
-        if (event.getClickCount() == 2 && !tableRow.isEmpty()) {
-          Wine wine = tableRow.getItem();
-          onWineInListClick(wine);
-        }
-      });
-      return tableRow;
-    });
-
     tableView.getItems().clear();
     tableView.setItems(wines);
   }
 
-  /**
-   * Handler to warn on deletion of wine from a list
-   *
-   * @param wine wine
-   */
-  public void onWineInListClick(Wine wine) {
-//    Alert alert = new Alert(AlertType.CONFIRMATION);
-//    alert.setTitle("Delete Wine from List");
-//    alert.setHeaderText("Would you like to remove " + wine.getTitle() + " from this list?");
-//    ButtonType buttonType = alert.showAndWait().orElse(null);
-//    if (buttonType == ButtonType.OK) {
-//      WineList selectedList = getWineLists().get(selected);
-//      managerContext.databaseManager.deleteWineFromList(selectedList, wine);
-//      tableView.getItems().remove(wine);
-//    }
-  }
 }

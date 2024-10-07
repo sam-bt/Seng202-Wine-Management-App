@@ -12,9 +12,9 @@ public class YearStringConverter extends StringConverter<Number> {
   private final DecimalFormat yearFormat = new DecimalFormat("0000");
 
   /**
-   * Convert the value to a string
+   * Convert the value to a string.
    *
-   * @param value
+   * @param value value
    * @return string in the form DDDD
    */
   @Override
@@ -28,8 +28,8 @@ public class YearStringConverter extends StringConverter<Number> {
   /**
    * Converts the given string into an int. Unused in this program.
    *
-   * @param string
-   * @return
+   * @param string string
+   * @return integer
    */
   @Override
   public Integer fromString(String string) {

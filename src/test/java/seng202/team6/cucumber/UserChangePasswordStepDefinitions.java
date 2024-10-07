@@ -13,7 +13,7 @@ import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.model.User;
 import seng202.team6.util.EncryptionUtil;
 
@@ -93,7 +93,7 @@ public class UserChangePasswordStepDefinitions {
         newPassword, confirmNewPassword);
     assertNotEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
 
-    User user = databaseManager.getUserDAO().get(username);
+    User user = databaseManager.getUserDao().get(username);
     String storedHash = user.getPassword();
     assertFalse(EncryptionUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
     assertTrue(EncryptionUtil.verifyPassword(password, storedHash, user.getSalt()));
@@ -105,7 +105,7 @@ public class UserChangePasswordStepDefinitions {
         newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
 
-    User user = databaseManager.getUserDAO().get(username);
+    User user = databaseManager.getUserDao().get(username);
     String storedHash = user.getPassword();
     assertTrue(EncryptionUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
   }

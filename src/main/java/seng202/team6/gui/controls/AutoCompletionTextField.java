@@ -13,10 +13,11 @@ import javafx.scene.control.TextField;
 
 
 /**
- * A textbox with an auto-suggest feature based on entered text
+ * A textbox with an auto-suggest feature based on entered text.
  * <p>
  * Modified from: <a
  * href="https://stackoverflow.com/questions/36861056/javafx-textfield-auto-suggestions">...</a>
+ * </p>
  */
 public class AutoCompletionTextField extends TextField {
 
@@ -27,6 +28,9 @@ public class AutoCompletionTextField extends TextField {
   private final ContextMenu entriesPopup;
 
 
+  /**
+   * Default constructor.
+   */
   public AutoCompletionTextField() {
     super();
     this.entries = new TreeSet<>();
@@ -37,13 +41,15 @@ public class AutoCompletionTextField extends TextField {
 
 
   /**
-   * "Suggestion" specific listeners
+   * "Suggestion" specific listeners.
    */
   private void setListener() {
     //Add "suggestions" by changing text
     textProperty().addListener((observable, oldValue, newValue) -> {
       String enteredText = getText();
-      //always hide suggestion if nothing has been entered (only "spacebars" are disallowed in TextFieldWithLengthLimit)
+      // Always hide suggestion if nothing has been entered (only "spacebars" are disallowed in
+      // TextFieldWithLengthLimit)
+      //
       if (enteredText == null || enteredText.isEmpty()) {
         entriesPopup.hide();
       } else {

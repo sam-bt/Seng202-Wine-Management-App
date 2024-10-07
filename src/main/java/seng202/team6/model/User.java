@@ -4,32 +4,32 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * User represents the users in the database
+ * User represents the users in the database.
  */
 public class User {
 
   /**
-   * The username of the user
+   * The username of the user.
    */
   private final StringProperty username;
 
   /**
-   * The password of the user
+   * The password of the user.
    */
   private final StringProperty password;
 
   /**
-   * The role of the user
+   * The role of the user.
    */
   private final StringProperty role;
 
   /**
-   * The salt used for password hashing for the user
+   * The salt used for password hashing for the user.
    */
   private final StringProperty salt;
 
   /**
-   * Constructs a new User with the specified details
+   * Constructs a new User with the specified details.
    *
    * @param username username
    * @param password password
@@ -49,7 +49,7 @@ public class User {
   }
 
   /**
-   * Constructs a new User with default empty values
+   * Constructs a new User with default empty values.
    */
   public User() {
     this.username = new SimpleStringProperty(this, "username");
@@ -59,7 +59,7 @@ public class User {
   }
 
   /**
-   * Gets the username
+   * Gets the username.
    *
    * @return username
    */
@@ -68,7 +68,7 @@ public class User {
   }
 
   /**
-   * Sets the username
+   * Sets the username.
    *
    * @param username username
    */
@@ -77,7 +77,7 @@ public class User {
   }
 
   /**
-   * Gets the username property
+   * Gets the username property.
    *
    * @return username property
    */
@@ -86,7 +86,7 @@ public class User {
   }
 
   /**
-   * Gets the password
+   * Gets the password.
    *
    * @return password
    */
@@ -95,7 +95,7 @@ public class User {
   }
 
   /**
-   * Sets the password
+   * Sets the password.
    *
    * @param password password
    */
@@ -104,7 +104,7 @@ public class User {
   }
 
   /**
-   * Gets the password property
+   * Gets the password property.
    *
    * @return password property
    */
@@ -113,7 +113,7 @@ public class User {
   }
 
   /**
-   * Gets the role
+   * Gets the role.
    *
    * @return role
    */
@@ -122,7 +122,7 @@ public class User {
   }
 
   /**
-   * Sets the role
+   * Sets the role.
    *
    * @param role role
    */
@@ -131,7 +131,7 @@ public class User {
   }
 
   /**
-   * Gets the role property
+   * Gets the role property.
    *
    * @return role property
    */
@@ -140,7 +140,7 @@ public class User {
   }
 
   /**
-   * Gets the salt
+   * Gets the salt.
    *
    * @return salt
    */
@@ -149,7 +149,7 @@ public class User {
   }
 
   /**
-   * Sets the salt
+   * Sets the salt.
    *
    * @param salt salt
    */
@@ -158,7 +158,7 @@ public class User {
   }
 
   /**
-   * Gets the salt property
+   * Gets the salt property.
    *
    * @return salt property
    */
