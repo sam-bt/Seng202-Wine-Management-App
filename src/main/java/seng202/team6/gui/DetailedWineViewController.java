@@ -303,6 +303,7 @@ public class DetailedWineViewController extends Controller {
     descriptionLabel.setStyle("-fx-padding: 10 0 0 0;");
 
     Rating rating = new UnmodifiableRating();
+    rating.ratingProperty().bind(wineReview.ratingProperty());
     wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel);
     return wrapper;
   }

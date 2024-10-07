@@ -14,7 +14,7 @@
 
 <AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" styleClass="popup" stylesheets="@../../css/popup_pane_action_blocker.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.popup.ReviewViewPopupController">
   <children>
-    <TitledPane fx:id="reviewTitlePane" animated="false" collapsible="false" layoutX="457.0" layoutY="198.0" maxWidth="456.0" minWidth="456.0" prefHeight="384.0" prefWidth="456.0" stylesheets="@../../css/titled_pane.css" text="Review by {user} for {wine}">
+    <TitledPane fx:id="reviewTitlePane" animated="false" collapsible="false" layoutX="457.0" layoutY="198.0" maxWidth="456.0" minWidth="456.0" prefHeight="384.0" prefWidth="456.0" stylesheets="@../../css/titled_pane.css" text="Review for {wine}">
       <content>
         <GridPane prefWidth="454.0">
           <children>
@@ -63,13 +63,19 @@
               </font>
             </Label>
             <Label fx:id="descriptionLabel" alignment="TOP_LEFT" ellipsisString="" prefHeight="80.0" prefWidth="428.0" wrapText="true" GridPane.rowIndex="5" GridPane.valignment="TOP" />
-            <Label prefHeight="20.0" prefWidth="112.0" text="Date Published">
+            <Label prefHeight="20.0" prefWidth="181.0" text="Date" GridPane.halignment="RIGHT">
               <font>
                 <Font size="16.0" />
               </font>
             </Label>
-            <Label fx:id="dateLabel" alignment="TOP_LEFT" ellipsisString="" prefHeight="23.0" prefWidth="185.0" wrapText="true" GridPane.rowIndex="1" />
+            <Label fx:id="dateLabel" alignment="TOP_LEFT" ellipsisString="" prefHeight="23.0" prefWidth="184.0" wrapText="true" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
             <Pane fx:id="ratingPane" maxHeight="45.0" maxWidth="284.0" minHeight="45.0" minWidth="284.0" prefHeight="45.0" prefWidth="284.0" GridPane.rowIndex="3" GridPane.valignment="TOP" />
+                  <Label prefHeight="20.0" prefWidth="196.0" text="Review By">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="userLabel" alignment="TOP_LEFT" ellipsisString="" prefHeight="23.0" prefWidth="245.0" wrapText="true" GridPane.rowIndex="1" />
           </children>
           <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
