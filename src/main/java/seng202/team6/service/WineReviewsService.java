@@ -42,6 +42,16 @@ public class WineReviewsService {
     this.wine = wine;
   }
 
+
+  /**
+   * Default Constructor for testing purposes.
+   */
+  public WineReviewsService() {
+    this.authenticationManager = null;
+    this.databaseManager = null;
+    this.wine = null;
+  };
+
   /**
    * Initialize the service.
    */
