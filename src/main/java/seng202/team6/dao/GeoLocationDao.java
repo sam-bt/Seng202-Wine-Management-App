@@ -67,6 +67,11 @@ public class GeoLocationDao extends Dao {
         rowsAffected, rows.size(), timer.currentOffsetMilliseconds());
   }
 
+  /**
+   * Adds all the provided geolocations to the database using a batch insert operation.
+   *
+   * @param geoLocations A map containing location names as keys and Geolocation objects as values.
+   */
   public void addAll(Map<String, GeoLocation> geoLocations) {
     Timer timer = new Timer();
     String sql = "INSERT INTO GEOLOCATION values (?, ?, ?);";
@@ -86,11 +91,18 @@ public class GeoLocationDao extends Dao {
     }
   }
 
+  /**
+   * Retrieves the names of locations that already exist in the GEOLOCATION table. This method
+   * checks for matches between the provided set of location names and those not in the table.
+   *
+   * @param locationNames A set of location names to check in the database.
+   * @return A set of location names that already exist in the GEOLOCATION table.
+   */
   public Set<String> getExistingLocationNames(Set<String> locationNames) {
     Timer timer = new Timer();
     // Collections.nCopies just repeats '?' n times
-    String sql = "SELECT NAME FROM GEOLOCATION WHERE NAME IN (" +
-        String.join(",", Collections.nCopies(locationNames.size(), "?")) + ")";
+    String sql = "SELECT NAME FROM GEOLOCATION WHERE NAME IN ("
+        + String.join(",", Collections.nCopies(locationNames.size(), "?")) + ")";
     Set<String> existingLocationNames = new HashSet<>();
 
     try (PreparedStatement statement = connection.prepareStatement(sql)) {

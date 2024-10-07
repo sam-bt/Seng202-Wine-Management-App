@@ -250,15 +250,13 @@ public class DatabaseManager {
   }
 
   /**
-   * Callback to set the attribute to update
+   * Callback to set the attribute to update.
    */
   public interface AttributeSetter {
 
     /**
-     * Updates the prepared statement with the value to set
-     * <p>
-     * Attribute must be index 1 in prepared statement
-     * </p>
+     * Updates the prepared statement with the value to set. Attribute must be index 1 in prepared
+     * statement.
      */
     void setAttribute(PreparedStatement statement) throws SQLException;
   }

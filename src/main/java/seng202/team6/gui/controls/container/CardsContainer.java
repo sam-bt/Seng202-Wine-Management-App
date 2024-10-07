@@ -8,6 +8,11 @@ import javafx.geometry.Bounds;
 import javafx.scene.layout.VBox;
 import seng202.team6.gui.controls.card.Card;
 
+/**
+ * A class that represents a container for managing a collection of cards.
+ *
+ * @param <T> the type of elements associated with the cards in this container
+ */
 public class CardsContainer<T> extends VBox {
 
   /**
@@ -15,6 +20,13 @@ public class CardsContainer<T> extends VBox {
    */
   private final Map<T, Card> cards = new HashMap<>();
 
+  /**
+   * Constructs a CardsContainer that adjusts its width based on the specified viewport bounds
+   * and scroll pane width.
+   *
+   * @param viewportBounds a ReadOnlyObjectProperty representing the bounds of the viewport
+   * @param scrollPaneWidth a ReadOnlyDoubleProperty representing the width of the scroll pane
+   */
   public CardsContainer(ReadOnlyObjectProperty<Bounds> viewportBounds,
       ReadOnlyDoubleProperty scrollPaneWidth) {
     setSpacing(10);
@@ -36,11 +48,22 @@ public class CardsContainer<T> extends VBox {
     });
   }
 
+  /**
+   * Adds a card associated with a specified element to the container.
+   *
+   * @param element the element associated with the card
+   * @param cardContainer the Card object to be added to the container
+   */
   public void addCard(T element, Card cardContainer) {
     cards.put(element, cardContainer);
     getChildren().add(cardContainer);
   }
 
+  /**
+   * Removes the card associated with the specified element from the container.
+   *
+   * @param element the element whose associated card should be removed
+   */
   public void remove(T element) {
     Card card = cards.remove(element);
     if (card != null) {
@@ -48,6 +71,9 @@ public class CardsContainer<T> extends VBox {
     }
   }
 
+  /**
+   * Removes all cards from the container.
+   */
   public void removeAll() {
     cards.values().removeIf(card -> {
       getChildren().remove(card);

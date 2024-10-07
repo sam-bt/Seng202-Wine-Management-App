@@ -31,7 +31,13 @@ public class ImageReader {
     return null;
   }
 
-  public static Image loadImageFromURL(String url) {
+  /**
+   * Loads an image asynchronously from the specified URL.
+   *
+   * @param url the URL of the image to be loaded
+   * @return an Image object representing the loaded image
+   */
+  public static Image loadImageFromUrl(String url) {
     return new Image(url, true);
   }
 }

@@ -16,10 +16,13 @@ import seng202.team6.model.VineyardTour;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
+/**
+ * Data Access Object (DAO) for handling vineyard related database operations.
+ */
 public class VineyardDao extends Dao {
 
   /**
-   * Cache to store and reuse Vineyard objects to avoid duplication
+   * Cache to store and reuse Vineyard objects to avoid duplication.
    */
   private final DatabaseObjectUniquer<Vineyard> vineyardCache = new DatabaseObjectUniquer<>();
 
@@ -120,6 +123,12 @@ public class VineyardDao extends Dao {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Retrieves a vineyard by its name from the VINEYARD table.
+   *
+   * @param name The name of the vineyard.
+   * @return The corresponding Vineyard object, or null if not found.
+   */
   public Vineyard get(String name) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM VINEYARD "
@@ -142,6 +151,11 @@ public class VineyardDao extends Dao {
     return null;
   }
 
+  /**
+   * Inserts a list of vineyards into the VINEYARD table.
+   *
+   * @param vineyards The list of Vineyard objects to be added.
+   */
   public void addAll(List<Vineyard> vineyards) {
     Timer timer = new Timer();
     String sql = "INSERT INTO VINEYARD values (null, ?, ?, ?, ?, ?, ?);";
@@ -164,6 +178,12 @@ public class VineyardDao extends Dao {
     }
   }
 
+  /**
+   * Retrieves all vineyards associated with a given vineyard tour.
+   *
+   * @param vineyardTour The VineyardTour object.
+   * @return A list of Vineyard objects associated with the tour.
+   */
   public List<Vineyard> getAllFromTour(VineyardTour vineyardTour) {
     Timer timer = new Timer();
     String sql = "SELECT ID FROM VINEYARD_TOUR_ITEM "
@@ -236,11 +256,11 @@ public class VineyardDao extends Dao {
 
   /**
    * Extracts the latitude and longitude from the provided ResultSet and creates a new GeoLocation
-   * object
+   * object.
    *
    * @param set The ResultSet from which geolocations are to be extracted
    * @return The extract Geolocation if available, otherwise null if either the latitude or
-   * longitude were null
+   *        longitude were null
    * @throws SQLException If an error occurs while processing the ResultSet
    */
   private GeoLocation createGeoLocation(ResultSet set) throws SQLException {

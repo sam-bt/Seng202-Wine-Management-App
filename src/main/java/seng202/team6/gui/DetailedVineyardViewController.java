@@ -15,6 +15,10 @@ import seng202.team6.model.Vineyard;
 import seng202.team6.model.Wine;
 import seng202.team6.util.ImageReader;
 
+/**
+ * The DetailedVineyardViewController is responsible for managing the detailed vineyard view within
+ * the GUI.
+ */
 public class DetailedVineyardViewController extends Controller {
 
   private final Vineyard vineyard;
@@ -33,7 +37,7 @@ public class DetailedVineyardViewController extends Controller {
   TextArea descriptionTextbox;
 
   /**
-   * Constructs the Detailed Vineyard View Controller
+   * Constructs the Detailed Vineyard View Controller.
    *
    * @param context The manager context
    */
@@ -51,7 +55,7 @@ public class DetailedVineyardViewController extends Controller {
     websiteTextbox.textProperty().bind(vineyard.websiteProperty());
     descriptionTextbox.textProperty().bind(vineyard.descriptionProperty());
 
-    Image image = ImageReader.loadImageFromURL(vineyard.getLogoUrl());
+    Image image = ImageReader.loadImageFromUrl(vineyard.getLogoUrl());
     imageView.setImage(image);
     imageView.setPreserveRatio(true);
 
@@ -73,6 +77,11 @@ public class DetailedVineyardViewController extends Controller {
     managerContext.getGuiManager().mainController.openAddToTourPopup(vineyard);
   }
 
+  /**
+   * Creates a wine card and adds it to the wine cards container.
+   *
+   * @param wine The wine to add to the card.
+   */
   public void createWineCard(Wine wine) {
     WineCard card = new WineCard(winesContainer.widthProperty(),
         new SimpleDoubleProperty(), wine, true);

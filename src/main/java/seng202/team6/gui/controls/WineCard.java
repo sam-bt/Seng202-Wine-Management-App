@@ -17,6 +17,9 @@ import seng202.team6.gui.controls.card.Card;
 import seng202.team6.model.Wine;
 import seng202.team6.util.ImageReader;
 
+/**
+ * A class that represents a card for displaying wine information.
+ */
 public class WineCard extends Card {
 
   private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine_cropped.png");
@@ -25,16 +28,26 @@ public class WineCard extends Card {
   private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine_cropped.png");
   private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage(
       "/img/default_wine_cropped.png");
-  private static final Map<String, Image> WINE_IMAGES = new HashMap<>() {{
-    put("red", RED_WINE_IMAGE);
-    put("white", WHITE_WINE_IMAGE);
-    put("rose", ROSE_WINE_IMAGE);
-    put("rosé", ROSE_WINE_IMAGE);
-  }};
+  private static final Map<String, Image> WINE_IMAGES = new HashMap<>();
 
+  static {
+    WINE_IMAGES.put("red", RED_WINE_IMAGE);
+    WINE_IMAGES.put("white", WHITE_WINE_IMAGE);
+    WINE_IMAGES.put("rose", ROSE_WINE_IMAGE);
+    WINE_IMAGES.put("rosé", ROSE_WINE_IMAGE);
+  }
+
+  /**
+   * Constructs a WineCard to display the specified wine's details.
+   *
+   * @param containerWidth the width of the container to which this card belongs
+   * @param horizontalGap          the horizontal gap of the container.
+   * @param wine          the Wine object containing details to display
+   * @param showReview    a boolean indicating whether to show the review rating
+   */
   public WineCard(ReadOnlyDoubleProperty containerWidth,
-      DoubleProperty hGap, Wine wine, boolean showReview) {
-    super(containerWidth, hGap);
+      DoubleProperty horizontalGap, Wine wine, boolean showReview) {
+    super(containerWidth, horizontalGap);
     Image wineImage = WINE_IMAGES.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
     ImageView imageView = new ImageView(wineImage);
     imageView.setFitHeight(100);

@@ -283,7 +283,6 @@ public class DetailedWineViewController extends Controller {
         + "-fx-border-color: black; "
         + "-fx-border-insets: 10;");
 
-    Rating rating = new UnmodifiableRating();
     String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
 
     Label reviewCaptionLabel = new Label(
@@ -303,6 +302,7 @@ public class DetailedWineViewController extends Controller {
     descriptionLabel.setWrapText(true);
     descriptionLabel.setStyle("-fx-padding: 10 0 0 0;");
 
+    Rating rating = new UnmodifiableRating();
     wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel);
     return wrapper;
   }

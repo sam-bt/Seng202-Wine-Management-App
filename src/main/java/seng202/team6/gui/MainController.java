@@ -307,7 +307,7 @@ public class MainController extends Controller {
   }
 
   /**
-   * Launches the detailed wine view
+   * Launches the detailed wine view.
    *
    * @param vineyard         the vineyard to view
    * @param backButtonAction action to run when back button is pressed
@@ -326,12 +326,18 @@ public class MainController extends Controller {
         () -> new SocialController(managerContext));
   }
 
+  /**
+   * Launches the vineyards screen.
+   */
   @FXML
   public void openVineyardsScreen() {
     switchScene("/fxml/vineyards_screen.fxml", "Vineyards",
         () -> new VineyardsController(managerContext));
   }
 
+  /**
+   * Launches the tour planning screen.
+   */
   @FXML
   public void openTourPlanningScreen() {
     switchScene("/fxml/tour_planning_screen.fxml", "Tour Planning",
@@ -367,6 +373,11 @@ public class MainController extends Controller {
         () -> new ConsumptionController(managerContext));
   }
 
+  /**
+   * Launches the popup to add the specified vineyard to a tour.
+   *
+   * @param vineyard The vineyard to be added to a tour.
+   */
   public void openAddToTourPopup(Vineyard vineyard) {
     openPopup("/fxml/popup/add_to_tour_popup.fxml",
         () -> new AddToTourPopupController(managerContext, vineyard));
@@ -375,10 +386,10 @@ public class MainController extends Controller {
   /**
    * Launches the popup to review a wine.
    *
-   * @param wineReviewsService service
-   * @param reviewer           reviewer
-   * @param selectedReview     selected review
-   * @param wine               wine
+   * @param wineReviewsService the service used for managing wine reviews.
+   * @param reviewer the user reviewing the wine.
+   * @param selectedReview the currently selected wine review, or null if creating a new review.
+   * @param wine the wine being reviewed.
    */
   public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer,
       WineReview selectedReview, Wine wine) {
@@ -387,6 +398,12 @@ public class MainController extends Controller {
             selectedReview, wine));
   }
 
+  /**
+   * Launches the popup to create a vineyard tour.
+   *
+   * @param vineyardToursService the service used for managing vineyard tours.
+   * @param modifyingVineyardTour the vineyard tour to be modified, or null if creating a new tour.
+   */
   public void openVineyardTourPopup(VineyardToursService vineyardToursService,
       VineyardTour modifyingVineyardTour) {
     openPopup("/fxml/popup/create_vineyard_tour_popup.fxml",

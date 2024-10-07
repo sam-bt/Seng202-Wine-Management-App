@@ -10,8 +10,10 @@ import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
 import seng202.team6.service.VineyardToursService;
 
+/**
+ * Controller for the add to tour popup.
+ */
 public class AddToTourPopupController extends Controller {
-
   private final VineyardToursService vineyardToursService;
   private final Vineyard vineyard;
   @FXML
@@ -19,9 +21,9 @@ public class AddToTourPopupController extends Controller {
   private AddRemoveCardsContainer<VineyardTour> addRemoveCardsContainer;
 
   /**
-   * Constructs a new AddToTourPopupController
+   * Constructs a new AddToTourPopupController.
    *
-   * @param context The manager context
+   * @param context the manager context
    */
   public AddToTourPopupController(ManagerContext context, Vineyard vineyard) {
     super(context);
@@ -31,6 +33,9 @@ public class AddToTourPopupController extends Controller {
     bindToVineyardToursService();
   }
 
+  /**
+   * Initializes the controller and its components.
+   */
   @Override
   public void init() {
     addRemoveCardsContainer = new AddRemoveCardsContainer<>(
@@ -40,11 +45,17 @@ public class AddToTourPopupController extends Controller {
     vineyardToursService.init();
   }
 
+  /**
+   * Handles the action when the back button is clicked.
+   */
   @FXML
   void onBackButtonClick() {
     managerContext.getGuiManager().mainController.closePopup();
   }
 
+  /**
+   * Binds the vineyards tours service to the UI.
+   */
   private void bindToVineyardToursService() {
     vineyardToursService.getVineyardTours()
         .addListener((ListChangeListener<VineyardTour>) change -> {

@@ -196,14 +196,29 @@ public class Vineyard {
     descriptionProperty().set(description);
   }
 
+  /**
+   * Returns the StringProperty representing the vineyard's logo url.
+   *
+   * @return the StringProperty of the vineyard's logo url.
+   */
   public StringProperty logoUrlProperty() {
     return logoUrl;
   }
 
+  /**
+   * Retrieves the vineyard's logo url.
+   *
+   * @return the logo url of the vineyard.
+   */
   public String getLogoUrl() {
     return logoUrl.get();
   }
 
+  /**
+   * Sets the vineyard's logo url.
+   *
+   * @param logoUrl the new logo url of the vineyard.
+   */
   public void setLogoUrl(String logoUrl) {
     logoUrlProperty().set(logoUrl);
   }

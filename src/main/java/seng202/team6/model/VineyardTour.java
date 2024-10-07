@@ -62,7 +62,7 @@ public class VineyardTour {
   }
 
   /**
-   * Returns the username who created the tour
+   * Returns the username who created the tour.
    *
    * @return the username of the wine tour
    */

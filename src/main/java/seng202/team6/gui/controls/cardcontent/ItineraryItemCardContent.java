@@ -4,8 +4,18 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import seng202.team6.model.Vineyard;
 
+/**
+ * A class that represents the content of an itinerary item card, displaying information about a
+ * vineyard, including its name and address.
+ */
 public class ItineraryItemCardContent extends VBox {
 
+  /**
+   * Constructs an ItineraryItemCardContent with the specified vineyard.
+   *
+   * @param vineyard the Vineyard object containing the information to display on the itinerary item
+   *                 card.
+   */
   public ItineraryItemCardContent(Vineyard vineyard) {
     Label name = new Label();
     name.textProperty().bind(vineyard.nameProperty());

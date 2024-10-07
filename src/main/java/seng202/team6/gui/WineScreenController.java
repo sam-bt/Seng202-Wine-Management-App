@@ -32,7 +32,7 @@ import seng202.team6.service.PageService;
 import seng202.team6.util.YearStringConverter;
 
 /**
- * Controller for the screen that displays wines
+ * Controller for the screen that displays wines.
  */
 
 public class WineScreenController extends Controller {
@@ -132,9 +132,9 @@ public class WineScreenController extends Controller {
     // Clear any existing cols
     tableView.getColumns().clear();
 
-    StringConverter<String> stringConverter = new DefaultStringConverter();
-    StringConverter<Integer> intConverter = new IntegerStringConverter();
-    StringConverter<Float> floatConverter = new FloatStringConverter();
+    final StringConverter<String> stringConverter = new DefaultStringConverter();
+    final StringConverter<Integer> intConverter = new IntegerStringConverter();
+    final StringConverter<Float> floatConverter = new FloatStringConverter();
 
     // Create and config cols
     tableView.setEditable(true);

@@ -25,23 +25,40 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import seng202.team6.model.GeoLocation;
 
+/**
+ * The GeolocationResolver class is responsible for resolving geographical coordinates for a
+ * list of locations, as well as finding driving routes between geographical points.
+ * It interacts with the OpenRouteService (ORS) API to perform geocoding and routing requests.
+ */
 public class GeolocationResolver {
 
-  private static final int MAX_REQUESTS_PER_MINUTE = 40; // ORS has a cap of 40 requests per min
-  private final String LOCATION_RESOLVER_API_URL;
-  private final String ROUTE_RESOLVER_API_URL;
-  private final String API_KEY;
+  private static final int MAX_REQUESTS_PER_MINUTE = 100; // ORS has a cap of 100 requests per min
+  private final String locationResolverApiUrl;
+  private final String routeResolverApiUrl;
+  private final String apiKey;
   private final HttpClient client = HttpClient.newHttpClient();
   private final Logger log = LogManager.getLogger(getClass());
 
+  /**
+   * Constructs a new GeolocationResolver. Loads the ORS API key from environment variables.
+   * Initializes the URLs for both geolocation and route resolution.
+   */
   public GeolocationResolver() {
     Dotenv dotenv = Dotenv.load();
-    API_KEY = dotenv.get("ORS_API_KEY");
-    LOCATION_RESOLVER_API_URL = "https://api.openrouteservice.org/geocode/search?api_key=" + API_KEY
+    apiKey = dotenv.get("ORS_API_KEY");
+    locationResolverApiUrl = "https://api.openrouteservice.org/geocode/search?api_key=" + apiKey
         + "&boundary.country=NZ&size=1";
-    ROUTE_RESOLVER_API_URL = "https://api.openrouteservice.org/v2/directions/driving-car";
+    routeResolverApiUrl = "https://api.openrouteservice.org/v2/directions/driving-car";
   }
 
+  /**
+   * Resolves the geographical coordinates of a list of location names. This method splits the
+   * locations into batches of requests, ensuring compliance with the rate limits of the ORS API.
+   * It performs these requests asynchronously.
+   *
+   * @param locations a list of location names to be geocoded.
+   * @return a map of location names to their respective GeoLocation objects.
+   */
   public Map<String, GeoLocation> resolveAll(List<String> locations) {
     Map<String, CompletableFuture<GeoLocation>> futuresMap = new ConcurrentHashMap<>();
 
@@ -92,10 +109,17 @@ public class GeolocationResolver {
         ));
   }
 
+  /**
+   * Resolves the geographical coordinates of a single location asynchronously. The method sends an
+   * HTTP request to the ORS geocoding API and parses the response to extract the coordinates.
+   *
+   * @param locationName the name of the location to be geocoded.
+   * @return a CompletableFuture containing the GeoLocation object for the resolved location.
+   */
   public CompletableFuture<GeoLocation> resolveLocation(String locationName) {
     Timer timer = new Timer();
     String encodedLocationName = URLEncoder.encode(locationName, StandardCharsets.UTF_8);
-    String url = LOCATION_RESOLVER_API_URL + "&text=" + encodedLocationName;
+    String url = locationResolverApiUrl + "&text=" + encodedLocationName;
     try {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(new URI(url))
@@ -110,7 +134,6 @@ public class GeolocationResolver {
             return response.body();
           })
           .thenApply(response -> parseResponse(locationName, response, timer))
-//          .orTimeout(3, TimeUnit.SECONDS)
           .exceptionally(error -> {
             log.error("Encountered an error sending location resolver request", error);
             throw new CompletionException(error); // Propagate the error
@@ -120,6 +143,15 @@ public class GeolocationResolver {
     }
   }
 
+  /**
+   * Parses the geocoding response from the ORS API and extracts the geographical coordinates.
+   *
+   * @param locationName the name of the location being resolved.
+   * @param responseBody the response body from the ORS API.
+   * @param timer  a timer object to measure the time taken for the request.
+   * @return a GeoLocation object containing the latitude and longitude of the location,
+   *        or null if the location could not be resolved.
+   */
   private GeoLocation parseResponse(String locationName, String responseBody, Timer timer) {
     JSONParser jsonParser = new JSONParser();
     try {
@@ -144,6 +176,13 @@ public class GeolocationResolver {
     return null;
   }
 
+  /**
+   * Resolves a driving route between multiple geographical locations. The method sends a POST
+   * request to the ORS routing API and parses the response to return the route geometry.
+   *
+   * @param vineyardLocations a list of GeoLocation objects representing the vineyard locations.
+   * @return the route geometry as a string, or null if no route could be resolved.
+   */
   @SuppressWarnings("unchecked")
   public String resolveRoute(List<GeoLocation> vineyardLocations) {
     JSONObject content = new JSONObject();
@@ -161,8 +200,8 @@ public class GeolocationResolver {
 
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(new URI(ROUTE_RESOLVER_API_URL))
-          .header("Authorization", API_KEY)
+          .uri(new URI(routeResolverApiUrl))
+          .header("Authorization", apiKey)
           .header("Content-Type", "application/json")
           .POST(HttpRequest.BodyPublishers.ofString(content.toString(), StandardCharsets.UTF_8))
           .build();
@@ -179,6 +218,12 @@ public class GeolocationResolver {
     return null;
   }
 
+  /**
+   * Parses the route response from the ORS API to extract the route geometry.
+   *
+   * @param response the HTTP response from the ORS API.
+   * @return the route geometry as a string, or null if the request was unsuccessful.
+   */
   private String parseRouteResponse(HttpResponse<String> response) {
     if (response.statusCode() != 200) {
       return null;

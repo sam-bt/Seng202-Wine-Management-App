@@ -1,6 +1,5 @@
 package seng202.team6.gui.controls.container;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -20,6 +19,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import seng202.team6.util.IconPaths;
 
+/**
+ * A class that represents a container for managing a collection of cards with add and remove
+ * functionality.
+ *
+ * @param <T> the type of elements associated with the cards in this container
+ */
 public class AddRemoveCardsContainer<T> extends VBox {
 
   /**
@@ -27,6 +32,13 @@ public class AddRemoveCardsContainer<T> extends VBox {
    */
   private final Map<T, GridPane> buttons = new HashMap<>();
 
+  /**
+   * Constructs an AddRemoveCardsContainer that adjusts its width based on the specified viewport
+   * bounds and scroll pane width.
+   *
+   * @param viewportBounds a ReadOnlyObjectProperty representing the bounds of the viewport
+   * @param scrollPaneWidth a ReadOnlyDoubleProperty representing the width of the scroll pane
+   */
   public AddRemoveCardsContainer(ReadOnlyObjectProperty<Bounds> viewportBounds,
       ReadOnlyDoubleProperty scrollPaneWidth) {
     setSpacing(10);
@@ -48,6 +60,15 @@ public class AddRemoveCardsContainer<T> extends VBox {
     });
   }
 
+  /**
+   * Adds a card associated with a specified element to the container.
+   *
+   * @param element the element associated with the card
+   * @param text a StringProperty representing the text to be displayed on the card
+   * @param shouldAdd a boolean indicating whether the button is for adding or removing
+   * @param addClickAction a Runnable to be executed when the add button is clicked
+   * @param removeClickAction a Runnable to be executed when the remove button is clicked
+   */
   public void add(T element, StringProperty text, boolean shouldAdd, Runnable addClickAction,
       Runnable removeClickAction) {
     Label listNameLabel = new Label();
@@ -64,10 +85,10 @@ public class AddRemoveCardsContainer<T> extends VBox {
     button.getStylesheets().add("css/add_remove_buttons.css");
     GridPane.setHalignment(button, HPos.CENTER);
 
-    CardWrapper wrapper = new CardWrapper(button, shouldAdd, addClickAction, removeClickAction);
-    RowConstraints firstRow = new RowConstraints();
-    ColumnConstraints firstColumn = new ColumnConstraints();
-    ColumnConstraints secondColumn = new ColumnConstraints();
+    final CardWrapper wrapper = new CardWrapper(button, shouldAdd, addClickAction, removeClickAction);
+    final RowConstraints firstRow = new RowConstraints();
+    final ColumnConstraints firstColumn = new ColumnConstraints();
+    final ColumnConstraints secondColumn = new ColumnConstraints();
     firstColumn.setPercentWidth(80);
     secondColumn.setPercentWidth(20);
     firstColumn.setHgrow(Priority.NEVER);
@@ -85,12 +106,23 @@ public class AddRemoveCardsContainer<T> extends VBox {
     getChildren().add(wrapper);
   }
 
+  /**
+   * A static inner class that wraps a button in a GridPane for managing its action and appearance.
+   */
   static class CardWrapper extends GridPane {
 
     protected final Runnable addClickRunnable;
     protected final Runnable removeClickRunnable;
     private final Button button;
 
+    /**
+     * Constructs a CardWrapper with specified button and actions.
+     *
+     * @param button the Button to be wrapped
+     * @param shouldAdd a boolean indicating if the button is for adding
+     * @param addClickRunnable a Runnable to be executed when the add action is triggered
+     * @param removeClickRunnable a Runnable to be executed when the remove action is triggered
+     */
     CardWrapper(Button button, boolean shouldAdd, Runnable addClickRunnable,
         Runnable removeClickRunnable) {
       this.button = button;
@@ -99,6 +131,11 @@ public class AddRemoveCardsContainer<T> extends VBox {
       updateActionIcon(shouldAdd);
     }
 
+    /**
+     * Updates the button icon based on whether it is in add or remove mode.
+     *
+     * @param shouldAdd a boolean indicating if the button is for adding
+     */
     private void updateActionIcon(boolean shouldAdd) {
       SVGPath svgPath = new SVGPath();
       svgPath.getStyleClass().add("icon");

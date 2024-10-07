@@ -8,6 +8,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.shape.SVGPath;
 import seng202.team6.util.IconPaths;
 
+/**
+ * A custom button which toggles between an "add" and "remove" state. When the button is in an add
+ * state, it will show a plus icon. When the button is in a remove state, it will show a minus icon.
+ */
 public class AddRemoveButton extends GridPane {
 
   private final Button button;
@@ -16,6 +20,15 @@ public class AddRemoveButton extends GridPane {
   private final String addTooltipText;
   private final String removeTooltipText;
 
+  /**
+   * Constructs an AddRemoveButton with specified actions and tooltips.
+   *
+   * @param shouldAdd Indicates whether the button should represent the add action.
+   * @param addClickRunnable The action to be performed when the button is clicked to add.
+   * @param removeClickRunnable The action to be performed when the button is clicked to remove.
+   * @param addTooltipText The tooltip text displayed when the button is in add mode.
+   * @param removeTooltipText The tooltip text displayed when the button is in remove mode.
+   */
   public AddRemoveButton(boolean shouldAdd, Runnable addClickRunnable, Runnable removeClickRunnable,
       String addTooltipText, String removeTooltipText) {
     this.addTooltipText = addTooltipText;
@@ -36,6 +49,11 @@ public class AddRemoveButton extends GridPane {
     GridPane.setHalignment(button, HPos.CENTER);
   }
 
+  /**
+   * Updates the icon of the button based on the current action (add or remove).
+   *
+   * @param shouldAdd Indicates whether to display the add icon (true) or the remove icon (false).
+   */
   private void updateActionIcon(boolean shouldAdd) {
     SVGPath svgPath = new SVGPath();
     svgPath.getStyleClass().add("icon");

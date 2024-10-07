@@ -25,6 +25,14 @@ public class ButtonsList<T> extends VBox {
    */
   private final Map<T, Button> buttons = new HashMap<>();
 
+  /**
+   * Constructs a ButtonsList that creates and manages a list of buttons associated with unique
+   * elements. The buttons are displayed within a VBox, and their width is dynamically bound to the
+   * parent's width.
+   *
+   * @param viewportBounds The ReadOnlyObjectProperty representing the viewport's bounds.
+   * @param scrollPaneWidth The ReadOnlyDoubleProperty representing the width of the scroll pane.
+   */
   public ButtonsList(ReadOnlyObjectProperty<Bounds> viewportBounds,
       ReadOnlyDoubleProperty scrollPaneWidth) {
     setSpacing(10);

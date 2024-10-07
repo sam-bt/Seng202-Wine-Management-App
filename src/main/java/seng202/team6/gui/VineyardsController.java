@@ -98,7 +98,7 @@ public class VineyardsController extends Controller {
     });
 
     int logoWidth = 200, logoHeight = 150;
-    Image logo = ImageReader.loadImageFromURL(vineyard.getLogoUrl());
+    Image logo = ImageReader.loadImageFromUrl(vineyard.getLogoUrl());
     ImageView logoView = new ImageView(logo);
     HBox imageContainer = new HBox(logoView);
     logoView.setFitWidth(logoWidth);

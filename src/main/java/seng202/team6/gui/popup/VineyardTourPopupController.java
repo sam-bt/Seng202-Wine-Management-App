@@ -13,6 +13,10 @@ import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.VineyardTour;
 import seng202.team6.service.VineyardToursService;
 
+/**
+ * Controller for the vineyard tours popup controller which allows modification or creation of
+ * a vineyard tour.
+ */
 public class VineyardTourPopupController extends Controller {
 
   private final VineyardToursService vineyardToursService;
@@ -42,6 +46,9 @@ public class VineyardTourPopupController extends Controller {
     this.modifyingVineyard = modifyingVineyard;
   }
 
+  /**
+   * Initializes the controller and its components.
+   */
   @Override
   public void init() {
     boolean modifying = modifyingVineyard != null;
@@ -54,16 +61,25 @@ public class VineyardTourPopupController extends Controller {
     islandComboBox.getSelectionModel().selectFirst();
   }
 
+  /**
+   * Handles the action when the back button is clicked.
+   */
   @FXML
   void onBackButtonClick() {
     managerContext.getGuiManager().mainController.closePopup();
   }
 
+  /**
+   * Handles the action when the delete button is clicked.
+   */
   @FXML
   void onDeleteButtonClick() {
 
   }
 
+  /**
+   * Handles the action when the submit button is clicked.
+   */
   @FXML
   void onSubmitButtonClick() {
     String name = tourNameTextfield.getText();

@@ -14,15 +14,18 @@ import seng202.team6.model.VineyardTour;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
+/**
+ * Data Access Object (DAO) for handling vineyard tour related database operations.
+ */
 public class VineyardTourDao extends Dao {
 
   /**
-   * Cache to store and reuse WineList objects to avoid duplication
+   * Cache to store and reuse WineList objects to avoid duplication.
    */
   private final DatabaseObjectUniquer<VineyardTour> wineTourCache = new DatabaseObjectUniquer<>();
 
   /**
-   * Constructs a new WineTourDAO with the given database connection.
+   * Constructs a new VineyardTourDao with the given database connection.
    *
    * @param connection The database connection to be used for wine tour operations.
    */
@@ -50,6 +53,12 @@ public class VineyardTourDao extends Dao {
     };
   }
 
+  /**
+   * Retrieves all vineyard tours created by the specified user from the database.
+   *
+   * @param user The User object representing the user whose vineyard tours are being queried.
+   * @return An ObservableList of VineyardTour objects created by the specified user.
+   */
   public ObservableList<VineyardTour> getAll(User user) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM VINEYARD_TOUR WHERE USERNAME = ?";
@@ -68,6 +77,15 @@ public class VineyardTourDao extends Dao {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Creates a new vineyard tour for a specified user.
+   *
+   * @param user The User object representing the user for whom the vineyard tour is being created.
+   * @param tourName The name of the vineyard tour to be created.
+   * @param island The Island enumeration representing the island on which the tour takes place.
+   * @return A VineyardTour object representing the newly created vineyard tour, or null if the
+   *        operation fails.
+   */
   public VineyardTour create(User user, String tourName, Island island) {
     Timer timer = new Timer();
     String sql = "INSERT INTO VINEYARD_TOUR VALUES (NULL, ?, ?, ?)";
@@ -99,6 +117,13 @@ public class VineyardTourDao extends Dao {
     return null;
   }
 
+  /**
+   * Checks if a specific vineyard is part of a given vineyard tour.
+   *
+   * @param vineyardTour The VineyardTour object representing the tour.
+   * @param vineyard The Vineyard object representing the vineyard being checked.
+   * @return True if the vineyard is in the tour, false otherwise.
+   */
   public boolean isVineyardInTour(VineyardTour vineyardTour, Vineyard vineyard) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM VINEYARD_TOUR_ITEM WHERE TOUR_ID = ? AND VINEYARD_ID = ?";
@@ -120,6 +145,12 @@ public class VineyardTourDao extends Dao {
     return false;
   }
 
+  /**
+   * Adds a vineyard to an existing vineyard tour.
+   *
+   * @param vineyardTour The VineyardTour object representing the tour.
+   * @param vineyard The Vineyard object representing the vineyard to be added.
+   */
   public void addVineyard(VineyardTour vineyardTour, Vineyard vineyard) {
     Timer timer = new Timer();
     String sql = "INSERT INTO VINEYARD_TOUR_ITEM VALUES (?, ?)";
@@ -141,6 +172,12 @@ public class VineyardTourDao extends Dao {
     }
   }
 
+  /**
+   * Removes a vineyard from an existing vineyard tour.
+   *
+   * @param vineyardTour The VineyardTour object representing the tour.
+   * @param vineyard The Vineyard object representing the vineyard to be removed.
+   */
   public void removeVineyard(VineyardTour vineyardTour, Vineyard vineyard) {
     Timer timer = new Timer();
     String sql = "DELETE FROM VINEYARD_TOUR_ITEM WHERE TOUR_ID = ? AND VINEYARD_ID = ?";
@@ -162,6 +199,13 @@ public class VineyardTourDao extends Dao {
     }
   }
 
+  /**
+   * Extracts all vineyard tours from the provided ResultSet and stores them in an ObservableList.
+   *
+   * @param resultSet The ResultSet from which vineyard tours are to be extracted
+   * @return An ObservableList of VineyardTour objects
+   * @throws SQLException If an error occurs while processing the ResultSet
+   */
   private ObservableList<VineyardTour> extractVineyardToursFromResultSet(ResultSet resultSet)
       throws SQLException {
     ObservableList<VineyardTour> vineyardTours = FXCollections.observableArrayList();
@@ -171,6 +215,14 @@ public class VineyardTourDao extends Dao {
     return vineyardTours;
   }
 
+  /**
+   * Extracts a VineyardTour object from the provided ResultSet. The wine cache is checked before
+   * creating a new Wine instance.
+   *
+   * @param resultSet The ResultSet from which vineyards tours are to be extracted.
+   * @return The extracted vineyard tour.
+   * @throws SQLException If an error occurs while processing the ResultSet
+   */
   private VineyardTour extractVineyardTourFromResultSet(ResultSet resultSet) throws SQLException {
     long id = resultSet.getLong("ID");
     VineyardTour cachedVineyardTour = wineTourCache.tryGetObject(id);

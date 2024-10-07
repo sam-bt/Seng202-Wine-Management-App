@@ -25,6 +25,9 @@ import seng202.team6.service.VineyardService;
 import seng202.team6.service.VineyardToursService;
 import seng202.team6.util.GeolocationResolver;
 
+/**
+ * The controller for manging the vineyard tour planning screen.
+ */
 public class TourPlanningController extends Controller {
 
   private final VineyardToursService vineyardToursService;
@@ -55,7 +58,7 @@ public class TourPlanningController extends Controller {
   /**
    * Constructs a new TourPlanningController.
    *
-   * @param context The manager context
+   * @param context the manager context
    */
   public TourPlanningController(ManagerContext context) {
     super(context);
@@ -66,6 +69,11 @@ public class TourPlanningController extends Controller {
     bindToVineyardToursService();
   }
 
+  /**
+   * Binds the vineyard tours service to the UI. The bindings ensure changes to the vineyard tours
+   * are reflected in the UI. The listeners will graphically display or remove vineyard tour buttons
+   * upon change in the vineyard tours service list.
+   */
   private void bindToVineyardToursService() {
     ObservableList<VineyardTour> vineyardTours = vineyardToursService.getVineyardTours();
     vineyardTours.addListener((ListChangeListener<VineyardTour>) change -> {
@@ -85,6 +93,9 @@ public class TourPlanningController extends Controller {
     });
   }
 
+  /**
+   * Initializes the controller and its components.
+   */
   @Override
   public void init() {
     vineyardTourButtonsList = new ButtonsList<>(
@@ -106,16 +117,25 @@ public class TourPlanningController extends Controller {
     mapController.initMap();
   }
 
+  /**
+   * Handles the action when the create tour button is clicked.
+   */
   @FXML
   public void onCreateTourButtonClick() {
     managerContext.getGuiManager().mainController.openVineyardTourPopup(vineyardToursService, null);
   }
 
+  /**
+   * Handles the action when the delete tour button is clicked.
+   */
   @FXML
   public void onDeleteTourClick() {
 
   }
 
+  /**
+   * Handles the action when the calculate tour button is clicked.
+   */
   @FXML
   public void onCalculateTourClick() {
     List<Vineyard> vineyards = currentTourPlanningService.getVineyards();
@@ -137,7 +157,17 @@ public class TourPlanningController extends Controller {
     tabPane.getSelectionModel().select(viewTourTab);
   }
 
-  public void openVineyardTour(VineyardTour vineyardTour) {
+  /**
+   * Opens the specified vineyard tour and updates the UI with the associated vineyards.
+   * <p>
+   *  This method populates the vineyard and itinerary containers with the
+   *  appropriate cards for the selected vineyard tour, allowing the user to
+   *  view and manage the vineyards included in the tour.
+   * </p>
+   *
+   * @param vineyardTour The vineyard tour to be opened.
+   */
+  private void openVineyardTour(VineyardTour vineyardTour) {
     vineyardCardsContainer.removeAll();
     itineraryCardsContainer.removeAll();
 

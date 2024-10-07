@@ -53,7 +53,7 @@ public class AggregatedDao extends Dao {
    *
    * @param user The user for whom to retrieve the notes and wines.
    * @return An ObservableMap where the key is a Wine object and the value is the associated Note
-   * object.
+   *        object.
    */
   public ObservableMap<Wine, Note> getAllNotesMappedWithWinesByUser(User user) {
     Timer timer = new Timer();
@@ -177,6 +177,12 @@ public class AggregatedDao extends Dao {
     return wineReviewPairs;
   }
 
+  /**
+   * Retrieves all wines which are associated with a vineyard.
+   *
+   * @param vineyard The Vineyard object representing the vineyard from which to retrieve wines.
+   * @return An ObservableList of Wine objects associated with the specified vineyard.
+   */
   public ObservableList<Wine> getWinesFromVineyard(Vineyard vineyard) {
     Timer timer = new Timer();
     String sql = "SELECT * FROM WINE "

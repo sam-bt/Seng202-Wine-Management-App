@@ -119,10 +119,10 @@ public class LeafletOsmController {
    * Calls the addWineMarker function in JavaScript.
    * <p>
    * The JavaScript function will create a new marker of the wine and display it at the wines
-   * geolocation
+   * geolocation.
    * </p>
    *
-   * @param wine the wine for which the marker should represent
+   * @param wine the wine for which the marker should represent.
    */
   public void addWineMarker(Wine wine) {
     GeoLocation geoLocation = wine.getGeoLocation();
@@ -130,6 +130,17 @@ public class LeafletOsmController {
         geoLocation.getLatitude(), geoLocation.getLongitude());
   }
 
+  /**
+   * Calls the addVineyardMarker function in JavaScript. If the focus parameter is true, the map
+   * will zoom into this vineyard marker.
+   * <p>
+   *   The JavaScript function will create a new marker of the vineyard and display it at the
+   *   vineyards geolocation.
+   * </p>
+   *
+   * @param vineyard the vineyard for which the marker should represent.
+   * @param focus if the map should zoom and focus on the created vineyard marker.
+   */
   public void addVineyardMaker(Vineyard vineyard, boolean focus) {
     GeoLocation geoLocation = vineyard.getGeoLocation();
     javaScriptConnector.call("addVineyardMarker", geoLocation.getLatitude(),
@@ -140,6 +151,15 @@ public class LeafletOsmController {
     }
   }
 
+  /**
+   * Calls the addRoute function in JavaScript.
+   * <p>
+   *   The JavaScript function will decode the geometry string into a polyline and display it on
+   *   the map.
+   * </p>
+   *
+   * @param geometry The encoded polyline geometry.
+   */
   public void addRoute(String geometry) {
     javaScriptConnector.call("displayRoute", geometry);
   }

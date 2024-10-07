@@ -60,7 +60,7 @@ public class WineReviewDao extends Dao {
    *
    * @param wine The wine whose wine reviews should be returned
    * @return An ObservableList of all WineReview objects in the database belonging to the specified
-   * wine
+   *        wine
    */
   public ObservableList<WineReview> getAll(Wine wine) {
     Timer timer = new Timer();
@@ -85,7 +85,7 @@ public class WineReviewDao extends Dao {
    *
    * @param user The user whose wine reviews should be returned
    * @return An ObservableList of all WineReview objects in the database belonging to the specified
-   * user
+   *        user
    */
   public ObservableList<WineReview> getAll(User user) {
     Timer timer = new Timer();

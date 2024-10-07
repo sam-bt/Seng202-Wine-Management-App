@@ -14,6 +14,9 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 import seng202.team6.service.WineListService;
 
+/**
+ * Controller for the add to list popup.
+ */
 public class AddToListPopupController extends Controller {
 
   private final WineListService wineListService;
@@ -23,6 +26,12 @@ public class AddToListPopupController extends Controller {
   ScrollPane wineListsContainer;
   private AddRemoveCardsContainer<WineList> addRemoveCardsContainer;
 
+  /**
+   * Constructs an AddToListPopupController.
+   *
+   * @param context the manager context.
+   * @param wine the wine to be added to a list.
+   */
   public AddToListPopupController(ManagerContext context, Wine wine) {
     super(context);
     this.wine = wine;

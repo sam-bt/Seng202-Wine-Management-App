@@ -15,28 +15,43 @@ import seng202.team6.util.GeolocationResolver;
 import seng202.team6.util.ProcessCsv;
 import seng202.team6.util.Timer;
 
+/**
+ * The VineyardDefaultsService class is responsible for loading default vineyard data from a CSV
+ * file and adding it to the database. If enabled, it also resolves missing addresses using the
+ * GeolocationResolver.
+ */
 public class VineyardDefaultsService {
 
   private final Logger log = LogManager.getLogger(getClass());
   private final GeolocationResolver geolocationResolver;
   private final GeoLocationDao geoLocationDao;
-  private final VineyardDao vineyardDAO;
+  private final VineyardDao vineyardDao;
   private final boolean resolveMissingAddresses;
 
-  public VineyardDefaultsService(GeoLocationDao geoLocationDao, VineyardDao vineyardDAO,
+  /**
+   * Constructs a VineyardDefaultsService instance.
+   *
+   * @param geoLocationDao the data access object for geolocation information
+   * @param vineyardDao the data access object for vineyard information
+   * @param resolveMissingAddresses a boolean flag to indicate whether missing addresses should be
+   *        resolved using geolocation services
+   */
+  public VineyardDefaultsService(GeoLocationDao geoLocationDao, VineyardDao vineyardDao,
       boolean resolveMissingAddresses) {
     this.geoLocationDao = geoLocationDao;
-    this.vineyardDAO = vineyardDAO;
+    this.vineyardDao = vineyardDao;
     this.resolveMissingAddresses = resolveMissingAddresses;
-    // only initialise the resolver if we are using it
-    // otherwise dotenv will try and look for the ORS API KEY
-    // todo - find a better fix for this
     this.geolocationResolver = resolveMissingAddresses ? new GeolocationResolver() : null;
   }
 
+  /**
+   * Initializes the vineyard data. If the vineyard table is empty, this method loads default
+   * vineyard data from a CSV file. If address resolution is enabled, it resolves missing addresses
+   * by querying the geolocation API and updating the database.
+   */
   public void init() {
     Timer timer = new Timer();
-    if (vineyardDAO.vineyardsTableHasData()) {
+    if (vineyardDao.vineyardsTableHasData()) {
       log.info("Skip loading default vineyards as the VINEYARD table is not empty in {}ms",
           timer.currentOffsetMilliseconds());
       return;
@@ -54,9 +69,14 @@ public class VineyardDefaultsService {
         geoLocationDao.addAll(missingAddressesGeolocations);
       }
     }
-    vineyardDAO.addAll(vineyards);
+    vineyardDao.addAll(vineyards);
   }
 
+  /**
+   * Loads the default vineyards from a CSV file.
+   *
+   * @return a list of default vineyards loaded from the CSV
+   */
   private List<Vineyard> loadDefaultVineyards() {
     List<Vineyard> vineyards = new ArrayList<>();
     List<String[]> rows = ProcessCsv.getCsvRows(
@@ -76,6 +96,13 @@ public class VineyardDefaultsService {
     return vineyards;
   }
 
+  /**
+   * Finds the addresses that are missing from the geolocation database.
+   *
+   * @param addresses a set of addresses to check
+   * @param addressesInDatabase a set of addresses already in the database
+   * @return a list of addresses that are missing from the database
+   */
   private List<String> findMissingAddresses(Set<String> addresses,
       Set<String> addressesInDatabase) {
     List<String> missingAddresses = new ArrayList<>();
