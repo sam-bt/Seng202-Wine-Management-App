@@ -276,7 +276,7 @@ public class WineDao extends Dao {
    */
   public void add(Wine wine) {
     Timer timer = new Timer();
-    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(sql,
         Statement.RETURN_GENERATED_KEYS)) {
       setWineParameters(statement, wine, 1);
