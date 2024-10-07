@@ -60,7 +60,8 @@ public class WineDao extends Dao {
             + "DESCRIPTION    INTEGER,"
             + "SCORE_PERCENT  INTEGER,"
             + "ABV            FLOAT,"
-            + "PRICE          FLOAT"
+            + "PRICE          FLOAT,"
+            + "AVERAGE_RATING DOUBLE"
             + ")"
     };
   }
@@ -275,7 +276,7 @@ public class WineDao extends Dao {
    */
   public void add(Wine wine) {
     Timer timer = new Timer();
-    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(sql,
         Statement.RETURN_GENERATED_KEYS)) {
       setWineParameters(statement, wine, 1);
@@ -313,7 +314,7 @@ public class WineDao extends Dao {
    */
   public void addAll(List<Wine> wines) {
     Timer timer = new Timer();
-    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try {
       connection.setAutoCommit(false);
     } catch (SQLException error) {
@@ -412,7 +413,8 @@ public class WineDao extends Dao {
         resultSet.getInt("SCORE_PERCENT"),
         resultSet.getFloat("ABV"),
         resultSet.getFloat("PRICE"),
-        geoLocation
+        geoLocation,
+        resultSet.getDouble("AVERAGE_RATING")
     );
     if (useCache()) {
       wineCache.addObject(id, wine);
@@ -464,6 +466,7 @@ public class WineDao extends Dao {
     statement.setInt(startIndex++, wine.getScorePercent());
     statement.setFloat(startIndex++, wine.getAbv());
     statement.setFloat(startIndex++, wine.getPrice());
+    statement.setDouble(startIndex++, wine.getAverageRating());
   }
 
   /**
@@ -506,7 +509,7 @@ public class WineDao extends Dao {
     });
     wine.vintageProperty().addListener((observableValue, before, after) -> {
       updateAttribute(wine.getKey(), "VINTAGE", update -> {
-        update.setInt(1, (Integer) after);
+        update.setInt(1, (int) after);
       });
     });
     wine.descriptionProperty().addListener((observableValue, before, after) -> {
@@ -516,17 +519,22 @@ public class WineDao extends Dao {
     });
     wine.scorePercentProperty().addListener((observableValue, before, after) -> {
       updateAttribute(wine.getKey(), "SCORE_PERCENT", update -> {
-        update.setInt(1, (Integer) after);
+        update.setInt(1, (int) after);
       });
     });
     wine.abvProperty().addListener((observableValue, before, after) -> {
       updateAttribute(wine.getKey(), "ABV", update -> {
-        update.setFloat(1, (Float) after);
+        update.setFloat(1, (float) after);
       });
     });
     wine.priceProperty().addListener((observableValue, before, after) -> {
       updateAttribute(wine.getKey(), "PRICE", update -> {
-        update.setFloat(1, (Float) after);
+        update.setFloat(1, (float) after);
+      });
+    });
+    wine.averageRatingProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "AVERAGE_RATING", update -> {
+        update.setDouble(1, (double) after);
       });
     });
   }

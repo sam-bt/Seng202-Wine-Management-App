@@ -56,7 +56,7 @@ public class WineDaoTest {
     for (int i = 0; i < 3; i++) {
       wines.add(
           new Wine(-1, "wine", "blue", "nz", "christchurch", "", "", 1024, "na", 99, 25.0f,
-              50f, null));
+              50f, null, 0.0));
     }
 
     wineDao.replaceAll(wines);
@@ -200,7 +200,7 @@ public class WineDaoTest {
     for (int i = 0; i < num; i++) {
       wines.add(
           new Wine(-1, "wine", "blue", "nz", "christchurch", "bob's wine", "red", 2011,
-              "na", 99, 25f, (float) i, null));
+              "na", 99, 25f, (float) i, null, 0.0));
     }
     wineDao.addAll(wines);
   }
@@ -217,7 +217,7 @@ public class WineDaoTest {
       float abv,
       float price) {
     Wine wine = new Wine(1, title, variety, country, region, winery, color, vintage, description,
-        scorePercent, abv, price, null);
+        scorePercent, abv, price, null, 0.0);
     wineDao.add(wine);
     return wineDao.getAll().getFirst();
   }

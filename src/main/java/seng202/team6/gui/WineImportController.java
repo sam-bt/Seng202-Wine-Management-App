@@ -48,8 +48,6 @@ public class WineImportController extends Controller {
   private final Map<Integer, WinePropertyName> selectedWineProperties = new HashMap<>();
   @FXML
   private TilePane dataColumnsContainer;
-  @FXML
-  private CheckBox extractVintageFromTitleCheckbox;
   private List<String[]> currentFileRows;
 
   /**
@@ -119,7 +117,6 @@ public class WineImportController extends Controller {
    */
   private void reset() {
     dataColumnsContainer.getChildren().clear();
-    extractVintageFromTitleCheckbox.setSelected(false);
     selectedWineProperties.clear();
     currentFileRows = null;
   }

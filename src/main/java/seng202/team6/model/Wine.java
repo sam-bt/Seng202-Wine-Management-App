@@ -18,6 +18,14 @@ import javafx.beans.property.StringProperty;
 public class Wine {
 
   /**
+   * ID of wine record.
+   * <p>
+   * -1 represents no database record attached. Setters will fail in this case.
+   * </p>
+   */
+  private long key;
+
+  /**
    * Title.
    */
   private final StringProperty title;
@@ -66,23 +74,11 @@ public class Wine {
    * Price of the wine in NZD if known, else 0.
    */
   private final FloatProperty price;
-  /**
-   * ID of wine record.
-   * <p>
-   * -1 represents no database record attached. Setters will fail in this case.
-   * </p>
-   */
-  private long key;
-
-  /**
-   * number of reviews the wine has.
-   */
-  private IntegerProperty reviewCount;
 
   /**
    * Average rating of the wine.
    */
-  private DoubleProperty rating;
+  private final DoubleProperty averageRating;
 
   /**
    * GeoLocation which holds the coordinates of the region name.
@@ -107,53 +103,7 @@ public class Wine {
    * @param abv          alcohol by volume
    * @param price        NZD price
    * @param geoLocation  geographical location
-   */
-  public Wine(
-      long key,
-      String title,
-      String variety,
-      String country,
-      String region,
-      String winery,
-      String color,
-      Integer vintage,
-      String description,
-      Integer scorePercent,
-      Float abv,
-      Float price,
-      GeoLocation geoLocation
-  ) {
-    this.key = key;
-    this.title = new SimpleStringProperty(this, "title", title);
-    this.variety = new SimpleStringProperty(this, "variety", variety);
-    this.country = new SimpleStringProperty(this, "country", country);
-    this.region = new SimpleStringProperty(this, "region", region);
-    this.winery = new SimpleStringProperty(this, "winery", winery);
-    this.color = new SimpleStringProperty(this, "color", color);
-    this.vintage = new SimpleIntegerProperty(this, "vintage", vintage);
-    this.description = new SimpleStringProperty(this, "description", description);
-    this.scorePercent = new SimpleIntegerProperty(this, "scorePercent", scorePercent);
-    this.abv = new SimpleFloatProperty(this, "abv", abv);
-    this.price = new SimpleFloatProperty(this, "price", price);
-    this.geoLocation = geoLocation;
-  }
-
-  /**
-   * Constructs a new Wine with the given attributes.
-   *
-   * @param key          database key, -1 if no record attached
-   * @param title        title
-   * @param variety      variety
-   * @param country      country
-   * @param region       region
-   * @param winery       winery
-   * @param description  description of wine
-   * @param scorePercent score from 0-100
-   * @param abv          alcohol by volume
-   * @param price        NZD price
-   * @param geoLocation  geographical location
-   * @param reviewCount  number of reviews that wine has
-   * @param rating       average rating of the wine
+   * @param averageRating the average rating
    */
   public Wine(
       long key,
@@ -169,8 +119,7 @@ public class Wine {
       Float abv,
       Float price,
       GeoLocation geoLocation,
-      Integer reviewCount,
-      Double rating
+      double averageRating
   ) {
     this.key = key;
     this.title = new SimpleStringProperty(this, "title", title);
@@ -185,9 +134,7 @@ public class Wine {
     this.abv = new SimpleFloatProperty(this, "abv", abv);
     this.price = new SimpleFloatProperty(this, "price", price);
     this.geoLocation = geoLocation;
-    this.reviewCount = new SimpleIntegerProperty(this, "reviewCount", reviewCount);
-    this.rating = new SimpleDoubleProperty(this, "rating", rating);
-
+    this.averageRating = new SimpleDoubleProperty(averageRating);
   }
 
   /**
@@ -206,6 +153,7 @@ public class Wine {
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent");
     this.abv = new SimpleFloatProperty(this, "abv");
     this.price = new SimpleFloatProperty(this, "price");
+    this.averageRating = new SimpleDoubleProperty(this, "rating", 0.0);
   }
 
   /**
@@ -561,56 +509,29 @@ public class Wine {
   }
 
   /**
-   * Gets the review count.
+   * Gets the average rating.
    *
-   * @return review count
+   * @return the average rating
    */
-  public int getReviewCount() {
-    return reviewCount.get();
+  public double getAverageRating() {
+    return averageRating.get();
   }
 
   /**
-   * Sets the review count.
+   * Sets the average rating.
    *
-   * @param reviewCount review count
+   * @param averageRating average rating
    */
-  public void setReviewCount(int reviewCount) {
-    this.reviewCount.set(reviewCount);
+  public void setAverageRating(double averageRating) {
+    this.averageRating.set(averageRating);
   }
 
   /**
-   * Gets the view count property.
+   * Gets the average rating property.
    *
-   * @return review count
+   * @return the average rating property
    */
-  public IntegerProperty reviewCountProperty() {
-    return reviewCount;
-  }
-
-  /**
-   * Gets the rating.
-   *
-   * @return rating
-   */
-  public double getRating() {
-    return rating.get();
-  }
-
-  /**
-   * Sets the rating.
-   *
-   * @param rating rating
-   */
-  public void setRating(double rating) {
-    this.rating.set(rating);
-  }
-
-  /**
-   * Gets the rating property.
-   *
-   * @return rating
-   */
-  public DoubleProperty ratingProperty() {
-    return rating;
+  public DoubleProperty averageRatingProperty() {
+    return averageRating;
   }
 }

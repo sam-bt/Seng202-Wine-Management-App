@@ -76,7 +76,8 @@ public class WineValidator {
           Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
           Objects.equals(abv, "") ? 0 : Float.parseFloat(abv),
           Objects.equals(price, "") ? 0 : Float.parseFloat(price),
-          geoLocation
+          geoLocation,
+          0.0
       );
     } catch (Exception e) {
       throw new ValidationException("Failed to parse wine", e);
