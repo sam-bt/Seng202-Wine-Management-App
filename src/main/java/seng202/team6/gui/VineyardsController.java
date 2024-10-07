@@ -5,13 +5,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.web.WebView;
 import seng202.team6.gui.controls.AutoCompletionTextField;
@@ -20,7 +14,6 @@ import seng202.team6.gui.controls.cardcontent.VineyardCardContent;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Vineyard;
 import seng202.team6.service.VineyardService;
-import seng202.team6.util.ImageReader;
 
 /**
  * Controller for the screen that displays vineyards.

@@ -31,10 +31,10 @@ public class VineyardDefaultsService {
   /**
    * Constructs a VineyardDefaultsService instance.
    *
-   * @param geoLocationDao the data access object for geolocation information
-   * @param vineyardDao the data access object for vineyard information
+   * @param geoLocationDao          the data access object for geolocation information
+   * @param vineyardDao             the data access object for vineyard information
    * @param resolveMissingAddresses a boolean flag to indicate whether missing addresses should be
-   *        resolved using geolocation services
+   *                                resolved using geolocation services
    */
   public VineyardDefaultsService(GeoLocationDao geoLocationDao, VineyardDao vineyardDao,
       boolean resolveMissingAddresses) {
@@ -99,7 +99,7 @@ public class VineyardDefaultsService {
   /**
    * Finds the addresses that are missing from the geolocation database.
    *
-   * @param addresses a set of addresses to check
+   * @param addresses           a set of addresses to check
    * @param addressesInDatabase a set of addresses already in the database
    * @return a list of addresses that are missing from the database
    */

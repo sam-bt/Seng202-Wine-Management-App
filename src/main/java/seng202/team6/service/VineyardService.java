@@ -35,9 +35,9 @@ public class VineyardService {
   /**
    * Adds distinct vineyard values (names, addresses, and regions) to the provided sorted sets.
    *
-   * @param nameValues a sorted set to hold distinct vineyard names
+   * @param nameValues    a sorted set to hold distinct vineyard names
    * @param addressValues a sorted set to hold distinct vineyard addresses
-   * @param regionValues a sorted set to hold distinct vineyard regions
+   * @param regionValues  a sorted set to hold distinct vineyard regions
    */
   public void addDistinctValues(SortedSet<String> nameValues, SortedSet<String> addressValues,
       SortedSet<String> regionValues) {

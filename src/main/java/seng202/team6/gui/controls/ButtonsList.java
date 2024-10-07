@@ -30,7 +30,7 @@ public class ButtonsList<T> extends VBox {
    * elements. The buttons are displayed within a VBox, and their width is dynamically bound to the
    * parent's width.
    *
-   * @param viewportBounds The ReadOnlyObjectProperty representing the viewport's bounds.
+   * @param viewportBounds  The ReadOnlyObjectProperty representing the viewport's bounds.
    * @param scrollPaneWidth The ReadOnlyDoubleProperty representing the width of the scroll pane.
    */
   public ButtonsList(ReadOnlyObjectProperty<Bounds> viewportBounds,

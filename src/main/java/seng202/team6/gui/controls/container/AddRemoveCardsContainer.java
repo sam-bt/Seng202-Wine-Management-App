@@ -36,7 +36,7 @@ public class AddRemoveCardsContainer<T> extends VBox {
    * Constructs an AddRemoveCardsContainer that adjusts its width based on the specified viewport
    * bounds and scroll pane width.
    *
-   * @param viewportBounds a ReadOnlyObjectProperty representing the bounds of the viewport
+   * @param viewportBounds  a ReadOnlyObjectProperty representing the bounds of the viewport
    * @param scrollPaneWidth a ReadOnlyDoubleProperty representing the width of the scroll pane
    */
   public AddRemoveCardsContainer(ReadOnlyObjectProperty<Bounds> viewportBounds,
@@ -63,10 +63,10 @@ public class AddRemoveCardsContainer<T> extends VBox {
   /**
    * Adds a card associated with a specified element to the container.
    *
-   * @param element the element associated with the card
-   * @param text a StringProperty representing the text to be displayed on the card
-   * @param shouldAdd a boolean indicating whether the button is for adding or removing
-   * @param addClickAction a Runnable to be executed when the add button is clicked
+   * @param element           the element associated with the card
+   * @param text              a StringProperty representing the text to be displayed on the card
+   * @param shouldAdd         a boolean indicating whether the button is for adding or removing
+   * @param addClickAction    a Runnable to be executed when the add button is clicked
    * @param removeClickAction a Runnable to be executed when the remove button is clicked
    */
   public void add(T element, StringProperty text, boolean shouldAdd, Runnable addClickAction,
@@ -86,7 +86,7 @@ public class AddRemoveCardsContainer<T> extends VBox {
     GridPane.setHalignment(button, HPos.CENTER);
 
     final CardWrapper wrapper = new CardWrapper(button, shouldAdd, addClickAction,
-            removeClickAction);
+        removeClickAction);
     final RowConstraints firstRow = new RowConstraints();
     final ColumnConstraints firstColumn = new ColumnConstraints();
     final ColumnConstraints secondColumn = new ColumnConstraints();
@@ -119,9 +119,9 @@ public class AddRemoveCardsContainer<T> extends VBox {
     /**
      * Constructs a CardWrapper with specified button and actions.
      *
-     * @param button the Button to be wrapped
-     * @param shouldAdd a boolean indicating if the button is for adding
-     * @param addClickRunnable a Runnable to be executed when the add action is triggered
+     * @param button              the Button to be wrapped
+     * @param shouldAdd           a boolean indicating if the button is for adding
+     * @param addClickRunnable    a Runnable to be executed when the add action is triggered
      * @param removeClickRunnable a Runnable to be executed when the remove action is triggered
      */
     CardWrapper(Button button, boolean shouldAdd, Runnable addClickRunnable,

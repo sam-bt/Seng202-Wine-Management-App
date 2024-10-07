@@ -10,7 +10,8 @@ import seng202.team6.util.IconPaths;
 
 /**
  * A custom button which toggles between an "add" and "remove" state. When the button is in an add
- * state, it will show a plus icon. When the button is in a remove state, it will show a minus icon.
+ * state, it will show a plus icon. When the button is in a remove state, it will show a minus
+ * icon.
  */
 public class AddRemoveButton extends GridPane {
 
@@ -23,11 +24,11 @@ public class AddRemoveButton extends GridPane {
   /**
    * Constructs an AddRemoveButton with specified actions and tooltips.
    *
-   * @param shouldAdd Indicates whether the button should represent the add action.
-   * @param addClickRunnable The action to be performed when the button is clicked to add.
+   * @param shouldAdd           Indicates whether the button should represent the add action.
+   * @param addClickRunnable    The action to be performed when the button is clicked to add.
    * @param removeClickRunnable The action to be performed when the button is clicked to remove.
-   * @param addTooltipText The tooltip text displayed when the button is in add mode.
-   * @param removeTooltipText The tooltip text displayed when the button is in remove mode.
+   * @param addTooltipText      The tooltip text displayed when the button is in add mode.
+   * @param removeTooltipText   The tooltip text displayed when the button is in remove mode.
    */
   public AddRemoveButton(boolean shouldAdd, Runnable addClickRunnable, Runnable removeClickRunnable,
       String addTooltipText, String removeTooltipText) {

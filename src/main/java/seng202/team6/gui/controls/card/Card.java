@@ -6,16 +6,17 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
 
 /**
- * Represents a customizable card layout that adjusts its width based on the container it resides
- * in and the specified horizontal gap.
+ * Represents a customizable card layout that adjusts its width based on the container it resides in
+ * and the specified horizontal gap.
  */
 public class Card extends HBox {
 
   /**
    * Constructs a Card with specified container width and horizontal gap.
    *
-   * @param containerWidth The width of the container that holds the card.
-   * @param containerHorizontalGap The containers horizontal gap between the card and its neighbors.
+   * @param containerWidth         The width of the container that holds the card.
+   * @param containerHorizontalGap The containers horizontal gap between the card and its
+   *                               neighbors.
    */
   public Card(ReadOnlyDoubleProperty containerWidth, DoubleProperty containerHorizontalGap) {
     setPadding(new Insets(10));
@@ -34,7 +35,7 @@ public class Card extends HBox {
    * Sets the width of the card based on the container's width and the horizontal gap.
    *
    * @param containerWidth The width of the container.
-   * @param horizontalGap The horizontal gap of the container.
+   * @param horizontalGap  The horizontal gap of the container.
    */
   private void setCardWidth(double containerWidth, double horizontalGap) {
     if (containerWidth != 0) {

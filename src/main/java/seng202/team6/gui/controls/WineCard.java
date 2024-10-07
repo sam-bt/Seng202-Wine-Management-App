@@ -41,9 +41,9 @@ public class WineCard extends Card {
    * Constructs a WineCard to display the specified wine's details.
    *
    * @param containerWidth the width of the container to which this card belongs
-   * @param horizontalGap          the horizontal gap of the container.
-   * @param wine          the Wine object containing details to display
-   * @param showReview    a boolean indicating whether to show the review rating
+   * @param horizontalGap  the horizontal gap of the container.
+   * @param wine           the Wine object containing details to display
+   * @param showReview     a boolean indicating whether to show the review rating
    */
   public WineCard(ReadOnlyDoubleProperty containerWidth,
       DoubleProperty horizontalGap, Wine wine, boolean showReview) {
