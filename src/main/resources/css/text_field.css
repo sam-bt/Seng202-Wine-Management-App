@@ -1,0 +1,8 @@
+.normal-text-field {
+  -fx-background-color: #transparent;
+}
+
+.error-text-field {
+  -fx-background-color: #FCA5A5;
+  -fx-text-color: #000000;
+}
