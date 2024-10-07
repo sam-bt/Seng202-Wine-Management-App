@@ -12,9 +12,9 @@ public class VineyardFilters {
   /**
    * Constructs a VineyardFilters instance with specified name, address, and region.
    *
-   * @param name the name of the vineyard to filter
+   * @param name    the name of the vineyard to filter
    * @param address the address of the vineyard to filter
-   * @param region the region of the vineyard to filter
+   * @param region  the region of the vineyard to filter
    */
   public VineyardFilters(String name, String address, String region) {
     this.name = name;

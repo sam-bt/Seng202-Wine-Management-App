@@ -134,12 +134,12 @@ public class LeafletOsmController {
    * Calls the addVineyardMarker function in JavaScript. If the focus parameter is true, the map
    * will zoom into this vineyard marker.
    * <p>
-   *   The JavaScript function will create a new marker of the vineyard and display it at the
-   *   vineyards geolocation.
+   * The JavaScript function will create a new marker of the vineyard and display it at the
+   * vineyards geolocation.
    * </p>
    *
    * @param vineyard the vineyard for which the marker should represent.
-   * @param focus if the map should zoom and focus on the created vineyard marker.
+   * @param focus    if the map should zoom and focus on the created vineyard marker.
    */
   public void addVineyardMaker(Vineyard vineyard, boolean focus) {
     GeoLocation geoLocation = vineyard.getGeoLocation();
@@ -154,8 +154,8 @@ public class LeafletOsmController {
   /**
    * Calls the addRoute function in JavaScript.
    * <p>
-   *   The JavaScript function will decode the geometry string into a polyline and display it on
-   *   the map.
+   * The JavaScript function will decode the geometry string into a polyline and display it on the
+   * map.
    * </p>
    *
    * @param geometry The encoded polyline geometry.

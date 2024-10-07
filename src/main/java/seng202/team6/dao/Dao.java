@@ -44,7 +44,7 @@ public abstract class Dao {
    * statements.
    *
    * @return an array of SQL statements for table initialization, or null if no statements are
-   *        needed.
+   * needed.
    */
   public String[] getInitialiseStatements() {
     return null;

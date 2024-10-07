@@ -26,11 +26,12 @@ import org.json.simple.parser.ParseException;
 import seng202.team6.model.GeoLocation;
 
 /**
- * The GeolocationResolver class is responsible for resolving geographical coordinates for a
- * list of locations, as well as finding driving routes between geographical points.
- * It interacts with the OpenRouteService (ORS) API to perform geocoding and routing requests.
+ * The GeolocationResolver class is responsible for resolving geographical coordinates for a list of
+ * locations, as well as finding driving routes between geographical points. It interacts with the
+ * OpenRouteService (ORS) API to perform geocoding and routing requests.
  */
 public class GeolocationResolver {
+
   private static final int MAX_REQUESTS_PER_MINUTE = 100; // ORS has a cap of 100 requests per min
   private static final String API_KEY;
   private static final String GEOLOCATION_API_URL;
@@ -42,13 +43,13 @@ public class GeolocationResolver {
     Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
     API_KEY = dotenv.get("ORS_API_KEY");
     GEOLOCATION_API_URL = "https://api.openrouteservice.org/geocode/search?api_key=" + API_KEY
-            + "&boundary.country=NZ&size=1";
+        + "&boundary.country=NZ&size=1";
     ROUTING_API_URL = "https://api.openrouteservice.org/v2/directions/driving-car";
   }
 
   /**
-   * Tests if an API key is present in a .env file and sends a dummy request in order to
-   * check if its valid key.
+   * Tests if an API key is present in a .env file and sends a dummy request in order to check if
+   * its valid key.
    *
    * @return true if the key is present and valid, false otherwise.
    */
@@ -59,11 +60,11 @@ public class GeolocationResolver {
 
     try (HttpClient client = HttpClient.newHttpClient()) {
       HttpRequest request = HttpRequest.newBuilder()
-              .uri(new URI(GEOLOCATION_API_URL))
-              .header("User-Agent", "Java 21 Http Client")
-              .header("content-type", "application/json")
-              .GET()
-              .build();
+          .uri(new URI(GEOLOCATION_API_URL))
+          .header("User-Agent", "Java 21 Http Client")
+          .header("content-type", "application/json")
+          .GET()
+          .build();
       HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
       JSONParser jsonParser = new JSONParser();
       JSONObject responseObject = (JSONObject) jsonParser.parse(response.body());
@@ -75,8 +76,8 @@ public class GeolocationResolver {
 
   /**
    * Resolves the geographical coordinates of a list of location names. This method splits the
-   * locations into batches of requests, ensuring compliance with the rate limits of the ORS API.
-   * It performs these requests asynchronously.
+   * locations into batches of requests, ensuring compliance with the rate limits of the ORS API. It
+   * performs these requests asynchronously.
    *
    * @param locations a list of location names to be geocoded.
    * @return a map of location names to their respective GeoLocation objects.
@@ -170,9 +171,9 @@ public class GeolocationResolver {
    *
    * @param locationName the name of the location being resolved.
    * @param responseBody the response body from the ORS API.
-   * @param timer  a timer object to measure the time taken for the request.
-   * @return a GeoLocation object containing the latitude and longitude of the location,
-   *        or null if the location could not be resolved.
+   * @param timer        a timer object to measure the time taken for the request.
+   * @return a GeoLocation object containing the latitude and longitude of the location, or null if
+   * the location could not be resolved.
    */
   private GeoLocation parseResponse(String locationName, String responseBody, Timer timer) {
     JSONParser jsonParser = new JSONParser();

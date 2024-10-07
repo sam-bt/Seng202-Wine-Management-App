@@ -55,9 +55,9 @@ public class UserViewPopupController extends Controller {
 
 
   /**
-   * Binds the social service to the UI. The bindings ensure changes to the reviews are
-   * reflected in the UI. The listeners will graphically display or remove reviews upon change in
-   * the social service list.
+   * Binds the social service to the UI. The bindings ensure changes to the reviews are reflected in
+   * the UI. The listeners will graphically display or remove reviews upon change in the social
+   * service list.
    */
   private void bindToSocialService() {
     ObservableList<WineReview> wineReviews = socialService.getUserReviews();
@@ -129,7 +129,9 @@ public class UserViewPopupController extends Controller {
   private void openReviewView(WineReview review, Wine wine) {
     managerContext.getGuiManager().mainController.closePopup();
     User user = managerContext.getDatabaseManager().getUserDao().get(review.getUsername());
-    managerContext.getGuiManager().mainController.openPopupReviewView(new WineReviewsService(managerContext.getAuthenticationManager(), managerContext.getDatabaseManager(), wine), user, review, wine);
+    managerContext.getGuiManager().mainController.openPopupReviewView(
+        new WineReviewsService(managerContext.getAuthenticationManager(),
+            managerContext.getDatabaseManager(), wine), user, review, wine);
   }
 
 }

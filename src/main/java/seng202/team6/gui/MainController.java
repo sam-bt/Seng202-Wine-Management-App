@@ -398,9 +398,10 @@ public class MainController extends Controller {
    * Launches the popup to review a wine.
    *
    * @param wineReviewsService the service used for managing wine reviews.
-   * @param reviewer the user reviewing the wine.
-   * @param selectedReview the currently selected wine review, or null if creating a new review.
-   * @param wine the wine being reviewed.
+   * @param reviewer           the user reviewing the wine.
+   * @param selectedReview     the currently selected wine review, or null if creating a new
+   *                           review.
+   * @param wine               the wine being reviewed.
    */
   public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer,
       WineReview selectedReview, Wine wine) {
@@ -412,7 +413,7 @@ public class MainController extends Controller {
   /**
    * Launches the popup to create a vineyard tour.
    *
-   * @param vineyardToursService the service used for managing vineyard tours.
+   * @param vineyardToursService  the service used for managing vineyard tours.
    * @param modifyingVineyardTour the vineyard tour to be modified, or null if creating a new tour.
    */
   public void openVineyardTourPopup(VineyardToursService vineyardToursService,

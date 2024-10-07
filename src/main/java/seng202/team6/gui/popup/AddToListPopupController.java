@@ -30,7 +30,7 @@ public class AddToListPopupController extends Controller {
    * Constructs an AddToListPopupController.
    *
    * @param context the manager context.
-   * @param wine the wine to be added to a list.
+   * @param wine    the wine to be added to a list.
    */
   public AddToListPopupController(ManagerContext context, Wine wine) {
     super(context);

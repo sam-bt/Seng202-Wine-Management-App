@@ -80,11 +80,12 @@ public class VineyardTourDao extends Dao {
   /**
    * Creates a new vineyard tour for a specified user.
    *
-   * @param user The User object representing the user for whom the vineyard tour is being created.
+   * @param user     The User object representing the user for whom the vineyard tour is being
+   *                 created.
    * @param tourName The name of the vineyard tour to be created.
-   * @param island The Island enumeration representing the island on which the tour takes place.
+   * @param island   The Island enumeration representing the island on which the tour takes place.
    * @return A VineyardTour object representing the newly created vineyard tour, or null if the
-   *        operation fails.
+   * operation fails.
    */
   public VineyardTour create(User user, String tourName, Island island) {
     Timer timer = new Timer();
@@ -121,7 +122,7 @@ public class VineyardTourDao extends Dao {
    * Checks if a specific vineyard is part of a given vineyard tour.
    *
    * @param vineyardTour The VineyardTour object representing the tour.
-   * @param vineyard The Vineyard object representing the vineyard being checked.
+   * @param vineyard     The Vineyard object representing the vineyard being checked.
    * @return True if the vineyard is in the tour, false otherwise.
    */
   public boolean isVineyardInTour(VineyardTour vineyardTour, Vineyard vineyard) {
@@ -149,7 +150,7 @@ public class VineyardTourDao extends Dao {
    * Adds a vineyard to an existing vineyard tour.
    *
    * @param vineyardTour The VineyardTour object representing the tour.
-   * @param vineyard The Vineyard object representing the vineyard to be added.
+   * @param vineyard     The Vineyard object representing the vineyard to be added.
    */
   public void addVineyard(VineyardTour vineyardTour, Vineyard vineyard) {
     Timer timer = new Timer();
@@ -176,7 +177,7 @@ public class VineyardTourDao extends Dao {
    * Removes a vineyard from an existing vineyard tour.
    *
    * @param vineyardTour The VineyardTour object representing the tour.
-   * @param vineyard The Vineyard object representing the vineyard to be removed.
+   * @param vineyard     The Vineyard object representing the vineyard to be removed.
    */
   public void removeVineyard(VineyardTour vineyardTour, Vineyard vineyard) {
     Timer timer = new Timer();

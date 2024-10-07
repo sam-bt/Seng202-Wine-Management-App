@@ -161,9 +161,9 @@ public class TourPlanningController extends Controller {
   /**
    * Opens the specified vineyard tour and updates the UI with the associated vineyards.
    * <p>
-   *  This method populates the vineyard and itinerary containers with the
-   *  appropriate cards for the selected vineyard tour, allowing the user to
-   *  view and manage the vineyards included in the tour.
+   * This method populates the vineyard and itinerary containers with the appropriate cards for the
+   * selected vineyard tour, allowing the user to view and manage the vineyards included in the
+   * tour.
    * </p>
    *
    * @param vineyardTour The vineyard tour to be opened.

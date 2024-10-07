@@ -17,16 +17,16 @@ public class AddRemoveCard extends Card {
   /**
    * Constructs an AddRemoveCard with specified parameters.
    *
-   * @param containerWidth The width of the container that holds the card.
-   * @param horizontalGap The horizontal gap of the container.
-   * @param content The content to be displayed in the card.
-   * @param centerContent Indicates whether the content should be centered.
-   * @param shouldAdd Indicates whether the button should represent the add action.
-   * @param white Indicates whether the card should have a white background.
-   * @param addClickRunnable The action to be performed when the button is clicked to add.
+   * @param containerWidth      The width of the container that holds the card.
+   * @param horizontalGap       The horizontal gap of the container.
+   * @param content             The content to be displayed in the card.
+   * @param centerContent       Indicates whether the content should be centered.
+   * @param shouldAdd           Indicates whether the button should represent the add action.
+   * @param white               Indicates whether the card should have a white background.
+   * @param addClickRunnable    The action to be performed when the button is clicked to add.
    * @param removeClickRunnable The action to be performed when the button is clicked to remove.
-   * @param addTooltipText The tooltip text displayed when the button is in add mode.
-   * @param removeTooltipText The tooltip text displayed when the button is in remove mode.
+   * @param addTooltipText      The tooltip text displayed when the button is in add mode.
+   * @param removeTooltipText   The tooltip text displayed when the button is in remove mode.
    */
   public AddRemoveCard(ReadOnlyDoubleProperty containerWidth, DoubleProperty horizontalGap,
       Node content, boolean centerContent, boolean shouldAdd, boolean white,

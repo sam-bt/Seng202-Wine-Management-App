@@ -14,8 +14,8 @@ import seng202.team6.model.VineyardTour;
 import seng202.team6.service.VineyardToursService;
 
 /**
- * Controller for the vineyard tours popup controller which allows modification or creation of
- * a vineyard tour.
+ * Controller for the vineyard tours popup controller which allows modification or creation of a
+ * vineyard tour.
  */
 public class VineyardTourPopupController extends Controller {
 
