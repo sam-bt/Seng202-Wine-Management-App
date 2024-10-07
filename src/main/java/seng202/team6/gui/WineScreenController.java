@@ -1,6 +1,7 @@
 package seng202.team6.gui;
 
 import java.util.Set;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -128,7 +129,8 @@ public class WineScreenController extends Controller {
 
     for (Wine wine : wines) {
 
-      Pane node = WineWidgets.createWineCard(wine);
+      Pane node = new WineCard(
+          winesViewContainer.widthProperty(), new SimpleDoubleProperty(), wine, false);
       node.setOnMouseClicked(event -> {
         if (event.getClickCount() == 2) {
           openDetailedWineView(wine);
