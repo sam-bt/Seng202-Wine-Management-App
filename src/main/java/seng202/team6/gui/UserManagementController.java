@@ -29,7 +29,7 @@ public class UserManagementController extends Controller {
     public UserManagementController(ManagerContext managerContext, Runnable backAction) {
         super(managerContext);
         this.managerContext = managerContext;
-        this.dbman = managerContext.databaseManager;
+        this.dbman = managerContext.getDatabaseManager();
     }
 
     /**
@@ -45,7 +45,7 @@ public class UserManagementController extends Controller {
      * Reset FXML component content. Used on account deletion.
      */
     private void resetView() {
-        ObservableList<User> users = dbman.getUserDAO().getAll();
+        ObservableList<User> users = dbman.getUserDao().getAll();
         userList.setCellFactory(param -> new ListCell<User>() {
             @Override
             protected void updateItem(User item, boolean empty) {

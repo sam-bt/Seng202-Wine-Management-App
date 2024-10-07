@@ -29,6 +29,8 @@ public class AdminController extends Controller {
 
   @FXML
   Button deleteButton;
+  @FXML
+  Button deleteReviews;
 
   @FXML
   private ListView<User> userList;
@@ -53,7 +55,7 @@ public class AdminController extends Controller {
    */
   public AdminController(ManagerContext managerContext) {
     super(managerContext);
-    this.databaseManager = managerContext.databaseManager;
+    this.databaseManager = managerContext.getDatabaseManager();
   }
 
   /**
@@ -112,7 +114,20 @@ public class AdminController extends Controller {
 
     Optional<ButtonType> result = confirmation.showAndWait();
     if (result.get() == ButtonType.OK) {
-      databaseManager.getUserDAO().delete(workingUser);
+      databaseManager.getUserDao().delete(workingUser);
+      resetView();
+    }
+  }
+
+  @FXML
+  private void onDeleteReviews() {
+    Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+    confirmation.setTitle("Confirm Deletion");
+    confirmation.setHeaderText("Deleting reviws for: " + workingUser.getUsername());
+    confirmation.setContentText("Are you sure you want to delete all reviews left by this user?\n This action cannot be undone");
+    Optional<ButtonType> result = confirmation.showAndWait();
+    if (result.get() == ButtonType.OK) {
+      databaseManager.getWineReviewDao().deleteAllFromUser(workingUser);
       resetView();
     }
   }
@@ -121,7 +136,7 @@ public class AdminController extends Controller {
    * Reset FXML component content. Used on account deletion.
    */
   private void resetView() {
-    ObservableList<User> users = databaseManager.getUserDAO().getAll();
+    ObservableList<User> users = databaseManager.getUserDao().getAll();
     userList.setCellFactory(param -> new ListCell<User>() {
       @Override
       protected void updateItem(User item, boolean empty) {
@@ -137,6 +152,7 @@ public class AdminController extends Controller {
     userList.setItems(users);
     userLabel.setText("No User Selected");
     deleteUser.setDisable(true);
+    deleteReviews.setDisable(true);
   }
 
   /**
@@ -150,6 +166,7 @@ public class AdminController extends Controller {
       workingUser = userList.getSelectionModel().getSelectedItem();
       userLabel.setText(workingUser.getUsername());
       deleteUser.setDisable(false);
+      deleteReviews.setDisable(false);
     }
   }
 
