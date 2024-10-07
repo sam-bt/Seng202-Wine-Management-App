@@ -3,7 +3,6 @@ package seng202.team6.gui;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
@@ -12,7 +11,11 @@ import javafx.scene.layout.Pane;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import seng202.team6.gui.popup.*;
+import seng202.team6.gui.popup.AddToListPopupController;
+import seng202.team6.gui.popup.CreateListPopupController;
+import seng202.team6.gui.popup.DeleteListPopupController;
+import seng202.team6.gui.popup.ReviewViewPopupController;
+import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
@@ -173,7 +176,6 @@ public class MainController extends Controller {
     navBarBox.getChildren().add(3, listScreenButton);
     listScreenButton.setVisible(false);
 
-
     openWineScreen();
   }
 
@@ -261,19 +263,20 @@ public class MainController extends Controller {
 
   public void openCreateListPopUp(WineListService wineListService) {
     openPopup("/fxml/popup/create_list_popup.fxml",
-            () -> new CreateListPopupController(managerContext, wineListService));
+        () -> new CreateListPopupController(managerContext, wineListService));
   }
 
 
   public void openDeleteListPopUp(WineList wineList, WineListService wineListService) {
     openPopup("/fxml/popup/delete_list_popup.fxml",
-            () -> new DeleteListPopupController(managerContext, wineList, wineListService));
+        () -> new DeleteListPopupController(managerContext, wineList, wineListService));
   }
 
   public void openAddToListPopup(Wine wine) {
     openPopup("/fxml/popup/add_to_list_popup.fxml",
         () -> new AddToListPopupController(managerContext, wine));
   }
+
   @FXML
   public void openConsumptionScreen() {
     switchScene("/fxml/consumption_screen.fxml", "Consumption",
@@ -295,7 +298,6 @@ public class MainController extends Controller {
     popupContent.setDisable(true);
     popupContent.getChildren().clear();
   }
-
 
 
   public Parent loadImportWineScreen(Pane parent) {
