@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -29,45 +26,6 @@
                 </TableView>
               </children>
             </HBox>
-          </content>
-        </Tab>
-        <Tab fx:id="tabCreating" text="CREATE NEW LIST">
-          <content>
-            <BorderPane>
-              <center>
-                <TitledPane animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="400.0" stylesheets="@../css/titled_pane.css" text="CREATE NEW LIST">
-                  <content>
-                    <VBox>
-                      <children>
-                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0" VBox.vgrow="ALWAYS">
-                          <children>
-                            <Button fx:id="backButton" minWidth="150.0" mnemonicParsing="false" onAction="#onBackButton" styleClass="secondary-button" stylesheets="@../css/global.css" text="Back" HBox.hgrow="ALWAYS">
-                              <font>
-                                <Font name="System Bold" size="16.0" />
-                              </font>
-                            </Button>
-                          </children>
-                        </HBox>
-                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
-                          <children>
-                            <Label text="Enter list Name">
-                              <font>
-                                <Font size="16.0" />
-                              </font>
-                            </Label>
-                            <Label fx:id="errorText" prefHeight="16.0" prefWidth="159.0" text="List already exists!" textFill="RED" visible="false" />
-                            <TextField fx:id="listName" prefHeight="33.0" prefWidth="300.0" promptText="Enter list name" />
-                          </children>
-                        </VBox>
-                      </children>
-                    </VBox>
-                  </content>
-                  <font>
-                    <Font name="System Bold" size="16.0" />
-                  </font>
-                </TitledPane>
-              </center>
-            </BorderPane>
           </content>
         </Tab>
       </tabs>

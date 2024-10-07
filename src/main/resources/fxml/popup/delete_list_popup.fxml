@@ -15,13 +15,13 @@
          <content>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
                <children>
-                  <Label layoutX="58.0" layoutY="62.0" prefHeight="87.0" prefWidth="371.0" text="Are you sure you want to delete list Gamer?" />
-                  <Button layoutX="50.0" layoutY="271.0" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#onBackButtonClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="nuh uh">
+                  <Label fx:id="deleteLabel" layoutX="58.0" layoutY="62.0" prefHeight="87.0" prefWidth="371.0" />
+                  <Button layoutX="50.0" layoutY="271.0" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#onBackButtonClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Back">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
                   </Button>
-                  <Button layoutX="276.0" layoutY="271.0" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#onDeleteListConfirmClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="uh huh">
+                  <Button layoutX="276.0" layoutY="271.0" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#onDeleteListConfirmClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Delete List">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>

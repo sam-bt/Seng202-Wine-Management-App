@@ -7,25 +7,29 @@ import javafx.scene.control.TextField;
 import seng202.team6.gui.Controller;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
-import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 import seng202.team6.service.WineListService;
-
 import java.util.List;
 
 public class CreateListPopupController extends Controller {
-
     @FXML
     private TextField listNameTextField;
     @FXML
     private Label errorText;
     private final WineListService wineListService;
-
+    /**
+     *
+     * @param managerContext manager context.
+     * @param wineListService the service class which handles creating the list.
+     */
     public CreateListPopupController(ManagerContext managerContext, WineListService wineListService) {
         super(managerContext);
         this.wineListService = wineListService;
     }
 
+    /**
+     * Closes the popup without creating a list.
+     */
     public void onBackButtonClick() {
         managerContext.GUIManager.mainController.closePopup();
     }
@@ -58,9 +62,4 @@ public class CreateListPopupController extends Controller {
             }
         }
     }
-
-
-
-
-
 }
