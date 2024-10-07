@@ -24,10 +24,20 @@ public class ImageReader {
       if (inputStream != null) {
         return new Image(inputStream);
       }
-      log.error("Could not load image at path %s".formatted(path));
+      log.error("Could not load image at path {}}", path);
     } catch (IOException error) {
       log.error("Could load image", error);
     }
     return null;
+  }
+
+  /**
+   * Loads an image asynchronously from the specified URL.
+   *
+   * @param url the URL of the image to be loaded
+   * @return an Image object representing the loaded image
+   */
+  public static Image loadImageFromUrl(String url) {
+    return new Image(url, true);
   }
 }

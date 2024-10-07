@@ -113,8 +113,8 @@ public class WineNotesDao extends Dao {
         if (resultSet.next()) {
           long id = resultSet.getLong("ID");
           log.info("Successfully retrieved note with ID {} for user '{}' "
-              + "and wine with ID {} "
-              + "in {}ms", id, user.getUsername(), wine.getKey(),
+                  + "and wine with ID {} "
+                  + "in {}ms", id, user.getUsername(), wine.getKey(),
               timer.currentOffsetMilliseconds());
           return extractNoteFromResultSet(resultSet);
         } else {

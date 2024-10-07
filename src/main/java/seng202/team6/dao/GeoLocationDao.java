@@ -5,7 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import seng202.team6.model.GeoLocation;
 import seng202.team6.util.ProcessCsv;
 import seng202.team6.util.Timer;
 
@@ -53,11 +60,68 @@ public class GeoLocationDao extends Dao {
 
     String sql = "INSERT INTO GEOLOCATION values (?, ?, ?);";
     List<String[]> rows = ProcessCsv.getCsvRows(
-        getClass().getResourceAsStream("/nz_geolocations.csv"));
+        getClass().getResourceAsStream("/data/nz_geolocations.csv"));
 
     int rowsAffected = batchInsertGeoLocations(sql, rows);
     log.info("Successfully added {} out of {} default geolocations in {}ms",
-        rowsAffected, rows.size() - 1, timer.currentOffsetMilliseconds());
+        rowsAffected, rows.size(), timer.currentOffsetMilliseconds());
+  }
+
+  /**
+   * Adds all the provided geolocations to the database using a batch insert operation.
+   *
+   * @param geoLocations A map containing location names as keys and Geolocation objects as values.
+   */
+  public void addAll(Map<String, GeoLocation> geoLocations) {
+    Timer timer = new Timer();
+    String sql = "INSERT INTO GEOLOCATION values (?, ?, ?);";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      for (Entry<String, GeoLocation> entry : geoLocations.entrySet()) {
+        statement.setString(1, entry.getKey());
+        statement.setDouble(2, entry.getValue().getLatitude());
+        statement.setDouble(3, entry.getValue().getLongitude());
+        statement.addBatch();
+      }
+
+      int rowsAffected = Arrays.stream(statement.executeBatch()).sum();
+      log.info("Successfully added {} geolocations in {}ms",
+          rowsAffected, rowsAffected, timer.currentOffsetMilliseconds());
+    } catch (SQLException error) {
+      log.error("Failed to add geolocations", error);
+    }
+  }
+
+  /**
+   * Retrieves the names of locations that already exist in the GEOLOCATION table. This method
+   * checks for matches between the provided set of location names and those not in the table.
+   *
+   * @param locationNames A set of location names to check in the database.
+   * @return A set of location names that already exist in the GEOLOCATION table.
+   */
+  public Set<String> getExistingLocationNames(Set<String> locationNames) {
+    Timer timer = new Timer();
+    // Collections.nCopies just repeats '?' n times
+    String sql = "SELECT NAME FROM GEOLOCATION WHERE NAME IN ("
+        + String.join(",", Collections.nCopies(locationNames.size(), "?")) + ")";
+    Set<String> existingLocationNames = new HashSet<>();
+
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      int paramIndex = 1;
+      for (String locationName : locationNames) {
+        statement.setString(paramIndex++, locationName);
+      }
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          existingLocationNames.add(resultSet.getString("NAME"));
+        }
+      }
+      log.info("Successfully found {} out of {} location names in {}ms",
+          existingLocationNames.size(), locationNames.size(), timer.currentOffsetMilliseconds());
+    } catch (SQLException error) {
+      log.error("Failed to retrieve locations names that match", error);
+    }
+    return existingLocationNames;
   }
 
   /**

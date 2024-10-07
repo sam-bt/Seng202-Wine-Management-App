@@ -56,6 +56,11 @@
                 <Font name="System Bold" size="20.0" />
               </font>
             </Button>
+                  <Button focusTraversable="false" mnemonicParsing="false" onAction="#openVineyardsScreen" prefHeight="75.0" prefWidth="150.0" styleClass="primary-button" text="Vineyards">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Button>
             <Button fx:id="consumptionScreenButton" focusTraversable="false" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#openConsumptionScreen" prefHeight="75.0" prefWidth="175.0" styleClass="primary-button" text="Consumption" textOverrun="CLIP">
               <font>
                 <Font name="System Bold" size="20.0" />

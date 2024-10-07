@@ -5,8 +5,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyCode;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.model.AuthenticationResponse;
 
 /**
  * controller to handle updating passwords.

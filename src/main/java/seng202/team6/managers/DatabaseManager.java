@@ -21,16 +21,19 @@ import seng202.team6.dao.AggregatedDao;
 import seng202.team6.dao.Dao;
 import seng202.team6.dao.GeoLocationDao;
 import seng202.team6.dao.UserDao;
+import seng202.team6.dao.VineyardDao;
+import seng202.team6.dao.VineyardTourDao;
 import seng202.team6.dao.WineDao;
 import seng202.team6.dao.WineListDao;
 import seng202.team6.dao.WineNotesDao;
 import seng202.team6.dao.WineReviewDao;
+import seng202.team6.service.VineyardDefaultsService;
 import seng202.team6.service.WineDataStatService;
 import seng202.team6.util.EncryptionUtil;
 
 /**
  * Manages the creation, initialization, and teardown of a database. Provides methods for setting up
- * an in-memory or persistent SQLite database connection and initializes DAOs (Data Access Objects)
+ * an in-memory or persistent SQLite database connection and initializes Daos (Data Access Objects)
  * for interacting with different database tables.
  */
 public class DatabaseManager {
@@ -40,9 +43,11 @@ public class DatabaseManager {
   private final UserDao userDao;
   private final WineDao wineDao;
   private final WineListDao wineListDao;
+  private final VineyardDao vineyardsDao;
   private final WineNotesDao wineNotesDao;
   private final WineReviewDao wineReviewDao;
   private final GeoLocationDao geoLocationDao;
+  private final VineyardTourDao vineyardTourDao;
   private final AggregatedDao aggregatedDao;
   private final WineDataStatService wineDataStatService;
 
@@ -52,7 +57,7 @@ public class DatabaseManager {
    * @throws SQLException if a database access error occurs
    */
   public DatabaseManager() throws SQLException {
-    this(setupInMemoryConnection());
+    this(setupInMemoryConnection(), true);
   }
 
   /**
@@ -63,16 +68,16 @@ public class DatabaseManager {
    * @throws SQLException if a database access error occurs
    */
   public DatabaseManager(String directoryName, String fileName) throws SQLException {
-    this(setupPersistentConnection(directoryName, fileName));
+    this(setupPersistentConnection(directoryName, fileName), false);
   }
 
   /**
-   * Private constructor for NewDatabaseManager that initializes DAOs using the provided database
+   * Private constructor for NewDatabaseManager that initializes Daos using the provided database
    * connection.
    *
    * @param connection the database connection to use
    */
-  private DatabaseManager(Connection connection) throws SQLException {
+  private DatabaseManager(Connection connection, boolean inMemory) throws SQLException {
     if (connection == null || connection.isClosed()) {
       throw new InvalidParameterException("The provided connection was invalid or closed");
     }
@@ -82,11 +87,17 @@ public class DatabaseManager {
     this.userDao = new UserDao(connection);
     this.wineDao = new WineDao(connection, wineDataStatService);
     this.wineListDao = new WineListDao(connection);
+    this.vineyardsDao = new VineyardDao(connection);
     this.wineNotesDao = new WineNotesDao(connection);
     this.wineReviewDao = new WineReviewDao(connection);
     this.geoLocationDao = new GeoLocationDao(connection);
+    this.vineyardTourDao = new VineyardTourDao(connection);
     this.aggregatedDao = new AggregatedDao(connection, wineReviewDao, wineNotesDao, wineDao);
     init();
+
+    VineyardDefaultsService vineyardDefaultsService = new VineyardDefaultsService(geoLocationDao,
+        vineyardsDao, !inMemory);
+    vineyardDefaultsService.init();
   }
 
   /**
@@ -138,7 +149,7 @@ public class DatabaseManager {
 
   /**
    * Initializes the database by executing SQL statements required to set up the tables. The SQL
-   * statements are fetched from each DAO.
+   * statements are fetched from each Dao.
    *
    * @throws RuntimeException if any SQL execution fails
    */
@@ -226,6 +237,14 @@ public class DatabaseManager {
     return geoLocationDao;
   }
 
+  public VineyardDao getVineyardsDao() {
+    return vineyardsDao;
+  }
+
+  public VineyardTourDao getVineyardTourDao() {
+    return vineyardTourDao;
+  }
+
   public AggregatedDao getAggregatedDao() {
     return aggregatedDao;
   }
@@ -236,10 +255,8 @@ public class DatabaseManager {
   public interface AttributeSetter {
 
     /**
-     * Updates the prepared statement with the value to set.
-     * <p>
-     * Attribute must be index 1 in prepared statement
-     * </p>
+     * Updates the prepared statement with the value to set. Attribute must be index 1 in prepared
+     * statement.
      */
     void setAttribute(PreparedStatement statement) throws SQLException;
   }

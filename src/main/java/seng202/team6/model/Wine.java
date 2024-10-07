@@ -570,21 +570,21 @@ public class Wine {
   }
 
   /**
-   * Gets the view count property.
-   *
-   * @return review count
-   */
-  public IntegerProperty reviewCountProperty() {
-    return reviewCount;
-  }
-
-  /**
    * Sets the review count.
    *
    * @param reviewCount review count
    */
   public void setReviewCount(int reviewCount) {
     this.reviewCount.set(reviewCount);
+  }
+
+  /**
+   * Gets the view count property.
+   *
+   * @return review count
+   */
+  public IntegerProperty reviewCountProperty() {
+    return reviewCount;
   }
 
   /**
@@ -597,20 +597,20 @@ public class Wine {
   }
 
   /**
-   * Gets the rating property.
-   *
-   * @return rating
-   */
-  public DoubleProperty ratingProperty() {
-    return rating;
-  }
-
-  /**
    * Sets the rating.
    *
    * @param rating rating
    */
   public void setRating(double rating) {
     this.rating.set(rating);
+  }
+
+  /**
+   * Gets the rating property.
+   *
+   * @return rating
+   */
+  public DoubleProperty ratingProperty() {
+    return rating;
   }
 }

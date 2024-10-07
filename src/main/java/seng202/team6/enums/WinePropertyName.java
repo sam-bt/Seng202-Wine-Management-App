@@ -13,7 +13,7 @@ public enum WinePropertyName {
   VARIETY("Variety"),
   COUNTRY("Country"),
   REGION("Region"),
-  WINERY("Winery"),
+  WINERY("Winery", "Producer"),
   COLOUR("Colour", "Color"),
   VINTAGE("Vintage", "Year"),
   DESCRIPTION("Description"),
@@ -40,7 +40,7 @@ public enum WinePropertyName {
    * Constructor.
    *
    * @param prettyName real name of column
-   * @param aliases possible names the dataset may have
+   * @param aliases    possible names the dataset may have
    */
   WinePropertyName(String prettyName, String... aliases) {
     this.name = prettyName;
