@@ -132,10 +132,7 @@ public class ListScreenController extends Controller {
    */
   @FXML
   public void onCreateListRequestButton(ActionEvent actionEvent) {
-    listScreenTabs.getTabs().add(tabCreating);
-    listScreenTabs.getTabs().remove(tabViewing);
-    createListRequestButton.setDisable(true);
-    deleteListRequestButton.setDisable(true);
+    managerContext.GUIManager.mainController.openCreateListPopUp(wineListService);
   }
 
   /**
@@ -154,35 +151,7 @@ public class ListScreenController extends Controller {
     managerContext.GUIManager.mainController.openDeleteListPopUp(wineList, wineListService);
   }
 
-  /**
-   * creates the lists, adding it to the array and updates relevant information on screen
-   *
-   * @param actionEvent triggers this function when on action.
-   */
-  @FXML
-  public void onCreateListConfirmButton(ActionEvent actionEvent) {
-    String name = listName.getText();
-    List<WineList> wineLists = wineListService.getWineLists();
-    if (wineLists.stream().anyMatch(wineList -> wineList.name().equals(name))) {
-      errorText.setText("List Already Exists");
-      errorText.setVisible(true);
-    } else {
 
-      if (name.length() < 3 || name.length() > 10 || !name.matches("[a-zA-Z0-9_]+")) {
-        errorText.setText("Invalid List Name");
-        errorText.setVisible(true);
-      } else {
-        errorText.setVisible(false);
-
-        User user = managerContext.authenticationManager.getAuthenticatedUser();
-        wineListService.createWineList(user, name);
-
-        listName.setText("");
-        setSelected(wineLists.getFirst());
-        onBackButton(actionEvent);
-      }
-    }
-  }
 
   /**
    * Deletes the selected list. Cannot delete the favourites or history list.

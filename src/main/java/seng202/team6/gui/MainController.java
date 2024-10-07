@@ -258,12 +258,12 @@ public class MainController extends Controller {
         () -> new WineReviewPopupController(managerContext, wineReviewsService));
   }
 
-/*
-  public void openCreateListPopUp() {
-    openPopup("/fxml/popup/review_popup.fxml",
-            () -> new CreateListPopupController(managerContext));
+
+  public void openCreateListPopUp(WineListService wineListService) {
+    openPopup("/fxml/popup/create_list_popup.fxml",
+            () -> new CreateListPopupController(managerContext, wineListService));
   }
-*/
+
 
   public void openDeleteListPopUp(WineList wineList, WineListService wineListService) {
     openPopup("/fxml/popup/delete_list_popup.fxml",
