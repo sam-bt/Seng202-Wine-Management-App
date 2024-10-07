@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
@@ -12,14 +11,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" styleClass="popup" stylesheets="@../../css/popup_pane_action_blocker.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.popup.VineyardTourPopupController">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" styleClass="popup" stylesheets="@../../css/popup_pane_action_blocker.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.popup.VineyardTourPopupController">
   <children>
-    <TitledPane fx:id="createModifyReviewTitlePane" animated="false" collapsible="false" layoutX="457.0" layoutY="257.0" maxHeight="1.7976931348623157E308" maxWidth="456.0" minWidth="456.0" stylesheets="@../../css/titled_pane.css" text="Create/Modify Vineyard Tour">
+    <TitledPane fx:id="createModifyReviewTitlePane" animated="false" collapsible="false" layoutX="457.0" layoutY="272.0" maxHeight="1.7976931348623157E308" maxWidth="456.0" minWidth="456.0" stylesheets="@../../css/titled_pane.css" text="Create/Modify Vineyard Tour">
       <font>
         <Font name="System Bold" size="16.0" />
       </font>
          <content>
-            <VBox prefHeight="200.0" prefWidth="461.0">
+            <VBox prefHeight="119.0" prefWidth="461.0">
                <children>
             <Label text="Tour Name">
               <font>
@@ -31,13 +30,7 @@
                         <Insets bottom="20.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label text="Island">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
-                  <ComboBox fx:id="islandComboBox" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="166.0" />
-            <HBox fx:id="buttonsContainer" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+            <HBox fx:id="buttonsContainer" alignment="CENTER" prefHeight="69.0" prefWidth="435.0">
               <children>
                 <Button maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onMouseClicked="#onBackButtonClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Back">
                   <HBox.margin>

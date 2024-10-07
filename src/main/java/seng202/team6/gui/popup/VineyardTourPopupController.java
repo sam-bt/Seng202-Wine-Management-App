@@ -28,8 +28,6 @@ public class VineyardTourPopupController extends Controller {
   @FXML
   private Button deleteButton;
   @FXML
-  private ComboBox<Island> islandComboBox;
-  @FXML
   private Button submitButton;
   @FXML
   private TextField tourNameTextfield;
@@ -57,8 +55,6 @@ public class VineyardTourPopupController extends Controller {
     if (!modifying) {
       buttonsContainer.getChildren().remove(deleteButton);
     }
-    islandComboBox.getItems().addAll(Island.values());
-    islandComboBox.getSelectionModel().selectFirst();
   }
 
   /**
@@ -83,7 +79,7 @@ public class VineyardTourPopupController extends Controller {
   @FXML
   void onSubmitButtonClick() {
     String name = tourNameTextfield.getText();
-    Island island = islandComboBox.getSelectionModel().getSelectedItem();
+    Island island = Island.NORTH;
     ObservableList<VineyardTour> vineyardTours = vineyardToursService.getVineyardTours();
     boolean existingName = vineyardTours.stream().anyMatch(
         vineyardTour -> vineyardTour.getName().equals(name) && modifyingVineyard != vineyardTour);

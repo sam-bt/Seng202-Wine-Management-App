@@ -144,6 +144,7 @@ public class TourPlanningController extends Controller {
       return;
     }
 
+    mapController.clearWineMarkers();
     List<GeoLocation> vineyardLocations = currentTourPlanningService.getVineyards().stream()
         .peek(vineyard -> mapController.addVineyardMaker(vineyard, false))
         .map(Vineyard::getGeoLocation)
