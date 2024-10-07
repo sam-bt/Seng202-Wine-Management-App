@@ -3,9 +3,11 @@ package seng202.team6.gui;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -14,6 +16,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
@@ -26,6 +29,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.FloatStringConverter;
@@ -282,6 +286,12 @@ public class WineScreenController extends Controller {
     this.scoreSlider = createSlider(11, 365, 0, 100, 10);
     this.abvSlider = createSlider(11, 445, 0, 100, 10);
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
+
+    // Ensures the sliders are rendered before installing tooltips (Needed for css lookups)
+    Platform.runLater(() -> installRangeSliderTooltip(this.vintageSlider));
+    Platform.runLater(() -> installRangeSliderTooltip(this.scoreSlider));
+    Platform.runLater(() -> installRangeSliderTooltip(this.abvSlider));
+    Platform.runLater(() -> installRangeSliderTooltip(this.priceSlider));
 
     colorTextField.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.TAB) {
@@ -620,6 +630,87 @@ public class WineScreenController extends Controller {
     YearStringConverter yearStringConverter = new YearStringConverter();
     vintageSlider.setLabelFormatter(yearStringConverter);
 
+  }
+
+  /**
+   * Adds a tool tips to each thumb of the range slider to indicate values.
+   *
+   * @param rangeSlider range slider to add tooltips too
+   */
+  private void installRangeSliderTooltip(RangeSlider rangeSlider) {
+    rangeSlider.applyCss();
+    rangeSlider.getParent().applyCss();
+    final Tooltip lowerToolTip = new Tooltip();
+    final Tooltip upperToolTip = new Tooltip();
+
+    // Ensures that tooltips display instantly
+    lowerToolTip.setShowDelay(Duration.ZERO);
+    lowerToolTip.setHideDelay(Duration.ZERO);
+    lowerToolTip.setShowDuration(Duration.INDEFINITE);
+
+    upperToolTip.setShowDelay(Duration.ZERO);
+    upperToolTip.setHideDelay(Duration.ZERO);
+    upperToolTip.setShowDuration(Duration.INDEFINITE);
+
+    // Get thumbs
+    Node lowerThumb = rangeSlider.lookup(".low-thumb");
+    Node upperThumb = rangeSlider.lookup(".high-thumb");
+
+    if (lowerThumb != null && upperThumb != null) {
+      // add handlers for tooltip logic
+      addEventHandlersToThumb(lowerThumb, lowerToolTip);
+      addEventHandlersToThumb(upperThumb, upperToolTip);
+
+      // Set initial values
+      lowerToolTip.setText(String.format("%.0f", rangeSlider.getLowValue()));
+      upperToolTip.setText(String.format("%.0f", rangeSlider.getHighValue()));
+
+      // Add listeners
+      rangeSlider.lowValueProperty().addListener((observable, oldValue, newValue) ->
+          lowerToolTip.setText(String.format("%.0f", newValue.doubleValue())));
+      rangeSlider.highValueProperty().addListener((observable, oldValue, newValue) ->
+          upperToolTip.setText(String.format("%.0f", newValue.doubleValue())));
+
+    } else {
+      LogManager.getLogger().error(
+          "Thumb nodes not found. Make sure the RangeSlider is added to the scene and rendered.");
+    }
+
+  }
+
+  /**
+   * Adds required tooltip logic through event handlers.
+   *
+   * @param thumb the thumb node to attach the tool tip too
+   * @param tooltip tool tip to attach
+   */
+  private void addEventHandlersToThumb(Node thumb, Tooltip tooltip) {
+
+    // Attach tooltip on click
+    thumb.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+
+          Point2D thumbLocation = thumb.localToScene(
+              thumb.getBoundsInLocal().getMinX(), thumb.getBoundsInLocal().getMinY());
+
+          // Using getWindow().getX() to adjust for window postion so tool tip is located correctly
+          tooltip.show(thumb, thumbLocation.getX() + thumb.getScene().getWindow().getX(),
+              thumbLocation.getY() + thumb.getScene().getWindow().getY() - 20);
+        }
+    );
+
+    // Update tooltip as its dragged
+    thumb.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> {
+
+          Point2D thumbLocation = thumb.localToScene(
+              thumb.getBoundsInLocal().getMinX(), thumb.getBoundsInLocal().getMinY());
+
+          tooltip.setX(thumbLocation.getX() + thumb.getScene().getWindow().getX());
+          tooltip.setY(thumbLocation.getY() + thumb.getScene().getWindow().getY() - 20);
+        }
+    );
+
+    // Hide on mouse release
+    thumb.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> tooltip.hide());
   }
 
   /**
