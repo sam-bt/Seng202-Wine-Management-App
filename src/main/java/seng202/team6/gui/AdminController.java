@@ -9,9 +9,14 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
@@ -21,9 +26,30 @@ import seng202.team6.model.User;
  * Controller for the admin screen.
  */
 public class AdminController extends Controller {
+  @FXML
+  Label passwordBoxLabel;
+
+  @FXML
+  AnchorPane selectedActionsPane;
+
+  @FXML
+  Label passwordErrorLabel;
 
   @FXML
   Label adminMessageLabel;
+
+  @FXML
+  private Button resetPasswordButton;
+
+  @FXML
+  private Button acceptPassword;
+
+
+  @FXML
+  private Button cancelPasswordButton;
+
+  @FXML
+  private PasswordField confirmField;
 
   @FXML
   Button yesButton;
@@ -48,9 +74,17 @@ public class AdminController extends Controller {
   @FXML
   private VBox importWinesScreenContainer;
 
+  @FXML
+  private AnchorPane passwordBox;
+
+  @FXML
+  private PasswordField passwordField;
+
   private final DatabaseManager databaseManager;
 
   private User workingUser = null;
+
+  private static final Logger log = LogManager.getLogger(AdminController.class);
 
   /**
    * Constructor.
@@ -68,6 +102,7 @@ public class AdminController extends Controller {
   public void initialize() {
     noButton.setVisible(false);
     yesButton.setVisible(false);
+    togglePasswordBox(false);
 
     VBox parent = (VBox) managerContext.getGuiManager().mainController.loadImportWineScreen(
         importWinesScreenContainer);
@@ -158,6 +193,7 @@ public class AdminController extends Controller {
     userLabel.setText("No User Selected");
     deleteUser.setDisable(true);
     deleteReviews.setDisable(true);
+    resetPasswordButton.setDisable(true);
   }
 
   /**
@@ -173,7 +209,55 @@ public class AdminController extends Controller {
       userLabel.setText(workingUser.getUsername());
       deleteUser.setDisable(false);
       deleteReviews.setDisable(false);
+      resetPasswordButton.setDisable(false);
     }
+  }
+
+  private void togglePasswordBox(boolean state) {
+    passwordField.setVisible(state);
+    confirmField.setVisible(state);
+    acceptPassword.setVisible(state);
+    cancelPasswordButton.setVisible(state);
+    passwordBoxLabel.setVisible(state);
+    if (!state) {
+      passwordField.setText("");
+      confirmField.setText("");
+      passwordErrorLabel.setText("");
+    }
+
+
+  }
+
+  @FXML
+  void onResetPassword() {
+    togglePasswordBox(true);
+  }
+
+  @FXML
+  void onNewPasswordAccept() {
+    String password = passwordField.getText();
+    String confirm = confirmField.getText();
+    AuthenticationResponse response =
+            managerContext.getAuthenticationManager().validatePasswordReset(
+            workingUser.getUsername(), password, confirm
+    );
+
+    if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
+      log.info("Password updated");
+      togglePasswordBox(false);
+      selectedActionsPane.setPrefHeight(200);
+    } else {
+      selectedActionsPane.setPrefHeight(300);
+      passwordErrorLabel.setStyle("-fx-text-fill: red");
+      passwordErrorLabel.setText(response.getMessage());
+    }
+
+  }
+
+  @FXML
+  void onNewPasswordCancel() {
+    togglePasswordBox(false);
+    selectedActionsPane.setPrefHeight(200);
   }
 
 }
