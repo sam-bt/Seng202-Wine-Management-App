@@ -70,7 +70,7 @@ public class WineReviewsService {
    * @param rating      rating
    * @param description description
    */
-  public void addOrUpdateUserReview(double rating, String description) {
+  public void addOrUpdateUserReview(double rating, String description) { //todo test with mock db
     User user = authenticationManager.getAuthenticatedUser();
     if (hasUserReviewed()) {
       WineReview usersReview = getUsersReview();
@@ -102,7 +102,6 @@ public class WineReviewsService {
     }
   }
 
-//todo test
   /**
    * Gets the caption for the wine review label given the review info.
    *
