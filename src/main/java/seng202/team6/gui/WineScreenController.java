@@ -530,12 +530,6 @@ public class WineScreenController extends Controller {
         .getWineDataStatService()
         .getMinAbv();
 
-    // Ensure sliders are valid and disable if not
-    validateSlider(vintageSlider, minVintage, maxVintage);
-    validateSlider(scoreSlider, minScore, maxScore);
-    validateSlider(priceSlider, minPrice, maxPrice);
-    validateSlider(abvSlider, minAbv, maxAbv);
-
     // Clear old list data
     wineryTextField.getEntries().clear();
     countryTextField.getEntries().clear();
@@ -575,6 +569,12 @@ public class WineScreenController extends Controller {
     priceSlider.setMajorTickUnit(100);
     priceSlider.setMinorTickCount(5);
 
+    // Ensure sliders are valid and disable if not
+    validateSlider(vintageSlider, minVintage, maxVintage);
+    validateSlider(scoreSlider, minScore, maxScore);
+    validateSlider(priceSlider, minPrice, maxPrice);
+    validateSlider(abvSlider, minAbv, maxAbv);
+
     YearStringConverter yearStringConverter = new YearStringConverter();
     vintageSlider.setLabelFormatter(yearStringConverter);
 
@@ -591,7 +591,17 @@ public class WineScreenController extends Controller {
    * @param max    max value to check
    */
   private void validateSlider(RangeSlider slider, double min, double max) {
-    slider.setDisable(min == 0 && max == 0);
+    // The vintage min is set to the max double for error handling so min > max check needed
+    if (min == 0 & max == 0 || min > max) {
+      slider.setMin(0);
+      slider.setMax(1);
+      slider.setHighValue(1); // ensures the slider is in the right spot
+      slider.setShowTickLabels(false);
+      slider.setDisable(true);
+    } else {
+      slider.setDisable(false);
+      slider.setShowTickLabels(true);
+    }
   }
 
   /**
