@@ -85,8 +85,8 @@ public class PasswordUtil {
    */
   public static boolean checkAdminLogin(ManagerContext managerContext, Boolean disabled) {
     if (managerContext.getAuthenticationManager().isAdminFirstLogin()) {
-      managerContext.getGuiManager().mainController.onLogin();
-      managerContext.getGuiManager().mainController.setDisable(false);
+      managerContext.getGuiManager().mainController.updateNavigation();
+      managerContext.getGuiManager().mainController.disableNavigation(false);
       managerContext.getAuthenticationManager().setAdminFirstLogin(false);
       return true;
     }

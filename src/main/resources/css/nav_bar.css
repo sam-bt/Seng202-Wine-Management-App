@@ -1,0 +1,37 @@
+.nav-background {
+  -fx-background-color: #EB4034;
+}
+
+.menu {
+  -fx-padding: 0 0px 0 0px;
+}
+
+.menu-bar {
+  -fx-background-color: transparent;
+}
+
+.menu-bar > .container > .menu-button:hover,
+.menu-bar > .container > .menu-button:hover, .menu-bar > .container > .menu-button:focused, .menu-bar > .container > .menu-button:showing {
+    -fx-background: #F87171;
+}
+
+.sub-menu {
+    -fx-border-color: white;
+    -fx-border-width:  0 2px 2px 2px;
+}
+
+.sub-menu-item {
+  -fx-background-color: #F87171;
+  -fx-padding: 10px 0 10px 0;
+}
+
+.sub-menu-item:hover {
+  -fx-background-color: #EB4034;
+}
+
+.label {
+  -fx-font-size: 18px;
+  -fx-font-weight: bold;
+  -fx-text-fill: white;
+}
+
