@@ -1,4 +1,4 @@
-package seng202.team6.util;
+package seng202.team6.unittests.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
 import seng202.team6.util.Exceptions.ValidationException;
+import seng202.team6.util.WineValidator;
 
 /**
  * Test class for the WineValidator utility. This class contains unit tests to verify the

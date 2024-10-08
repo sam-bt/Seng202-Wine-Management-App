@@ -384,7 +384,7 @@ public class MainController extends Controller {
   /**
    * Launches the popup delete list.
    *
-   * @param wineList the wineList to delete.
+   * @param wineList        the wineList to delete.
    * @param wineListService service class for wine lists.
    */
   public void openDeleteListPopUp(WineList wineList, WineListService wineListService) {
