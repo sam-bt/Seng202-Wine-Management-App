@@ -81,14 +81,6 @@ public class VineyardsController extends Controller {
     });
   }
 
-  /**
-   * Handles when the plan a tour button is clicked.
-   */
-  @FXML
-  public void onPlanTourClick() {
-    managerContext.getGuiManager().mainController.openTourPlanningScreen();
-  }
-
   private Card createVineyardCard(Vineyard vineyard) {
     Card card = new Card(vineyardsViewContainer.widthProperty(),
         vineyardsViewContainer.hgapProperty());

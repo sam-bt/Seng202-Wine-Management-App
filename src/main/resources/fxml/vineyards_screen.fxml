@@ -59,7 +59,6 @@
             </AnchorPane>
           </content>
         </Tab>
-            <Tab onSelectionChanged="#onPlanTourClick" text="Plan a Tour" />
       </tabs>
     </TabPane>
     <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Filters">
