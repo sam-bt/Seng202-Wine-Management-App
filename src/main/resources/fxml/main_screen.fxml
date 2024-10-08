@@ -34,11 +34,20 @@
                               </VBox>
                            </graphic>
                         </Menu>
-                        <Menu mnemonicParsing="false">
+                        <Menu fx:id="vineyardsMenu" mnemonicParsing="false">
+                           <graphic>
+                              <VBox alignment="CENTER" onMouseClicked="#openVineyardsScreen" prefHeight="200.0" prefWidth="150.0">
+                                 <children>
+                                    <Label text="Vineyards" />
+                                 </children>
+                              </VBox>
+                           </graphic>
+                        </Menu>
+                        <Menu fx:id="vineyardsDropdownMenu" mnemonicParsing="false">
                            <graphic>
                               <VBox fx:id="vineyardsMenuGraphic" alignment="CENTER" onMouseClicked="#openVineyardsScreen" prefHeight="200.0" prefWidth="150.0">
                                  <children>
-                                    <Label text="Vineyards" />
+                                    <Label text="Vineyards ▼" />
                                  </children>
                               </VBox>
                            </graphic>

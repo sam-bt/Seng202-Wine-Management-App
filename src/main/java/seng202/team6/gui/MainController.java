@@ -61,6 +61,12 @@ public class MainController extends Controller {
   private Menu adminMenu;
 
   @FXML
+  private Menu vineyardsDropdownMenu;
+
+  @FXML
+  private Menu vineyardsMenu;
+
+  @FXML
   private VBox profileMenuGraphic;
 
   @FXML
@@ -128,15 +134,6 @@ public class MainController extends Controller {
     vineyardsMenuGraphic.setOnMouseExited(vineyardsExitEvent);
     vineyardsSubmenu.setOnMouseExited(vineyardsExitEvent);
 
-    // when the menu button or a submenu button is clicked, close the menu
-    profileSubmenu.getChildren().forEach(submenuItem ->
-        submenuItem.addEventFilter(MouseEvent.MOUSE_CLICKED, event ->
-            hideSubmenu(profileSubmenu)));
-    vineyardsMenuGraphic.addEventFilter(MouseEvent.MOUSE_CLICKED, event ->
-        hideSubmenu(vineyardsSubmenu));
-    vineyardsSubmenu.getChildren().forEach(submenuItem ->
-        submenuItem.addEventFilter(MouseEvent.MOUSE_CLICKED, event ->
-            hideSubmenu(vineyardsSubmenu)));
     // disable the profile and vineyards submenu when the navigation is first loaded
     profileSubmenu.setDisable(true);
     profileSubmenu.setVisible(false);
@@ -220,21 +217,27 @@ public class MainController extends Controller {
    */
   public void updateNavigation() {
     if (managerContext.getAuthenticationManager().isAuthenticated()) {
-      addIfNotPresent(profileMenu);
+      addIfNotPresent(profileMenu, -1);
       loginButton.setText("Settings");
       registerButton.setText("Logout");
       loginButton.setOnMouseClicked(event -> openSettingsScreen());
       registerButton.setOnMouseClicked(event -> logout());
+
+      // replace the vineyards button with a drop down
+      menuBar.getMenus().remove(vineyardsMenu);
+      addIfNotPresent(vineyardsDropdownMenu, 1);
     } else {
       menuBar.getMenus().remove(profileMenu);
       loginButton.setText("Login");
       registerButton.setText("Register");
       loginButton.setOnMouseClicked(event -> openLoginScreen());
       registerButton.setOnMouseClicked(event -> openRegisterScreen());
+      menuBar.getMenus().remove(vineyardsDropdownMenu);
+      addIfNotPresent(vineyardsMenu, 1);
     }
 
     if (managerContext.getAuthenticationManager().isAdmin()) {
-      addIfNotPresent(adminMenu);
+      addIfNotPresent(adminMenu, -1);
     } else {
       menuBar.getMenus().remove(adminMenu);
     }
@@ -245,9 +248,13 @@ public class MainController extends Controller {
    *
    * @param menu the menu to be added
    */
-  private void addIfNotPresent(Menu menu) {
+  private void addIfNotPresent(Menu menu, int index) {
     if (!menuBar.getMenus().contains(menu)) {
-      menuBar.getMenus().add(menu);
+      if (index == -1) {
+        menuBar.getMenus().add(menu);
+      } else {
+        menuBar.getMenus().add(index, menu);
+      }
     }
   }
 
