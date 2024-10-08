@@ -13,7 +13,7 @@ public class ReviewModerationController extends Controller{
     public ReviewModerationController(ManagerContext managerContext) {
         super(managerContext);
         this.managerContext = managerContext;
-        this.databaseManager = managerContext.databaseManager;
+        this.databaseManager = managerContext.getDatabaseManager();
     }
 
 
