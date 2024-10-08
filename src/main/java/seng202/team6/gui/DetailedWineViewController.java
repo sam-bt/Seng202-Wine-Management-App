@@ -57,6 +57,8 @@ public class DetailedWineViewController extends Controller {
   private final Wine viewedWine;
   private final Runnable backButtonAction;
   private final ObservableMap<WineReview, VBox> wineReviewCards = FXCollections.observableHashMap();
+  private final Rating ratingStars;
+  private final CircularScoreIndicator scoreIndicator;
   private Vineyard wineVineyard;
   @FXML
   private Button saveNotes;
@@ -102,8 +104,6 @@ public class DetailedWineViewController extends Controller {
   private GridPane descriptionScoreNotesGridPane;
   @FXML
   private WebView webView;
-  private final Rating ratingStars;
-  private final CircularScoreIndicator scoreIndicator;
   private LeafletOsmController mapController;
 
   /**
@@ -283,7 +283,7 @@ public class DetailedWineViewController extends Controller {
         + "-fx-border-color: black; "
         + "-fx-border-insets: 10;");
 
-    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
+    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate()); //todo extract
 
     Label reviewCaptionLabel = new Label(
         "From " + wineReview.getUsername() + " on " + formattedDate);
@@ -303,6 +303,7 @@ public class DetailedWineViewController extends Controller {
     descriptionLabel.setStyle("-fx-padding: 10 0 0 0;");
 
     Rating rating = new UnmodifiableRating();
+    rating.ratingProperty().bind(wineReview.ratingProperty());
     wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel);
     return wrapper;
   }

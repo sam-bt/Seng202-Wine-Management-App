@@ -21,10 +21,10 @@ public class CardsContainer<T> extends VBox {
   private final Map<T, Card> cards = new HashMap<>();
 
   /**
-   * Constructs a CardsContainer that adjusts its width based on the specified viewport bounds
-   * and scroll pane width.
+   * Constructs a CardsContainer that adjusts its width based on the specified viewport bounds and
+   * scroll pane width.
    *
-   * @param viewportBounds a ReadOnlyObjectProperty representing the bounds of the viewport
+   * @param viewportBounds  a ReadOnlyObjectProperty representing the bounds of the viewport
    * @param scrollPaneWidth a ReadOnlyDoubleProperty representing the width of the scroll pane
    */
   public CardsContainer(ReadOnlyObjectProperty<Bounds> viewportBounds,
@@ -51,7 +51,7 @@ public class CardsContainer<T> extends VBox {
   /**
    * Adds a card associated with a specified element to the container.
    *
-   * @param element the element associated with the card
+   * @param element       the element associated with the card
    * @param cardContainer the Card object to be added to the container
    */
   public void addCard(T element, Card cardContainer) {

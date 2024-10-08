@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import seng202.team6.util.GeolocationResolver;
+import seng202.team6.util.ImageReader;
 
 /**
  * Class starts the javaFX application window.
@@ -38,7 +39,7 @@ public class FxWindow extends Application {
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setHeaderText("Invalid or missing ORS API Key");
       alert.setContentText("An ORS API key was not found in an .env file or was invalid. "
-              + "Please check the readme or manual to find out more.");
+          + "Please check the readme or manual to find out more.");
       alert.showAndWait();
       return;
     }
@@ -58,6 +59,7 @@ public class FxWindow extends Application {
     primaryStage.sizeToScene();
     primaryStage.setMinHeight(900);
     primaryStage.setMinWidth(1400);
+    primaryStage.getIcons().add(ImageReader.loadImage("/img/icon.png"));
     primaryStage.show();
   }
 
