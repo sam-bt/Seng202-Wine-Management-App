@@ -11,29 +11,21 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0"
-  minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
-  xmlns="http://javafx.com/javafx/21" fx:controller="seng202.team6.gui.WineScreenController">
+
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.WineScreenController">
   <children>
-    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0"
-      stylesheets="@../css/titled_pane.css" text="Options">
+    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Options">
       <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="316.0"
-          styleClass="filters-pane" stylesheets="@../css/titled_pane.css" fx:id="filtersPane">
+        <AnchorPane fx:id="filtersPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="316.0" styleClass="filters-pane" stylesheets="@../css/titled_pane.css">
           <children>
-            <Button disable="true" layoutX="48.0" layoutY="84.0" maxHeight="70.0"
-              maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false"
-              prefHeight="70.0" prefWidth="220.0" styleClass="primary-button"
-              stylesheets="@../css/global.css" text="Search User" fx:id="listOneButton">
+            <Button fx:id="listOneButton" disable="true" layoutX="48.0" layoutY="84.0" maxHeight="70.0" maxWidth="220.0" minHeight="70.0" minWidth="220.0" mnemonicParsing="false" prefHeight="70.0" prefWidth="220.0" styleClass="primary-button" stylesheets="@../css/global.css" text="Search User">
               <font>
-                <Font name="System Bold" size="18.0"/>
+                <Font name="System Bold" size="18.0" />
               </font>
             </Button>
-            <Button disable="true" layoutX="75.0" layoutY="644.0" mnemonicParsing="false"
-              prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button"
-              stylesheets="@../css/global.css" text="Action" fx:id="deleteListRequestButton">
+            <Button fx:id="deleteListRequestButton" disable="true" layoutX="75.0" layoutY="644.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Action">
               <font>
-                <Font name="System Bold" size="16.0"/>
+                <Font name="System Bold" size="16.0" />
               </font>
             </Button>
           </children>
@@ -41,27 +33,25 @@
       </content>
     </TitledPane>
 
-    <TitledPane animated="false" collapsible="false" layoutX="330.0" prefHeight="780.0"
-      prefWidth="1040.0" stylesheets="@../css/titled_pane.css" text="Reviews">
+    <TitledPane animated="false" collapsible="false" layoutX="330.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/titled_pane.css" text="Reviews">
       <content>
         <VBox minHeight="720.0" prefHeight="720.0" prefWidth="1014.0">
           <children>
             <GridPane prefHeight="729.0" prefWidth="1229.0">
               <children>
-                <HBox prefHeight="28.0" prefWidth="914.0"/>
-                <TableView GridPane.rowIndex="1" prefHeight="696.0" prefWidth="1040.0"
-                  fx:id="reviewTableView">
+                <HBox prefHeight="28.0" prefWidth="914.0" />
+                <TableView fx:id="reviewTableView" prefHeight="696.0" prefWidth="1040.0" GridPane.rowIndex="1">
                   <columns>
-                    <TableColumn minWidth="-1.0" prefWidth="-1.0"/>
+                    <TableColumn minWidth="-1.0" prefWidth="-1.0" />
                   </columns>
                 </TableView>
               </children>
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
           </children>

@@ -29,8 +29,7 @@
           </yAxis>
         </LineChart>
         <VBox HBox.hgrow="ALWAYS" alignment="BOTTOM_CENTER"
-          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-          stylesheets="@../css/global.css">
+          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../css/global.css">
           <children>
             <ScrollPane VBox.vgrow="ALWAYS" hbarPolicy="NEVER"
               maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
@@ -48,8 +47,7 @@
                   <children>
                     <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                       text="10 Drinks" fx:id="winesInPastWeekLabel"/>
-                    <ProgressBar maxHeight="1.7976931348623157E308"
-                      maxWidth="1.7976931348623157E308"
+                    <ProgressBar maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                       progress="0.0" fx:id="winesInPastWeekBar"/>
                   </children>
                 </VBox>

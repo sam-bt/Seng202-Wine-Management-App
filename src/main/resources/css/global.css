@@ -71,23 +71,21 @@
   -fx-text-fill: white;
 }
 
-.table-view .table-cell {
+.table-view .table-cell{
   -fx-border-color: transparent;
   -fx-padding: 2 0 2 10px;
 }
-
 .table-row-cell:hover {
   -fx-background-color: #F87171;
   -fx-text-background-color: #DC2626;
 }
 
-.table-row-cell:odd {
+.table-row-cell:odd{
   -fx-background-color: #f3dddd;
   -fx-background-insets: 0, 0 0 1 0;
   -fx-padding: 0.0em;
 }
-
-.table-row-cell:even {
+.table-row-cell:even{
   -fx-background-color: #faeeed;
   -fx-background-insets: 0, 0 0 1 0;
   -fx-padding: 0.0em;
@@ -99,20 +97,20 @@
 }
 
 .rating > .container > .button {
-  -fx-background-color: transparent;
-  -fx-background-image: url("/img/unselected_star.png");
-  -fx-padding: 16 16;
-  -fx-background-image-repeat: no-repeat;
+    -fx-background-color: transparent;
+    -fx-background-image: url("/img/unselected_star.png");
+    -fx-padding: 16 16;
+    -fx-background-image-repeat: no-repeat;
 }
 
 .rating > .container > .button.strong {
-  -fx-background-image: url("/img/selected_star.png");
+    -fx-background-image: url("/img/selected_star.png");
 }
 
 .small-rating > .container > .button {
-  -fx-background-color: transparent;
-  -fx-background-image: url("/img/unselected_star.png");
-  -fx-padding: 12 12;
-  -fx-background-size: 24px 24px;
-  -fx-background-image-repeat: no-repeat;
+    -fx-background-color: transparent;
+    -fx-background-image: url("/img/unselected_star.png");
+    -fx-padding: 12 12;
+    -fx-background-size: 24px 24px;
+    -fx-background-image-repeat: no-repeat;
 }

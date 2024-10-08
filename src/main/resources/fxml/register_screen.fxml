@@ -7,8 +7,7 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0"
-  minHeight="780.0"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0"
   minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
   xmlns="http://javafx.com/javafx/21.0.1" fx:controller="seng202.team6.gui.RegisterController">
   <children>
@@ -26,8 +25,7 @@
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="320.0" prefWidth="555.0">
           <children>
             <Button layoutX="122.0" layoutY="250.0" mnemonicParsing="false"
-              onAction="#onConfirm" prefHeight="35.0" prefWidth="200.0"
-              styleClass="secondary-button"
+              onAction="#onConfirm" prefHeight="35.0" prefWidth="200.0" styleClass="secondary-button"
               stylesheets="@../css/global.css" text="Create Account" fx:id="createAccountButton">
               <font>
                 <Font name="System Bold" size="16.0"/>
