@@ -2,12 +2,11 @@ package seng202.team6.gui;
 
 import java.util.HashMap;
 import java.util.Map;
-import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -20,20 +19,23 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebView;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.CircularScoreIndicator;
+import seng202.team6.gui.controls.UnmodifiableRating;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
+import seng202.team6.model.Vineyard;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineNoteService;
 import seng202.team6.service.WineReviewsService;
-import seng202.team6.util.DateFormatter;
 import seng202.team6.util.ImageReader;
 
 /**
- * The DetailedWineViewController is responsible for managing the detailed wine view within the GUI.
+ * The DetailedWineViewController is responsible for managing the detailed wine view within the
+ * GUI.
  */
 public class DetailedWineViewController extends Controller {
 
@@ -53,16 +55,22 @@ public class DetailedWineViewController extends Controller {
   private final WineNoteService wineNoteService;
   private final Wine viewedWine;
   private final Runnable backButtonAction;
-  private final ObservableMap<WineReview, VBox> wineReviewWrappers
-      = FXCollections.observableHashMap();
+  private final ObservableMap<WineReview, VBox> wineReviewCards = FXCollections.observableHashMap();
+  private final Rating ratingStars;
+  private final CircularScoreIndicator scoreIndicator;
+  private Vineyard wineVineyard;
   @FXML
   private Button saveNotes;
   @FXML
   private Label noteLabel;
   @FXML
+  private HBox buttonsContainer;
+  @FXML
   private Button addReviewButton;
   @FXML
-  private Button backButton;
+  private Button openListsButton;
+  @FXML
+  private Button viewVineyardButton;
   @FXML
   private TextField colourTextbox;
   @FXML
@@ -93,8 +101,9 @@ public class DetailedWineViewController extends Controller {
   private Label loginToReviewLabel;
   @FXML
   private GridPane descriptionScoreNotesGridPane;
-  private Rating ratingStars;
-  private CircularScoreIndicator scoreIndicator;
+  @FXML
+  private WebView webView;
+  private LeafletOsmController mapController;
 
   /**
    * Constructs a DetailedWineViewController wth the provided ManagerContext, Wine to view, and the
@@ -113,9 +122,14 @@ public class DetailedWineViewController extends Controller {
         managerContext.getDatabaseManager(), viewedWine);
     this.viewedWine = viewedWine;
     this.backButtonAction = backButtonAction;
-    this.ratingStars = new Rating();
+    this.ratingStars = new UnmodifiableRating();
     this.scoreIndicator = new CircularScoreIndicator();
     bindToWineReviewsService();
+
+    String winery = viewedWine.getWinery();
+    if (winery != null && !winery.isEmpty()) {
+      wineVineyard = managerContext.getDatabaseManager().getVineyardsDao().get(winery);
+    }
   }
 
   /**
@@ -149,28 +163,30 @@ public class DetailedWineViewController extends Controller {
       });
     } else {
       setNotesVisible(false);
+      addReviewButton.setDisable(true);
+      addReviewButton.setVisible(false);
+      loginToReviewLabel.setVisible(true);
+      loginToReviewLabel.setDisable(false);
+      buttonsContainer.getChildren().remove(openListsButton);
     }
 
     Image wineImage = wineImages.getOrDefault(colourTextbox.getText().toLowerCase(),
         DEFAULT_WINE_IMAGE);
     imageView.setImage(wineImage);
 
-    // create the rating control and disable it being edited by consuming mouse events
     ratingStars.setUpdateOnHover(false);
-    ratingStars.setMouseTransparent(true);
-    ratingStars.setOnMouseClicked(Event::consume);
-    ratingStars.setOnMouseDragEntered(Event::consume);
-    ratingStars.setPartialRating(true);
     ratingsContainer.getChildren().addFirst(ratingStars);
-
     scoreIndicator.setScore(viewedWine.getScorePercent());
     descriptionScoreNotesGridPane.add(scoreIndicator, 2, 1);
 
-    if (!managerContext.getAuthenticationManager().isAuthenticated()) {
-      addReviewButton.setDisable(true);
-      addReviewButton.setVisible(false);
-      loginToReviewLabel.setVisible(true);
-      loginToReviewLabel.setDisable(false);
+    if (wineVineyard != null) {
+      mapController = new LeafletOsmController(webView.getEngine());
+      mapController.initMap();
+      mapController.runOrQueueWhenReady(() -> {
+        mapController.addVineyardMaker(wineVineyard, true);
+      });
+    } else {
+      buttonsContainer.getChildren().remove(viewVineyardButton);
     }
 
     // everything is ready so now the wine reviews can be loaded
@@ -189,15 +205,15 @@ public class DetailedWineViewController extends Controller {
         if (change.wasAdded()) {
           change.getAddedSubList().forEach(wineReview -> {
             VBox reviewWrapper = createWineReviewElement(wineReview);
-            wineReviewWrappers.put(wineReview, reviewWrapper);
+            wineReviewCards.put(wineReview, reviewWrapper);
             reviewsBox.getChildren().add(reviewWrapper);
           });
         }
         if (change.wasRemoved()) {
           change.getRemoved().forEach(wineReview -> {
-            VBox reviewWrapper = wineReviewWrappers.get(wineReview);
+            VBox reviewWrapper = wineReviewCards.get(wineReview);
             reviewsBox.getChildren().remove(reviewWrapper);
-            wineReviewWrappers.remove(wineReview);
+            wineReviewCards.remove(wineReview);
           });
         }
       }
@@ -206,7 +222,7 @@ public class DetailedWineViewController extends Controller {
         .addListener((observableValue, oldValue, usersReview) -> {
           addReviewButton.setText((usersReview == null ? "Add" : "Modify") + " Review");
         });
-    ratingStars.ratingProperty().bind(wineReviewsService.averageRatingProperty());
+    ratingStars.ratingProperty().bind(viewedWine.averageRatingProperty());
     ratingStars.ratingProperty().addListener((observableValue, oldValue, newAverageRating) -> {
       if (wineReviewsService.hasReviews()) {
         int numberOfRatings = wineReviewsService.getWineReviews().size();
@@ -243,6 +259,13 @@ public class DetailedWineViewController extends Controller {
     managerContext.getGuiManager().mainController.openAddToListPopup(viewedWine);
   }
 
+  @FXML
+  void onViewVineyardClick() {
+    // fixme - circular back buttons idk how to fix
+    managerContext.getGuiManager().mainController.openDetailedVineyardView(wineVineyard,
+        () -> managerContext.getGuiManager().mainController.openDetailedWineView(viewedWine, null));
+  }
+
   /**
    * Creates a new VBox layout element which represents a single wine. Attributes in the wine review
    * are bind to the UI elements to ensure any changes are reflected in the UI.
@@ -259,24 +282,12 @@ public class DetailedWineViewController extends Controller {
         + "-fx-border-color: black; "
         + "-fx-border-insets: 10;");
 
-    // setup the star rating, disable interaction so reviews cannot be modified
-    Rating rating = new Rating();
-    rating.ratingProperty().bind(wineReview.ratingProperty());
-    rating.setUpdateOnHover(false);
-    rating.setMouseTransparent(true);
-    rating.setOnMouseClicked(Event::consume);
-    rating.setOnMouseDragEntered(Event::consume);
+    String caption = wineReviewsService.getCaptionWithDateFormatted(wineReview);
+    Label reviewCaptionLabel = new Label(caption);
 
-    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
+    StringBinding labelBind = wineReviewsService.getCaptionBinding(wineReview);
+    reviewCaptionLabel.textProperty().bind(labelBind);
 
-    Label reviewCaptionLabel = new Label(
-        "From " + wineReview.getUsername() + " on " + formattedDate);
-    reviewCaptionLabel.textProperty().bind(Bindings.createStringBinding(
-        () ->
-            "From " + wineReview.getUsername() + " on " + DateFormatter.DATE_FORMAT.format(
-                wineReview.getDate()),
-        wineReview.dateProperty()
-    ));
     reviewCaptionLabel.setMaxWidth(wrapper.getMaxWidth());
     reviewCaptionLabel.setWrapText(true);
 
@@ -286,6 +297,8 @@ public class DetailedWineViewController extends Controller {
     descriptionLabel.setWrapText(true);
     descriptionLabel.setStyle("-fx-padding: 10 0 0 0;");
 
+    Rating rating = new UnmodifiableRating();
+    rating.ratingProperty().bind(wineReview.ratingProperty());
     wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel);
     return wrapper;
   }
@@ -303,7 +316,7 @@ public class DetailedWineViewController extends Controller {
       noteLabel.setText("My Notes");
     }
     notesTextbox.setVisible(visible);
-    saveNotes.setVisible(visible);
+    buttonsContainer.getChildren().remove(saveNotes);
   }
 
   /**

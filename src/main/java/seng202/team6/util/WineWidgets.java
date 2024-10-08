@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import seng202.team6.model.Wine;
@@ -38,7 +38,7 @@ public class WineWidgets {
    *
    * @param wine wine
    */
-  public static Node createWineCard(Wine wine) {
+  public static Pane createWineCard(Wine wine) {
     VBox wrapper = new VBox();
     wrapper.setPadding(new Insets(10));
     wrapper.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");

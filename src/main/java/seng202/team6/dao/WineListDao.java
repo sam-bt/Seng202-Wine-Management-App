@@ -38,10 +38,9 @@ public class WineListDao extends Dao {
    * Returns the SQL statements required to initialise the LIST_NAME and LIST_ITEMS table.
    *
    * <p>
-   *   The LIST_NAME table is responsible for holding the username of who owns the list and the name
-   *   of the list.
-   *   The LIST_ITEMS table is responsible for holding the WINE_ID of a wine which belongs to a list
-   *   from LIST_NAME with ID
+   * The LIST_NAME table is responsible for holding the username of who owns the list and the name
+   * of the list. The LIST_ITEMS table is responsible for holding the WINE_ID of a wine which
+   * belongs to a list from LIST_NAME with ID
    * </p>
    *
    * @return Array of SQL statements for initialising the USER table
@@ -51,8 +50,8 @@ public class WineListDao extends Dao {
     return new String[]{
         "CREATE TABLE IF NOT EXISTS LIST_NAME ("
             + "ID             INTEGER       PRIMARY KEY,"
-            + "USERNAME       VARCHAR(32)   NOT NULL,"
-            + "NAME           VARCHAR(10)   NOT NULL,"
+            + "USERNAME       VARCHAR(64)   NOT NULL,"
+            + "NAME           VARCHAR(32)   NOT NULL,"
             + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE"
             + ")",
 
@@ -112,12 +111,16 @@ public class WineListDao extends Dao {
           long id = generatedKeys.getLong(1);
           log.info("Successfully created list '{}' with ID {} for user '{}' in {}ms", listName,
               id, listName, user.getUsername(), timer.currentOffsetMilliseconds());
-          return new WineList(id, listName);
+          WineList wineList = new WineList(id, listName);
+          if (useCache()) {
+            wineListCache.addObject(id, wineList);
+          }
+          return wineList;
         }
         log.warn("Could not create list '{}' for user '{}'", listName, user.getUsername());
       }
     } catch (SQLException error) {
-      log.error("Failed to create list '{}' for user {''}", listName, user.getUsername(), error);
+      log.error("Failed to create list '{}' for user '{}'", listName, user.getUsername(), error);
     }
     return null;
   }
@@ -166,7 +169,7 @@ public class WineListDao extends Dao {
         log.info("Successfully found wine with ID {} is {} list with ID {} in {}ms",
             wine.getKey(), found ? "in" : "not in", wineList.id(),
             timer.currentOffsetMilliseconds());
-        return resultSet.next();
+        return found;
       }
     } catch (SQLException error) {
       log.error("Failed to check if wine with ID {} is in list '{}'", wineList.id(),

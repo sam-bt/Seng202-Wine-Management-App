@@ -1,8 +1,9 @@
-package seng202.team6.util;
+package seng202.team6.unittests.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import seng202.team6.util.RegexProcessor;
 
 public class RegexProcessorTest {
 

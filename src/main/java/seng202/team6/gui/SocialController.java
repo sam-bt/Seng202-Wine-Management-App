@@ -17,6 +17,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
 
+
 /**
  * Controller for the social screen.
  */
@@ -54,7 +55,7 @@ public class SocialController extends Controller {
     // Clear existing data
     reviewTableView.getItems().clear();
 
-    ObservableList<Pair<WineReview, Wine>>  reviews = managerContext.getDatabaseManager()
+    ObservableList<Pair<WineReview, Wine>> reviews = managerContext.getDatabaseManager()
         .getAggregatedDao().getWineReviewsAndWines(begin, end);
 
     // Set fetched data to the table

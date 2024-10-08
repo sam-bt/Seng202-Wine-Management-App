@@ -26,6 +26,8 @@ public class ReviewViewPopupController extends Controller {
   @FXML
   private Pane ratingPane;
   @FXML
+  private Label userLabel;
+  @FXML
   private Button userButton;
   @FXML
   private Button wineButton;
@@ -39,11 +41,11 @@ public class ReviewViewPopupController extends Controller {
   /**
    * Constructor.
    *
-   * @param context context
+   * @param context            context
    * @param wineReviewsService wine reviews service
-   * @param reviewer reviewing user
-   * @param selectedReview selected review
-   * @param wine wine
+   * @param reviewer           reviewing user
+   * @param selectedReview     selected review
+   * @param wine               wine
    */
   public ReviewViewPopupController(ManagerContext context, WineReviewsService wineReviewsService,
       User reviewer, WineReview selectedReview, Wine wine) {
@@ -55,12 +57,12 @@ public class ReviewViewPopupController extends Controller {
   }
 
   @Override
-  public void init() { // TODO add your personal rating to this screen
+  public void init() {
 
     reviewTitlePane.setText(
-        "Review by " + reviewer.getUsername() + " for " + wine.getTitle());
+        "Review for " + wine.getTitle());
     dateLabel.setText(selectedReview.getDate().toString());
-
+    userLabel.setText(reviewer.getUsername());
     Rating ratingStars = new Rating();
     ratingStars.setUpdateOnHover(false);
     ratingStars.setMouseTransparent(true);
@@ -94,6 +96,7 @@ public class ReviewViewPopupController extends Controller {
   @FXML
   void onUserButtonClick() {
     managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().mainController.openUserProfilePopup(reviewer);
   }
 
 

@@ -106,3 +106,11 @@
 .rating > .container > .button.strong {
     -fx-background-image: url("/img/selected_star.png");
 }
+
+.small-rating > .container > .button {
+    -fx-background-color: transparent;
+    -fx-background-image: url("/img/unselected_star.png");
+    -fx-padding: 12 12;
+    -fx-background-size: 24px 24px;
+    -fx-background-image-repeat: no-repeat;
+}

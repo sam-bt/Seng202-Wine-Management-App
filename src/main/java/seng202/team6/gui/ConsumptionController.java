@@ -42,8 +42,7 @@ public class ConsumptionController extends Controller {
    * Chart for consumption.
    * <p>
    * The generic parameters for LineChart are checked at runtime and don't seem to be documented...
-   * - X seems to be either Number or string
-   * - Y seems to be only Number
+   * - X seems to be either Number or string - Y seems to be only Number
    * </p>
    */
   @FXML
@@ -69,7 +68,7 @@ public class ConsumptionController extends Controller {
     return managerContext.getDatabaseManager().getWineListDao().getAll(user)
         .stream()
         .filter(wineList -> Objects.equals(
-            wineList.name(), "History")).findFirst().orElse(null);
+            wineList.name(), "History")).findFirst().orElse(null); //todo extract
   }
 
   /**
@@ -123,7 +122,7 @@ public class ConsumptionController extends Controller {
   private ObservableList<WineDatePair> getPastWeekConsumption() {
     ObservableList<WineDatePair> wineHistory =
         managerContext.getDatabaseManager().getAggregatedDao()
-        .getWinesMappedWithDatesFromList(getHistoryList());
+            .getWinesMappedWithDatesFromList(getHistoryList());
     wineHistory.sort(Comparator.comparing(WineDatePair::date));
     long oneWeek = 1000 * 60 * 60 * 24 * 7;
     Date weekAgo = new Date(System.currentTimeMillis() - oneWeek);

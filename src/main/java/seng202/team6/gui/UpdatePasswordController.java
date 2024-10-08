@@ -5,8 +5,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyCode;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.util.PasswordUtil;
 
 /**
  * controller to handle updating passwords.
@@ -72,12 +73,7 @@ public class UpdatePasswordController extends Controller {
         username, oldPassword, newPassword, confirmNewPassword);
     if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
       managerContext.getGuiManager().mainController.openWineScreen();
-      if (managerContext.getAuthenticationManager().isAdminFirstLogin()) {
-        managerContext.getGuiManager().mainController.onLogin();
-        managerContext.getGuiManager().mainController.setDisable(false);
-        managerContext.getAuthenticationManager().setAdminFirstLogin(false);
-        disabled = true;
-      }
+      disabled = PasswordUtil.checkAdminLogin(managerContext, disabled);
     } else {
       updateMessageLabel.setStyle("-fx-text-fill: red");
       updateMessageLabel.setText(response.getMessage());

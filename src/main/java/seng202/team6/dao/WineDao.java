@@ -5,16 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.Filters;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineFilters;
 import seng202.team6.service.WineDataStatService;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
@@ -62,7 +60,8 @@ public class WineDao extends Dao {
             + "DESCRIPTION    INTEGER,"
             + "SCORE_PERCENT  INTEGER,"
             + "ABV            FLOAT,"
-            + "PRICE          FLOAT"
+            + "PRICE          FLOAT,"
+            + "AVERAGE_RATING DOUBLE"
             + ")"
     };
   }
@@ -95,7 +94,7 @@ public class WineDao extends Dao {
    * @param filters filters to apply to wines before counting
    * @return number of wines after filtering
    */
-  public int getCount(Filters filters) {
+  public int getCount(WineFilters filters) {
     Timer timer = new Timer();
     String sql = "SELECT count(*) from WINE "
         + "where TITLE like ? "
@@ -165,11 +164,12 @@ public class WineDao extends Dao {
   /**
    * Retrieves a range of wines from the WINE table.
    *
-   * @param begin The start index of the range (inclusive)
-   * @param end   The end index of the range (exclusive)
+   * @param begin   The start index of the range (inclusive)
+   * @param end     The end index of the range (exclusive)
+   * @param filters The wine filters to be applied
    * @return An ObservableList of Wine objects within the specified range
    */
-  public ObservableList<Wine> getAllInRange(int begin, int end, Filters filters) {
+  public ObservableList<Wine> getAllInRange(int begin, int end, WineFilters filters) {
     Timer timer = new Timer();
     String sql = "SELECT * from "
         + (filters == null ? "WINE " : "( " // Subquery for filtering
@@ -276,7 +276,7 @@ public class WineDao extends Dao {
    */
   public void add(Wine wine) {
     Timer timer = new Timer();
-    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(sql,
         Statement.RETURN_GENERATED_KEYS)) {
       setWineParameters(statement, wine, 1);
@@ -314,7 +314,7 @@ public class WineDao extends Dao {
    */
   public void addAll(List<Wine> wines) {
     Timer timer = new Timer();
-    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try {
       connection.setAutoCommit(false);
     } catch (SQLException error) {
@@ -360,6 +360,9 @@ public class WineDao extends Dao {
           timer.currentOffsetMilliseconds());
     } catch (SQLException error) {
       log.error("Failed to remove all wines", error);
+    } finally {
+      wineCache.clear();
+      updateUniques();
     }
   }
 
@@ -396,8 +399,7 @@ public class WineDao extends Dao {
       }
     }
 
-    GeoLocation geoLocation = createGeoLocation(
-        resultSet); // todo - change this to grab the geolocation when required
+    GeoLocation geoLocation = createGeoLocation(resultSet);
     Wine wine = new Wine(
         id,
         resultSet.getString("TITLE"),
@@ -411,7 +413,8 @@ public class WineDao extends Dao {
         resultSet.getInt("SCORE_PERCENT"),
         resultSet.getFloat("ABV"),
         resultSet.getFloat("PRICE"),
-        geoLocation
+        geoLocation,
+        resultSet.getDouble("AVERAGE_RATING")
     );
     if (useCache()) {
       wineCache.addObject(id, wine);
@@ -422,11 +425,11 @@ public class WineDao extends Dao {
 
   /**
    * Extracts the latitude and longitude from the provided ResultSet and creates a new GeoLocation
-   *      object.
+   * object.
    *
    * @param set The ResultSet from which geolocations are to be extracted
    * @return The extract Geolocation if available, otherwise null if either the latitude or
-   *      longitude were null
+   *        longitude were null
    * @throws SQLException If an error occurs while processing the ResultSet
    */
   private GeoLocation createGeoLocation(ResultSet set) throws SQLException {
@@ -463,6 +466,7 @@ public class WineDao extends Dao {
     statement.setInt(startIndex++, wine.getScorePercent());
     statement.setFloat(startIndex++, wine.getAbv());
     statement.setFloat(startIndex++, wine.getPrice());
+    statement.setDouble(startIndex++, wine.getAverageRating());
   }
 
   /**
@@ -505,7 +509,7 @@ public class WineDao extends Dao {
     });
     wine.vintageProperty().addListener((observableValue, before, after) -> {
       updateAttribute(wine.getKey(), "VINTAGE", update -> {
-        update.setInt(1, (Integer) after);
+        update.setInt(1, (int) after);
       });
     });
     wine.descriptionProperty().addListener((observableValue, before, after) -> {
@@ -515,17 +519,22 @@ public class WineDao extends Dao {
     });
     wine.scorePercentProperty().addListener((observableValue, before, after) -> {
       updateAttribute(wine.getKey(), "SCORE_PERCENT", update -> {
-        update.setInt(1, (Integer) after);
+        update.setInt(1, (int) after);
       });
     });
     wine.abvProperty().addListener((observableValue, before, after) -> {
       updateAttribute(wine.getKey(), "ABV", update -> {
-        update.setFloat(1, (Float) after);
+        update.setFloat(1, (float) after);
       });
     });
     wine.priceProperty().addListener((observableValue, before, after) -> {
       updateAttribute(wine.getKey(), "PRICE", update -> {
-        update.setFloat(1, (Float) after);
+        update.setFloat(1, (float) after);
+      });
+    });
+    wine.averageRatingProperty().addListener((observableValue, before, after) -> {
+      updateAttribute(wine.getKey(), "AVERAGE_RATING", update -> {
+        update.setDouble(1, (double) after);
       });
     });
   }
@@ -566,6 +575,9 @@ public class WineDao extends Dao {
   /**
    * Updates a range of unique values using the wineDataStatService.
    *
+   * <p>
+   * When the cache is invalidated by write operations to the database this must be called.
+   * </p>
    */
   public void updateUniques() {
     wineDataStatService.reset();

@@ -3,7 +3,6 @@ package seng202.team6.gui;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +15,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -25,6 +23,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
@@ -34,6 +33,7 @@ import org.apache.logging.log4j.Logger;
 import seng202.team6.enums.WinePropertyName;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
+import seng202.team6.service.WineImportService;
 import seng202.team6.util.Exceptions.ValidationException;
 import seng202.team6.util.ProcessCsv;
 import seng202.team6.util.WineValidator;
@@ -45,10 +45,9 @@ public class WineImportController extends Controller {
 
   private final Logger log = LogManager.getLogger(getClass());
   private final Map<Integer, WinePropertyName> selectedWineProperties = new HashMap<>();
+  private final WineImportService importService;
   @FXML
-  private GridPane dataColumnsContainer;
-  @FXML
-  private CheckBox extractVintageFromTitleCheckbox;
+  private TilePane dataColumnsContainer;
   private List<String[]> currentFileRows;
 
   /**
@@ -58,6 +57,7 @@ public class WineImportController extends Controller {
    */
   public WineImportController(ManagerContext context) {
     super(context);
+    importService = new WineImportService();
   }
 
   /**
@@ -65,7 +65,6 @@ public class WineImportController extends Controller {
    */
   @Override
   public void init() {
-    dataColumnsContainer.getRowConstraints().clear();
     dataColumnsContainer.setHgap(10);
     dataColumnsContainer.setVgap(20);
   }
@@ -119,9 +118,6 @@ public class WineImportController extends Controller {
    */
   private void reset() {
     dataColumnsContainer.getChildren().clear();
-    dataColumnsContainer.getRowConstraints().clear();
-    dataColumnsContainer.getColumnConstraints().clear();
-    extractVintageFromTitleCheckbox.setSelected(false);
     selectedWineProperties.clear();
     currentFileRows = null;
   }
@@ -133,26 +129,22 @@ public class WineImportController extends Controller {
    */
   private void parseWines(boolean replace) {
     List<Wine> parsedWines = new ArrayList<>();
-    Map<WinePropertyName, Integer> valid = new HashMap<>() {
-      {
-        selectedWineProperties.forEach(((integer, winePropertyName) ->
-            put(winePropertyName, integer)));
-      }
-    };
+    Map<WinePropertyName, Integer> valid = importService.validHashMapCreate(selectedWineProperties);
+
     currentFileRows.forEach(row -> {
       try {
         parsedWines.add(WineValidator.parseWine(
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.TITLE),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VARIETY),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COUNTRY),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.REGION),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.WINERY),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COLOUR),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VINTAGE),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.DESCRIPTION),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.SCORE),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.ABV),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.NZD),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.TITLE),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VARIETY),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COUNTRY),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.REGION),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.WINERY),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COLOUR),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VINTAGE),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.DESCRIPTION),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.SCORE),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.ABV),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.NZD),
             null
         ));
       } catch (ValidationException e) {
@@ -170,27 +162,6 @@ public class WineImportController extends Controller {
     reset();
   }
 
-  /**
-   * Gets the string at a row if it is valid or empty string.
-   *
-   * @param valid            map of valid wine property names
-   * @param row              row of table to import
-   * @param winePropertyName name of property
-   * @return string from row or default
-   */
-  private String extractPropertyFromRowOrDefault(Map<WinePropertyName, Integer> valid, String[] row,
-      WinePropertyName winePropertyName) {
-    return valid.containsKey(winePropertyName) ? row[valid.get(winePropertyName)] : "";
-  }
-
-  /**
-   * Validates the current table.
-   *
-   * @return if current table is valid
-   */
-  private boolean validate() {
-    return checkContainsTitleProperty() && checkDuplicateProperties();
-  }
 
   /**
    * Checks if the importer contains the title property.
@@ -210,18 +181,22 @@ public class WineImportController extends Controller {
   }
 
   /**
+   * Validates the current table.
+   *
+   * @return if current table is valid
+   */
+  public boolean validate() {
+    return checkContainsTitleProperty() && checkDuplicateProperties();
+  }
+
+  /**
    * Check for duplicate attribute names.
    *
    * @return true if valid
    */
   private boolean checkDuplicateProperties() {
-    Set<WinePropertyName> duplicatedProperties = new HashSet<>();
-    Set<WinePropertyName> selectedProperties = new HashSet<>();
-    selectedWineProperties.forEach((index, winePropertyName) -> {
-      if (!selectedProperties.add(winePropertyName)) { // returns false if the set already contained
-        duplicatedProperties.add(winePropertyName);
-      }
-    });
+    Set<WinePropertyName> duplicatedProperties = importService.checkDuplicateProperties(
+        selectedWineProperties);
 
     if (!duplicatedProperties.isEmpty()) {
       Alert alert = new Alert(AlertType.ERROR);
@@ -244,19 +219,12 @@ public class WineImportController extends Controller {
    * @param rows        rows
    */
   private void makeColumnRemapList(String[] columnNames, List<String[]> rows) {
-    int columns = 4;
-    int row = 0;
-    int column = 0;
+    dataColumnsContainer.getChildren().clear();
     for (int i = 0; i < columnNames.length; i++) {
       String columnName = columnNames[i];
       // skip if the column name is empty
       if (columnName.isBlank()) {
         continue;
-      }
-      if (column >= columns) {
-        addRow();
-        row++;
-        column = 0;
       }
 
       ObservableList<String> sampleValues = FXCollections.observableArrayList();
@@ -266,18 +234,8 @@ public class WineImportController extends Controller {
 
       WinePropertyName possiblePropertyName = WinePropertyName.tryMatch(columnName);
       GridPane wrapper = createImportBox(i, columnName, possiblePropertyName, sampleValues);
-      dataColumnsContainer.add(wrapper, column, row);
-      column++;
+      dataColumnsContainer.getChildren().add(wrapper);
     }
-  }
-
-  /**
-   * Adds a row.
-   */
-  private void addRow() {
-    RowConstraints rowConstraint = new RowConstraints();
-    rowConstraint.setVgrow(Priority.ALWAYS);
-    dataColumnsContainer.getRowConstraints().add(rowConstraint);
   }
 
   /**

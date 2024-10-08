@@ -13,9 +13,9 @@ import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.model.User;
-import seng202.team6.util.EncryptionUtil;
+import seng202.team6.util.PasswordUtil;
 
 public class UserChangePasswordStepDefinitions {
 
@@ -95,8 +95,8 @@ public class UserChangePasswordStepDefinitions {
 
     User user = databaseManager.getUserDao().get(username);
     String storedHash = user.getPassword();
-    assertFalse(EncryptionUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
-    assertTrue(EncryptionUtil.verifyPassword(password, storedHash, user.getSalt()));
+    assertFalse(PasswordUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
+    assertTrue(PasswordUtil.verifyPassword(password, storedHash, user.getSalt()));
   }
 
   @Then("the accounts password is changed")
@@ -107,6 +107,6 @@ public class UserChangePasswordStepDefinitions {
 
     User user = databaseManager.getUserDao().get(username);
     String storedHash = user.getPassword();
-    assertTrue(EncryptionUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
+    assertTrue(PasswordUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
   }
 }

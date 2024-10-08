@@ -26,12 +26,12 @@ public class WineReview {
   /**
    * Constructor.
    *
-   * @param id id
-   * @param wineId id
-   * @param username username of user
-   * @param rating rating
+   * @param id          id
+   * @param wineId      id
+   * @param username    username of user
+   * @param rating      rating
    * @param description description
-   * @param date date
+   * @param date        date
    */
   public WineReview(
       long id,
@@ -41,7 +41,7 @@ public class WineReview {
       String description,
       Date date
   ) {
-    this.id = new ReadOnlyLongWrapper(wineId);
+    this.id = new ReadOnlyLongWrapper(id);
     this.wineId = new ReadOnlyLongWrapper(wineId);
     this.username = new ReadOnlyStringWrapper(username);
     this.rating = new SimpleDoubleProperty(rating);
@@ -164,6 +164,13 @@ public class WineReview {
    */
   public Date getDate() {
     return date.getValue();
+  }
+
+  /**
+   * Sets the date.
+   */
+  public void setDate(Date date) {
+    this.date.setValue(date);
   }
 
   /**

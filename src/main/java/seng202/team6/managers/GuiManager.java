@@ -42,16 +42,4 @@ public class GuiManager {
   public void setWindowTitle(String title) {
     wrapper.setWindowTitle(title);
   }
-
-  /**
-   * Switches the current scene.
-   *
-   * @param fxmlPath path to the fxml to load
-   * @param title    title of the scene to display
-   * @param builder  builder to instantiate the controller
-   */
-  private void switchScene(String fxmlPath, String title, Builder<?> builder) {
-    mainController.switchScene(fxmlPath, title, builder);
-  }
-
 }

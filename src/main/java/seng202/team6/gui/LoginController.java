@@ -4,8 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.model.AuthenticationResponse;
 
 /**
  * Login Controller.
@@ -61,12 +61,12 @@ public class LoginController extends Controller {
         managerContext.getAuthenticationManager().validateLogin(username, password);
     if (response == AuthenticationResponse.LOGIN_SUCCESS) {
       if (managerContext.getAuthenticationManager().isAdminFirstLogin()) {
-        managerContext.getGuiManager().mainController.setDisable(true);
+        managerContext.getGuiManager().mainController.disableNavigation(true);
         managerContext.getGuiManager().mainController.openUpdatePasswordScreen();
         return;
       }
       managerContext.getGuiManager().mainController.openWineScreen();
-      managerContext.getGuiManager().mainController.onLogin();
+      managerContext.getGuiManager().mainController.updateNavigation();
     } else {
       loginMessageLabel.setStyle("-fx-text-fill: red");
       loginMessageLabel.setText(response.getMessage());

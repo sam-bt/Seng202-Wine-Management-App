@@ -1,10 +1,11 @@
-package seng202.team6.util;
+package seng202.team6.unittests.util;
 
 import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import seng202.team6.util.DatabaseObjectUniquer;
 
 /**
  * Tests the database object uniquer

@@ -18,10 +18,10 @@ public class Note {
   /**
    * Constructor.
    *
-   * @param id id
+   * @param id       id
    * @param username username
-   * @param wineId wine id
-   * @param note note
+   * @param wineId   wine id
+   * @param note     note
    */
   public Note(long id, String username, long wineId, String note) {
     this.id = new SimpleLongProperty(id);
