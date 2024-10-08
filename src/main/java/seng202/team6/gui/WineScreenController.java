@@ -294,6 +294,14 @@ public class WineScreenController extends Controller {
         this.pageNumberTextFieldRawViewer.setText(this.pageService.getMaxPages() + "");
         this.pageNumberTextFieldSimpleView.setText(this.pageService.getMaxPages() + "");
       }
+
+      // Ensure we reset page buttons
+      this.nextPageButtonRawViewer.setDisable(
+          pageService.getPageNumber() == pageService.getMaxPages());
+      this.prevPageButtonRawViewer.setDisable(pageService.getPageNumber() == 1);
+      this.nextPageButtonSimpleView.setDisable(
+          pageService.getPageNumber() == pageService.getMaxPages());
+      this.prevPageButtonSimpleView.setDisable(pageService.getPageNumber() == 1);
     });
 
     mapController = new LeafletOsmController(webView.getEngine());
