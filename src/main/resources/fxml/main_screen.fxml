@@ -36,7 +36,7 @@
                         </Menu>
                         <Menu mnemonicParsing="false">
                            <graphic>
-                              <VBox alignment="CENTER" onMouseClicked="#openVineyardsScreen" prefHeight="200.0" prefWidth="150.0">
+                              <VBox fx:id="vineyardsMenuGraphic" alignment="CENTER" onMouseClicked="#openVineyardsScreen" prefHeight="200.0" prefWidth="150.0">
                                  <children>
                                     <Label text="Vineyards" />
                                  </children>
@@ -113,7 +113,19 @@
     </GridPane>
     <AnchorPane fx:id="popupActionBlocker" disable="true" maxHeight="900.0" maxWidth="1400.0" minHeight="900.0" minWidth="1400.0" prefHeight="900.0" prefWidth="1400.0" styleClass="anchor-pane" stylesheets="@../css/popup_pane_action_blocker.css" visible="false" />
     <AnchorPane fx:id="popupContent" disable="true" layoutX="15.0" layoutY="98.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" visible="false" />
-      <VBox fx:id="profileContextMenu" layoutX="100.0" layoutY="200.0" styleClass="sub-menu" stylesheets="@../css/nav_bar.css">
+      <VBox fx:id="vineyardsSubmenu" layoutX="300.0" layoutY="200.0" styleClass="sub-menu" stylesheets="@../css/nav_bar.css">
+         <children>
+            <HBox alignment="CENTER" fillHeight="false" onMouseClicked="#openTourPlanningScreen" styleClass="sub-menu-item">
+               <children>
+                  <Label text="Plan a Tour" />
+               </children>
+            </HBox>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </VBox>
+      <VBox fx:id="profileSubmenu" layoutX="100.0" layoutY="200.0" styleClass="sub-menu" stylesheets="@../css/nav_bar.css">
          <children>
             <HBox alignment="CENTER" fillHeight="false" onMouseClicked="#openListScreen" styleClass="sub-menu-item">
                <children>
