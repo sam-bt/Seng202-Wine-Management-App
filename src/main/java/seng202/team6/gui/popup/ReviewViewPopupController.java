@@ -4,54 +4,65 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.Controller;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
+import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
-import seng202.team6.service.WineReviewValidator;
 import seng202.team6.service.WineReviewsService;
 
+/**
+ * Controller for the review view popup.
+ */
 public class ReviewViewPopupController extends Controller {
-  @FXML
-  private Pane ratingPane;
-
-  @FXML
-  private Button userButton;
-
-  @FXML
-  private Button wineButton;
-
-  @FXML
-  private TitledPane reviewTitlePane;
-
-  @FXML
-  private Label descriptionLabel;
-
-  @FXML
-  private Label dateLabel;
 
   private final WineReviewsService wineReviewsService;
   private final User reviewer;
   private final WineReview selectedReview;
+  private final Wine wine;
+  @FXML
+  private Pane ratingPane;
+  @FXML
+  private Label userLabel;
+  @FXML
+  private Button userButton;
+  @FXML
+  private Button wineButton;
+  @FXML
+  private TitledPane reviewTitlePane;
+  @FXML
+  private Label descriptionLabel;
+  @FXML
+  private Label dateLabel;
 
-  public ReviewViewPopupController(ManagerContext context, WineReviewsService wineReviewsService, User reviewer, WineReview selectedReview) {
+  /**
+   * Constructor.
+   *
+   * @param context            context
+   * @param wineReviewsService wine reviews service
+   * @param reviewer           reviewing user
+   * @param selectedReview     selected review
+   * @param wine               wine
+   */
+  public ReviewViewPopupController(ManagerContext context, WineReviewsService wineReviewsService,
+      User reviewer, WineReview selectedReview, Wine wine) {
     super(context);
     this.wineReviewsService = wineReviewsService;
     this.reviewer = reviewer;
     this.selectedReview = selectedReview;
+    this.wine = wine;
   }
 
   @Override
-  public void init() { // TODO add your personal rating to this screen
+  public void init() {
 
-    reviewTitlePane.setText("Review by "+reviewer.getUsername()+" for "+ selectedReview.getWineName().get());
+    reviewTitlePane.setText(
+        "Review for " + wine.getTitle());
     dateLabel.setText(selectedReview.getDate().toString());
-
+    userLabel.setText(reviewer.getUsername());
     Rating ratingStars = new Rating();
     ratingStars.setUpdateOnHover(false);
     ratingStars.setMouseTransparent(true);
@@ -71,19 +82,21 @@ public class ReviewViewPopupController extends Controller {
 
   @FXML
   void onBackButtonClick() {
-    managerContext.GUIManager.mainController.closePopup();
+    managerContext.getGuiManager().mainController.closePopup();
   }
 
   @FXML
   void onWineButtonClick() {
-    Runnable backAction = () -> managerContext.GUIManager.mainController.openSocialScreen();
-    managerContext.GUIManager.mainController.closePopup();
-    managerContext.GUIManager.mainController.openDetailedWineView(wineReviewsService.getWine(),backAction);
+    Runnable backAction = () -> managerContext.getGuiManager().mainController.openSocialScreen();
+    managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().mainController.openDetailedWineView(wineReviewsService.getWine(),
+        backAction);
   }
 
   @FXML
   void onUserButtonClick() {
-    managerContext.GUIManager.mainController.closePopup();
+    managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().mainController.openUserProfilePopup(reviewer);
   }
 
 

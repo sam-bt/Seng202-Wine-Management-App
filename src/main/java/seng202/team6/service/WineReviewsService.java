@@ -1,25 +1,38 @@
 package seng202.team6.service;
 
-import javafx.beans.property.DoubleProperty;
+import java.sql.Date;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.Property;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
+import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
+import seng202.team6.util.DateFormatter;
 
+/**
+ * Wine review service for a given wine.
+ */
 public class WineReviewsService {
 
+  public static final int MAX_DESCRIPTION_CHARACTERS = 255;
   private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
   private final ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
   private final Wine wine;
   private final Property<WineReview> usersReview = new SimpleObjectProperty<>();
-  private final DoubleProperty averageRating = new SimpleDoubleProperty();
 
+  /**
+   * Constructor.
+   *
+   * @param authenticationManager authentication manager
+   * @param databaseManager       database manager
+   * @param wine                  wine
+   */
   public WineReviewsService(AuthenticationManager authenticationManager,
       DatabaseManager databaseManager, Wine wine) {
     this.authenticationManager = authenticationManager;
@@ -27,27 +40,46 @@ public class WineReviewsService {
     this.wine = wine;
   }
 
+
+  /**
+   * Default Constructor for testing purposes.
+   */
+  public WineReviewsService() {
+    this.authenticationManager = null;
+    this.databaseManager = null;
+    this.wine = null;
+  }
+
+  /**
+   * Initialize the service.
+   */
   public void init() {
     String username = authenticationManager.getAuthenticatedUsername();
-    wineReviews.addAll(databaseManager.getWineReviews(wine));
+    wineReviews.addAll(databaseManager.getWineReviewDao().getAll(wine));
     usersReview.setValue(wineReviews.stream()
         .filter(wineReview -> wineReview.getUsername().equals(username))
         .findFirst()
         .orElse(null));
-    calculateAverageReview();
   }
 
-  public void addOrUpdateUserReview(double rating, String description) {
-    String username = authenticationManager.getAuthenticatedUsername();
+  /**
+   * Adds or removes a user review.
+   *
+   * @param rating      rating
+   * @param description description
+   */
+  public void addOrUpdateUserReview(double rating, String description) { //todo test with mock db
+    User user = authenticationManager.getAuthenticatedUser();
     if (hasUserReviewed()) {
       WineReview usersReview = getUsersReview();
       usersReview.setRating(rating);
       usersReview.setDescription(description);
-      databaseManager.updateWineReview(username, wine.getKey(), rating, description);
       calculateAverageReview();
       return;
     }
-    WineReview wineReview = databaseManager.addWineReview(username, wine.getKey(), rating, description);
+    Date currentDate = new Date(System.currentTimeMillis());
+    WineReview wineReview = databaseManager.getWineReviewDao()
+        .add(user, wine, rating, description, currentDate);
     if (wineReview != null) {
       wineReviews.add(wineReview);
       usersReview.setValue(wineReview);
@@ -55,58 +87,107 @@ public class WineReviewsService {
     }
   }
 
-//  public WineReview getReviewByUsernameAndWineID(String username, long wineId) {
-//    return databaseManager.get
-//  }
-
+  /**
+   * Deletes users review.
+   */
   public void deleteUsersReview() {
     WineReview wineReview = getUsersReview();
     if (wineReview != null) {
-      databaseManager.removeWineReview(wineReview);
+      databaseManager.getWineReviewDao().delete(wineReview);
       usersReview.setValue(null);
       wineReviews.remove(wineReview);
+      calculateAverageReview();
     }
   }
 
+  /**
+   * Gets the caption for the wine review label given the review info.
+   *
+   * @param wineReview the review for that review card
+   * @return the formatted label text
+   */
+  public String getCaptionWithDateFormatted(WineReview wineReview) {
+    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
+    return "From " + wineReview.getUsername() + " on " + formattedDate;
+  }
+
+
+  /**
+   * Gets the StringBinding property for the wine review label given the review info.
+   *
+   * @param wineReview the review for that review card
+   * @return the binding property for that review card
+   */
+  public StringBinding getCaptionBinding(WineReview wineReview) {
+    return Bindings.createStringBinding(
+        () ->
+            "From " + wineReview.getUsername() + " on " + DateFormatter.DATE_FORMAT.format(
+                wineReview.getDate()),
+        wineReview.dateProperty()
+    );
+  }
+
+  /**
+   * Checks if this wine has any reviews.
+   *
+   * @return if this wine has a review
+   */
   public boolean hasReviews() {
     return !wineReviews.isEmpty();
   }
 
+  /**
+   * Gets the reviews for a wine.
+   *
+   * @return reviews
+   */
   public ObservableList<WineReview> getWineReviews() {
     return wineReviews;
   }
 
+  /**
+   * Gets the wine.
+   *
+   * @return wine
+   */
   public Wine getWine() {
     return wine;
   }
 
+  /**
+   * Gets the users review property.
+   *
+   * @return review property
+   */
   public Property<WineReview> usersReviewProperty() {
     return usersReview;
   }
 
+  /**
+   * Gets the users review.
+   *
+   * @return users review
+   */
   public WineReview getUsersReview() {
     return usersReview.getValue();
   }
 
+  /**
+   * Checks if the user has reviewed this wine.
+   *
+   * @return review
+   */
   public boolean hasUserReviewed() {
     return getUsersReview() != null;
   }
 
-  public DoubleProperty averageRatingProperty() {
-    return averageRating;
-  }
-
-  public double getAverageRating() {
-    return averageRating.get();
-  }
-
+  /**
+   * Updates the average rating.
+   */
   private void calculateAverageReview() {
-    if (!hasReviews())
-      averageRating.set(0);
-
     double sum = wineReviews.stream()
         .mapToDouble(WineReview::getRating)
         .sum();
-    averageRating.set(sum / getWineReviews().size());
+    wine.setAverageRating(sum / getWineReviews().size());
   }
 }

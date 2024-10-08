@@ -1,6 +1,5 @@
 package seng202.team6.model;
 
-import java.sql.SQLException;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.IntegerProperty;
@@ -9,95 +8,75 @@ import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
-import org.apache.logging.log4j.LogManager;
-import seng202.team6.managers.DatabaseManager;
 
 /**
- * Wine represents the wine record in the database
+ * Wine represents the wine record in the database.
  * <p>
- *   There must only be one wine per id. This is assured by the database
+ * There must only be one wine per id. This is assured by the database
  * </p>
  */
 public class Wine {
 
   /**
-   * Title
+   * Title.
    */
   private final StringProperty title;
-
   /**
-   * Variety
+   * Variety.
    */
   private final StringProperty variety;
-
   /**
-   * Country
+   * Country.
    */
   private final StringProperty country;
   /**
-   * Region
+   * Region.
    */
   private final StringProperty region;
   /**
-   * Winery
+   * Winery.
    * <p>
    * Represented as a name to ease binding
    * </p>
    */
   private final StringProperty winery;
   /**
-   * Color of the wine
+   * Color of the wine.
    */
   private final StringProperty color;
   /**
-   * Age of the wine as a year
+   * Age of the wine as a year.
    */
   private final IntegerProperty vintage;
   /**
-   * Description of the wine
+   * Description of the wine.
    */
   private final StringProperty description;
   /**
-   * Normalized score from 0-100
+   * Normalized score from 0-100.
    */
   private final IntegerProperty scorePercent;
   /**
-   * Alcohol by volume as a percentage if known, else 0
+   * Alcohol by volume as a percentage if known, else 0.
    */
   private final FloatProperty abv;
   /**
-   * Price of the wine in NZD if known, else 0
+   * Price of the wine in NZD if known, else 0.
    */
   private final FloatProperty price;
   /**
-   * ID of wine record
+   * Average rating of the wine.
+   */
+  private final DoubleProperty averageRating;
+  /**
+   * ID of wine record.
    * <p>
    * -1 represents no database record attached. Setters will fail in this case.
    * </p>
    */
   private long key;
   /**
-   * Reference to database
-   * <p>
-   * We need to maintain this for JavaBean compliance with the setters and getters
-   * </p>
-   */
-
-  /**
-   * number of reviews the wine has
-   */
-  private IntegerProperty reviewCount;
-
-  /**
-   * Average rating of the wine
-   */
-  private DoubleProperty rating;
-
-
-  private DatabaseManager databaseManager;
-  /**
-   * GeoLocation which holds the coordinates of the region name
+   * GeoLocation which holds the coordinates of the region name.
    * <p>
    * If the region is invalid, not present, or not found from the geolocation dataset, this will be
    * null
@@ -106,73 +85,23 @@ public class Wine {
   private GeoLocation geoLocation;
 
   /**
-   * Constructs a new Wine with the given attributes
+   * Constructs a new Wine with the given attributes.
    *
-   * @param key          database key, -1 if no record attached
-   * @param title        title
-   * @param variety      variety
-   * @param country      country
-   * @param region       region
-   * @param winery       winery
-   * @param description  description of wine
-   * @param scorePercent score from 0-100
-   * @param abv          alcohol by volume
-   * @param price        NZD price
-   * @param geoLocation  geographical location
+   * @param key           database key, -1 if no record attached
+   * @param title         title
+   * @param variety       variety
+   * @param country       country
+   * @param region        region
+   * @param winery        winery
+   * @param description   description of wine
+   * @param scorePercent  score from 0-100
+   * @param abv           alcohol by volume
+   * @param price         NZD price
+   * @param geoLocation   geographical location
+   * @param averageRating the average rating
    */
   public Wine(
       long key,
-      DatabaseManager databaseManager,
-      String title,
-      String variety,
-      String country,
-      String region,
-      String winery,
-      String color,
-      Integer vintage,
-      String description,
-      Integer scorePercent,
-      Float abv,
-      Float price,
-      GeoLocation geoLocation
-  ) {
-    this.key = key;
-    this.databaseManager = databaseManager;
-    this.title = new SimpleStringProperty(this, "title", title);
-    this.variety = new SimpleStringProperty(this, "variety", variety);
-    this.country = new SimpleStringProperty(this, "country", country);
-    this.region = new SimpleStringProperty(this, "region", region);
-    this.winery = new SimpleStringProperty(this, "winery", winery);
-    this.color = new SimpleStringProperty(this, "color", color);
-    this.vintage = new SimpleIntegerProperty(this, "vintage", vintage);
-    this.description = new SimpleStringProperty(this, "description", description);
-    this.scorePercent = new SimpleIntegerProperty(this, "scorePercent", scorePercent);
-    this.abv = new SimpleFloatProperty(this, "abv", abv);
-    this.price = new SimpleFloatProperty(this, "price", price);
-    this.geoLocation = geoLocation;
-    setupSetters();
-  }
-
-  /**
-   * Constructs a new Wine with the given attributes
-   *
-   * @param key          database key, -1 if no record attached
-   * @param title        title
-   * @param variety      variety
-   * @param country      country
-   * @param region       region
-   * @param winery       winery
-   * @param description  description of wine
-   * @param scorePercent score from 0-100
-   * @param abv          alcohol by volume
-   * @param price        NZD price
-   * @param geoLocation  geographical location
-   * @param reviewCount  number of reviews that wine has
-   * @param rating  average rating of the wine
-   */
-  public Wine(
-      long key,
-      DatabaseManager databaseManager,
       String title,
       String variety,
       String country,
@@ -185,11 +114,9 @@ public class Wine {
       Float abv,
       Float price,
       GeoLocation geoLocation,
-      Integer reviewCount,
-      Double rating
+      double averageRating
   ) {
     this.key = key;
-    this.databaseManager = databaseManager;
     this.title = new SimpleStringProperty(this, "title", title);
     this.variety = new SimpleStringProperty(this, "variety", variety);
     this.country = new SimpleStringProperty(this, "country", country);
@@ -202,13 +129,11 @@ public class Wine {
     this.abv = new SimpleFloatProperty(this, "abv", abv);
     this.price = new SimpleFloatProperty(this, "price", price);
     this.geoLocation = geoLocation;
-    this.reviewCount = new SimpleIntegerProperty(this, "reviewCount", reviewCount);
-    this.rating = new SimpleDoubleProperty(this, "rating", rating);
-
+    this.averageRating = new SimpleDoubleProperty(averageRating);
   }
 
   /**
-   * Default constructor for a Wine with default attributes
+   * Default constructor for a Wine with default attributes.
    */
   public Wine() {
     this.key = -1;
@@ -223,108 +148,11 @@ public class Wine {
     this.scorePercent = new SimpleIntegerProperty(this, "scorePercent");
     this.abv = new SimpleFloatProperty(this, "abv");
     this.price = new SimpleFloatProperty(this, "price");
-    setupSetters();
+    this.averageRating = new SimpleDoubleProperty(this, "rating", 0.0);
   }
 
   /**
-   * Setup listeners
-   * <p>
-   * JavaFX uses properties to change stuff. This means we need to listen to changes rather than
-   * just intercept through setters.
-   * </p>
-   */
-  public void setupSetters() {
-    // This might be mem leaky but that is too hard to think about
-    titleProperty().addListener((observableValue, before, after) -> {
-      setAttribute("TITLE", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    varietyProperty().addListener((observableValue, before, after) -> {
-      setAttribute("VARIETY", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    countryProperty().addListener((observableValue, before, after) -> {
-      setAttribute("COUNTRY", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    regionProperty().addListener((observableValue, before, after) -> {
-      setAttribute("REGION", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    wineryProperty().addListener((observableValue, before, after) -> {
-      setAttribute("WINERY", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    colorProperty().addListener((observableValue, before, after) -> {
-      setAttribute("COLOR", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    vintageProperty().addListener((observableValue, before, after) -> {
-      setAttribute("VINTAGE", update -> {
-        update.setInt(1, (Integer) after);
-      });
-    });
-
-    descriptionProperty().addListener((observableValue, before, after) -> {
-      setAttribute("DESCRIPTION", update -> {
-        update.setString(1, after);
-      });
-    });
-
-    scorePercentProperty().addListener((observableValue, before, after) -> {
-      setAttribute("SCORE_PERCENT", update -> {
-        update.setInt(1, (Integer) after);
-      });
-    });
-
-    abvProperty().addListener((observableValue, before, after) -> {
-      setAttribute("ABV", update -> {
-        update.setFloat(1, (Float) after);
-      });
-    });
-
-    priceProperty().addListener((observableValue, before, after) -> {
-      setAttribute("PRICE", update -> {
-        update.setFloat(1, (Float) after);
-      });
-    });
-  }
-
-
-  /**
-   * Helper to set an attribute
-   *
-   * @param attributeName name of attribute
-   * @param callback      callback to set attribute
-   */
-  private void setAttribute(String attributeName,
-      DatabaseManager.AttributeSetterCallBack callback) {
-    if (key == -1) {
-      return;
-    }
-    try {
-      databaseManager.setWineAttribute(key, attributeName, callback);
-    } catch (SQLException exception) {
-      LogManager.getLogger(getClass())
-          .error("Failed to set attribute when updating database: {}", attributeName, exception);
-    }
-
-  }
-
-  /**
-   * Gets the key
+   * Gets the key.
    *
    * @return key
    */
@@ -333,7 +161,7 @@ public class Wine {
   }
 
   /**
-   * Sets the key
+   * Sets the key.
    *
    * @param key key
    */
@@ -342,28 +170,7 @@ public class Wine {
   }
 
   /**
-   * Gets the database
-   * <p>
-   * Please don't use this. This is only here for the sake of being a bean.
-   * </p>
-   *
-   * @return database
-   */
-  public DatabaseManager getDatabaseManager() {
-    return databaseManager;
-  }
-
-  /**
-   * Sets the database
-   *
-   * @param databaseManager database
-   */
-  public void setDatabaseManager(DatabaseManager databaseManager) {
-    this.databaseManager = databaseManager;
-  }
-
-  /**
-   * Gets the title
+   * Gets the title..
    *
    * @return title
    */
@@ -372,7 +179,7 @@ public class Wine {
   }
 
   /**
-   * Sets the title
+   * Sets the title.
    *
    * @param title title
    */
@@ -381,7 +188,7 @@ public class Wine {
   }
 
   /**
-   * Gets the title property
+   * Gets the title property.
    *
    * @return title property
    */
@@ -390,7 +197,7 @@ public class Wine {
   }
 
   /**
-   * Gets the variety
+   * Gets the variety.
    *
    * @return variety
    */
@@ -399,7 +206,7 @@ public class Wine {
   }
 
   /**
-   * Sets the variety
+   * Sets the variety.
    *
    * @param variety variety
    */
@@ -408,7 +215,7 @@ public class Wine {
   }
 
   /**
-   * Gets the variety property
+   * Gets the variety property.
    *
    * @return variety property
    */
@@ -417,7 +224,7 @@ public class Wine {
   }
 
   /**
-   * Gets the country
+   * Gets the country.
    *
    * @return country
    */
@@ -426,7 +233,7 @@ public class Wine {
   }
 
   /**
-   * Sets the country
+   * Sets the country.
    *
    * @param country country
    */
@@ -435,7 +242,7 @@ public class Wine {
   }
 
   /**
-   * Gets the country property
+   * Gets the country property.
    *
    * @return country property
    */
@@ -444,7 +251,7 @@ public class Wine {
   }
 
   /**
-   * Gets the Region
+   * Gets the Region.
    *
    * @return region
    */
@@ -453,7 +260,7 @@ public class Wine {
   }
 
   /**
-   * Sets the region
+   * Sets the region.
    *
    * @param region region
    */
@@ -462,7 +269,7 @@ public class Wine {
   }
 
   /**
-   * Gets the region property
+   * Gets the region property.
    *
    * @return region property
    */
@@ -472,7 +279,7 @@ public class Wine {
 
 
   /**
-   * Gets the winery
+   * Gets the winery.
    *
    * @return winery
    */
@@ -481,7 +288,7 @@ public class Wine {
   }
 
   /**
-   * Sets the winery
+   * Sets the winery.
    *
    * @param winery winery
    */
@@ -490,7 +297,7 @@ public class Wine {
   }
 
   /**
-   * Gets the winery property
+   * Gets the winery property.
    *
    * @return winery property
    */
@@ -499,7 +306,7 @@ public class Wine {
   }
 
   /**
-   * Gets the color of the wine
+   * Gets the color of the wine.
    *
    * @return color
    */
@@ -508,7 +315,7 @@ public class Wine {
   }
 
   /**
-   * Sets the color of the wine
+   * Sets the color of the wine.
    *
    * @param color color
    */
@@ -517,7 +324,7 @@ public class Wine {
   }
 
   /**
-   * Returns the color property
+   * Returns the color property.
    *
    * @return color property
    */
@@ -526,7 +333,7 @@ public class Wine {
   }
 
   /**
-   * Returns the vintage
+   * Returns the vintage.
    *
    * @return vintage
    */
@@ -535,7 +342,7 @@ public class Wine {
   }
 
   /**
-   * Sets the vintage
+   * Sets the vintage.
    *
    * @param vintage vintage
    */
@@ -544,7 +351,7 @@ public class Wine {
   }
 
   /**
-   * Gets the vintage property
+   * Gets the vintage property.
    *
    * @return vintage property
    */
@@ -553,7 +360,7 @@ public class Wine {
   }
 
   /**
-   * Gets the description
+   * Gets the description.
    *
    * @return description
    */
@@ -562,7 +369,7 @@ public class Wine {
   }
 
   /**
-   * Sets the description
+   * Sets the description.
    *
    * @param description description
    */
@@ -571,7 +378,7 @@ public class Wine {
   }
 
   /**
-   * Gets the description property
+   * Gets the description property.
    *
    * @return description property
    */
@@ -580,7 +387,7 @@ public class Wine {
   }
 
   /**
-   * Gets the score percentage
+   * Gets the score percentage.
    *
    * @return score percentage
    */
@@ -589,7 +396,7 @@ public class Wine {
   }
 
   /**
-   * Sets the score percentage
+   * Sets the score percentage.
    *
    * @param scorePercent score percentage
    */
@@ -598,7 +405,7 @@ public class Wine {
   }
 
   /**
-   * Gets the score percentage
+   * Gets the score percentage.
    *
    * @return score percentage
    */
@@ -607,7 +414,7 @@ public class Wine {
   }
 
   /**
-   * Gets the alcohol by volume
+   * Gets the alcohol by volume.
    *
    * @return abv
    */
@@ -616,7 +423,7 @@ public class Wine {
   }
 
   /**
-   * Gets the alcohol by volume
+   * Gets the alcohol by volume.
    *
    * @param abv alcohol by volume
    */
@@ -625,7 +432,7 @@ public class Wine {
   }
 
   /**
-   * Gets the alcohol by volume property
+   * Gets the alcohol by volume property.
    *
    * @return alcohol by volume
    */
@@ -634,7 +441,7 @@ public class Wine {
   }
 
   /**
-   * Gets the price
+   * Gets the price.
    *
    * @return price
    */
@@ -643,7 +450,7 @@ public class Wine {
   }
 
   /**
-   * Sets the price
+   * Sets the price.
    *
    * @param price price
    */
@@ -652,7 +459,7 @@ public class Wine {
   }
 
   /**
-   * Gets the price property
+   * Gets the price property.
    *
    * @return price property
    */
@@ -661,7 +468,7 @@ public class Wine {
   }
 
   /**
-   * Gets the geolocation
+   * Gets the geolocation.
    *
    * @return geolocation the geolocation
    */
@@ -670,7 +477,7 @@ public class Wine {
   }
 
   /**
-   * Sets the geolocation
+   * Sets the geolocation.
    *
    * @param geoLocation the geolocation
    */
@@ -678,6 +485,12 @@ public class Wine {
     this.geoLocation = geoLocation;
   }
 
+  /**
+   * Checks equality.
+   *
+   * @param o object
+   * @return true if equal
+   */
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -690,12 +503,30 @@ public class Wine {
     return key == wine.key;
   }
 
-  public IntegerProperty getReviewCount() {
-    return reviewCount;
+  /**
+   * Gets the average rating.
+   *
+   * @return the average rating
+   */
+  public double getAverageRating() {
+    return averageRating.get();
   }
 
+  /**
+   * Sets the average rating.
+   *
+   * @param averageRating average rating
+   */
+  public void setAverageRating(double averageRating) {
+    this.averageRating.set(averageRating);
+  }
 
-  public DoubleProperty getRating() {
-    return rating;
+  /**
+   * Gets the average rating property.
+   *
+   * @return the average rating property
+   */
+  public DoubleProperty averageRatingProperty() {
+    return averageRating;
   }
 }

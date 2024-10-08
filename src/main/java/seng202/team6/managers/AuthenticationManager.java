@@ -1,23 +1,26 @@
 package seng202.team6.managers;
 
-import static seng202.team6.model.AuthenticationResponse.PASSWORD_CHANGED_SUCCESS;
-import static seng202.team6.model.AuthenticationResponse.UNEXPECTED_ERROR;
+import static seng202.team6.enums.AuthenticationResponse.PASSWORD_CHANGED_SUCCESS;
+import static seng202.team6.enums.AuthenticationResponse.USERNAME_ALREADY_REGISTERED;
 
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.dao.UserDao;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.model.User;
-import seng202.team6.util.EncryptionUtil;
+import seng202.team6.util.PasswordUtil;
 
 /**
- * Manager class responsible for handling authentication-related operations.
- * This class provides methods for user registration, login, password update, and logout.
+ * Manager class responsible for handling authentication-related operations. This class provides
+ * methods for user registration, login, password update, and logout.
  */
 public class AuthenticationManager {
-  private String authenticatedUsername;
+
+  private final DatabaseManager databaseManager;
+  private User authenticatedUser;
   private boolean admin;
   private boolean adminFirstLogin;
-  private final DatabaseManager databaseManager;
+
   /**
-   * Constructs an AuthenticationManager
+   * Constructs an AuthenticationManager.
    */
   public AuthenticationManager(DatabaseManager databaseManager) {
     this.databaseManager = databaseManager;
@@ -26,8 +29,8 @@ public class AuthenticationManager {
   /**
    * Validates and processes a user registration request.
    *
-   * @param username The username for the new account.
-   * @param password The password for the new account.
+   * @param username          The username for the new account.
+   * @param password          The password for the new account.
    * @param confirmedPassword The confirmed password for verification.
    * @return An AuthenticationResponse indicating the result of the registration attempt.
    */
@@ -49,13 +52,15 @@ public class AuthenticationManager {
         AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())) {
       return AuthenticationResponse.INVALID_PASSWORD;
     }
-    String salt = EncryptionUtil.generateSalt();
-    String hashedPassword = EncryptionUtil.hashPassword(password, salt);
-    boolean userAdded = databaseManager.addUser(username, hashedPassword, salt);
-    if (userAdded) {
-      return AuthenticationResponse.REGISTER_SUCCESS;
+    UserDao userDao = databaseManager.getUserDao();
+    if (userDao.get(username) != null) {
+      return USERNAME_ALREADY_REGISTERED;
     }
-    return AuthenticationResponse.USERNAME_ALREADY_REGISTERED;
+
+    String salt = PasswordUtil.generateSalt();
+    String hashedPassword = PasswordUtil.hashPassword(password, salt);
+    userDao.add(new User(username, hashedPassword, "user", salt));
+    return AuthenticationResponse.REGISTER_SUCCESS;
   }
 
   /**
@@ -71,15 +76,15 @@ public class AuthenticationManager {
       return AuthenticationResponse.MISSING_FIELDS;
     }
 
-    User userInfo = databaseManager.getUser(username);
-    if (userInfo == null) {
+    User user = databaseManager.getUserDao().get(username);
+    if (user == null) {
       return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
     }
 
-    boolean validPassword = EncryptionUtil.verifyPassword(password, userInfo.getPassword(),
-        userInfo.getSalt());
+    boolean validPassword = PasswordUtil.verifyPassword(password, user.getPassword(),
+        user.getSalt());
     if (validPassword) {
-      setAuthenticatedUsername(username);
+      setAuthenticatedUser(user);
       setAdmin(username.equals("admin"));
       setAdminFirstLogin(isAdmin() && password.equals("admin"));
       return AuthenticationResponse.LOGIN_SUCCESS;
@@ -90,7 +95,7 @@ public class AuthenticationManager {
   /**
    * Validates and processes a password update request.
    *
-   * @param username The username of the account to update.
+   * @param username    The username of the account to update.
    * @param oldPassword The current password of the account.
    * @param newPassword The new password to set.
    * @return An AuthenticationResponse indicating the result of the password update attempt.
@@ -104,9 +109,9 @@ public class AuthenticationManager {
       return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
     }
 
-    User user = databaseManager.getUser(username);
+    User user = databaseManager.getUserDao().get(username);
     if (user != null) {
-      boolean validPassword = EncryptionUtil.verifyPassword(oldPassword, user.getPassword(),
+      boolean validPassword = PasswordUtil.verifyPassword(oldPassword, user.getPassword(),
           user.getSalt());
       if (!validPassword) {
         return AuthenticationResponse.INCORRECT_OLD_PASSWORD;
@@ -125,42 +130,38 @@ public class AuthenticationManager {
         return AuthenticationResponse.INVALID_PASSWORD;
       }
 
-      String salt = EncryptionUtil.generateSalt();
-      String hashedPassword = EncryptionUtil.hashPassword(newPassword, salt);
-      boolean passwordUpdated = databaseManager.updatePassword(username, hashedPassword,
-          salt);
-      if (passwordUpdated) {
-        return PASSWORD_CHANGED_SUCCESS;
-      }
+      String salt = PasswordUtil.generateSalt();
+      String hashedPassword = PasswordUtil.hashPassword(newPassword, salt);
+      user.setPassword(hashedPassword);
+      user.setSalt(salt);
+      return PASSWORD_CHANGED_SUCCESS;
     }
     return AuthenticationResponse.UNEXPECTED_ERROR;
   }
 
   /**
    * Processes a user logout request.
-   *
-   * @return An AuthenticationResponse indicating the result of the logout attempt.
    */
-  public AuthenticationResponse logout() {
-    if (isAuthenticated()) {
-      setAuthenticatedUsername(null);
-      setAdmin(false);
-      setAdminFirstLogin(false);
-      return AuthenticationResponse.LOGOUT_SUCCESS;
-    }
-    return UNEXPECTED_ERROR;
+  public void logout() {
+    setAuthenticatedUser(null);
+    setAdmin(false);
+    setAdminFirstLogin(false);
+  }
+
+  public User getAuthenticatedUser() {
+    return authenticatedUser;
+  }
+
+  public void setAuthenticatedUser(User authenticatedUser) {
+    this.authenticatedUser = authenticatedUser;
   }
 
   public boolean isAuthenticated() {
-    return authenticatedUsername != null;
+    return authenticatedUser != null;
   }
 
   public String getAuthenticatedUsername() {
-    return authenticatedUsername;
-  }
-
-  public void setAuthenticatedUsername(String authenticatedUsername) {
-    this.authenticatedUsername = authenticatedUsername;
+    return authenticatedUser == null ? null : authenticatedUser.getUsername();
   }
 
   public boolean isAdmin() {

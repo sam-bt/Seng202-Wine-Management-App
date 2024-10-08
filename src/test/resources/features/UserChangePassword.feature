@@ -1,4 +1,5 @@
 Feature: User Changing Password
+
   Scenario: The user enters the correct old password and a valid new password (AT_8)
     Given the user is authenticated and changing their password
     When the user enters in the correct old password
@@ -18,4 +19,11 @@ Feature: User Changing Password
     When the user enters in the correct old password
     And the user enters an invalid new password
     And the user enters the same invalid new confirm password
+    Then the accounts password is not changed
+
+  Scenario: The user enters the correct old password but a new password that is the same as their username (AT_31)
+    Given the user is authenticated and changing their password
+    When the user enters in the correct old password
+    And the user enters their username as a password
+    And the user enters the same password of their username to confirm
     Then the accounts password is not changed

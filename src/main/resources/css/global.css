@@ -48,6 +48,11 @@
   -fx-border-radius: 10px;
 }
 
+.text-field:focused {
+  -fx-focus-color: #F87171;
+  -fx-faint-focus-color: #F8717122; /* transparent shadow around text field */
+}
+
 .table-view {
   -fx-background-color: #FEF0F0;
 }
@@ -89,4 +94,23 @@
 .table-row-cell:selected {
   -fx-background-color: #f68585;
   -fx-text-background-color: black;
+}
+
+.rating > .container > .button {
+    -fx-background-color: transparent;
+    -fx-background-image: url("/img/unselected_star.png");
+    -fx-padding: 16 16;
+    -fx-background-image-repeat: no-repeat;
+}
+
+.rating > .container > .button.strong {
+    -fx-background-image: url("/img/selected_star.png");
+}
+
+.small-rating > .container > .button {
+    -fx-background-color: transparent;
+    -fx-background-image: url("/img/unselected_star.png");
+    -fx-padding: 12 12;
+    -fx-background-size: 24px 24px;
+    -fx-background-image-repeat: no-repeat;
 }

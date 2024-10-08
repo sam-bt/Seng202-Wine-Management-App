@@ -1,6 +1,8 @@
 package seng202.team6.unittests.managers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.sql.SQLException;
 import org.junit.jupiter.api.AfterEach;
@@ -8,19 +10,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 
 /**
- * Test class for the AuthenticationManager.
- * This class contains unit tests to verify the functionality of the authenticationManager
+ * Test class for the AuthenticationManager. This class contains unit tests to verify the
+ * functionality of the authenticationManager
  */
 public class AuthenticationManagerTest {
+
+  // A valid password needs upper and lowercase letters, a symbol, and a number, and is 8-30 chars long.
+  String validPass = "testPassword1!";
   private AuthenticationManager authenticationManager;
   private DatabaseManager databaseManager;
 
   /**
-   * Sets up the test environment before each test method.
-   * Initializes the AuthenticationManager and DatabaseManager.
+   * Sets up the test environment before each test method. Initializes the AuthenticationManager and
+   * DatabaseManager.
    *
    * @throws SQLException if there's an error setting up the database connection
    */
@@ -35,11 +40,8 @@ public class AuthenticationManagerTest {
    */
   @AfterEach
   public void close() {
-    databaseManager.close();
+    databaseManager.teardown();
   }
-
-  // A valid password needs upper and lowercase letters, a symbol, and a number, and is 8-30 chars long.
-  String validPass = "testPassword1!";
 
   /**
    * Tests a valid user registration scenario.
@@ -55,8 +57,8 @@ public class AuthenticationManagerTest {
   }
 
   /**
-   * Tests registration attempts with empty fields.
-   * Verifies that the service correctly identifies missing username, password, or confirmed password.
+   * Tests registration attempts with empty fields. Verifies that the service correctly identifies
+   * missing username, password, or confirmed password.
    */
   @Test
   public void testRegistrationEmptyFields() {
@@ -96,8 +98,20 @@ public class AuthenticationManagerTest {
   }
 
   /**
-   * Tests registration attempts with empty fields.
-   * Verifies that the service correctly identifies missing username, password, or confirmed password.
+   * Tests registration with the password the same as the username.
+   */
+  @Test
+  public void testRegistrationPassEqualUsername() {
+    String username = "MyAccount";
+    AuthenticationResponse response = authenticationManager.validateRegistration(username, username,
+        username);
+    assertEquals(AuthenticationResponse.SAME_AS_USERNAME, response);
+  }
+
+
+  /**
+   * Tests registration attempts with empty fields. Verifies that the service correctly identifies
+   * missing username, password, or confirmed password.
    */
   @Test
   public void testLoginEmptyFields() {
@@ -165,6 +179,36 @@ public class AuthenticationManagerTest {
 
     AuthenticationResponse response = authenticationManager.validateLogin(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, response);
+  }
+
+  /**
+   * Tests logging out.
+   */
+  @Test
+  public void testLogout() {
+    String username = "MyAccount";
+    String password = validPass;
+    registerAccount(username, password);
+
+    authenticationManager.validateLogin(username, password);
+    authenticationManager.logout();
+    assertFalse(authenticationManager.isAuthenticated());
+    assertFalse(authenticationManager.isAdmin());
+    assertNull(authenticationManager.getAuthenticatedUser());
+  }
+
+  /**
+   * Tests a valid user registration scenario.
+   */
+  @Test
+  public void testUpdatePassEqualUsername() {
+    String username = "MyAccount";
+    String password = validPass;
+    registerAccount(username, password);
+
+    AuthenticationResponse response = authenticationManager.validateUpdate(username, password,
+        username, username);
+    assertEquals(AuthenticationResponse.SAME_AS_USERNAME, response);
   }
 
   /**

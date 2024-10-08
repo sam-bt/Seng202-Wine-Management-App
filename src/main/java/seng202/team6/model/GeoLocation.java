@@ -1,23 +1,23 @@
 package seng202.team6.model;
 
 /**
- * Represents a geographical location with latitude and longitude coordinates
+ * Represents a geographical location with latitude and longitude coordinates.
  */
 public class GeoLocation {
 
   /**
-   * The latitude coordinate of this location
+   * The latitude coordinate of this location.
    */
   private final double latitude;
   /**
-   * The longitude coordinate of this location
+   * The longitude coordinate of this location.
    */
   private final double longitude;
 
   /**
-   * Constructs a new GeoLocation object with the specified latitude and longitude
+   * Constructs a new GeoLocation object with the specified latitude and longitude.
    *
-   * @param latitude the latitude of the geolocation
+   * @param latitude  the latitude of the geolocation
    * @param longitude the longitude of the geolocation
    */
   public GeoLocation(double latitude, double longitude) {
@@ -26,7 +26,7 @@ public class GeoLocation {
   }
 
   /**
-   * Returns the latitude coordinate of this location
+   * Returns the latitude coordinate of this location.
    *
    * @return the latitude
    */
@@ -35,7 +35,7 @@ public class GeoLocation {
   }
 
   /**
-   * Returns the longitude of this location
+   * Returns the longitude of this location.
    *
    * @return the longitude
    */

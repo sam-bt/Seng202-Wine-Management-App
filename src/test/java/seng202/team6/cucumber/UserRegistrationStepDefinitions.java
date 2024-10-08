@@ -11,9 +11,11 @@ import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
+import seng202.team6.model.User;
 
 public class UserRegistrationStepDefinitions {
+
   private DatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private String username;
@@ -28,12 +30,12 @@ public class UserRegistrationStepDefinitions {
 
   @After
   public void close() {
-    databaseManager.close();
+    databaseManager.teardown();
   }
 
   @Given("the user is not authenticated and is registering")
   public void the_user_is_not_authenticated_and_is_registering() {
-    authenticationManager.setAuthenticatedUsername(null);
+    authenticationManager.setAuthenticatedUser(null);
   }
 
   @When("the user enters a valid username, password, and confirmed password")
@@ -48,7 +50,8 @@ public class UserRegistrationStepDefinitions {
     // Write code here that turns the phrase above into concrete actions
     String existingUsername = "MyAccount";
     String existingPassword = "ValidPassword1!";
-    databaseManager.addUser(existingUsername, existingPassword, existingPassword);
+    User user = new User(username, password, "user", "salt");
+    databaseManager.getUserDao().add(user);
     username = existingUsername;
     password = "OtherValidPass1!";
     confirmedPassword = password;
@@ -61,12 +64,27 @@ public class UserRegistrationStepDefinitions {
     confirmedPassword = password;
   }
 
+  @When("the user enters an invalid password")
+  public void the_user_enters_an_invalid_password() {
+    username = "MyUsername";
+    password = "invalid";
+    confirmedPassword = password;
+  }
+
+  @When("the user enters the same password as their username")
+  public void the_user_enters_same_pass_as_user() {
+    username = "MyUsername";
+    password = "MyUsername!";
+    confirmedPassword = password;
+  }
+
   @When("the user enters a different password and confirmed password")
   public void the_user_enters_a_different_password_and_confirmed_password() {
     username = "MyAccount";
     password = "ValidPassword1!";
     confirmedPassword = "notValidPassword1!";
   }
+
 
   @Then("a new account for the user is created")
   public void a_new_account_for_the_user_is_created() {
