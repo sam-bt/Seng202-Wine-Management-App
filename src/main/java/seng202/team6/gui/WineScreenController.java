@@ -360,6 +360,8 @@ public class WineScreenController extends Controller {
           this.prevPageButtonRawViewer.setDisable((int) newValue == 1);
           this.nextPageButtonSimpleView.setDisable((int) newValue == pageService.getMaxPages());
           this.prevPageButtonSimpleView.setDisable((int) newValue == 1);
+          this.pageNumberTextFieldSimpleView.setText(newValue + "");
+          this.pageNumberTextFieldRawViewer.setText(newValue + "");
         });
 
     // Set up max pages
