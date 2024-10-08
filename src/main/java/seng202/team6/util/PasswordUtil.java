@@ -80,7 +80,7 @@ public class PasswordUtil {
    * Checks if it is the admin first time login scenario.
    *
    * @param managerContext The manager context.
-   * @param disabled      Whether the admin has logged in before or not.
+   * @param disabled       Whether the admin has logged in before or not.
    * @return true if it is the admins first time logging in, otherwise leave disabled as is.
    */
   public static boolean checkAdminLogin(ManagerContext managerContext, Boolean disabled) {

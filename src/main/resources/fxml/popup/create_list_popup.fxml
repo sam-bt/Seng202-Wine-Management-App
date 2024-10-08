@@ -7,40 +7,51 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" styleClass="popup" stylesheets="@../../css/popup_pane_action_blocker.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.popup.CreateListPopupController">
-   <children>
-      <TitledPane animated="false" collapsible="false" layoutX="457.0" layoutY="198.0" maxHeight="1.7976931348623157E308" maxWidth="456.0" minWidth="456.0" prefHeight="384.0" prefWidth="456.0" stylesheets="@../../css/titled_pane.css" text="CREATE LIST">
-         <font>
-            <Font name="System Bold" size="16.0" />
-         </font>
-         <content>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0">
-               <children>
-                  <Button layoutX="50.0" layoutY="271.0" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#onBackButtonClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Back">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Button>
-                  <Button layoutX="276.0" layoutY="271.0" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#onCreateListConfirmButton" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Create List">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Button>
-                  <VBox alignment="CENTER" layoutX="48.0" prefHeight="263.0" prefWidth="359.0">
-                     <children>
-                        <Label text="Enter list Name">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="errorText" prefHeight="16.0" prefWidth="159.0" text="List already exists!" textFill="RED" visible="false" />
-                        <TextField fx:id="listNameTextField" prefHeight="33.0" prefWidth="300.0" promptText="Enter list name" />
-                     </children>
-                  </VBox>
-               </children>
-            </AnchorPane>
-         </content>
-      </TitledPane>
-   </children>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0"
+  minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
+  styleClass="popup" stylesheets="@../../css/popup_pane_action_blocker.css"
+  xmlns="http://javafx.com/javafx/21.0.1"
+  fx:controller="seng202.team6.gui.popup.CreateListPopupController">
+  <children>
+    <TitledPane animated="false" collapsible="false" layoutX="457.0" layoutY="198.0"
+      maxHeight="1.7976931348623157E308" maxWidth="456.0" minWidth="456.0" prefHeight="384.0"
+      prefWidth="456.0" stylesheets="@../../css/titled_pane.css" text="CREATE LIST">
+      <content>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+          <children>
+            <Button layoutX="50.0" layoutY="271.0" maxWidth="125.0" minWidth="125.0"
+              mnemonicParsing="false" onAction="#onBackButtonClick" prefWidth="125.0"
+              styleClass="secondary-button" stylesheets="@../../css/global.css" text="Back">
+              <font>
+                <Font name="System Bold" size="16.0"/>
+              </font>
+            </Button>
+            <Button layoutX="276.0" layoutY="271.0" maxWidth="125.0" minWidth="125.0"
+              mnemonicParsing="false" onAction="#onCreateListConfirmButton" prefWidth="125.0"
+              styleClass="secondary-button" stylesheets="@../../css/global.css" text="Create List">
+              <font>
+                <Font name="System Bold" size="16.0"/>
+              </font>
+            </Button>
+            <VBox alignment="CENTER" layoutX="48.0" prefHeight="263.0" prefWidth="359.0">
+              <children>
+                <Label text="Enter list Name">
+                  <font>
+                    <Font size="16.0"/>
+                  </font>
+                </Label>
+                <Label prefHeight="16.0" prefWidth="159.0" text="List already exists!"
+                  textFill="RED" visible="false" fx:id="errorText"/>
+                <TextField prefHeight="33.0" prefWidth="300.0" promptText="Enter list name"
+                  fx:id="listNameTextField"/>
+              </children>
+            </VBox>
+          </children>
+        </AnchorPane>
+      </content>
+      <font>
+        <Font name="System Bold" size="16.0"/>
+      </font>
+    </TitledPane>
+  </children>
 </AnchorPane>

@@ -13,150 +13,176 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.web.WebView?>
-
-<HBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.TourPlanningController">
+<HBox xmlns:fx="http://javafx.com/fxml/1" spacing="15.0" xmlns="http://javafx.com/javafx/21"
+  fx:controller="seng202.team6.gui.TourPlanningController">
   <children>
-    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Vineyard Tours">
+    <TabPane minWidth="1040.0" prefHeight="200.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css"
+      tabClosingPolicy="UNAVAILABLE" tabMinHeight="45.0" fx:id="tabPane">
+      <tabs>
+        <Tab text="Plan Tour" fx:id="planTourTab">
+          <content>
+            <VBox>
+              <children>
+                <HBox VBox.vgrow="NEVER" alignment="CENTER" prefHeight="0.0" prefWidth="1040.0">
+                  <children>
+                    <Label text="Label" textAlignment="CENTER" fx:id="viewingTourLabel">
+                      <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                      </HBox.margin>
+                      <font>
+                        <Font name="System Bold" size="24.0"/>
+                      </font>
+                    </Label>
+                  </children>
+                </HBox>
+                <HBox VBox.vgrow="ALWAYS" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+                  <children>
+                    <VBox style="-fx-border-color: gray; -fx-border-radius: 20px;" HBox.hgrow="ALWAYS"
+                      prefHeight="713.0" spacing="20.0">
+                      <HBox.margin>
+                        <Insets/>
+                      </HBox.margin>
+                      <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0"
+                          spacing="20.0">
+                          <children>
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Search"/>
+                            <TextField maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
+                          </children>
+                        </HBox>
+                        <Label alignment="CENTER" prefHeight="21.0" prefWidth="332.0"
+                          text="Select Vineyards" textAlignment="CENTER">
+                          <font>
+                            <Font size="18.0"/>
+                          </font>
+                        </Label>
+                        <ScrollPane focusTraversable="false" hbarPolicy="NEVER"
+                          pickOnBounds="false" prefHeight="713.0" stylesheets="@../css/scroll_pane.css"
+                          fx:id="vineyardsContainer">
+                          <content>
+                            <VBox prefHeight="200.0" prefWidth="100.0"/>
+                          </content>
+                        </ScrollPane>
+                      </children>
+                      <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                      </padding>
+                    </VBox>
+                    <VBox style="-fx-border-color: gray; -fx-border-radius: 20px;" HBox.hgrow="ALWAYS"
+                      prefHeight="713.0" spacing="20.0">
+                      <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0"
+                          spacing="20.0">
+                          <children>
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Search"/>
+                            <TextField maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
+                          </children>
+                        </HBox>
+                        <Label alignment="CENTER" prefHeight="21.0" prefWidth="332.0"
+                          text="Select Vineyards from Wines" textAlignment="CENTER">
+                          <font>
+                            <Font size="18.0"/>
+                          </font>
+                        </Label>
+                        <ScrollPane focusTraversable="false" hbarPolicy="NEVER"
+                          pickOnBounds="false" prefHeight="713.0" stylesheets="@../css/scroll_pane.css"
+                          fx:id="vineyardsContainer1"/>
+                      </children>
+                      <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                      </padding>
+                    </VBox>
+                    <VBox style="-fx-border-color: gray; -fx-border-radius: 20px;" HBox.hgrow="ALWAYS"
+                      prefHeight="713.0" spacing="20.0">
+                      <HBox.margin>
+                        <Insets/>
+                      </HBox.margin>
+                      <children>
+                        <Label alignment="CENTER" prefHeight="21.0" prefWidth="332.0"
+                          text="Current Itinerary" textAlignment="CENTER">
+                          <font>
+                            <Font size="18.0"/>
+                          </font>
+                        </Label>
+                        <ScrollPane focusTraversable="false" hbarPolicy="NEVER"
+                          pickOnBounds="false" prefHeight="713.0" stylesheets="@../css/scroll_pane.css"
+                          fx:id="itineraryContainer"/>
+                      </children>
+                      <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                      </padding>
+                    </VBox>
+                  </children>
+                  <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </padding>
+                </HBox>
+                <HBox alignment="CENTER" prefHeight="0.0" prefWidth="1040.0" spacing="20.0">
+                  <VBox.margin>
+                    <Insets/>
+                  </VBox.margin>
+                  <children>
+                    <Button alignment="CENTER" mnemonicParsing="false"
+                      onMouseClicked="#onDeleteTourClick" prefHeight="33.0" prefWidth="167.0"
+                      styleClass="secondary-button" stylesheets="@../css/global.css"
+                      text="Delete Tour">
+                      <font>
+                        <Font name="System Bold" size="16.0"/>
+                      </font>
+                    </Button>
+                    <Button alignment="CENTER" mnemonicParsing="false"
+                      onMouseClicked="#onCalculateTourClick" prefHeight="33.0" prefWidth="167.0"
+                      styleClass="secondary-button" stylesheets="@../css/global.css"
+                      text="Calculate Route">
+                      <font>
+                        <Font name="System Bold" size="16.0"/>
+                      </font>
+                    </Button>
+                  </children>
+                  <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                  </padding>
+                </HBox>
+              </children>
+            </VBox>
+          </content>
+        </Tab>
+        <Tab text="View Tour" fx:id="viewTourTab">
+          <content>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+              <children>
+                <WebView prefHeight="200.0" prefWidth="2000.0" fx:id="webView"/>
+              </children>
+            </HBox>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0"
+      stylesheets="@../css/titled_pane.css" text="Vineyard Tours">
       <content>
         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="50.0">
           <children>
-            <ScrollPane fx:id="vineyardToursContainer" focusTraversable="false" hbarPolicy="NEVER" pickOnBounds="false" prefHeight="20000.0" stylesheets="@../css/scroll_pane.css" VBox.vgrow="ALWAYS" />
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
-                     <children>
-                        <Button mnemonicParsing="false" onMouseClicked="#onCreateTourButtonClick" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Create Tour">
-                           <font>
-                              <Font name="System Bold" size="16.0" />
-                           </font>
-                        </Button>
-                     </children>
-                  </VBox>
+            <ScrollPane VBox.vgrow="ALWAYS" focusTraversable="false" hbarPolicy="NEVER"
+              pickOnBounds="false" prefHeight="20000.0" stylesheets="@../css/scroll_pane.css"
+              fx:id="vineyardToursContainer"/>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+              <children>
+                <Button mnemonicParsing="false" onMouseClicked="#onCreateTourButtonClick"
+                  prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button"
+                  stylesheets="@../css/global.css" text="Create Tour">
+                  <font>
+                    <Font name="System Bold" size="16.0"/>
+                  </font>
+                </Button>
+              </children>
+            </VBox>
           </children>
         </VBox>
       </content>
       <font>
-        <Font name="System Bold" size="24.0" />
+        <Font name="System Bold" size="24.0"/>
       </font>
     </TitledPane>
-      <TabPane fx:id="tabPane" minWidth="1040.0" prefHeight="200.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="45.0">
-        <tabs>
-          <Tab fx:id="planTourTab" text="Plan Tour">
-               <content>
-                  <VBox>
-                     <children>
-                        <HBox alignment="CENTER" prefHeight="0.0" prefWidth="1040.0" VBox.vgrow="NEVER">
-                           <children>
-                              <Label fx:id="viewingTourLabel" text="Label" textAlignment="CENTER">
-                                 <font>
-                                    <Font name="System Bold" size="24.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </HBox.margin>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0" VBox.vgrow="ALWAYS">
-                           <children>
-                              <VBox prefHeight="713.0" spacing="20.0" style="-fx-border-color: gray; -fx-border-radius: 20px;" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <Label alignment="CENTER" prefHeight="21.0" prefWidth="332.0" text="Select Vineyards" textAlignment="CENTER">
-                                       <font>
-                                          <Font size="18.0" />
-                                       </font>
-                                    </Label>
-                                    <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
-                                       <children>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Search" />
-                                          <TextField maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
-                                       </children>
-                                    </HBox>
-                                    <ScrollPane fx:id="vineyardsContainer" focusTraversable="false" hbarPolicy="NEVER" pickOnBounds="false" prefHeight="713.0" stylesheets="@../css/scroll_pane.css">
-                                       <content>
-                                          <VBox prefHeight="200.0" prefWidth="100.0" />
-                                       </content>
-                                    </ScrollPane>
-                                 </children>
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                                 <padding>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </padding>
-                              </VBox>
-                              <VBox prefHeight="713.0" spacing="20.0" style="-fx-border-color: gray; -fx-border-radius: 20px;" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <Label alignment="CENTER" prefHeight="21.0" prefWidth="332.0" text="Select Vineyards from Wines" textAlignment="CENTER">
-                                       <font>
-                                          <Font size="18.0" />
-                                       </font>
-                                    </Label>
-                                    <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
-                                       <children>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Search" />
-                                          <TextField maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
-                                       </children>
-                                    </HBox>
-                                    <ScrollPane fx:id="vineyardsContainer1" focusTraversable="false" hbarPolicy="NEVER" pickOnBounds="false" prefHeight="713.0" stylesheets="@../css/scroll_pane.css" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </padding>
-                              </VBox>
-                              <VBox prefHeight="713.0" spacing="20.0" style="-fx-border-color: gray; -fx-border-radius: 20px;" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <Label alignment="CENTER" prefHeight="21.0" prefWidth="332.0" text="Current Itinerary" textAlignment="CENTER">
-                                       <font>
-                                          <Font size="18.0" />
-                                       </font>
-                                    </Label>
-                                    <ScrollPane fx:id="itineraryContainer" focusTraversable="false" hbarPolicy="NEVER" pickOnBounds="false" prefHeight="713.0" stylesheets="@../css/scroll_pane.css" />
-                                 </children>
-                                 <HBox.margin>
-                                    <Insets />
-                                 </HBox.margin>
-                                 <padding>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </padding>
-                              </VBox>
-                           </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                        <HBox alignment="CENTER" prefHeight="0.0" prefWidth="1040.0" spacing="20.0">
-                           <children>
-                              <Button alignment="CENTER" mnemonicParsing="false" onMouseClicked="#onDeleteTourClick" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Delete Tour">
-                                 <font>
-                                    <Font name="System Bold" size="16.0" />
-                                 </font>
-                              </Button>
-                              <Button alignment="CENTER" mnemonicParsing="false" onMouseClicked="#onCalculateTourClick" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Calculate Route">
-                                 <font>
-                                    <Font name="System Bold" size="16.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </content>
-          </Tab>
-          <Tab fx:id="viewTourTab" text="View Tour">
-               <content>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <WebView fx:id="webView" prefHeight="200.0" prefWidth="2000.0" />
-                     </children>
-                  </HBox>
-               </content>
-          </Tab>
-        </tabs>
-      </TabPane>
   </children>
 </HBox>

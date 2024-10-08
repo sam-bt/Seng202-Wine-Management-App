@@ -2,7 +2,6 @@ package seng202.team6.gui;
 
 import java.util.HashMap;
 import java.util.Map;
-import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -32,7 +31,6 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineNoteService;
 import seng202.team6.service.WineReviewsService;
-import seng202.team6.util.DateFormatter;
 import seng202.team6.util.ImageReader;
 
 /**
@@ -283,7 +281,6 @@ public class DetailedWineViewController extends Controller {
     wrapper.setStyle("-fx-border-width: 1; "
         + "-fx-border-color: black; "
         + "-fx-border-insets: 10;");
-
 
     String caption = wineReviewsService.getCaptionWithDateFormatted(wineReview);
     Label reviewCaptionLabel = new Label(caption);

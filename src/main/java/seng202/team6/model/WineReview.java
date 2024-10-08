@@ -166,6 +166,9 @@ public class WineReview {
     return date.getValue();
   }
 
+  /**
+   * Sets the date.
+   */
   public void setDate(Date date) {
     this.date.setValue(date);
   }

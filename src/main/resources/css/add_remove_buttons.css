@@ -5,7 +5,7 @@
 }
 
 .icon {
-    -fx-fill: white;
+  -fx-fill: white;
 }
 
 .button:hover .icon {

@@ -3,7 +3,6 @@ package seng202.team6.gui;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +15,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -47,10 +45,10 @@ public class WineImportController extends Controller {
 
   private final Logger log = LogManager.getLogger(getClass());
   private final Map<Integer, WinePropertyName> selectedWineProperties = new HashMap<>();
+  private final WineImportService importService;
   @FXML
   private TilePane dataColumnsContainer;
   private List<String[]> currentFileRows;
-  private final WineImportService importService;
 
   /**
    * Constructor.
@@ -165,7 +163,6 @@ public class WineImportController extends Controller {
   }
 
 
-
   /**
    * Checks if the importer contains the title property.
    *
@@ -198,7 +195,8 @@ public class WineImportController extends Controller {
    * @return true if valid
    */
   private boolean checkDuplicateProperties() {
-    Set<WinePropertyName> duplicatedProperties = importService.checkDuplicateProperties(selectedWineProperties);
+    Set<WinePropertyName> duplicatedProperties = importService.checkDuplicateProperties(
+        selectedWineProperties);
 
     if (!duplicatedProperties.isEmpty()) {
       Alert alert = new Alert(AlertType.ERROR);

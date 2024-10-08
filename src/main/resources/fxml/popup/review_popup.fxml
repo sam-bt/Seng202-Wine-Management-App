@@ -12,70 +12,87 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
-
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" styleClass="popup" stylesheets="@../../css/popup_pane_action_blocker.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.popup.WineReviewPopupController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0"
+  minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
+  styleClass="popup" stylesheets="@../../css/popup_pane_action_blocker.css"
+  xmlns="http://javafx.com/javafx/21"
+  fx:controller="seng202.team6.gui.popup.WineReviewPopupController">
   <children>
-    <TitledPane fx:id="createModifyReviewTitlePane" animated="false" collapsible="false" layoutX="457.0" layoutY="198.0" maxHeight="1.7976931348623157E308" maxWidth="456.0" minWidth="456.0" prefHeight="384.0" prefWidth="456.0" stylesheets="@../../css/titled_pane.css" text="Create /Modify Review">
+    <TitledPane animated="false" collapsible="false" layoutX="457.0"
+      layoutY="198.0" maxHeight="1.7976931348623157E308" maxWidth="456.0" minWidth="456.0"
+      prefHeight="384.0" prefWidth="456.0" stylesheets="@../../css/titled_pane.css" text="Create /Modify Review"
+      fx:id="createModifyReviewTitlePane">
       <content>
         <GridPane prefWidth="454.0">
           <children>
-            <HBox fx:id="buttonsContainer" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="5">
+            <HBox GridPane.rowIndex="5" alignment="CENTER" prefHeight="100.0" prefWidth="200.0"
+              fx:id="buttonsContainer">
               <children>
-                <Button fx:id="backButton" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onMouseClicked="#onBackButtonClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Back">
+                <Button maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onMouseClicked="#onBackButtonClick"
+                  prefWidth="125.0" styleClass="secondary-button"
+                  stylesheets="@../../css/global.css" text="Back" fx:id="backButton">
                   <HBox.margin>
-                    <Insets left="10.0" right="10.0" />
+                    <Insets left="10.0" right="10.0"/>
                   </HBox.margin>
                   <font>
-                    <Font name="System Bold" size="16.0" />
+                    <Font name="System Bold" size="16.0"/>
                   </font>
                 </Button>
-                <Button fx:id="deleteButton" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onMouseClicked="#onDeleteButtonClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Delete">
+                <Button maxWidth="125.0" minWidth="125.0" mnemonicParsing="false"
+                  onMouseClicked="#onDeleteButtonClick" prefWidth="125.0" styleClass="secondary-button"
+                  stylesheets="@../../css/global.css" text="Delete" fx:id="deleteButton">
                   <HBox.margin>
-                    <Insets left="10.0" right="10.0" />
+                    <Insets left="10.0" right="10.0"/>
                   </HBox.margin>
                   <font>
-                    <Font name="System Bold" size="16.0" />
+                    <Font name="System Bold" size="16.0"/>
                   </font>
                 </Button>
-                <Button fx:id="submitButton" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onMouseClicked="#onSubmitButtonClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Create">
+                <Button maxWidth="125.0" minWidth="125.0" mnemonicParsing="false"
+                  onMouseClicked="#onSubmitButtonClick" prefWidth="125.0" styleClass="secondary-button"
+                  stylesheets="@../../css/global.css" text="Create" fx:id="submitButton">
                   <HBox.margin>
-                    <Insets left="10.0" right="10.0" />
+                    <Insets left="10.0" right="10.0"/>
                   </HBox.margin>
                   <font>
-                    <Font name="System Bold" size="16.0" />
+                    <Font name="System Bold" size="16.0"/>
                   </font>
                 </Button>
               </children>
             </HBox>
-            <Label text="Description" GridPane.rowIndex="2">
+            <Label GridPane.rowIndex="2" text="Description">
               <font>
-                <Font size="16.0" />
+                <Font size="16.0"/>
               </font>
             </Label>
             <Label text="What do you rate this wine?">
               <font>
-                <Font size="16.0" />
+                <Font size="16.0"/>
               </font>
             </Label>
-            <Pane fx:id="ratingPane" maxHeight="45.0" maxWidth="284.0" minHeight="45.0" minWidth="284.0" prefHeight="45.0" prefWidth="284.0" GridPane.rowIndex="1" />
-            <TextArea fx:id="descriptionTextArea" prefHeight="200.0" prefWidth="428.0" wrapText="true" GridPane.rowIndex="3" />
-                  <Label fx:id="characterCountLabel" alignment="TOP_RIGHT" prefHeight="17.0" text="0/0" textFill="#00000080" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+            <Label GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" alignment="TOP_RIGHT"
+              prefHeight="17.0" text="0/0" textFill="#00000080"
+              fx:id="characterCountLabel"/>
+            <Pane GridPane.rowIndex="1" maxHeight="45.0" maxWidth="284.0" minHeight="45.0"
+              minWidth="284.0" prefHeight="45.0" prefWidth="284.0" fx:id="ratingPane"/>
+            <TextArea GridPane.rowIndex="3" prefHeight="200.0" prefWidth="428.0"
+              wrapText="true" fx:id="descriptionTextArea"/>
           </children>
           <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
           </columnConstraints>
           <rowConstraints>
-            <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-            <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+            <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+            <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER"/>
+            <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
           </rowConstraints>
         </GridPane>
       </content>
       <font>
-        <Font name="System Bold" size="16.0" />
+        <Font name="System Bold" size="16.0"/>
       </font>
     </TitledPane>
   </children>

@@ -4,11 +4,10 @@
 
 .range-slider .low-thumb:focused,
 .range-slider .high-thumb:focused {
-    -fx-background-color:
-        #F87171,
-        derive(-fx-color,-36%),
-        derive(-fx-color,73%),
-        linear-gradient(to bottom, derive(-fx-color,-19%),derive(-fx-color,61%));
-    -fx-background-insets: -1.4, 0, 1, 2;
-    -fx-background-radius: 1.0em; /* makes sure this remains circular */
+  -fx-background-color: #F87171,
+  derive(-fx-color, -36%),
+  derive(-fx-color, 73%),
+  linear-gradient(to bottom, derive(-fx-color, -19%), derive(-fx-color, 61%));
+  -fx-background-insets: -1.4, 0, 1, 2;
+  -fx-background-radius: 1.0em; /* makes sure this remains circular */
 }

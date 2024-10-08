@@ -12,7 +12,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity"
+  minHeight="-Infinity"
   minWidth="-Infinity" prefHeight="780.0" prefWidth="1370.0"
   styleClass="application-background" xmlns="http://javafx.com/javafx/21.0.1"
   fx:controller="seng202.team6.gui.NotesController">
@@ -35,7 +36,8 @@
             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
               minWidth="-Infinity" prefHeight="100.0" prefWidth="200.0">
               <children>
-                <Label AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" text="No note selected"
+                <Label AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0"
+                  text="No note selected"
                   fx:id="wineTitle">
                   <font>
                     <Font size="35.0"/>
@@ -45,7 +47,8 @@
             </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
               <children>
-                <Button AnchorPane.rightAnchor="130.0" AnchorPane.topAnchor="10.0" mnemonicParsing="false"
+                <Button AnchorPane.rightAnchor="130.0" AnchorPane.topAnchor="10.0"
+                  mnemonicParsing="false"
                   onAction="#onDeleteClicked" styleClass="primary-button" text="Delete Note"
                   fx:id="deleteButton">
                   <font>
@@ -55,7 +58,8 @@
                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                   </padding>
                 </Button>
-                <Button AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" mnemonicParsing="false"
+                <Button AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0"
+                  mnemonicParsing="false"
                   onAction="#onSaveClicked" styleClass="primary-button" text="Save Note"
                   fx:id="saveButton">
                   <font>

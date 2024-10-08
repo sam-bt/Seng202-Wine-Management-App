@@ -6,9 +6,20 @@ import java.util.Map;
 import java.util.Set;
 import seng202.team6.enums.WinePropertyName;
 
+
+/**
+ * The Wine import service class provides methods to the wine importing functionality.
+ */
 public class WineImportService {
 
-  public Map<WinePropertyName, Integer> validHashMapCreate(Map<Integer, WinePropertyName> selectedWineProperties) {
+  /**
+   * The creator for the hashmap of valid wine properties.
+   *
+   * @param selectedWineProperties the properties that been selected
+   * @return the hashmap of valid wine properties
+   */
+  public Map<WinePropertyName, Integer> validHashMapCreate(
+      Map<Integer, WinePropertyName> selectedWineProperties) {
     return new HashMap<>() {
       {
         selectedWineProperties.forEach(((integer, winePropertyName) ->
@@ -35,17 +46,17 @@ public class WineImportService {
    *
    * @return the duplicateProperties
    */
-public Set<WinePropertyName> checkDuplicateProperties(Map<Integer, WinePropertyName> selectedWineProperties) {
-  Set<WinePropertyName> duplicatedProperties = new HashSet<>();
-  Set<WinePropertyName> selectedProperties = new HashSet<>();
-  selectedWineProperties.forEach((index, winePropertyName) -> {
-    if (!selectedProperties.add(winePropertyName)) {
-      duplicatedProperties.add(winePropertyName);
-    }
-  });
-  return duplicatedProperties;
-}
-
+  public Set<WinePropertyName> checkDuplicateProperties(
+      Map<Integer, WinePropertyName> selectedWineProperties) {
+    Set<WinePropertyName> duplicatedProperties = new HashSet<>();
+    Set<WinePropertyName> selectedProperties = new HashSet<>();
+    selectedWineProperties.forEach((index, winePropertyName) -> {
+      if (!selectedProperties.add(winePropertyName)) {
+        duplicatedProperties.add(winePropertyName);
+      }
+    });
+    return duplicatedProperties;
+  }
 
 
 }

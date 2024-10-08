@@ -3,9 +3,7 @@ package seng202.team6.service;
 import java.sql.Date;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.Property;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -50,7 +48,9 @@ public class WineReviewsService {
     this.authenticationManager = null;
     this.databaseManager = null;
     this.wine = null;
-  };
+  }
+
+  ;
 
   /**
    * Initialize the service.
@@ -106,7 +106,6 @@ public class WineReviewsService {
    * Gets the caption for the wine review label given the review info.
    *
    * @param wineReview the review for that review card
-   *
    * @return the formatted label text
    */
   public String getCaptionWithDateFormatted(WineReview wineReview) {
@@ -119,7 +118,6 @@ public class WineReviewsService {
    * Gets the StringBinding property for the wine review label given the review info.
    *
    * @param wineReview the review for that review card
-   *
    * @return the binding property for that review card
    */
   public StringBinding getCaptionBinding(WineReview wineReview) {

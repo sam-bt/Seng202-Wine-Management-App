@@ -18,23 +18,13 @@ import javafx.beans.property.StringProperty;
 public class Wine {
 
   /**
-   * ID of wine record.
-   * <p>
-   * -1 represents no database record attached. Setters will fail in this case.
-   * </p>
-   */
-  private long key;
-
-  /**
    * Title.
    */
   private final StringProperty title;
-
   /**
    * Variety.
    */
   private final StringProperty variety;
-
   /**
    * Country.
    */
@@ -74,12 +64,17 @@ public class Wine {
    * Price of the wine in NZD if known, else 0.
    */
   private final FloatProperty price;
-
   /**
    * Average rating of the wine.
    */
   private final DoubleProperty averageRating;
-
+  /**
+   * ID of wine record.
+   * <p>
+   * -1 represents no database record attached. Setters will fail in this case.
+   * </p>
+   */
+  private long key;
   /**
    * GeoLocation which holds the coordinates of the region name.
    * <p>
@@ -92,17 +87,17 @@ public class Wine {
   /**
    * Constructs a new Wine with the given attributes.
    *
-   * @param key          database key, -1 if no record attached
-   * @param title        title
-   * @param variety      variety
-   * @param country      country
-   * @param region       region
-   * @param winery       winery
-   * @param description  description of wine
-   * @param scorePercent score from 0-100
-   * @param abv          alcohol by volume
-   * @param price        NZD price
-   * @param geoLocation  geographical location
+   * @param key           database key, -1 if no record attached
+   * @param title         title
+   * @param variety       variety
+   * @param country       country
+   * @param region        region
+   * @param winery        winery
+   * @param description   description of wine
+   * @param scorePercent  score from 0-100
+   * @param abv           alcohol by volume
+   * @param price         NZD price
+   * @param geoLocation   geographical location
    * @param averageRating the average rating
    */
   public Wine(
