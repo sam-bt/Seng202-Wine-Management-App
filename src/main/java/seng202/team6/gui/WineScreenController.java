@@ -342,6 +342,7 @@ public class WineScreenController extends Controller {
     rangeSlider.setStyle("-fx-font-size: 15px;");
     rangeSlider.getStylesheets().add("css/range_slider.css");
     filtersPane.getChildren().add(rangeSlider);
+
     return rangeSlider;
   }
 
@@ -582,7 +583,7 @@ public class WineScreenController extends Controller {
   /**
    * Ensures a slider is valid and the user is allowed to interact.
    * <p>
-   * Disables the slider if it is unable to be used and displays this to the user.
+   * Disables the slider if it is unable to be used
    * </p>
    *
    * @param slider the target slider
@@ -590,16 +591,7 @@ public class WineScreenController extends Controller {
    * @param max    max value to check
    */
   private void validateSlider(RangeSlider slider, double min, double max) {
-    if (min == 0 && max == 0) {
-      slider.setDisable(true);
-      Tooltip tooltip = new Tooltip();
-      tooltip.setText("No data!");
-      tooltip.setShowDelay(Duration.ZERO);
-      tooltip.setHideDelay(Duration.millis(500));
-      Tooltip.install(slider, tooltip);
-    } else {
-      slider.setDisable(false);
-    }
+    slider.setDisable(min == 0 && max == 0);
   }
 
   /**
