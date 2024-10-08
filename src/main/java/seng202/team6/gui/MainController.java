@@ -143,10 +143,11 @@ public class MainController extends Controller {
   private boolean isMouseInsideComponents(double mouseX, double mouseY) {
     VBox graphicNode = (VBox) profileMenuGraphic;
     Point2D graphicScreenPos = graphicNode.localToScreen(0, 0);
-    double minX = graphicScreenPos.getX();
-    double maxX = minX + profileMenuGraphic.getWidth();
-    double minY = graphicScreenPos.getY();
-    double maxY = minY + profileMenuGraphic.getHeight() + profileContextMenu.getHeight();
+    // add 5px padding to each of the bounds to resolve issues with edge cases
+    double minX = graphicScreenPos.getX() + 5;
+    double maxX = minX + profileMenuGraphic.getWidth() - 5;
+    double minY = graphicScreenPos.getY() + 5;
+    double maxY = minY + profileMenuGraphic.getHeight() + profileContextMenu.getHeight() - 5;
 
     return mouseX > minX && mouseX < maxX && mouseY > minY && mouseY < maxY;
   }
