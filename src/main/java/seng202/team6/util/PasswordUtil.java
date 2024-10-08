@@ -7,12 +7,13 @@ import java.util.Base64;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import org.apache.logging.log4j.LogManager;
+import seng202.team6.managers.ManagerContext;
 
 /**
  * Service class providing encryption and password hashing functionality. This class uses
  * PBKDF2WithHmacSHA1 for secure password hashing and verification.
  */
-public class EncryptionUtil {
+public class PasswordUtil {
 
   /**
    * The number of iterations for the PBKDF2WithHmacSHA1 algorithm.
@@ -57,7 +58,7 @@ public class EncryptionUtil {
       byte[] hash = keyFactory.generateSecret(spec).getEncoded();
       return Base64.getEncoder().encodeToString(hash);
     } catch (NoSuchAlgorithmException | InvalidKeySpecException error) {
-      LogManager.getLogger(EncryptionUtil.class).error("Error updating password", error);
+      LogManager.getLogger(PasswordUtil.class).error("Error updating password", error);
       return null;
     }
   }
@@ -74,4 +75,22 @@ public class EncryptionUtil {
     String hashOfEnteredPassword = hashPassword(enteredPassword, salt);
     return hashOfEnteredPassword != null && hashOfEnteredPassword.equals(storedHash);
   }
+
+  /**
+   * Checks if it is the admin first time login scenario.
+   *
+   * @param managerContext The manager context.
+   * @param disabled       Whether the admin has logged in before or not.
+   * @return true if it is the admins first time logging in, otherwise leave disabled as is.
+   */
+  public static boolean checkAdminLogin(ManagerContext managerContext, Boolean disabled) {
+    if (managerContext.getAuthenticationManager().isAdminFirstLogin()) {
+      managerContext.getGuiManager().mainController.updateNavigation();
+      managerContext.getGuiManager().mainController.disableNavigation(false);
+      managerContext.getAuthenticationManager().setAdminFirstLogin(false);
+      return true;
+    }
+    return disabled;
+  }
+
 }

@@ -2,7 +2,7 @@ package seng202.team6.gui;
 
 import java.util.HashMap;
 import java.util.Map;
-import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -31,7 +31,6 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineNoteService;
 import seng202.team6.service.WineReviewsService;
-import seng202.team6.util.DateFormatter;
 import seng202.team6.util.ImageReader;
 
 /**
@@ -283,16 +282,12 @@ public class DetailedWineViewController extends Controller {
         + "-fx-border-color: black; "
         + "-fx-border-insets: 10;");
 
-    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate()); //todo extract
+    String caption = wineReviewsService.getCaptionWithDateFormatted(wineReview);
+    Label reviewCaptionLabel = new Label(caption);
 
-    Label reviewCaptionLabel = new Label(
-        "From " + wineReview.getUsername() + " on " + formattedDate);
-    reviewCaptionLabel.textProperty().bind(Bindings.createStringBinding(
-        () ->
-            "From " + wineReview.getUsername() + " on " + DateFormatter.DATE_FORMAT.format(
-                wineReview.getDate()),
-        wineReview.dateProperty()
-    ));
+    StringBinding labelBind = wineReviewsService.getCaptionBinding(wineReview);
+    reviewCaptionLabel.textProperty().bind(labelBind);
+
     reviewCaptionLabel.setMaxWidth(wrapper.getMaxWidth());
     reviewCaptionLabel.setWrapText(true);
 

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;
-import seng202.team6.util.EncryptionUtil;
+import seng202.team6.util.PasswordUtil;
 import seng202.team6.util.Timer;
 
 /**
@@ -31,8 +31,8 @@ public class UserDao extends Dao {
    */
   @Override
   public String[] getInitialiseStatements() {
-    String salt = EncryptionUtil.generateSalt();
-    String hashedAdminPassword = EncryptionUtil.hashPassword("admin", salt);
+    String salt = PasswordUtil.generateSalt();
+    String hashedAdminPassword = PasswordUtil.hashPassword("admin", salt);
     return new String[]{
         "CREATE TABLE IF NOT EXISTS USER ("
             + "USERNAME       VARCHAR(64)   PRIMARY KEY,"

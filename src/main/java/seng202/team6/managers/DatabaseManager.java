@@ -29,7 +29,7 @@ import seng202.team6.dao.WineNotesDao;
 import seng202.team6.dao.WineReviewDao;
 import seng202.team6.service.VineyardDefaultsService;
 import seng202.team6.service.WineDataStatService;
-import seng202.team6.util.EncryptionUtil;
+import seng202.team6.util.PasswordUtil;
 
 /**
  * Manages the creation, initialization, and teardown of a database. Provides methods for setting up
@@ -162,8 +162,8 @@ public class DatabaseManager {
         .flatMap(Arrays::stream)
         .toList();
 
-    String salt = EncryptionUtil.generateSalt();
-    String hashedAdminPassword = EncryptionUtil.hashPassword("admin", salt);
+    String salt = PasswordUtil.generateSalt();
+    String hashedAdminPassword = PasswordUtil.hashPassword("admin", salt);
     List<String> triggersAndDefaultStatements = List.of(
         "CREATE TRIGGER IF NOT EXISTS FAVOURITES_LIST"
             + "AFTER INSERT ON USER "
