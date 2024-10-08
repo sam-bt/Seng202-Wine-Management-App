@@ -3,6 +3,7 @@ package seng202.team6.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -194,12 +195,12 @@ public class VineyardDao extends Dao {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet);
-        log.info("Successfully retrieved all {} vineyards in tour '{}' in {}ms",
-            vineyards.size(), vineyardTour.getName(), timer.currentOffsetMilliseconds());
+        log.info("Successfully retrieved all {} vineyards in tour '{}' with id '{}' in {}ms",
+            vineyards.size(), vineyardTour.getName(), vineyardTour.getId(), timer.currentOffsetMilliseconds());
         return vineyards;
       }
     } catch (SQLException error) {
-      log.info("Failed to retrieve vineyards in tour '{}'", vineyardTour.getName(), error);
+      log.info("Failed to retrieve vineyards in tour '{}' with id '{}'", vineyardTour.getName(),vineyardTour.getId(), error);
     }
     return FXCollections.emptyObservableList();
   }
