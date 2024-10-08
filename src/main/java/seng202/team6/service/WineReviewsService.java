@@ -50,8 +50,6 @@ public class WineReviewsService {
     this.wine = null;
   }
 
-  ;
-
   /**
    * Initialize the service.
    */

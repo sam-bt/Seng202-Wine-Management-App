@@ -85,7 +85,7 @@ public class VineyardTourDao extends Dao {
    * @param tourName The name of the vineyard tour to be created.
    * @param island   The Island enumeration representing the island on which the tour takes place.
    * @return A VineyardTour object representing the newly created vineyard tour, or null if the
-   * operation fails.
+   *        operation fails.
    */
   public VineyardTour create(User user, String tourName, Island island) {
     Timer timer = new Timer();
