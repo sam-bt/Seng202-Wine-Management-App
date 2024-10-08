@@ -1,15 +1,8 @@
 package seng202.team6.model;
 
 import java.sql.Date;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.Property;
-import javafx.beans.property.ReadOnlyLongProperty;
-import javafx.beans.property.ReadOnlyLongWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+
+import javafx.beans.property.*;
 
 /**
  * Represents a review of a wine.
@@ -22,6 +15,7 @@ public class WineReview {
   private final DoubleProperty rating;
   private final StringProperty description;
   private final Property<Date> date;
+  private IntegerProperty flag;
 
   /**
    * Constructor.
@@ -39,7 +33,8 @@ public class WineReview {
       String username,
       double rating,
       String description,
-      Date date
+      Date date,
+      int flag
   ) {
     this.id = new ReadOnlyLongWrapper(id);
     this.wineId = new ReadOnlyLongWrapper(wineId);
@@ -47,6 +42,7 @@ public class WineReview {
     this.rating = new SimpleDoubleProperty(rating);
     this.description = new SimpleStringProperty(description);
     this.date = new SimpleObjectProperty<>(date);
+    this.flag = new SimpleIntegerProperty(flag);
   }
 
   /**
@@ -181,4 +177,25 @@ public class WineReview {
   public Property<Date> dateProperty() {
     return date;
   }
+
+  /**
+   * Get the flag. 0 == not flagged, 1 == flagged
+   *
+   * @return the flag
+   */
+  public int getFlag() { return flag.get(); }
+
+  /**
+   * Get the flag property
+   *
+   * @return the flag property
+   */
+  public IntegerProperty flagProperty() { return flag; }
+
+  /** Set the value of the flag property
+   *
+   * @param flag The value to set
+   */
+  public void setFlag(int flag) { this.flag.set(flag); }
+
 }

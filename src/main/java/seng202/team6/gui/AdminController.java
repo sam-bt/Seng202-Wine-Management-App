@@ -3,14 +3,18 @@ package seng202.team6.gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.WineReview;
 
 /**
  * Controller for the admin screen.
  */
 public class AdminController extends Controller {
+  @FXML
+  TableView<WineReview> reviewsTable;
 
   @FXML
   Label adminMessageLabel;
@@ -52,6 +56,14 @@ public class AdminController extends Controller {
     parent.minWidthProperty().bind(importWinesScreenContainer.minWidthProperty());
     parent.maxWidthProperty().bind(importWinesScreenContainer.maxWidthProperty());
     parent.prefWidthProperty().bind(importWinesScreenContainer.prefWidthProperty());
+  }
+
+  private void setupReviewTable() {
+    reviewsTable.getItems().clear();
+  }
+
+  private void refreshReviewTable() {
+
   }
 
   @FXML

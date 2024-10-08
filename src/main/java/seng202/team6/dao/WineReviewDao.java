@@ -49,6 +49,7 @@ public class WineReviewDao extends Dao {
             + "RATING         DOUBLE        NOT NULL,"
             + "DESCRIPTION    VARCHAR(256)  NOT NULL,"
             + "DATE           DATE          NOT NULL,"
+            + "FLAG           INTEGER       NOT NULL CHECK(FLAG IN (\"0\", \"1\")),"
             + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE,"
             + "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE"
             + ")"
@@ -142,8 +143,9 @@ public class WineReviewDao extends Dao {
    * @return The WineReview object with the specified parameters
    */
   public WineReview add(User user, Wine wine, double rating, String description, Date date) {
+    Integer flag = 1;
     Timer timer = new Timer();
-    String insert = "INSERT INTO WINE_REVIEW VALUES (null, ?, ?, ?, ?, ?)";
+    String insert = "INSERT INTO WINE_REVIEW VALUES (null, ?, ?, ?, ?, ?, 0)";
     try (PreparedStatement statement = connection.prepareStatement(insert,
         Statement.RETURN_GENERATED_KEYS)) {
       statement.setString(1, user.getUsername());
@@ -166,7 +168,8 @@ public class WineReviewDao extends Dao {
               user.getUsername(),
               rating,
               description,
-              date
+              date,
+              flag
           );
           if (useCache()) {
             wineReviewCache.addObject(id, wineReview);
@@ -245,7 +248,8 @@ public class WineReviewDao extends Dao {
         resultSet.getString("USERNAME"),
         resultSet.getDouble("RATING"),
         resultSet.getString("DESCRIPTION"),
-        resultSet.getDate("DATE")
+        resultSet.getDate("DATE"),
+        resultSet.getInt("FLAG")
     );
     wineReviewCache.addObject(id, wineReview);
     bindUpdater(wineReview);
