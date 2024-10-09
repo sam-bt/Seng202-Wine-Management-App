@@ -45,10 +45,10 @@ public class VineyardDaoTest {
     vineyardDao = databaseManager.getVineyardsDao();
     vineyardDao.setUseCache(false);
 
-    testVineyard1 = new Vineyard(1, "Test1 Vineyard", "9 Maidstone Road", "Tasman",
-        "www.test.com", "test", "www.test.com", new GeoLocation(-43.52017341146717, 172.57804428385361));
-    testVineyard2 = new Vineyard(2, "Test2 Vineyard", "111 Test Road", "Taranaki",
-        "www.fake.com", "oops", "www.dog.com", new GeoLocation(-41.636723680359104, 172.25705105084347));
+    testVineyard1 = new Vineyard(1, "Test1 Vineyard", "Christchurch", "Canterbury",
+        "www.test.com", "test", "www.test.com", new GeoLocation(-43.532,172.6306));
+    testVineyard2 = new Vineyard(2, "Test2 Vineyard", "Dunedin", "Otago",
+        "www.fake.com", "oops", "www.dog.com", new GeoLocation(-45.8788,170.5028));
     testVineyard3 = new Vineyard(2, "Test3 Vineyard", "999 Bill Street", "Northland",
         "www.lol.com", "cat", "www.uno.com", new GeoLocation(-134.643, 159.09));
     vineyardDao.addAll(List.of(testVineyard1, testVineyard2, testVineyard3));
@@ -106,8 +106,7 @@ public class VineyardDaoTest {
     UserDao userDao = databaseManager.getUserDao();
     userDao.add(testUser);
     VineyardTourDao vineyardTourDao = databaseManager.getVineyardTourDao();
-    VineyardTour testTour = new VineyardTour(1, "testUser", "testTour", Island.SOUTH);
-    vineyardTourDao.create(testUser, "testTour", Island.SOUTH);
+    VineyardTour testTour = vineyardTourDao.create(testUser, "testTour", Island.SOUTH);
 
     vineyardTourDao.addVineyard(testTour, testVineyard1);
     vineyardTourDao.addVineyard(testTour, testVineyard2);
