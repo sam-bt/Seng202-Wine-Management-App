@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -22,8 +23,10 @@ import seng202.team6.gui.controls.container.CardsContainer;
 import seng202.team6.gui.popup.GeneralPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.GeoLocation;
+import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
+import seng202.team6.model.WineList;
 import seng202.team6.service.TourPlanningService;
 import seng202.team6.service.VineyardService;
 import seng202.team6.service.VineyardToursService;
@@ -132,39 +135,40 @@ public class TourPlanningController extends Controller {
     planTourTabContainer.getChildren().remove(planTourOptionsContainer);
   }
 
-  /**
-   * Handles the action when the create tour button is clicked.
-   */
   @FXML
   public void onCreateTourButtonClick() {
-    GeneralPopupController popup = managerContext.getGuiManager().mainController.showPopup();
-    popup.setTitle("Create Vineyard Tour");
-
-    VBox nameWrapper = new VBox();
-    Label nameLabel = new Label("Name");
-    TextField nameTextField = new TextField();
-    nameTextField.setMaxWidth(Double.MAX_VALUE);
-    nameWrapper.getChildren().addAll(nameLabel, nameTextField);
-    nameWrapper.setSpacing(10);
-    nameWrapper.setMaxWidth(Double.MAX_VALUE);
-    nameWrapper.prefWidthProperty().bind(popup.getContentContainer().widthProperty());
-    popup.setContent(nameWrapper);
+    GeneralPopupController popup = setupCreateTourPopup("Create Vineyard Tour");
+    VBox optionsWrapper = createTourPopupOptionsWrapper(popup);
+    TextField nameTextField = createNameField(optionsWrapper);
+    popup.addContent(optionsWrapper);
 
     popup.addButton("Create", () -> {
-      // todo validation
-      VineyardTour vineyardTour = vineyardToursService.createVineyardTour(nameTextField.getText());
-      openVineyardTour(vineyardTour);
-      popup.close();
+      createVineyardTour(nameTextField.getText(), popup);
     });
     popup.addCancelButton();
   }
 
-  /**
-   * Handles the action when the create tour from list button is clicked.
-   */
   @FXML
   public void onCreateTourFromListButtonClick() {
+    GeneralPopupController popup = setupCreateTourPopup("Create Vineyard Tour");
+    VBox optionsWrapper = createTourPopupOptionsWrapper(popup);
+    TextField nameTextField = createNameField(optionsWrapper);
 
+    Label listLabel = new Label("List");
+    ComboBox<WineList> wineListsComboBox = createWineListComboBox();
+    optionsWrapper.getChildren().addAll(listLabel, wineListsComboBox);
+    popup.addContent(optionsWrapper);
+
+    popup.addButton("Create", () -> {
+      createVineyardTour(nameTextField.getText(), popup);
+      WineList wineList = wineListsComboBox.getSelectionModel().getSelectedItem();
+      VineyardTour vineyardTour = createVineyardTour(nameTextField.getText(), popup);
+      openVineyardTour(vineyardTour);
+      managerContext.getDatabaseManager().getVineyardsDao()
+          .getAllInList(wineList)
+          .forEach(vineyard -> currentTourPlanningService.addVineyard(vineyard));
+    });
+    popup.addCancelButton();
   }
 
   /**
@@ -291,5 +295,43 @@ public class TourPlanningController extends Controller {
     popup.setTitle("Error Calculating Route");
     popup.setMessage("There was an error calculating a route. Please try again later.");
     popup.addOkButton();
+  }
+
+  private VBox createTourPopupOptionsWrapper(GeneralPopupController popup) {
+    VBox optionsWrapper = new VBox();
+    optionsWrapper.setSpacing(10);
+    optionsWrapper.setMaxWidth(Double.MAX_VALUE);
+    optionsWrapper.prefWidthProperty().bind(popup.getContentContainer().widthProperty());
+    return optionsWrapper;
+  }
+
+  private GeneralPopupController setupCreateTourPopup(String title) {
+    GeneralPopupController popup = managerContext.getGuiManager().mainController.showPopup();
+    popup.setTitle(title);
+    return popup;
+  }
+
+  private TextField createNameField(VBox optionsWrapper) {
+    final Label nameLabel = new Label("Name");
+    TextField nameTextField = new TextField();
+    nameTextField.setMaxWidth(Double.MAX_VALUE);
+    optionsWrapper.getChildren().addAll(nameLabel, nameTextField);
+    return nameTextField;
+  }
+
+  private ComboBox<WineList> createWineListComboBox() {
+    ComboBox<WineList> wineListsComboBox = new ComboBox<>();
+    User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
+    ObservableList<WineList> wineLists = managerContext.getDatabaseManager().getWineListDao().getAll(user);
+    wineListsComboBox.getItems().addAll(wineLists);
+    return wineListsComboBox;
+  }
+
+  private VineyardTour createVineyardTour(String name, GeneralPopupController popup) {
+    // todo validation
+    VineyardTour vineyardTour = vineyardToursService.createVineyardTour(name);
+    openVineyardTour(vineyardTour);
+    popup.close();
+    return vineyardTour;
   }
 }

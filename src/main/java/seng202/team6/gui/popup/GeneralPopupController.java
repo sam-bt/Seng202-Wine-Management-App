@@ -110,7 +110,7 @@ public class GeneralPopupController extends Controller {
    *
    * @param node The content to display in the popup.
    */
-  public void setContent(Node node) {
+  public void addContent(Node node) {
     contentContainer.getChildren().add(node);
     if (!container.getChildren().contains(node)) {
       container.getChildren().addFirst(node);
