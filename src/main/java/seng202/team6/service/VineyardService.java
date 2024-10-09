@@ -32,29 +32,17 @@ public class VineyardService {
     databaseManager.getVineyardsDao().updateUniques();
   }
 
+  /**
+   * Clears the list of vineyards currently loaded and adds a range of vineyards which meet the
+   * specified filter criteria.
+   *
+   * @param filters the filters that specify what vineyards to load.
+   */
   public void applyFilters(VineyardFilters filters) {
     vineyards.clear();
     ObservableList<Vineyard> vineyards = databaseManager.getVineyardsDao()
         .getAllInRange(0, 100, filters);
     this.vineyards.addAll(vineyards);
-  }
-
-  /**
-   * Adds distinct vineyard values (names, addresses, and regions) to the provided sorted sets.
-   *
-   * @param nameValues    a sorted set to hold distinct vineyard names
-   * @param addressValues a sorted set to hold distinct vineyard addresses
-   * @param regionValues  a sorted set to hold distinct vineyard regions
-   */
-  public void addDistinctValues(SortedSet<String> nameValues, SortedSet<String> addressValues,
-      SortedSet<String> regionValues) {
-    // fixme - angus merge conflict deleted this
-    // nameValues.addAll(databaseManager
-    //     .getD("NAME", "VINEYARD"));
-    // addressValues.addAll(databaseManager
-    //     .getDistinctStringValues("ADDRESS", "VINEYARD"));
-    // regionValues.addAll(databaseManager
-    //     .getDistinctStringValues("REGION", "VINEYARD"));
   }
 
   /**

@@ -100,14 +100,11 @@ public class VineyardsController extends Controller {
 
   @FXML
   private void onResetClick() {
-    VineyardFilters vineyardFilters = new VineyardFilters(
-        "",
-        "",
-        "");
+    VineyardFilters vineyardFilters = new VineyardFilters("", "", "");
+    vineyardService.applyFilters(vineyardFilters);
     nameTextField.setText("");
     addressTextField.setText("");
     regionTextField.setText("");
-    vineyardService.applyFilters(vineyardFilters);
   }
 
   private Card createVineyardCard(Vineyard vineyard) {

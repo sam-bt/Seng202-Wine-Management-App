@@ -208,6 +208,13 @@ public class VineyardDao extends Dao {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Updates a range of unique values using the vineyards data stat service.
+   *
+   * <p>
+   * When the cache is invalidated by write operations to the database this must be called.
+   * </p>
+   */
   public void updateUniques() {
     Timer timer = new Timer();
     String query = "SELECT NAME, ADDRESS, REGION FROM VINEYARD";
