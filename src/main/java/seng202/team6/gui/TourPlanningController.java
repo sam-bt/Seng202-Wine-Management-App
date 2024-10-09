@@ -92,8 +92,8 @@ public class TourPlanningController extends Controller {
           change.getAddedSubList().forEach(vineyardTour ->
               vineyardTourButtonsList.add(vineyardTour, vineyardTour.nameProperty(), () -> {
                 // if the user already has the tour open, don't open it again
-                if (currentTourPlanningService == null ||
-                    currentTourPlanningService.getVineyardTour() != vineyardTour) {
+                if (currentTourPlanningService == null
+                    || currentTourPlanningService.getVineyardTour() != vineyardTour) {
                   openVineyardTour(vineyardTour);
                   tabPane.getSelectionModel().select(planTourTab);
                 }
@@ -140,15 +140,14 @@ public class TourPlanningController extends Controller {
     GeneralPopupController popup = managerContext.getGuiManager().mainController.showPopup();
     popup.setTitle("Create Vineyard Tour");
 
+    VBox nameWrapper = new VBox();
     Label nameLabel = new Label("Name");
     TextField nameTextField = new TextField();
     nameTextField.setMaxWidth(Double.MAX_VALUE);
-
-    VBox nameWrapper = new VBox();
+    nameWrapper.getChildren().addAll(nameLabel, nameTextField);
     nameWrapper.setSpacing(10);
     nameWrapper.setMaxWidth(Double.MAX_VALUE);
     nameWrapper.prefWidthProperty().bind(popup.getContentContainer().widthProperty());
-    nameWrapper.getChildren().addAll(nameLabel, nameTextField);
     popup.setContent(nameWrapper);
 
     popup.addButton("Create", () -> {
