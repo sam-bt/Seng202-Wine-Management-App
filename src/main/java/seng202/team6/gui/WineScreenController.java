@@ -242,6 +242,7 @@ public class WineScreenController extends Controller {
     openWineRange(null);
 
     tableView.setOnMouseClicked(this::openWineOnClick);
+
   }
 
   /**
