@@ -48,13 +48,13 @@ public class WineScreenController extends Controller {
   private final PageService pageService = new PageService(100);
   // FXML elements
   @FXML
-  public Button prevPageButtonSimpleView;
+  private Button prevPageButtonSimpleView;
   @FXML
-  public TextField pageNumberTextFieldSimpleView;
+  private TextField pageNumberTextFieldSimpleView;
   @FXML
-  public Label maxPageNumberSimpleView;
+  private Label maxPageNumberSimpleView;
   @FXML
-  public Button nextPageButtonSimpleView;
+  private Button nextPageButtonSimpleView;
   @FXML
   public TabPane tabPane;
   private LeafletOsmController mapController;
