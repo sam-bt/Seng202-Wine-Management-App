@@ -27,12 +27,14 @@ import javafx.util.converter.IntegerStringConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
+import seng202.team6.dao.WineDao;
 import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineFilters;
 import seng202.team6.service.PageService;
+import seng202.team6.service.WineDataStatService;
 import seng202.team6.util.YearStringConverter;
 
 /**
@@ -44,17 +46,6 @@ public class WineScreenController extends Controller {
   // Utilities and services
   private final Logger log = LogManager.getLogger(WineScreenController.class);
   private final PageService pageService = new PageService(100);
-  private LeafletOsmController mapController;
-
-  // Custom element (added in code)
-  private RangeSlider scoreSlider;
-  private RangeSlider abvSlider;
-  private RangeSlider priceSlider;
-  private RangeSlider vintageSlider;
-  private AutoCompletionTextField countryTextField;
-  private AutoCompletionTextField wineryTextField;
-  private AutoCompletionTextField colorTextField;
-
   // FXML elements
   @FXML
   public Button prevPageButtonSimpleView;
@@ -66,6 +57,15 @@ public class WineScreenController extends Controller {
   public Button nextPageButtonSimpleView;
   @FXML
   public TabPane tabPane;
+  private LeafletOsmController mapController;
+  // Custom element (added in code)
+  private RangeSlider scoreSlider;
+  private RangeSlider abvSlider;
+  private RangeSlider priceSlider;
+  private RangeSlider vintageSlider;
+  private AutoCompletionTextField countryTextField;
+  private AutoCompletionTextField wineryTextField;
+  private AutoCompletionTextField colorTextField;
   @FXML
   private TableView<Wine> tableView;
   @FXML
@@ -330,7 +330,7 @@ public class WineScreenController extends Controller {
    */
   public void onResetFiltersButtonPressed() {
     // Reset all parameters
-    resetSliders();
+    resetSliderThumbs();
     wineryTextField.setText("");
     countryTextField.setText("");
     titleTextField.setText("");
@@ -410,94 +410,113 @@ public class WineScreenController extends Controller {
    * Sets the value of the current filters based off the inputted filters.
    */
   public void setFilterValues() {
-    // Ensure uniques are up to date
-    managerContext.getDatabaseManager().getWineDao().updateUniques();
+
+    WineDao wineDao = managerContext.getDatabaseManager().getWineDao();
+    WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
+
+    // Ensure unique value are up to date
+    wineDao.updateUniques();
 
     // Auto Complete boxes and range sliders
     // Update filter checkboxes
-    final Set<String> winerySet = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getUniqueWineries();
-    final Set<String> countrySet = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getUniqueCountries();
-    final Set<String> colorSet = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getUniqueColors();
-    final int minVintage = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMinVintage();
-    final int maxVintage = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMaxVintage();
-    final double maxScore = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMaxScore();
-    final double minScore = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMinScore();
-    final double minPrice = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMinPrice();
-    final double maxPrice = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMaxPrice();
-    final double maxAbv = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMaxAbv();
-    final double minAbv = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMinAbv();
+    final Set<String> winerySet = wineDataStatService.getUniqueWineries();
+    final Set<String> countrySet = wineDataStatService.getUniqueCountries();
+    final Set<String> colorSet = wineDataStatService.getUniqueColors();
+    final int minVintage = wineDataStatService.getMinVintage();
+    final int maxVintage = wineDataStatService.getMaxVintage();
+    final double maxScore = wineDataStatService.getMaxScore();
+    final double minScore = wineDataStatService.getMinScore();
+    final double minPrice = wineDataStatService.getMinPrice();
+    final double maxPrice = wineDataStatService.getMaxPrice();
+    final double maxAbv = wineDataStatService.getMaxAbv();
+    final double minAbv = wineDataStatService.getMinAbv();
 
-    // Clear old list data
-    wineryTextField.getEntries().clear();
-    countryTextField.getEntries().clear();
-    colorTextField.getEntries().clear();
+    // Configure auto-complete data
+    configureAutoComplete(wineryTextField, winerySet);
+    configureAutoComplete(countryTextField, countrySet);
+    configureAutoComplete(colorTextField, colorSet);
 
-    // Set data for auto complete
-    wineryTextField.getEntries().addAll(winerySet);
-    countryTextField.getEntries().addAll(countrySet);
-    colorTextField.getEntries().addAll(colorSet);
+    // Configure Sliders
+    configureSlider(scoreSlider, minScore, maxScore, 1, 0);
+    configureSlider(priceSlider, minPrice, maxPrice, 100, 5);
 
-    // Following entries are commented out as we currently don't have data for them
-    // Set min and max ranges
-    scoreSlider.setMin(minScore);
-    scoreSlider.setMax(maxScore);
-    vintageSlider.setMin(minVintage);
-    vintageSlider.setMax(maxVintage);
-    priceSlider.setMin(minPrice);
-    priceSlider.setMax(maxPrice);
-    abvSlider.setMin(minAbv);
-    abvSlider.setMax(maxAbv);
+    YearStringConverter yearStringConverter = new YearStringConverter(); // For vintage
+    configureSlider(vintageSlider, minVintage, maxVintage, 1, 0,
+        yearStringConverter);
 
     // Set slider handles to min and max values
     // Fixes a graphic issue where the slider values don't change with the min and max adjustments
-    resetSliders();
-
-    // Ensure the sliders display properly
-    scoreSlider.setMajorTickUnit(1);
-    vintageSlider.setMajorTickUnit(1);
-    vintageSlider.setMinorTickCount(0);
-    priceSlider.setMajorTickUnit(100);
-    priceSlider.setMinorTickCount(5);
+    resetSliderThumbs();
 
     // Ensure sliders are valid and disable if not
     validateSlider(vintageSlider, minVintage, maxVintage);
     validateSlider(scoreSlider, minScore, maxScore);
     validateSlider(priceSlider, minPrice, maxPrice);
     validateSlider(abvSlider, minAbv, maxAbv);
-
-    YearStringConverter yearStringConverter = new YearStringConverter();
-    vintageSlider.setLabelFormatter(yearStringConverter);
-
   }
 
   // Private helper functions
 
   /**
+   * Configures Auto-completing text field with given entries.
+   *
+   * @param textField Target text field
+   * @param entries   Auto-complete entries
+   */
+  private void configureAutoComplete(AutoCompletionTextField textField, Set<String> entries) {
+    textField.getEntries().clear(); // Clear old data
+    textField.getEntries().addAll(entries); // Add new data for auto-complete
+  }
+
+  /**
+   * helper method to configure range slider.
+   *
+   * @param rangeSlider    Range Slider to configure
+   * @param min            Minimum range slider value
+   * @param max            Maximum range slider value
+   * @param majorTickUnit  Units between major tick
+   * @param minorTickCount Number of minor ticks
+   */
+  private void configureSlider(RangeSlider rangeSlider,
+      double min,
+      double max,
+      double majorTickUnit,
+      int minorTickCount) {
+
+    configureSlider(rangeSlider, min, max, majorTickUnit, minorTickCount, null);
+  }
+
+  /**
+   * Overloaded helper method for range slider with label formatter.
+   *
+   * @param rangeSlider    Range Slider to configure
+   * @param min            Minimum range slider value
+   * @param max            Maximum range slider value
+   * @param majorTickUnit  Units between major tick
+   * @param minorTickCount Number of minor ticks
+   * @param labelFormatter Label formatter
+   */
+  private void configureSlider(RangeSlider rangeSlider,
+      double min,
+      double max,
+      double majorTickUnit,
+      int minorTickCount,
+      StringConverter<Number> labelFormatter) {
+
+    rangeSlider.setMin(min);
+    rangeSlider.setMax(max);
+    rangeSlider.setMajorTickUnit(majorTickUnit);
+    rangeSlider.setMinorTickCount(minorTickCount);
+
+    if (labelFormatter != null) {
+      rangeSlider.setLabelFormatter(labelFormatter);
+    }
+  }
+
+  /**
    * Resets all sliders back to their minimums and maxes.
    */
-  private void resetSliders() {
+  private void resetSliderThumbs() {
     scoreSlider.setHighValue(scoreSlider.getMax());
     scoreSlider.setLowValue(scoreSlider.getMin());
     vintageSlider.setHighValue(vintageSlider.getMax());
