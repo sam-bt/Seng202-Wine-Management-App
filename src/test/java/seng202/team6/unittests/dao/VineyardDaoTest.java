@@ -1,10 +1,15 @@
 package seng202.team6.unittests.dao;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +22,7 @@ import org.apache.xmlbeans.impl.xb.xsdschema.Attribute.Use;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
 import seng202.team6.dao.GeoLocationDao;
 import seng202.team6.dao.UserDao;
 import seng202.team6.dao.VineyardDao;
@@ -30,6 +36,7 @@ import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineDatePair;
+import seng202.team6.service.VineyardService;
 
 public class VineyardDaoTest {
 
@@ -56,6 +63,12 @@ public class VineyardDaoTest {
   @AfterEach
   void teardown() throws SQLException {
     databaseManager.teardown();
+  }
+
+  @Test
+  void testInit() throws SQLException {
+    VineyardService vineyardService = new VineyardService(databaseManager);
+    assertDoesNotThrow(vineyardService::init);
   }
 
   @Test
@@ -115,4 +128,12 @@ public class VineyardDaoTest {
     assertEquals("Test2 Vineyard", vineyards.get(1).getName());
 
   }
+
+  @Test
+  void testVineyardHasData() {
+
+    assertTrue(vineyardDao.vineyardsTableHasData());
+
+  }
+
 }
