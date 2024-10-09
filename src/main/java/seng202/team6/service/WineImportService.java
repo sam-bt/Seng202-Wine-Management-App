@@ -38,7 +38,8 @@ public class WineImportService {
    */
   public String extractPropertyFromRowOrDefault(Map<WinePropertyName, Integer> valid, String[] row,
       WinePropertyName winePropertyName) {
-    return valid.containsKey(winePropertyName) ? row[valid.get(winePropertyName)] : "";
+    return winePropertyName != WinePropertyName.NONE && valid.containsKey(winePropertyName) ?
+        row[valid.get(winePropertyName)] : "";
   }
 
   /**
@@ -51,7 +52,7 @@ public class WineImportService {
     Set<WinePropertyName> duplicatedProperties = new HashSet<>();
     Set<WinePropertyName> selectedProperties = new HashSet<>();
     selectedWineProperties.forEach((index, winePropertyName) -> {
-      if (!selectedProperties.add(winePropertyName)) {
+      if (winePropertyName != WinePropertyName.NONE && !selectedProperties.add(winePropertyName)) {
         duplicatedProperties.add(winePropertyName);
       }
     });
