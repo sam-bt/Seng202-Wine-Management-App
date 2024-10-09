@@ -442,6 +442,7 @@ public class MainController extends Controller {
         () -> new DetailedWineViewController(managerContext, wine, backButtonAction), null);
   }
 
+
   /**
    * Launches the detailed wine view.
    *
