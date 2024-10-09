@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Vineyard;
+import seng202.team6.model.VineyardFilters;
 
 /**
  * The VineyardService class provides methods to manage vineyard data.
@@ -27,8 +28,13 @@ public class VineyardService {
    * Initializes the service by retrieving vineyards from the database.
    */
   public void init() {
+    applyFilters(null);
+  }
+
+  public void applyFilters(VineyardFilters filters) {
+    vineyards.clear();
     ObservableList<Vineyard> vineyards = databaseManager.getVineyardsDao()
-        .getAllInRange(0, 100, null);
+        .getAllInRange(0, 100, filters);
     this.vineyards.addAll(vineyards);
   }
 

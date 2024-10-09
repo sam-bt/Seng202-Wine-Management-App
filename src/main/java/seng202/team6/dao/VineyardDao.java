@@ -88,10 +88,10 @@ public class VineyardDao extends Dao {
   public ObservableList<Vineyard> getAllInRange(int begin, int end,
       VineyardFilters vineyardFilters) {
     Timer timer = new Timer(); // todo - make query not use limit and offset
-    String sql = "SELECT * FROM VINEYARD "
+    String sql = "SELECT VINEYARD.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE FROM VINEYARD "
         + "LEFT JOIN GEOLOCATION ON LOWER(VINEYARD.ADDRESS) LIKE LOWER(GEOLOCATION.NAME)"
         + (vineyardFilters == null ? "" :
-        "where NAME like ? "
+        "where VINEYARD.NAME like ? "
             + "and ADDRESS like ? "
             + "and REGION like ? ")
         + "ORDER BY VINEYARD.ID "

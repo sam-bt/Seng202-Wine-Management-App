@@ -14,6 +14,7 @@ import seng202.team6.gui.controls.card.Card;
 import seng202.team6.gui.controls.cardcontent.VineyardCardContent;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Vineyard;
+import seng202.team6.model.VineyardFilters;
 import seng202.team6.service.VineyardService;
 
 /**
@@ -79,6 +80,27 @@ public class VineyardsController extends Controller {
         }
       }
     });
+  }
+
+  @FXML
+  private void onApplyClick() {
+    VineyardFilters vineyardFilters = new VineyardFilters(
+        nameTextField.getText(),
+        addressTextField.getText(),
+        regionTextField.getText());
+    vineyardService.applyFilters(vineyardFilters);
+  }
+
+  @FXML
+  private void onResetClick() {
+    VineyardFilters vineyardFilters = new VineyardFilters(
+        "",
+        "",
+        "");
+    nameTextField.setText("");
+    addressTextField.setText("");
+    regionTextField.setText("");
+    vineyardService.applyFilters(vineyardFilters);
   }
 
   private Card createVineyardCard(Vineyard vineyard) {
