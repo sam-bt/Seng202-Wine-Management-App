@@ -1,5 +1,7 @@
 package seng202.team6.gui;
 
+import java.util.Set;
+import java.util.SortedSet;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -14,6 +16,8 @@ import seng202.team6.gui.controls.card.Card;
 import seng202.team6.gui.controls.cardcontent.VineyardCardContent;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Vineyard;
+import seng202.team6.model.VineyardFilters;
+import seng202.team6.service.VineyardDataStatService;
 import seng202.team6.service.VineyardService;
 
 /**
@@ -50,11 +54,15 @@ public class VineyardsController extends Controller {
     mapController = new LeafletOsmController(webView.getEngine());
     mapController.initMap();
     vineyardService.init();
-    nameTextField = createAutoCompleteTextField(9, 45);
-    addressTextField = createAutoCompleteTextField(9, 105);
-    regionTextField = createAutoCompleteTextField(9, 165);
-    vineyardService.addDistinctValues(nameTextField.getEntries(), addressTextField.getEntries(),
-        regionTextField.getEntries());
+
+    VineyardDataStatService vineyardDataStatService = managerContext.getDatabaseManager()
+        .getVineyardDataStatService();
+    Set<String> uniqueNames = vineyardDataStatService.getUniqueNames();
+    Set<String> uniqueAddresses = vineyardDataStatService.getUniqueAddresses();
+    Set<String> uniqueRegions = vineyardDataStatService.getUniqueRegions();
+    nameTextField = createAutoCompleteTextField(9, 45, uniqueNames);
+    addressTextField = createAutoCompleteTextField(9, 105, uniqueAddresses);
+    regionTextField = createAutoCompleteTextField(9, 165, uniqueRegions);
   }
 
   private void bindToVineyardService() {
@@ -81,6 +89,24 @@ public class VineyardsController extends Controller {
     });
   }
 
+  @FXML
+  private void onApplyClick() {
+    VineyardFilters vineyardFilters = new VineyardFilters(
+        nameTextField.getText(),
+        addressTextField.getText(),
+        regionTextField.getText());
+    vineyardService.applyFilters(vineyardFilters);
+  }
+
+  @FXML
+  private void onResetClick() {
+    VineyardFilters vineyardFilters = new VineyardFilters("", "", "");
+    vineyardService.applyFilters(vineyardFilters);
+    nameTextField.setText("");
+    addressTextField.setText("");
+    regionTextField.setText("");
+  }
+
   private Card createVineyardCard(Vineyard vineyard) {
     Card card = new Card(vineyardsViewContainer.widthProperty(),
         vineyardsViewContainer.hgapProperty());
@@ -95,13 +121,15 @@ public class VineyardsController extends Controller {
     return card;
   }
 
-  private AutoCompletionTextField createAutoCompleteTextField(double layoutX, double layoutY) {
+  private AutoCompletionTextField createAutoCompleteTextField(double layoutX, double layoutY,
+      Set<String> values) {
     AutoCompletionTextField autoCompleteTextField = new AutoCompletionTextField();
     autoCompleteTextField.setLayoutX(layoutX);
     autoCompleteTextField.setLayoutY(layoutY);
     autoCompleteTextField.prefHeight(33.0);
     autoCompleteTextField.setPrefWidth(300);
     autoCompleteTextField.setStyle("-fx-font-size: 15px;");
+    autoCompleteTextField.getEntries().addAll(values);
     filtersPane.getChildren().add(autoCompleteTextField);
     return autoCompleteTextField;
   }

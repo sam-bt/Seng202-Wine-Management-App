@@ -607,10 +607,8 @@ public class WineDao extends Dao {
         updateMinMax("price", price);
       }
       log.info("Successfully updated unique values wine cache");
-
     } catch (SQLException e) {
       log.error("Failed to update unique values wine cache", e);
-
     }
   }
 
@@ -663,6 +661,11 @@ public class WineDao extends Dao {
     }
   }
 
+  /**
+   * Gets the wineDataStatService.
+   *
+   * @return wineDataStatService
+   */
   public WineDataStatService getWineDataStatService() {
     return wineDataStatService;
   }
