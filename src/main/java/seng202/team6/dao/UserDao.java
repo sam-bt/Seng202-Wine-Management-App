@@ -5,10 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;
 import seng202.team6.util.PasswordUtil;
 import seng202.team6.util.Timer;
+
+
 
 /**
  * Data Access Object (DAO) for handling user related database operations.
@@ -98,6 +102,36 @@ public class UserDao extends Dao {
       log.error("Failed to retrieve user {}", username, error);
     }
     return null;
+  }
+
+  /**
+   * Get all users in the database.
+   *
+   * @return an observable list of all user objects.
+   */
+  public ObservableList<User> getAll() {
+    Timer timer = new Timer();
+
+    ObservableList<User> users = FXCollections.observableArrayList();
+
+    String sql = "SELECT * FROM USER WHERE USERNAME != 'admin'";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          User user = new User(
+              resultSet.getString("USERNAME"),
+              resultSet.getString("PASSWORD"),
+              resultSet.getString("ROLE"),
+              resultSet.getString("SALT")
+          );
+          users.add(user);
+        }
+      }
+    } catch (SQLException error) {
+      log.error("Failed to retrieve users", error);
+      log.error(error.getMessage());
+    }
+    return users;
   }
 
   /**
