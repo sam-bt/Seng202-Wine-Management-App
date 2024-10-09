@@ -9,6 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import seng202.team6.gui.controls.ButtonsList;
 import seng202.team6.gui.controls.card.AddRemoveCard;
@@ -16,6 +18,7 @@ import seng202.team6.gui.controls.card.Card;
 import seng202.team6.gui.controls.cardcontent.ItineraryItemCardContent;
 import seng202.team6.gui.controls.cardcontent.VineyardCardContent;
 import seng202.team6.gui.controls.container.CardsContainer;
+import seng202.team6.gui.popup.ErrorPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
@@ -33,6 +36,12 @@ public class TourPlanningController extends Controller {
   private final VineyardToursService vineyardToursService;
   private final VineyardService vineyardService;
   private final GeolocationResolver geolocationResolver;
+  @FXML
+  private VBox planTourTabContainer;
+  @FXML
+  private HBox noTourSelectedContainer;
+  @FXML
+  private VBox planTourOptionsContainer;
   @FXML
   private Label viewingTourLabel;
   @FXML
@@ -115,6 +124,8 @@ public class TourPlanningController extends Controller {
 
     mapController = new LeafletOsmController(webView.getEngine());
     mapController.initMap();
+
+    planTourTabContainer.getChildren().remove(planTourOptionsContainer);
   }
 
   /**
@@ -140,7 +151,7 @@ public class TourPlanningController extends Controller {
   public void onCalculateTourClick() {
     List<Vineyard> vineyards = currentTourPlanningService.getVineyards();
     if (vineyards.size() < 2) {
-      // todo - add popup to say not enough vineyards in list
+      showNotEnoughVineyardsToCalculateError();
       return;
     }
 
@@ -151,7 +162,7 @@ public class TourPlanningController extends Controller {
         .toList();
     String geometry = geolocationResolver.resolveRoute(vineyardLocations);
     if (geometry == null) {
-      // todo - add popup to say failed to find route
+      showCalculatingRouteError();
       return;
     }
     mapController.addRoute(geometry);
@@ -204,5 +215,32 @@ public class TourPlanningController extends Controller {
     });
     currentTourPlanningService.init();
     viewingTourLabel.setText("Viewing Tour: " + vineyardTour.getName());
+
+    planTourTabContainer.getChildren().remove(noTourSelectedContainer);
+    // if a tour was previously open, don't add the tour options container again
+    if (!planTourTabContainer.getChildren().contains(planTourOptionsContainer)) {
+      planTourTabContainer.getChildren().add(planTourOptionsContainer);
+    }
+  }
+
+  /**
+   * Displays an error popup indicating that there are not enough vineyards in the itinerary to
+   * calculate a route.
+   */
+  private void showNotEnoughVineyardsToCalculateError() {
+    ErrorPopupController error = managerContext.getGuiManager().mainController.showErrorPopup();
+    error.setTitle("Error Calculating Route");
+    error.setMessage("Please add 2 or more vineyards to your itinerary to calculate a route.");
+    error.addButton("Ok", error::close);
+  }
+
+  /**
+   * Displays an error popup indicating that there was an issue calculating the route.
+   */
+  private void showCalculatingRouteError() {
+    ErrorPopupController error = managerContext.getGuiManager().mainController.showErrorPopup();
+    error.setTitle("Error Calculating Route");
+    error.setMessage("There was an error calculating a route. Please try again later.");
+    error.addButton("Ok", error::close);
   }
 }

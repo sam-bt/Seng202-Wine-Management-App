@@ -20,6 +20,7 @@ import seng202.team6.gui.popup.AddToListPopupController;
 import seng202.team6.gui.popup.AddToTourPopupController;
 import seng202.team6.gui.popup.CreateListPopupController;
 import seng202.team6.gui.popup.DeleteListPopupController;
+import seng202.team6.gui.popup.ErrorPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.UserViewPopupController;
 import seng202.team6.gui.popup.VineyardTourPopupController;
@@ -579,6 +580,18 @@ public class MainController extends Controller {
     openPopup("/fxml/popup/create_vineyard_tour_popup.fxml",
         () -> new VineyardTourPopupController(managerContext, vineyardToursService,
             modifyingVineyardTour));
+  }
+
+  /**
+   * Displays an error popup. The popup is displayed on the screen, and the controller for the popup
+   * is returned to the caller for further customization.
+   *
+   * @return The ErrorPopupController associated with the displayed error popup.
+   */
+  public ErrorPopupController showErrorPopup() {
+    ErrorPopupController errorPopupController = new ErrorPopupController(managerContext);
+    openPopup("/fxml/popup/error_popup.fxml", () -> errorPopupController);
+    return errorPopupController;
   }
 
   /**
