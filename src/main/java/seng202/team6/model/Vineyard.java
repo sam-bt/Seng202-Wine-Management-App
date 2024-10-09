@@ -249,4 +249,11 @@ public class Vineyard {
   public void setGeoLocation(GeoLocation geoLocation) {
     geoLocationProperty().setValue(geoLocation);
   }
+
+  @Override
+  public String toString() {
+    return "Vineyard{" + "id=" + id + ", name=" + name + ", address=" + address + ", region="
+        + region + ", website=" + website + ", description=" + description + ", logoUrl=" + logoUrl
+        + ", geoLocation=" + geoLocation + '}';
+  }
 }
