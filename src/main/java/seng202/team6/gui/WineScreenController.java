@@ -41,48 +41,53 @@ import seng202.team6.util.YearStringConverter;
 
 public class WineScreenController extends Controller {
 
+  // Utilities and services
   private final Logger log = LogManager.getLogger(WineScreenController.class);
   private final PageService pageService = new PageService(100);
-  public TabPane tabPane;
-  public Button prevPageButtonSimpleView;
-  public TextField pageNumberTextFieldSimpleView;
-  public Label maxPageNumberSimpleView;
-  public Button nextPageButtonSimpleView;
-  @FXML
-  TableView<Wine> tableView;
-  @FXML
-  AnchorPane filtersPane;
-  @FXML
-  WebView webView;
-  @FXML
-  Button applyFiltersButton;
-  @FXML
-  Button resetFiltersButton;
-  AutoCompletionTextField countryTextField;
-  AutoCompletionTextField wineryTextField;
-  AutoCompletionTextField colorTextField;
-  @FXML
-  TextField titleTextField;
-  @FXML
-  private TilePane winesViewContainer;
+  private LeafletOsmController mapController;
+
+  // Custom element (added in code)
   private RangeSlider scoreSlider;
   private RangeSlider abvSlider;
   private RangeSlider priceSlider;
   private RangeSlider vintageSlider;
-  private LeafletOsmController mapController;
+  private AutoCompletionTextField countryTextField;
+  private AutoCompletionTextField wineryTextField;
+  private AutoCompletionTextField colorTextField;
 
+  // FXML elements
+  @FXML
+  public Button prevPageButtonSimpleView;
+  @FXML
+  public TextField pageNumberTextFieldSimpleView;
+  @FXML
+  public Label maxPageNumberSimpleView;
+  @FXML
+  public Button nextPageButtonSimpleView;
+  @FXML
+  public TabPane tabPane;
+  @FXML
+  private TableView<Wine> tableView;
+  @FXML
+  private AnchorPane filtersPane;
+  @FXML
+  private WebView webView;
+  @FXML
+  private Button applyFiltersButton;
+  @FXML
+  private Button resetFiltersButton;
+  @FXML
+  private TextField titleTextField;
+  @FXML
+  private TilePane winesViewContainer;
   @FXML
   private Button nextPageButtonRawViewer;
-
   @FXML
   private Button prevPageButtonRawViewer;
-
   @FXML
   private TextField pageNumberTextFieldRawViewer;
-
   @FXML
   private WineFilters currentFilters;
-
   @FXML
   private Label maxPageNumberRawViewer;
 
@@ -94,6 +99,45 @@ public class WineScreenController extends Controller {
    */
   public WineScreenController(ManagerContext managerContext) {
     super(managerContext);
+  }
+
+  /**
+   * Called after the constructor for when fxml is loaded.
+   * <p>
+   * Gets, loads, and displays a table from a list of wines from the controller layer
+   * </p>
+   */
+  @Override
+  public void init() {
+    // Create AutoCompleteBoxes
+    this.countryTextField = createAutoCompleteTextField(9.0, 105.0);
+    this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
+    this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
+
+    // Setup Sliders and filters
+    sliderInit();
+    setFilterValues();
+
+    // ensure tabbing doesn't select sliders
+    colorTextField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.TAB) {
+        applyFiltersButton.requestFocus();
+      }
+    });
+
+    // Setup page navigation functionality
+    setupNavigation();
+
+    // Setup map
+    mapController = new LeafletOsmController(webView.getEngine());
+    mapController.initMap();
+
+    // Setup table with wine data
+    setupTableColumns();
+    openWineRange(null);
+
+    // Setup detailed wine
+    tableView.setOnMouseClicked(this::openWineOnClick);
   }
 
   /**
@@ -209,43 +253,6 @@ public class WineScreenController extends Controller {
   }
 
   /**
-   * Called after the constructor for when fxml is loaded.
-   * <p>
-   * Gets, loads, and displays a table from a list of wines from the controller layer
-   * </p>
-   */
-  @Override
-  public void init() {
-    // Create AutoCompleteBoxes
-    this.countryTextField = createAutoCompleteTextField(9.0, 105.0);
-    this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
-    this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
-
-    // Setup Sliders and filters
-    sliderInit();
-    setFilterValues();
-
-    // ensure tabbing doesn't select sliders
-    colorTextField.setOnKeyPressed(event -> {
-      if (event.getCode() == KeyCode.TAB) {
-        applyFiltersButton.requestFocus();
-      }
-    });
-
-    setupNavigation();
-
-    // Setup map
-    mapController = new LeafletOsmController(webView.getEngine());
-    mapController.initMap();
-
-    setupTableColumns();
-    openWineRange(null);
-
-    tableView.setOnMouseClicked(this::openWineOnClick);
-
-  }
-
-  /**
    * Creates a range slider element and displays it on the filters pane at the given layout
    * coordinates.
    *
@@ -323,14 +330,7 @@ public class WineScreenController extends Controller {
    */
   public void onResetFiltersButtonPressed() {
     // Reset all parameters
-    priceSlider.setHighValue(priceSlider.getMax());
-    priceSlider.setLowValue(priceSlider.getMin());
-    scoreSlider.setHighValue(scoreSlider.getMax());
-    scoreSlider.setLowValue(scoreSlider.getMin());
-    abvSlider.setHighValue(abvSlider.getMax());
-    abvSlider.setLowValue(abvSlider.getMin());
-    vintageSlider.setHighValue(vintageSlider.getMax());
-    vintageSlider.setLowValue(vintageSlider.getMin());
+    resetSliders();
     wineryTextField.setText("");
     countryTextField.setText("");
     titleTextField.setText("");
@@ -359,16 +359,6 @@ public class WineScreenController extends Controller {
         openDetailedWineView(wine);
       }
     }
-  }
-
-  /**
-   * Opens the detailed wine view for a wine.
-   *
-   * @param wine wine
-   */
-  private void openDetailedWineView(Wine wine) {
-    Runnable backAction = () -> managerContext.getGuiManager().mainController.openWineScreen();
-    managerContext.getGuiManager().mainController.openDetailedWineView(wine, backAction);
   }
 
   /**
@@ -482,14 +472,7 @@ public class WineScreenController extends Controller {
 
     // Set slider handles to min and max values
     // Fixes a graphic issue where the slider values don't change with the min and max adjustments
-    scoreSlider.setHighValue(scoreSlider.getMax());
-    scoreSlider.setLowValue(scoreSlider.getMin());
-    vintageSlider.setHighValue(vintageSlider.getMax());
-    vintageSlider.setLowValue(vintageSlider.getMin());
-    priceSlider.setHighValue(priceSlider.getMax());
-    priceSlider.setLowValue(priceSlider.getMin());
-    abvSlider.setHighValue(abvSlider.getMax());
-    abvSlider.setLowValue(abvSlider.getMin());
+    resetSliders();
 
     // Ensure the sliders display properly
     scoreSlider.setMajorTickUnit(1);
@@ -507,6 +490,32 @@ public class WineScreenController extends Controller {
     YearStringConverter yearStringConverter = new YearStringConverter();
     vintageSlider.setLabelFormatter(yearStringConverter);
 
+  }
+
+  // Private helper functions
+
+  /**
+   * Resets all sliders back to their mins and maxes.
+   */
+  private void resetSliders() {
+    scoreSlider.setHighValue(scoreSlider.getMax());
+    scoreSlider.setLowValue(scoreSlider.getMin());
+    vintageSlider.setHighValue(vintageSlider.getMax());
+    vintageSlider.setLowValue(vintageSlider.getMin());
+    priceSlider.setHighValue(priceSlider.getMax());
+    priceSlider.setLowValue(priceSlider.getMin());
+    abvSlider.setHighValue(abvSlider.getMax());
+    abvSlider.setLowValue(abvSlider.getMin());
+  }
+
+  /**
+   * Opens the detailed wine view for a wine.
+   *
+   * @param wine wine
+   */
+  private void openDetailedWineView(Wine wine) {
+    Runnable backAction = () -> managerContext.getGuiManager().mainController.openWineScreen();
+    managerContext.getGuiManager().mainController.openDetailedWineView(wine, backAction);
   }
 
   /**
@@ -652,7 +661,7 @@ public class WineScreenController extends Controller {
     prevPageButtonSimpleView.setOnAction(actionEvent -> previousPage());
     nextPageButtonSimpleView.setOnAction(actionEvent -> nextPage());
 
-    // Set textfield listener and on action to ensure valid inputs
+    // Set textfield listener and on action and onfocused to ensure valid inputs
     pageNumberTextFieldRawViewer.focusedProperty()
         .addListener((observableValue, oldValue, newValue) -> {
           if (!newValue) {
