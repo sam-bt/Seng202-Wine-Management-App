@@ -135,6 +135,9 @@ public class TourPlanningController extends Controller {
     planTourTabContainer.getChildren().remove(planTourOptionsContainer);
   }
 
+  /**
+   * Handles the action when the "Create Tour" button is clicked.
+   */
   @FXML
   public void onCreateTourButtonClick() {
     GeneralPopupController popup = setupCreateTourPopup("Create Vineyard Tour");
@@ -148,9 +151,12 @@ public class TourPlanningController extends Controller {
     popup.addCancelButton();
   }
 
+  /**
+   * Handles the action when the "Create Tour from List" button is clicked.
+   */
   @FXML
   public void onCreateTourFromListButtonClick() {
-    GeneralPopupController popup = setupCreateTourPopup("Create Vineyard Tour");
+    GeneralPopupController popup = setupCreateTourPopup("Create Vineyard Tour from List");
     VBox optionsWrapper = createTourPopupOptionsWrapper(popup);
     TextField nameTextField = createNameField(optionsWrapper);
 
@@ -297,6 +303,13 @@ public class TourPlanningController extends Controller {
     popup.addOkButton();
   }
 
+  /**
+   * Creates a wrapper VBox to contain options in the "Create Tour" popup. This method sets up
+   * spacing, width, and bindings for the wrapper.
+   *
+   * @param popup The popup where the options wrapper will be added.
+   * @return The configured VBox containing options for the popup.
+   */
   private VBox createTourPopupOptionsWrapper(GeneralPopupController popup) {
     VBox optionsWrapper = new VBox();
     optionsWrapper.setSpacing(10);
@@ -305,12 +318,25 @@ public class TourPlanningController extends Controller {
     return optionsWrapper;
   }
 
+  /**
+   * Sets up and displays a popup for creating a vineyard tour with the specified title.
+   *
+   * @param title The title of the popup.
+   * @return The GeneralPopupController handling the popup.
+   */
   private GeneralPopupController setupCreateTourPopup(String title) {
     GeneralPopupController popup = managerContext.getGuiManager().mainController.showPopup();
     popup.setTitle(title);
     return popup;
   }
 
+  /**
+   * Creates a text field for entering the name of the vineyard tour and adds it to the options
+   * container in the popup.
+   *
+   * @param optionsWrapper The VBox to which the name field will be added.
+   * @return The created TextField for entering the tour name.
+   */
   private TextField createNameField(VBox optionsWrapper) {
     final Label nameLabel = new Label("Name");
     TextField nameTextField = new TextField();
@@ -319,14 +345,28 @@ public class TourPlanningController extends Controller {
     return nameTextField;
   }
 
+  /**
+   * Creates and returns a ComboBox containing wine lists for the authenticated user.
+   *
+   * @return A ComboBox populated with the wine lists of the authenticated user.
+   */
   private ComboBox<WineList> createWineListComboBox() {
     ComboBox<WineList> wineListsComboBox = new ComboBox<>();
     User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
-    ObservableList<WineList> wineLists = managerContext.getDatabaseManager().getWineListDao().getAll(user);
+    ObservableList<WineList> wineLists = managerContext.getDatabaseManager().getWineListDao()
+        .getAll(user);
     wineListsComboBox.getItems().addAll(wineLists);
     return wineListsComboBox;
   }
 
+  /**
+   * Creates a new vineyard tour with the specified name and closes the popup upon creation.
+   * The method also opens the newly created vineyard tour for the user to view and manage.
+   *
+   * @param name  The name of the new vineyard tour.
+   * @param popup The popup used for creating the tour.
+   * @return The newly created VineyardTour object.
+   */
   private VineyardTour createVineyardTour(String name, GeneralPopupController popup) {
     // todo validation
     VineyardTour vineyardTour = vineyardToursService.createVineyardTour(name);

@@ -209,6 +209,12 @@ public class VineyardDao extends Dao {
     return FXCollections.emptyObservableList();
   }
 
+  /**
+   * Retrieves all vineyards which wines in a list contain.
+   *
+   * @param wineList The WineList to search for vineyards from wines.
+   * @return A list of Vineyard objects associated with the tour.
+   */
   public ObservableList<Vineyard> getAllInList(WineList wineList) {
     Timer timer = new Timer();
     String sql = "SELECT VINEYARD.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE FROM WINE "
