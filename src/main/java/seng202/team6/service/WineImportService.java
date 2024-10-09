@@ -38,8 +38,8 @@ public class WineImportService {
    */
   public String extractPropertyFromRowOrDefault(Map<WinePropertyName, Integer> valid, String[] row,
       WinePropertyName winePropertyName) {
-    return winePropertyName != WinePropertyName.NONE && valid.containsKey(winePropertyName) ?
-        row[valid.get(winePropertyName)] : "";
+    return winePropertyName != WinePropertyName.NONE && valid.containsKey(winePropertyName)
+        ? row[valid.get(winePropertyName)] : "";
   }
 
   /**
