@@ -57,7 +57,7 @@ public class DatabaseManager {
    * @throws SQLException if a database access error occurs
    */
   public DatabaseManager() throws SQLException {
-    this(setupInMemoryConnection(), true);
+    this(setupInMemoryConnection(), true, false);
   }
 
   /**
@@ -68,7 +68,7 @@ public class DatabaseManager {
    * @throws SQLException if a database access error occurs
    */
   public DatabaseManager(String directoryName, String fileName) throws SQLException {
-    this(setupPersistentConnection(directoryName, fileName), false);
+    this(setupPersistentConnection(directoryName, fileName), false, true);
   }
 
   /**
@@ -77,7 +77,8 @@ public class DatabaseManager {
    *
    * @param connection the database connection to use
    */
-  private DatabaseManager(Connection connection, boolean inMemory) throws SQLException {
+  private DatabaseManager(Connection connection, boolean inMemory, boolean loadDefaultVineyards)
+      throws SQLException {
     if (connection == null || connection.isClosed()) {
       throw new InvalidParameterException("The provided connection was invalid or closed");
     }
@@ -97,7 +98,9 @@ public class DatabaseManager {
 
     VineyardDefaultsService vineyardDefaultsService = new VineyardDefaultsService(geoLocationDao,
         vineyardsDao, !inMemory);
-    vineyardDefaultsService.init();
+    if (loadDefaultVineyards) {
+      vineyardDefaultsService.init();
+    }
   }
 
   /**

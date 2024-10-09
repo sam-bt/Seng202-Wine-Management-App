@@ -14,6 +14,7 @@ import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardFilters;
 import seng202.team6.model.VineyardTour;
+import seng202.team6.model.Wine;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
@@ -180,6 +181,52 @@ public class VineyardDao extends Dao {
   }
 
   /**
+   * Create a vineyard and inserts it into the VINEYARD table.
+   *
+   * @param name the name of the vineyard
+   * @param address the address of the vineyard
+   * @param region the region of the vineyard
+   * @param website the website of the vineyard
+   * @param description the description of the vineyard
+   * @param logoUrl the logoUrl of the vineyard
+   * @param geoLocation the geoLocation of the vineyard
+   */
+  public Vineyard add(String name, String address, String region, String website,
+      String description, String logoUrl, GeoLocation geoLocation) {
+    Timer timer = new Timer();
+    String sql = "INSERT INTO VINEYARD values (null, ?, ?, ?, ?, ?, ?);";
+    try (PreparedStatement statement = connection.prepareStatement(sql,
+        Statement.RETURN_GENERATED_KEYS)) {
+      statement.setString(1, name);
+      statement.setString(2, address);
+      statement.setString(3, region);
+      statement.setString(4, website);
+      statement.setString(5, description);
+      statement.setString(6, logoUrl);
+      statement.executeUpdate();
+
+      try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+        if (generatedKeys.next()) {
+          long id = generatedKeys.getLong(1);
+          log.info("Successfully created vineyard with ID {} in {}ms",
+              id, timer.currentOffsetMilliseconds());
+          Vineyard vineyard = new Vineyard(id, name, address, region, website, description, logoUrl,
+              geoLocation);
+          if (useCache()) {
+            vineyardCache.addObject(id, vineyard);
+          }
+          return vineyard;
+        }
+        log.warn("Could not create vineyard with name '{}' in {}ms",
+            name, timer.currentOffsetMilliseconds());
+      }
+    } catch (SQLException error) {
+      log.error("Failed to create vineyard", error);
+    }
+    return null;
+  }
+
+  /**
    * Retrieves all vineyards associated with a given vineyard tour.
    *
    * @param vineyardTour The VineyardTour object.
@@ -187,20 +234,24 @@ public class VineyardDao extends Dao {
    */
   public List<Vineyard> getAllFromTour(VineyardTour vineyardTour) {
     Timer timer = new Timer();
-    String sql = "SELECT ID FROM VINEYARD_TOUR_ITEM "
+    String sql = "SELECT * FROM VINEYARD_TOUR_ITEM "
         + "LEFT JOIN VINEYARD ON VINEYARD.ID = VINEYARD_TOUR_ITEM.VINEYARD_ID "
+        + "LEFT JOIN GEOLOCATION ON LOWER(VINEYARD.ADDRESS) LIKE LOWER(GEOLOCATION.NAME)"
         + "WHERE TOUR_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setLong(1, vineyardTour.getId());
 
       try (ResultSet resultSet = statement.executeQuery()) {
         ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet);
-        log.info("Successfully retrieved all {} vineyards in tour '{}' with id '{}' in {}ms",
-            vineyards.size(), vineyardTour.getName(), vineyardTour.getId(), timer.currentOffsetMilliseconds());
+        log.info("Successfully retrieved all {} vineyards in tour '{}' with id '{}' in "
+                + "{}ms",
+            vineyards.size(), vineyardTour.getName(), vineyardTour.getId(),
+            timer.currentOffsetMilliseconds());
         return vineyards;
       }
     } catch (SQLException error) {
-      log.info("Failed to retrieve vineyards in tour '{}' with id '{}'", vineyardTour.getName(),vineyardTour.getId(), error);
+      log.info("Failed to retrieve vineyards in tour '{}' with id '{}'",
+          vineyardTour.getName(), vineyardTour.getId(), error);
     }
     return FXCollections.emptyObservableList();
   }

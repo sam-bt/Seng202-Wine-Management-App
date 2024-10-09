@@ -34,7 +34,7 @@ import seng202.team6.model.WineDatePair;
 public class VineyardDaoTest {
 
   private DatabaseManager databaseManager;
-  private VineyardDao vineyardDao;
+  VineyardDao vineyardDao;
   Vineyard testVineyard1;
   Vineyard testVineyard2;
   Vineyard testVineyard3;
@@ -45,14 +45,12 @@ public class VineyardDaoTest {
     vineyardDao = databaseManager.getVineyardsDao();
     vineyardDao.setUseCache(false);
 
-    testVineyard1 = new Vineyard(1, "Test1 Vineyard", "Christchurch", "Canterbury",
+    testVineyard1 = vineyardDao.add("Test1 Vineyard", "Christchurch", "Canterbury",
         "www.test.com", "test", "www.test.com", new GeoLocation(-43.532,172.6306));
-    testVineyard2 = new Vineyard(2, "Test2 Vineyard", "Dunedin", "Otago",
+    testVineyard2 = vineyardDao.add("Test2 Vineyard", "Dunedin", "Otago",
         "www.fake.com", "oops", "www.dog.com", new GeoLocation(-45.8788,170.5028));
-    testVineyard3 = new Vineyard(2, "Test3 Vineyard", "999 Bill Street", "Northland",
+    testVineyard3 = vineyardDao.add("Test3 Vineyard", "999 Bill Street", "Northland",
         "www.lol.com", "cat", "www.uno.com", new GeoLocation(-134.643, 159.09));
-    vineyardDao.addAll(List.of(testVineyard1, testVineyard2, testVineyard3));
-
   }
 
   @AfterEach
@@ -65,25 +63,21 @@ public class VineyardDaoTest {
 
     int count = vineyardDao.getCount();
 
-    assertEquals(count, 11); // 8 default plus 3 extras
+    assertEquals(count, 3); // 8 default plus 3 extras
   }
 
   @Test
   void testGetAllInRange() throws SQLException {
-
-    int start = 5;
-    int end = 100;
-
-    ObservableList<Vineyard> result = vineyardDao.getAllInRange(start, end, null);
+    ObservableList<Vineyard> result = vineyardDao.getAllInRange(0, Integer.MAX_VALUE, null);
 
     assertNotNull(result);
 
     int size = result.size();
-    assertEquals(6, size); // 8 default plus 3 extra
+    assertEquals(3, size); // 8 default plus 3 extra
 
-    assertEquals(result.get(size - 3).getName(), "Test1 Vineyard");
-    assertEquals(result.get(size - 2).getName(), "Test2 Vineyard");
-    assertEquals(result.get(size - 1).getName(), "Test3 Vineyard");
+    assertEquals(result.get(0).getName(), "Test1 Vineyard");
+    assertEquals(result.get(1).getName(), "Test2 Vineyard");
+    assertEquals(result.get(2).getName(), "Test3 Vineyard");
   }
 
   @Test
@@ -112,6 +106,7 @@ public class VineyardDaoTest {
     vineyardTourDao.addVineyard(testTour, testVineyard2);
 
     List<Vineyard> vineyards = vineyardDao.getAllFromTour(testTour);
+    System.out.println("vineyards.size() = " + vineyards.size());
 
     assertNotNull(vineyards);
     assertEquals(2, vineyards.size());
@@ -120,6 +115,4 @@ public class VineyardDaoTest {
     assertEquals("Test2 Vineyard", vineyards.get(1).getName());
 
   }
-
-
 }
