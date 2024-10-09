@@ -405,7 +405,6 @@ public class WineScreenController extends Controller {
         this.pageService.pageNumberProperty().getValue().toString());
   }
 
-
   /**
    * Sets the value of the current filters based off the inputted filters.
    */
