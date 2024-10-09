@@ -119,7 +119,6 @@ public class VineyardDaoTest {
     vineyardTourDao.addVineyard(testTour, testVineyard2);
 
     List<Vineyard> vineyards = vineyardDao.getAllFromTour(testTour);
-    System.out.println("vineyards.size() = " + vineyards.size());
 
     assertNotNull(vineyards);
     assertEquals(2, vineyards.size());
