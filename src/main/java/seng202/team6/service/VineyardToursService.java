@@ -58,14 +58,24 @@ public class VineyardToursService {
    * Creates a new vineyard tour for the authenticated user.
    *
    * @param name   the name of the vineyard tour
-   * @param island the island where the tour is located
    */
-  public void createVineyardTour(String name, Island island) {
+  public VineyardTour createVineyardTour(String name) {
     User user = authenticationManager.getAuthenticatedUser();
-    VineyardTour vineyardTour = databaseManager.getVineyardTourDao().create(user, name, island);
+    VineyardTour vineyardTour = databaseManager.getVineyardTourDao().create(user, name);
     if (vineyardTour != null) {
       vineyardTours.add(vineyardTour);
     }
+    return vineyardTour;
+  }
+
+  /**
+   * Removes a vineyard tour for the authenticated user.
+   *
+   * @param vineyardTour the vineyard tour to be removed
+   */
+  public void removeVineyardTour(VineyardTour vineyardTour) {
+    vineyardTours.remove(vineyardTour);
+    databaseManager.getVineyardTourDao().remove(vineyardTour);
   }
 
   /**

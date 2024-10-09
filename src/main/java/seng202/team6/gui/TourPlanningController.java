@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
@@ -18,7 +19,7 @@ import seng202.team6.gui.controls.card.Card;
 import seng202.team6.gui.controls.cardcontent.ItineraryItemCardContent;
 import seng202.team6.gui.controls.cardcontent.VineyardCardContent;
 import seng202.team6.gui.controls.container.CardsContainer;
-import seng202.team6.gui.popup.ErrorPopupController;
+import seng202.team6.gui.popup.GeneralPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
@@ -89,11 +90,14 @@ public class TourPlanningController extends Controller {
       while (change.next()) {
         if (change.wasAdded()) {
           change.getAddedSubList().forEach(vineyardTour ->
-              vineyardTourButtonsList.add(vineyardTour, vineyardTour.nameProperty(),
-                  () -> {
-                    openVineyardTour(vineyardTour);
-                    tabPane.getSelectionModel().select(planTourTab);
-                  }));
+              vineyardTourButtonsList.add(vineyardTour, vineyardTour.nameProperty(), () -> {
+                // if the user already has the tour open, don't open it again
+                if (currentTourPlanningService == null ||
+                    currentTourPlanningService.getVineyardTour() != vineyardTour) {
+                  openVineyardTour(vineyardTour);
+                  tabPane.getSelectionModel().select(planTourTab);
+                }
+              }));
         }
         if (change.wasRemoved()) {
           change.getRemoved().forEach(vineyardTour -> vineyardTourButtonsList.remove(vineyardTour));
@@ -133,7 +137,35 @@ public class TourPlanningController extends Controller {
    */
   @FXML
   public void onCreateTourButtonClick() {
-    managerContext.getGuiManager().mainController.openVineyardTourPopup(vineyardToursService, null);
+    GeneralPopupController popup = managerContext.getGuiManager().mainController.showPopup();
+    popup.setTitle("Create Vineyard Tour");
+
+    Label nameLabel = new Label("Name");
+    TextField nameTextField = new TextField();
+    nameTextField.setMaxWidth(Double.MAX_VALUE);
+
+    VBox nameWrapper = new VBox();
+    nameWrapper.setSpacing(10);
+    nameWrapper.setMaxWidth(Double.MAX_VALUE);
+    nameWrapper.prefWidthProperty().bind(popup.getContentContainer().widthProperty());
+    nameWrapper.getChildren().addAll(nameLabel, nameTextField);
+    popup.setContent(nameWrapper);
+
+    popup.addButton("Create", () -> {
+      // todo validation
+      VineyardTour vineyardTour = vineyardToursService.createVineyardTour(nameTextField.getText());
+      openVineyardTour(vineyardTour);
+      popup.close();
+    });
+    popup.addCancelButton();
+  }
+
+  /**
+   * Handles the action when the create tour from list button is clicked.
+   */
+  @FXML
+  public void onCreateTourFromListButtonClick() {
+
   }
 
   /**
@@ -141,7 +173,18 @@ public class TourPlanningController extends Controller {
    */
   @FXML
   public void onDeleteTourClick() {
-
+    GeneralPopupController popup = managerContext.getGuiManager().mainController.showPopup();
+    VineyardTour currentVineyardTour = currentTourPlanningService.getVineyardTour();
+    popup.setTitle("Delete Tour Confirmation");
+    popup.setMessage("Are you sure you would like to delete the tour '"
+        + currentVineyardTour.getName() + "'?");
+    popup.addButton("Confirm", () -> {
+      vineyardToursService.removeVineyardTour(currentVineyardTour);
+      currentTourPlanningService = null;
+      closeVineyardTour();
+      popup.close();
+    });
+    popup.addCancelButton();
   }
 
   /**
@@ -224,23 +267,30 @@ public class TourPlanningController extends Controller {
   }
 
   /**
+   * Closes the vineyard tour planning options container.
+   */
+  private void closeVineyardTour() {
+    planTourTabContainer.getChildren().remove(planTourOptionsContainer);
+  }
+
+  /**
    * Displays an error popup indicating that there are not enough vineyards in the itinerary to
    * calculate a route.
    */
   private void showNotEnoughVineyardsToCalculateError() {
-    ErrorPopupController error = managerContext.getGuiManager().mainController.showErrorPopup();
-    error.setTitle("Error Calculating Route");
-    error.setMessage("Please add 2 or more vineyards to your itinerary to calculate a route.");
-    error.addButton("Ok", error::close);
+    GeneralPopupController popup = managerContext.getGuiManager().mainController.showErrorPopup();
+    popup.setTitle("Error Calculating Route");
+    popup.setMessage("Please add 2 or more vineyards to your itinerary to calculate a route.");
+    popup.addOkButton();
   }
 
   /**
    * Displays an error popup indicating that there was an issue calculating the route.
    */
   private void showCalculatingRouteError() {
-    ErrorPopupController error = managerContext.getGuiManager().mainController.showErrorPopup();
-    error.setTitle("Error Calculating Route");
-    error.setMessage("There was an error calculating a route. Please try again later.");
-    error.addButton("Ok", error::close);
+    GeneralPopupController popup = managerContext.getGuiManager().mainController.showErrorPopup();
+    popup.setTitle("Error Calculating Route");
+    popup.setMessage("There was an error calculating a route. Please try again later.");
+    popup.addOkButton();
   }
 }

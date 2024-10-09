@@ -16,23 +16,21 @@ import javafx.scene.layout.VBox;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import seng202.team6.enums.PopupType;
 import seng202.team6.gui.popup.AddToListPopupController;
 import seng202.team6.gui.popup.AddToTourPopupController;
 import seng202.team6.gui.popup.CreateListPopupController;
 import seng202.team6.gui.popup.DeleteListPopupController;
-import seng202.team6.gui.popup.ErrorPopupController;
+import seng202.team6.gui.popup.GeneralPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.UserViewPopupController;
-import seng202.team6.gui.popup.VineyardTourPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
-import seng202.team6.model.VineyardTour;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
-import seng202.team6.service.VineyardToursService;
 import seng202.team6.service.WineListService;
 import seng202.team6.service.WineReviewsService;
 
@@ -571,28 +569,35 @@ public class MainController extends Controller {
   }
 
   /**
-   * Launches the popup to create a vineyard tour.
-   *
-   * @param vineyardToursService  the service used for managing vineyard tours.
-   * @param modifyingVineyardTour the vineyard tour to be modified, or null if creating a new tour.
-   */
-  public void openVineyardTourPopup(VineyardToursService vineyardToursService,
-      VineyardTour modifyingVineyardTour) {
-    openPopup("/fxml/popup/create_vineyard_tour_popup.fxml",
-        () -> new VineyardTourPopupController(managerContext, vineyardToursService,
-            modifyingVineyardTour));
-  }
-
-  /**
-   * Displays an error popup. The popup is displayed on the screen, and the controller for the popup
-   * is returned to the caller for further customization.
+   * Displays a popup of the error type. The popup is displayed on the screen, and the controller
+   * for the popup is returned to the caller for further customization.
    *
    * @return The ErrorPopupController associated with the displayed error popup.
    */
-  public ErrorPopupController showErrorPopup() {
-    ErrorPopupController errorPopupController = new ErrorPopupController(managerContext);
-    openPopup("/fxml/popup/error_popup.fxml", () -> errorPopupController);
-    return errorPopupController;
+  public GeneralPopupController showErrorPopup() {
+    return showPopup(PopupType.ERROR);
+  }
+
+  /**
+   * Displays a popup of the none type.
+   *
+   * @return The GeneralPopupController associated with the displayed popup
+   */
+  public GeneralPopupController showPopup() {
+    return showPopup(PopupType.NONE);
+  }
+
+  /**
+   * Displays a popup of the specified type. The popup is displayed on the screen, and the
+   * controller for the popup is returned to the caller for further customization.
+   *
+   * @param popupType The type of the popup
+   * @return The GeneralPopupController associated with the displayed popup
+   */
+  private GeneralPopupController showPopup(PopupType popupType) {
+    GeneralPopupController popupController = new GeneralPopupController(managerContext, popupType);
+    openPopup("/fxml/popup/general_popup.fxml", () -> popupController);
+    return popupController;
   }
 
   /**
