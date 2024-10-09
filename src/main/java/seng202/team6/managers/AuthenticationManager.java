@@ -92,8 +92,8 @@ public class AuthenticationManager {
       return AuthenticationResponse.INVALID_PASSWORD;
     }
 
-    String salt = EncryptionUtil.generateSalt();
-    String hashedPassword = EncryptionUtil.hashPassword(password, salt);
+    String salt = PasswordUtil.generateSalt();
+    String hashedPassword = PasswordUtil.hashPassword(password, salt);
     user.setPassword(hashedPassword);
     user.setSalt(salt);
     return PASSWORD_CHANGED_SUCCESS;
