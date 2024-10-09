@@ -13,6 +13,7 @@ import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardFilters;
 import seng202.team6.model.VineyardTour;
+import seng202.team6.service.VineyardDataStatService;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
@@ -26,13 +27,16 @@ public class VineyardDao extends Dao {
    */
   private final DatabaseObjectUniquer<Vineyard> vineyardCache = new DatabaseObjectUniquer<>();
 
+  private final VineyardDataStatService vineyardDataStatService;
+
   /**
    * Constructs a new VineyardDAO with the given database connection.
    *
    * @param connection The database connection to be used for vineyard operations
    */
-  public VineyardDao(Connection connection) {
+  public VineyardDao(Connection connection, VineyardDataStatService vineyardDataStatService) {
     super(connection, VineyardDao.class);
+    this.vineyardDataStatService = vineyardDataStatService;
   }
 
   /**
@@ -202,6 +206,26 @@ public class VineyardDao extends Dao {
       log.info("Failed to retrieve vineyards in tour '{}'", vineyardTour.getName(), error);
     }
     return FXCollections.emptyObservableList();
+  }
+
+  public void updateUniques() {
+    Timer timer = new Timer();
+    String query = "SELECT NAME, ADDRESS, REGION FROM VINEYARD";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          String name = resultSet.getString("NAME");
+          String address = resultSet.getString("ADDRESS");
+          String region = resultSet.getString("REGION");
+          vineyardDataStatService.getUniqueNames().add(name);
+          vineyardDataStatService.getUniqueAddresses().add(address);
+          vineyardDataStatService.getUniqueRegions().add(region);
+        }
+      }
+      log.info("Successfully updated unique values vineyard cache");
+    } catch (SQLException e) {
+      log.error("Failed to update unique values vineyard cache", e);
+    }
   }
 
   /**

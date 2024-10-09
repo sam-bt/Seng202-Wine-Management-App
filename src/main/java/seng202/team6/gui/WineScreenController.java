@@ -33,6 +33,7 @@ import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineFilters;
 import seng202.team6.service.PageService;
+import seng202.team6.service.WineDataStatService;
 import seng202.team6.util.YearStringConverter;
 
 /**
@@ -504,39 +505,19 @@ public class WineScreenController extends Controller {
   public void setFilterValues() {
     // Auto Complete boxes and range sliders
     // Update filter checkboxes
-    final Set<String> winerySet = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getUniqueWineries();
-    final Set<String> countrySet = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getUniqueCountries();
-    final Set<String> colorSet = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getUniqueColors();
-    final int minVintage = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMinVintage();
-    final int maxVintage = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMaxVintage();
-    final double maxScore = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMaxScore();
-    final double minScore = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMinScore();
-    final double minPrice = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMinPrice();
-    final double maxPrice = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMaxPrice();
-    final double maxAbv = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMaxAbv();
-    final double minAbv = managerContext.getDatabaseManager().getWineDao()
-        .getWineDataStatService()
-        .getMinAbv();
+    WineDataStatService wineDataStatService = managerContext.getDatabaseManager()
+        .getWineDataStatService();
+    final Set<String> winerySet = wineDataStatService.getUniqueWineries();
+    final Set<String> countrySet = wineDataStatService.getUniqueCountries();
+    final Set<String> colorSet = wineDataStatService.getUniqueColors();
+    final int minVintage = wineDataStatService.getMinVintage();
+    final int maxVintage = wineDataStatService.getMaxVintage();
+    final double maxScore = wineDataStatService.getMaxScore();
+    final double minScore = wineDataStatService.getMinScore();
+    final double minPrice = wineDataStatService.getMinPrice();
+    final double maxPrice = wineDataStatService.getMaxPrice();
+    final double maxAbv = wineDataStatService.getMaxAbv();
+    final double minAbv = wineDataStatService.getMinAbv();
 
     // Clear old list data
     wineryTextField.getEntries().clear();

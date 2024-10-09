@@ -29,6 +29,7 @@ public class VineyardService {
    */
   public void init() {
     applyFilters(null);
+    databaseManager.getVineyardsDao().updateUniques();
   }
 
   public void applyFilters(VineyardFilters filters) {
