@@ -22,6 +22,7 @@ import seng202.team6.gui.popup.CreateListPopupController;
 import seng202.team6.gui.popup.DeleteListPopupController;
 import seng202.team6.gui.popup.ErrorPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
+import seng202.team6.gui.popup.UserSearchPopupController;
 import seng202.team6.gui.popup.UserViewPopupController;
 import seng202.team6.gui.popup.VineyardTourPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
@@ -581,6 +582,11 @@ public class MainController extends Controller {
     openPopup("/fxml/popup/create_vineyard_tour_popup.fxml",
         () -> new VineyardTourPopupController(managerContext, vineyardToursService,
             modifyingVineyardTour));
+  }
+
+  public void openUserSearchPopup() {
+    openPopup("/fxml/popup/user_search_popup.fxml",
+        () -> new UserSearchPopupController(managerContext));
   }
 
   /**

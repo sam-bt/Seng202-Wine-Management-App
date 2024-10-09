@@ -105,6 +105,41 @@ public class UserDao extends Dao {
   }
 
   /**
+   * Retrieves a list of users from the database for the given search query
+   *
+   * @param search The query to be searched
+   * @return A list of all the users matching the query
+   */
+  public ObservableList<User> getAllFromSearch(String search) {
+    Timer timer = new Timer();
+
+    ObservableList<User> users = FXCollections.observableArrayList();
+
+    String sql = "SELECT * FROM USER WHERE LOWER(USERNAME) LIKE ?;";
+
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setString(1, "%" + search.toLowerCase() + "%");
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          User user = new User(
+              resultSet.getString("USERNAME"),
+              resultSet.getString("PASSWORD"),
+              resultSet.getString("ROLE"),
+              resultSet.getString("SALT")
+          );
+          users.add(user);
+        }
+      }
+    } catch (SQLException error) {
+      log.error("Failed to retrieve users", error);
+      log.error(error.getMessage());
+    }
+    log.info("Successfully retrieved '{}' users for search '{}' {}ms", users.size(),
+        search, timer.currentOffsetMilliseconds());
+    return users;
+  }
+
+  /**
    * Get all users in the database.
    *
    * @return an observable list of all user objects.

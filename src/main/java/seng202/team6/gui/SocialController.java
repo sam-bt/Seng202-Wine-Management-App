@@ -156,4 +156,19 @@ public class SocialController extends Controller {
         .openPopupReviewView(wineReviewsService, reviewer, selectedReview.getFirst(), selectedWine);
   }
 
+  @FXML
+  void onSearch() {
+    managerContext.getGuiManager().mainController.openUserSearchPopup();
+  }
+
+  @FXML
+  void onApply() {
+
+  }
+
+  @FXML
+  void onReset() {
+
+  }
+
 }
