@@ -1,6 +1,7 @@
 package seng202.team6.gui;
 
 import java.io.IOException;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
@@ -8,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -18,6 +20,7 @@ import seng202.team6.gui.popup.AddToListPopupController;
 import seng202.team6.gui.popup.AddToTourPopupController;
 import seng202.team6.gui.popup.CreateListPopupController;
 import seng202.team6.gui.popup.DeleteListPopupController;
+import seng202.team6.gui.popup.ErrorPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.UserViewPopupController;
 import seng202.team6.gui.popup.VineyardTourPopupController;
@@ -59,10 +62,22 @@ public class MainController extends Controller {
   private Menu adminMenu;
 
   @FXML
+  private Menu vineyardsDropdownMenu;
+
+  @FXML
+  private Menu vineyardsMenu;
+
+  @FXML
   private VBox profileMenuGraphic;
 
   @FXML
-  private VBox profileContextMenu;
+  private VBox vineyardsMenuGraphic;
+
+  @FXML
+  private VBox profileSubmenu;
+
+  @FXML
+  private VBox vineyardsSubmenu;
 
   @FXML
   private Button loginButton;
@@ -91,64 +106,107 @@ public class MainController extends Controller {
    */
   @Override
   public void init() {
-    profileMenuGraphic.setOnMouseEntered(event -> showProfileMenuContext());
-    profileMenuGraphic.setOnMouseExited(event -> {
-      hideProfileMenuContextIfNotInside(event.getScreenX(), event.getScreenY());
+    // mouse enter event for the profile button which shows the profile sub menu
+    profileMenuGraphic.setOnMouseEntered(event ->
+        showSubmenu(profileSubmenu, profileMenuGraphic));
+
+    // move exit events for when the profile button is open which checks if the cursor has
+    // left either the profile button or the submenu
+    EventHandler<MouseEvent> profileExitEvent = event ->
+        hideSubmenuIfNotInside(profileSubmenu, profileMenuGraphic, event.getScreenX(),
+            event.getScreenY());
+    profileMenuGraphic.setOnMouseExited(profileExitEvent);
+    profileSubmenu.setOnMouseExited(profileExitEvent);
+
+    // mouse enter event for the vineyard button which shows the vineyard sub menu
+    // only show the submenu if they are authenticated
+    vineyardsMenuGraphic.setOnMouseEntered(event -> {
+      if (managerContext.getAuthenticationManager().isAuthenticated()) {
+        showSubmenu(vineyardsSubmenu, vineyardsMenuGraphic);
+      }
     });
-    profileContextMenu.setOnMouseExited(event -> {
-      hideProfileMenuContextIfNotInside(event.getScreenX(), event.getScreenY());
-    });
-    profileContextMenu.setDisable(true);
-    profileContextMenu.setVisible(false);
+
+    // move exit events for when the vineyards button is open which checks if the cursor has
+    // left either the profile button or the submenu. only run if they are authenticated as the menu
+    // should only open when they are authenticated
+    EventHandler<MouseEvent> vineyardsExitEvent = event ->
+        hideSubmenuIfNotInside(vineyardsSubmenu, vineyardsMenuGraphic, event.getScreenX(),
+            event.getScreenY());
+    vineyardsMenuGraphic.setOnMouseExited(vineyardsExitEvent);
+    vineyardsSubmenu.setOnMouseExited(vineyardsExitEvent);
+
+    // disable the profile and vineyards submenu when the navigation is first loaded
+    profileSubmenu.setDisable(true);
+    profileSubmenu.setVisible(false);
+    vineyardsSubmenu.setDisable(true);
+    vineyardsSubmenu.setVisible(false);
 
     updateNavigation();
     openWineScreen();
   }
 
   /**
-   * Displays the profile context menu near the profile graphic node. The position of the context
-   * menu is determined based on the layout of the graphic node.
+   * Shows the submenu and positioning it directly below the parent menu graphic.
+   *
+   * @param submenu the submenu to be shown
+   * @param parentMenuGraphic the menu graphic that triggers the submenu
    */
-  private void showProfileMenuContext() {
-    VBox graphicNode = (VBox) profileMenuGraphic;
-    Point2D position = graphicNode.localToScene(0, graphicNode.getLayoutBounds().getMaxY());
-
-    profileContextMenu.setLayoutX(position.getX());
-    profileContextMenu.setLayoutY(position.getY());
-    profileContextMenu.setPrefWidth(graphicNode.getWidth());
-    profileContextMenu.setDisable(false);
-    profileContextMenu.setVisible(true);
+  private void showSubmenu(VBox submenu, VBox parentMenuGraphic) {
+    Point2D position = parentMenuGraphic.localToScene(0, parentMenuGraphic.getLayoutBounds()
+        .getMaxY());
+    submenu.setLayoutX(position.getX());
+    submenu.setLayoutY(position.getY());
+    submenu.setPrefWidth(parentMenuGraphic.getWidth());
+    submenu.setDisable(false);
+    submenu.setVisible(true);
   }
 
   /**
-   * Hides the profile context menu if the mouse is not inside the menu or the graphic node.
+   * Hides the submenu if the mouse cursor is not within the bounds of either the parent menu
+   * graphic or the submenu itself.
    *
-   * @param mouseX the X coordinate of the mouse cursor
-   * @param mouseY the Y coordinate of the mouse cursor
+   * @param submenu the submenu to be hidden
+   * @param parentMenuGraphic the parent menu graphic associated with the submenu
+   * @param mouseX the current X coordinate of the mouse
+   * @param mouseY the current Y coordinate of the mouse
    */
-  private void hideProfileMenuContextIfNotInside(double mouseX, double mouseY) {
-    if (!isMouseInsideComponents(mouseX, mouseY)) {
-      profileContextMenu.setDisable(true);
-      profileContextMenu.setVisible(false);
+  private void hideSubmenuIfNotInside(VBox submenu, VBox parentMenuGraphic, double mouseX,
+      double mouseY) {
+    if (!isMouseInsideSubmenu(submenu, parentMenuGraphic, mouseX, mouseY)) {
+      submenu.setDisable(true);
+      submenu.setVisible(false);
     }
   }
 
   /**
-   * Checks if the mouse cursor is inside the graphic node or the profile context menu.
+   * Hides the submenu by disabling and making it invisible.
    *
-   * @param mouseX the X coordinate of the mouse cursor
-   * @param mouseY the Y coordinate of the mouse cursor
-   * @return true if the mouse is inside the components, false otherwise
+   * @param submenu the submenu to be hidden
    */
-  private boolean isMouseInsideComponents(double mouseX, double mouseY) {
-    VBox graphicNode = (VBox) profileMenuGraphic;
-    Point2D graphicScreenPos = graphicNode.localToScreen(0, 0);
+  private void hideSubmenu(VBox submenu) {
+    submenu.setDisable(true);
+    submenu.setVisible(false);
+  }
+
+  /**
+   * Checks if the mouse cursor is inside the bounds of the submenu or the parent menu graphic,
+   * accounting for some padding to avoid edge cases.
+   *
+   * @param submenu the submenu to check
+   * @param parentMenuGraphic the parent menu graphic to check
+   * @param mouseX the current X coordinate of the mouse
+   * @param mouseY the current Y coordinate of the mouse
+   * @return true if the mouse is inside the submenu or parent menu graphic bounds, false otherwise
+   */
+  private boolean isMouseInsideSubmenu(VBox submenu, VBox parentMenuGraphic, double mouseX,
+      double mouseY) {
+    Point2D position = parentMenuGraphic.localToScreen(0, 0);
     // add padding to each of the bounds to resolve issues with edge cases
     int padding = 10;
-    double minX = graphicScreenPos.getX() + padding;
-    double maxX = minX + profileMenuGraphic.getWidth() - padding;
-    double minY = graphicScreenPos.getY() + padding;
-    double maxY = minY + profileMenuGraphic.getHeight() + profileContextMenu.getHeight() - padding;
+    double minX = position.getX() + padding;
+    double maxX = minX + parentMenuGraphic.getWidth() - padding;
+    double minY = position.getY() + padding;
+    double maxY = minY + parentMenuGraphic.getHeight() + submenu.getHeight() - padding;
 
     return mouseX > minX && mouseX < maxX && mouseY > minY && mouseY < maxY;
   }
@@ -160,21 +218,27 @@ public class MainController extends Controller {
    */
   public void updateNavigation() {
     if (managerContext.getAuthenticationManager().isAuthenticated()) {
-      addIfNotPresent(profileMenu);
+      addIfNotPresent(profileMenu, -1);
       loginButton.setText("Settings");
       registerButton.setText("Logout");
       loginButton.setOnMouseClicked(event -> openSettingsScreen());
       registerButton.setOnMouseClicked(event -> logout());
+
+      // replace the vineyards button with a drop down
+      menuBar.getMenus().remove(vineyardsMenu);
+      addIfNotPresent(vineyardsDropdownMenu, 1);
     } else {
       menuBar.getMenus().remove(profileMenu);
       loginButton.setText("Login");
       registerButton.setText("Register");
       loginButton.setOnMouseClicked(event -> openLoginScreen());
       registerButton.setOnMouseClicked(event -> openRegisterScreen());
+      menuBar.getMenus().remove(vineyardsDropdownMenu);
+      addIfNotPresent(vineyardsMenu, 1);
     }
 
     if (managerContext.getAuthenticationManager().isAdmin()) {
-      addIfNotPresent(adminMenu);
+      addIfNotPresent(adminMenu, -1);
     } else {
       menuBar.getMenus().remove(adminMenu);
     }
@@ -185,9 +249,13 @@ public class MainController extends Controller {
    *
    * @param menu the menu to be added
    */
-  private void addIfNotPresent(Menu menu) {
+  private void addIfNotPresent(Menu menu, int index) {
     if (!menuBar.getMenus().contains(menu)) {
-      menuBar.getMenus().add(menu);
+      if (index == -1) {
+        menuBar.getMenus().add(menu);
+      } else {
+        menuBar.getMenus().add(index, menu);
+      }
     }
   }
 
@@ -375,6 +443,7 @@ public class MainController extends Controller {
         () -> new DetailedWineViewController(managerContext, wine, backButtonAction), null);
   }
 
+
   /**
    * Launches the detailed wine view.
    *
@@ -512,6 +581,18 @@ public class MainController extends Controller {
     openPopup("/fxml/popup/create_vineyard_tour_popup.fxml",
         () -> new VineyardTourPopupController(managerContext, vineyardToursService,
             modifyingVineyardTour));
+  }
+
+  /**
+   * Displays an error popup. The popup is displayed on the screen, and the controller for the popup
+   * is returned to the caller for further customization.
+   *
+   * @return The ErrorPopupController associated with the displayed error popup.
+   */
+  public ErrorPopupController showErrorPopup() {
+    ErrorPopupController errorPopupController = new ErrorPopupController(managerContext);
+    openPopup("/fxml/popup/error_popup.fxml", () -> errorPopupController);
+    return errorPopupController;
   }
 
   /**
