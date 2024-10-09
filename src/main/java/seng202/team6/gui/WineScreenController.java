@@ -157,7 +157,7 @@ public class WineScreenController extends Controller {
     ObservableList<Wine> wines = managerContext.getDatabaseManager().getWineDao()
         .getAllInRange(begin, end, filters);
 
-    // send the wines to the map if they have a geo location
+    // send the wines to the map if they have a geolocation
     mapController.runOrQueueWhenReady(() -> {
       mapController.clearWineMarkers();
       mapController.clearHeatmap();
@@ -271,7 +271,7 @@ public class WineScreenController extends Controller {
     rangeSlider.setShowTickLabels(true);
     rangeSlider.setBlockIncrement(blockIncrements);
     rangeSlider.setSnapToPixel(true);
-    // by default the font size matches the parent font size which is the filters title
+    // by default, the font size matches the parent font size which is the filter title
     rangeSlider.setStyle("-fx-font-size: 15px;");
     rangeSlider.getStylesheets().add("css/range_slider.css");
     filtersPane.getChildren().add(rangeSlider);
@@ -299,7 +299,7 @@ public class WineScreenController extends Controller {
 
 
   /**
-   * Is called when the apply button is pressed<br> Updates table with filtered data.
+   * Is called when the "apply" button is pressed<br> Updates table with filtered data.
    */
   public void onApplyFiltersButtonPressed() {
     currentFilters = new WineFilters(
@@ -371,13 +371,13 @@ public class WineScreenController extends Controller {
 
     if (!isInteger(currentText)) {
       textField.setText(
-          String.valueOf(this.pageService.getPageNumber())); // Set back to current page
+          String.valueOf(this.pageService.getPageNumber())); // Set back to the current page
 
       // ensure valid range
     } else if (Integer.parseInt(currentText) > pageService.getMaxPages()
         || Integer.parseInt(currentText) < 1) {
       textField.setText(
-          String.valueOf(this.pageService.getPageNumber())); // Set back to current page
+          String.valueOf(this.pageService.getPageNumber())); // Set back to the current page
     } else {
       pageService.setPageNumber(Integer.parseInt(currentText)); // Change page if valid
     }
@@ -395,7 +395,7 @@ public class WineScreenController extends Controller {
   }
 
   /**
-   * Goes to the previous.
+   * Goes to the previous page.
    */
   public void previousPage() {
     this.pageService.previousPage();
@@ -495,7 +495,7 @@ public class WineScreenController extends Controller {
   // Private helper functions
 
   /**
-   * Resets all sliders back to their mins and maxes.
+   * Resets all sliders back to their minimums and maxes.
    */
   private void resetSliders() {
     scoreSlider.setHighValue(scoreSlider.getMax());
@@ -529,7 +529,7 @@ public class WineScreenController extends Controller {
    * @param max    max value to check
    */
   private void validateSlider(RangeSlider slider, double min, double max) {
-    // The vintage min is set to the max double for error handling so min > max check needed
+    // The vintage min is set to the max double for error handling, so min > max check needed
     if (min == 0 & max == 0 || min > max) {
       slider.setMin(0);
       slider.setMax(1);
@@ -582,7 +582,7 @@ public class WineScreenController extends Controller {
           upperToolTip.setText(String.format("%.0f", newValue.doubleValue())));
 
     } else {
-      LogManager.getLogger().error(
+      log.error(
           "Thumb nodes not found. Make sure the RangeSlider is added to the scene and rendered.");
     }
 
@@ -602,7 +602,7 @@ public class WineScreenController extends Controller {
           Point2D thumbLocation = thumb.localToScene(
               thumb.getBoundsInLocal().getMinX(), thumb.getBoundsInLocal().getMinY());
 
-          // Using getWindow().getX() to adjust for window postion so tool tip is located correctly
+          // Using getWindow().getX() to adjust for window position so tool tip is located correctly
           tooltip.show(thumb, thumbLocation.getX() + thumb.getScene().getWindow().getX(),
               thumbLocation.getY() + thumb.getScene().getWindow().getY() - 20);
         }
@@ -633,7 +633,7 @@ public class WineScreenController extends Controller {
     this.abvSlider = createSlider(11, 445, 0, 100, 10);
     this.priceSlider = createSlider(11, 525, 0, 100, 10);
 
-    // Ensures the sliders are rendered before installing tooltips (Needed for css lookups)
+    // Ensures the sliders are rendered before installing tooltips (Needed for CSS lookups)
     filtersPane.sceneProperty().addListener((observable, oldScene, newScene) -> {
       installRangeSliderTooltip(this.vintageSlider);
       installRangeSliderTooltip(this.scoreSlider);
@@ -661,7 +661,7 @@ public class WineScreenController extends Controller {
     prevPageButtonSimpleView.setOnAction(actionEvent -> previousPage());
     nextPageButtonSimpleView.setOnAction(actionEvent -> nextPage());
 
-    // Set textfield listener and on action and onfocused to ensure valid inputs
+    // Set text field listener and on action to ensure valid inputs
     pageNumberTextFieldRawViewer.focusedProperty()
         .addListener((observableValue, oldValue, newValue) -> {
           if (!newValue) {
