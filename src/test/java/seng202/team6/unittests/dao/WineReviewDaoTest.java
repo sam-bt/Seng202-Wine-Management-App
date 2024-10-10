@@ -20,22 +20,22 @@ import seng202.team6.model.WineReview;
 public class WineReviewDaoTest {
 
   private DatabaseManager databaseManager;
-  private WineReviewDao wineReviewDAO;
-  private WineDao wineDAO;
-  private UserDao userDAO;
+  private WineReviewDao wineReviewDao;
+  private WineDao wineDao;
+  private UserDao userDao;
   private User user;
   private Wine wine;
 
   @BeforeEach
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
-    wineReviewDAO = databaseManager.getWineReviewDao();
-    wineDAO = databaseManager.getWineDao();
-    userDAO = databaseManager.getUserDao();
-    wineReviewDAO.setUseCache(false);
+    wineReviewDao = databaseManager.getWineReviewDao();
+    wineDao = databaseManager.getWineDao();
+    userDao = databaseManager.getUserDao();
+    wineReviewDao.setUseCache(false);
 
     user = new User("username", "password", "role", "salt");
-    userDAO.add(user);
+    userDao.add(user);
 
     wine = new Wine(
             -1l,
@@ -52,7 +52,7 @@ public class WineReviewDaoTest {
             50f,
             null,
             2f);
-    wineDAO.add(wine);
+    wineDao.add(wine);
   }
 
   @AfterEach
@@ -67,7 +67,7 @@ public class WineReviewDaoTest {
     WineReview initialReview = createWineReview(initial, wine, "Initial description");
     initialReview.setRating(changed);
 
-    WineReview updatedReview = wineReviewDAO.getAll(user).getFirst();
+    WineReview updatedReview = wineReviewDao.getAll(user).getFirst();
     assertEquals(changed, updatedReview.getRating(), 0.001);
   }
 
@@ -78,7 +78,7 @@ public class WineReviewDaoTest {
     WineReview initialReview = createWineReview(4.0, wine, initial);
     initialReview.setDescription(changed);
 
-    WineReview updatedReview = wineReviewDAO.getAll(user).getFirst();
+    WineReview updatedReview = wineReviewDao.getAll(user).getFirst();
     assertEquals(changed, updatedReview.getDescription());
   }
 

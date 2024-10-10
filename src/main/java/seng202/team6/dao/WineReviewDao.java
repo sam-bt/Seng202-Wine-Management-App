@@ -272,7 +272,7 @@ public class WineReviewDao extends Dao {
     String sql = "SELECT * FROM WINE_REVIEW WHERE FLAG = 1";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       try (ResultSet resultSet = statement.executeQuery()) {
-        wineReviews = extractAllWineReviewsFromResultSet(resultSet);
+        wineReviews = extractAllWineReviewsFromResultSet(resultSet, "ID:");
         log.info("Successfully retrieved all flagged reviews in {}ms",
             timer.currentOffsetMilliseconds());
         return wineReviews;
