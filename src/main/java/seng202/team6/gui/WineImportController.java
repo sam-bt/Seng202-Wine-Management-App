@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.enums.WinePropertyName;
+import seng202.team6.gui.popup.ErrorPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.service.WineImportService;
@@ -170,11 +171,10 @@ public class WineImportController extends Controller {
    */
   private boolean checkContainsTitleProperty() {
     if (!selectedWineProperties.containsValue(WinePropertyName.TITLE)) {
-      Alert alert = new Alert(AlertType.ERROR);
-      alert.setTitle("Invalid Selections");
-      alert.setHeaderText("Missing Mandatory Property");
-      alert.setContentText("The property TITLE is required but has not been selected");
-      alert.showAndWait();
+      ErrorPopupController error = managerContext.getGuiManager().mainController.showErrorPopup();
+      error.setTitle("Invalid Selections");
+      error.setMessage("The property TITLE is required but has not been selected");
+      error.addButton("Ok", error::close);
       return false;
     }
     return true;
@@ -199,14 +199,13 @@ public class WineImportController extends Controller {
         selectedWineProperties);
 
     if (!duplicatedProperties.isEmpty()) {
-      Alert alert = new Alert(AlertType.ERROR);
-      alert.setTitle("Invalid Selections");
-      alert.setHeaderText("Duplicate Properties Selected");
-      alert.setContentText("The property field(s) " + duplicatedProperties.stream()
+      ErrorPopupController error = managerContext.getGuiManager().mainController.showErrorPopup();
+      error.setTitle("Invalid Selections");
+      error.setMessage("The property field(s) " + duplicatedProperties.stream()
           .map(WinePropertyName::name)
           .collect(Collectors.joining(", "))
           + " have been selected more than once.");
-      alert.showAndWait();
+      error.addButton("Ok", error::close);
       return false;
     }
     return true;

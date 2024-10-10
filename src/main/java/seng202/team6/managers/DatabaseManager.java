@@ -27,6 +27,7 @@ import seng202.team6.dao.WineDao;
 import seng202.team6.dao.WineListDao;
 import seng202.team6.dao.WineNotesDao;
 import seng202.team6.dao.WineReviewDao;
+import seng202.team6.service.VineyardDataStatService;
 import seng202.team6.service.VineyardDefaultsService;
 import seng202.team6.service.WineDataStatService;
 import seng202.team6.util.PasswordUtil;
@@ -50,6 +51,7 @@ public class DatabaseManager {
   private final VineyardTourDao vineyardTourDao;
   private final AggregatedDao aggregatedDao;
   private final WineDataStatService wineDataStatService;
+  private final VineyardDataStatService vineyardDataStatService;
 
   /**
    * Constructs a NewDatabaseManager with an in-memory SQLite database connection.
@@ -57,7 +59,7 @@ public class DatabaseManager {
    * @throws SQLException if a database access error occurs
    */
   public DatabaseManager() throws SQLException {
-    this(setupInMemoryConnection(), true);
+    this(setupInMemoryConnection(), true, false);
   }
 
   /**
@@ -68,7 +70,7 @@ public class DatabaseManager {
    * @throws SQLException if a database access error occurs
    */
   public DatabaseManager(String directoryName, String fileName) throws SQLException {
-    this(setupPersistentConnection(directoryName, fileName), false);
+    this(setupPersistentConnection(directoryName, fileName), false, true);
   }
 
   /**
@@ -77,17 +79,19 @@ public class DatabaseManager {
    *
    * @param connection the database connection to use
    */
-  private DatabaseManager(Connection connection, boolean inMemory) throws SQLException {
+  private DatabaseManager(Connection connection, boolean inMemory, boolean loadDefaultVineyards)
+      throws SQLException {
     if (connection == null || connection.isClosed()) {
       throw new InvalidParameterException("The provided connection was invalid or closed");
     }
     this.connection = connection;
     log.info("Successfully opened a connection to the database");
     this.wineDataStatService = new WineDataStatService();
+    this.vineyardDataStatService = new VineyardDataStatService();
     this.userDao = new UserDao(connection);
     this.wineDao = new WineDao(connection, wineDataStatService);
     this.wineListDao = new WineListDao(connection);
-    this.vineyardsDao = new VineyardDao(connection);
+    this.vineyardsDao = new VineyardDao(connection, vineyardDataStatService);
     this.wineNotesDao = new WineNotesDao(connection);
     this.wineReviewDao = new WineReviewDao(connection);
     this.geoLocationDao = new GeoLocationDao(connection);
@@ -97,7 +101,9 @@ public class DatabaseManager {
 
     VineyardDefaultsService vineyardDefaultsService = new VineyardDefaultsService(geoLocationDao,
         vineyardsDao, !inMemory);
-    vineyardDefaultsService.init();
+    if (loadDefaultVineyards) {
+      vineyardDefaultsService.init();
+    }
   }
 
   /**
@@ -247,6 +253,14 @@ public class DatabaseManager {
 
   public AggregatedDao getAggregatedDao() {
     return aggregatedDao;
+  }
+
+  public WineDataStatService getWineDataStatService() {
+    return wineDataStatService;
+  }
+
+  public VineyardDataStatService getVineyardDataStatService() {
+    return vineyardDataStatService;
   }
 
   /**

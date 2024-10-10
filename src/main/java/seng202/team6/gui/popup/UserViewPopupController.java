@@ -8,8 +8,10 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.Controller;
@@ -33,6 +35,12 @@ public class UserViewPopupController extends Controller {
   private TitledPane userTitlePane;
   @FXML
   private FlowPane reviewsBox;
+  @FXML
+  private StackPane reviewsStackPane;
+  @FXML
+  private Label noReviewsLabel;
+  @FXML
+  private ScrollPane reviewsScrollPane;
 
   /**
    * Constructor for the user view popup.
@@ -55,8 +63,13 @@ public class UserViewPopupController extends Controller {
     reviewsBox.setAlignment(Pos.CENTER_LEFT);
 
     socialService.init();
-  }
 
+    if (socialService.getUserReviews().isEmpty()) {
+      noReviewsLabel.setVisible(true);
+      noReviewsLabel.setText("This user has no reviews!");
+      reviewsScrollPane.setVisible(false);
+    }
+  }
 
   /**
    * Binds the social service to the UI. The bindings ensure changes to the reviews are reflected in
