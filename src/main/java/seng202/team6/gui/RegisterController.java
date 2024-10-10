@@ -19,7 +19,11 @@ public class RegisterController extends Controller {
   @FXML
   private TextField confirmPasswordField;
   @FXML
-  private Label registerMessageLabel;
+  private Label usernameErrorLabel;
+  @FXML
+  private Label passwordErrorLabel;
+  @FXML
+  private Label confirmPasswordErrorLabel;
 
   /**
    * Constructor.
@@ -50,25 +54,68 @@ public class RegisterController extends Controller {
       }
     });
 
+    resetFields();
+
   }
 
   @FXML
   private void onConfirm() { // TODO EXTRACT
+    resetFields();
 
     String username = usernameField.getText();
     String password = passwordField.getText();
     String confirmPassword = confirmPasswordField.getText();
-    AuthenticationResponse response
-        = managerContext.getAuthenticationManager().validateRegistration(
-        username, password, confirmPassword);
-    if (response == AuthenticationResponse.REGISTER_SUCCESS) {
-      // managerContext.getAuthenticationManager().validateLogin(username, password);
-      managerContext.getGuiManager().mainController.onLogin();
-      managerContext.getGuiManager().mainController.openWineScreen();
+
+    boolean usernameNull = (username.isEmpty());
+    boolean passwordNull = (password.isEmpty());
+    boolean confirmPasswordNull = (confirmPassword.isEmpty());
+
+    if (!usernameNull && !passwordNull && !confirmPasswordNull) {
+      AuthenticationResponse response
+          = managerContext.getAuthenticationManager().validateRegistration(
+          username, password, confirmPassword);
+
+      if (response == AuthenticationResponse.REGISTER_SUCCESS) {
+        // managerContext.getAuthenticationManager().validateLogin(username, password);
+        managerContext.getGuiManager().mainController.onLogin();
+        managerContext.getGuiManager().mainController.openWineScreen();
+      } else {
+//      registerMessageLabel.setText(response.getMessage());
+      }
     } else {
-      registerMessageLabel.setStyle("-fx-text-fill: red");
-      registerMessageLabel.setText(response.getMessage());
+      usernameErrorLabel.setText("Please enter a username");
+      passwordErrorLabel.setText("Please enter a password");
+      confirmPasswordErrorLabel.setText("Please re-enter your password");
+      usernameErrorLabel.setVisible(usernameNull);
+      passwordErrorLabel.setVisible(passwordNull);
+      confirmPasswordErrorLabel.setVisible(confirmPasswordNull);
+
+
+      if (usernameNull) {
+        usernameField.getStyleClass().add("error-text-field");
+      }
+      if (passwordNull) {
+        passwordField.getStyleClass().add("error-text-field");
+      }
+      if (confirmPasswordNull) {
+        confirmPasswordField.getStyleClass().add("error-text-field");
     }
+
   }
+
+  }
+
+  private void resetFields() {
+    usernameField.getStyleClass().add("normal-text-field");
+    usernameField.getStyleClass().remove("error-text-field");
+    passwordField.getStyleClass().add("normal-text-field");
+    passwordField.getStyleClass().remove("error-text-field");
+    confirmPasswordField.getStyleClass().add("normal-text-field");
+    confirmPasswordField.getStyleClass().remove("error-text-field");
+    usernameErrorLabel.setVisible(false);
+    passwordErrorLabel.setVisible(false);
+    confirmPasswordErrorLabel.setVisible(false);
+  }
+
 
 }

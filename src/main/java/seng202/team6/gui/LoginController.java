@@ -51,6 +51,8 @@ public class LoginController extends Controller {
         login();
       }
     });
+
+    resetFields();
   }
 
   /**
