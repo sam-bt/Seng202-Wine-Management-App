@@ -22,6 +22,7 @@ import seng202.team6.gui.popup.CreateListPopupController;
 import seng202.team6.gui.popup.DeleteListPopupController;
 import seng202.team6.gui.popup.ErrorPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
+import seng202.team6.gui.popup.UserSearchPopupController;
 import seng202.team6.gui.popup.UserViewPopupController;
 import seng202.team6.gui.popup.VineyardTourPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
@@ -148,7 +149,7 @@ public class MainController extends Controller {
   /**
    * Shows the submenu and positioning it directly below the parent menu graphic.
    *
-   * @param submenu the submenu to be shown
+   * @param submenu           the submenu to be shown
    * @param parentMenuGraphic the menu graphic that triggers the submenu
    */
   private void showSubmenu(VBox submenu, VBox parentMenuGraphic) {
@@ -165,10 +166,10 @@ public class MainController extends Controller {
    * Hides the submenu if the mouse cursor is not within the bounds of either the parent menu
    * graphic or the submenu itself.
    *
-   * @param submenu the submenu to be hidden
+   * @param submenu           the submenu to be hidden
    * @param parentMenuGraphic the parent menu graphic associated with the submenu
-   * @param mouseX the current X coordinate of the mouse
-   * @param mouseY the current Y coordinate of the mouse
+   * @param mouseX            the current X coordinate of the mouse
+   * @param mouseY            the current Y coordinate of the mouse
    */
   private void hideSubmenuIfNotInside(VBox submenu, VBox parentMenuGraphic, double mouseX,
       double mouseY) {
@@ -192,10 +193,10 @@ public class MainController extends Controller {
    * Checks if the mouse cursor is inside the bounds of the submenu or the parent menu graphic,
    * accounting for some padding to avoid edge cases.
    *
-   * @param submenu the submenu to check
+   * @param submenu           the submenu to check
    * @param parentMenuGraphic the parent menu graphic to check
-   * @param mouseX the current X coordinate of the mouse
-   * @param mouseY the current Y coordinate of the mouse
+   * @param mouseX            the current X coordinate of the mouse
+   * @param mouseY            the current Y coordinate of the mouse
    * @return true if the mouse is inside the submenu or parent menu graphic bounds, false otherwise
    */
   private boolean isMouseInsideSubmenu(VBox submenu, VBox parentMenuGraphic, double mouseX,
@@ -212,9 +213,9 @@ public class MainController extends Controller {
   }
 
   /**
-   * Updates the navigation menu based on the current authentication state of the user.
-   * If the user is authenticated, the profile menu and settings options are shown.
-   * If the user is not authenticated, the login and registration options are displayed.
+   * Updates the navigation menu based on the current authentication state of the user. If the user
+   * is authenticated, the profile menu and settings options are shown. If the user is not
+   * authenticated, the login and registration options are displayed.
    */
   public void updateNavigation() {
     if (managerContext.getAuthenticationManager().isAuthenticated()) {
@@ -581,6 +582,14 @@ public class MainController extends Controller {
     openPopup("/fxml/popup/create_vineyard_tour_popup.fxml",
         () -> new VineyardTourPopupController(managerContext, vineyardToursService,
             modifyingVineyardTour));
+  }
+
+  /**
+   * Launches the user search popup.
+   */
+  public void openUserSearchPopup() {
+    openPopup("/fxml/popup/user_search_popup.fxml",
+        () -> new UserSearchPopupController(managerContext));
   }
 
   /**

@@ -1,21 +1,20 @@
 package seng202.team6.gui;
 
-import java.sql.Date;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.TilePane;
 import kotlin.Pair;
-import org.controlsfx.control.Rating;
+import org.controlsfx.control.RangeSlider;
+import seng202.team6.gui.controls.AutoCompletionTextField;
+import seng202.team6.gui.controls.ReviewCard;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.ReviewFilters;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
+import seng202.team6.util.FilterUtil;
 
 
 /**
@@ -24,7 +23,14 @@ import seng202.team6.service.WineReviewsService;
 public class SocialController extends Controller {
 
   @FXML
-  TableView<Pair<WineReview, Wine>> reviewTableView;
+  AnchorPane filtersPane;
+  AutoCompletionTextField usernameTextField;
+  AutoCompletionTextField wineNameTextField;
+  @FXML
+  private TilePane reviewsViewContainer;
+  @FXML
+  private ReviewFilters currentFilters;
+  private RangeSlider ratingSlider;
 
   /**
    * Constructor.
@@ -40,111 +46,57 @@ public class SocialController extends Controller {
    */
   @Override
   public void init() {
-    setupReviewTableColumns();
-    openReviewInRange(0, 100);
-    reviewTableView.setOnMouseClicked(this::openReviewOnClick);
-  }
 
-  /**
-   * Opens a page of reviews from the database according to filters.
-   *
-   * @param begin first element
-   * @param end   last element + 1
-   */
-  private void openReviewInRange(int begin, int end) {
-    // Clear existing data
-    reviewTableView.getItems().clear();
+    reviewsViewContainer.setHgap(5);
 
-    ObservableList<Pair<WineReview, Wine>> reviews = managerContext.getDatabaseManager()
-        .getAggregatedDao().getWineReviewsAndWines(begin, end);
+    this.wineNameTextField = FilterUtil.createAutoCompleteTextField(9.0, 215.0);
+    this.usernameTextField = FilterUtil.createAutoCompleteTextField(9.0, 275.0);
 
-    // Set fetched data to the table
-    reviewTableView.setItems(reviews);
-  }
+    filtersPane.getChildren().add(usernameTextField);
+    filtersPane.getChildren().add(wineNameTextField);
 
-  /**
-   * Sets up the review table columns.
-   */
-  public void setupReviewTableColumns() {
-    // Clear any existing cols
-    reviewTableView.getColumns().clear();
+    this.ratingSlider = FilterUtil.createSlider(11, 345, 1, 5, 1);
+    ratingSlider.setMajorTickUnit(1);
+    ratingSlider.setMinorTickCount(0);
 
-    // Create and config cols
-    reviewTableView.setEditable(true);
+    filtersPane.getChildren().add(ratingSlider);
 
-    final TableColumn<Pair<WineReview, Wine>, String> titleColumn = new TableColumn<>("Wine Name");
-    final TableColumn<Pair<WineReview, Wine>, String> usernameColumn = new TableColumn<>("By");
-    final TableColumn<Pair<WineReview, Wine>, Double> ratingsColumn = new TableColumn<>("Score");
-    final TableColumn<Pair<WineReview, Wine>, Date> dateColumn = new TableColumn<>("Date");
-
-    titleColumn.setCellValueFactory(cellData ->
-        cellData.getValue().getSecond().titleProperty());
-    usernameColumn.setCellValueFactory(cellData ->
-        cellData.getValue().getFirst().usernameProperty());
-    ratingsColumn.setCellValueFactory(cellData ->
-        cellData.getValue().getFirst().ratingProperty().asObject());
-    dateColumn.setCellValueFactory(cellData ->
-        cellData.getValue().getFirst().dateProperty().orElse(null));
-
-    ratingsColumn.setCellFactory(column -> new TableCell<>() {
-      private final HBox starBox = new HBox(5);
-
-      @Override
-      protected void updateItem(Double rating, boolean empty) {
-        super.updateItem(rating, empty);
-
-        if (empty || rating == null) {
-          setGraphic(null);
-        } else {
-          starBox.getChildren().clear();
-          Rating ratingStars = createRating(rating);
-          starBox.getChildren().addFirst(ratingStars);
-          setGraphic(starBox);
-        }
-      }
+    filtersPane.sceneProperty().addListener((observable, oldScene, newScene) -> {
+      FilterUtil.installRangeSliderTooltip(ratingSlider);
     });
 
-    reviewTableView.getColumns().add(titleColumn);
-    reviewTableView.getColumns().add(usernameColumn);
-    reviewTableView.getColumns().add(ratingsColumn);
-    reviewTableView.getColumns().add(dateColumn);
+    ratingSlider.setSnapToTicks(true);
+
+    openReviewsInRange(null);
+
   }
 
   /**
-   * Creates the rating for a given rating.
+   * Creates a card for a review.
    *
-   * @param rating rating
-   * @return rating object
+   * @param review review
    */
-  private Rating createRating(double rating) {
-    Rating ratingStars = new Rating();
-    ratingStars.setUpdateOnHover(false);
-    ratingStars.setMouseTransparent(true);
-    ratingStars.setOnMouseClicked(Event::consume);
-    ratingStars.setOnMouseDragEntered(Event::consume);
-    ratingStars.setPartialRating(true);
-    ratingStars.setRating(rating);
-    return ratingStars;
+  public void createReviewCard(WineReview review, Wine wine) {
+    ReviewCard card = new ReviewCard(reviewsViewContainer.widthProperty(),
+        reviewsViewContainer.hgapProperty(), review, wine);
+    card.setOnMouseClicked(event -> {
+      if (event.getClickCount() == 2) {
+        openReviewOnClick(review, wine);
+      }
+    });
+    reviewsViewContainer.getChildren().add(card);
   }
 
   /**
-   * Opens a review when clicked.
+   * Opens a review.
    *
-   * @param event mouse event
+   * @param selectedReview the selected review to open
+   * @param selectedWine   the selected wine to open
    */
   @FXML
-  public void openReviewOnClick(MouseEvent event) {
-    if (event.getClickCount() != 2) {
-      return;
-    }
+  public void openReviewOnClick(WineReview selectedReview, Wine selectedWine) {
 
-    Pair<WineReview, Wine> selectedReview = reviewTableView.getSelectionModel().getSelectedItem();
-    if (selectedReview == null) {
-      return;
-    }
-
-    String reviewerUsername = selectedReview.getFirst().getUsername();
-    Wine selectedWine = selectedReview.getSecond();
+    String reviewerUsername = selectedReview.getUsername();
     User reviewer = managerContext.getDatabaseManager().getUserDao().get(reviewerUsername);
     WineReviewsService wineReviewsService = new WineReviewsService(
         managerContext.getAuthenticationManager(),
@@ -153,7 +105,50 @@ public class SocialController extends Controller {
     managerContext
         .getGuiManager()
         .mainController
-        .openPopupReviewView(wineReviewsService, reviewer, selectedReview.getFirst(), selectedWine);
+        .openPopupReviewView(wineReviewsService, reviewer, selectedReview, selectedWine);
+  }
+
+  private void openReviewsInRange(ReviewFilters filters) {
+
+    ObservableList<Pair<WineReview, Wine>> reviews = managerContext.getDatabaseManager()
+        .getAggregatedDao().getWineReviewsAndWines(0, 100, filters);
+
+    reviewsViewContainer.getChildren().clear();
+    reviews.forEach(pair -> createReviewCard(pair.getFirst(), pair.getSecond()));
+
+  }
+
+  @FXML
+  void onSearch() {
+    managerContext.getGuiManager().mainController.openUserSearchPopup();
+  }
+
+  @FXML
+  void onApply() {
+
+    currentFilters = new ReviewFilters(
+        usernameTextField.getText(),
+        wineNameTextField.getText(),
+        (int) ratingSlider.getLowValue(),
+        (int) ratingSlider.getHighValue()
+    );
+
+    openReviewsInRange(currentFilters);
+
+  }
+
+  @FXML
+  void onReset() {
+
+    ratingSlider.setHighValue(5);
+    ratingSlider.setLowValue(1);
+    wineNameTextField.setText("");
+    usernameTextField.setText("");
+
+    this.currentFilters = null;
+
+    openReviewsInRange(null);
+
   }
 
 }
