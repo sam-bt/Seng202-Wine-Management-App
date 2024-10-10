@@ -83,12 +83,12 @@ public class LoginController extends Controller {
 
         if (response == AuthenticationResponse.LOGIN_SUCCESS) {
           if (managerContext.getAuthenticationManager().isAdminFirstLogin()) {
-            managerContext.getGuiManager().mainController.setDisable(true);
+            managerContext.getGuiManager().mainController.disableNavigation(true);
             managerContext.getGuiManager().mainController.openUpdatePasswordScreen();
             return;
           }
           managerContext.getGuiManager().mainController.openWineScreen();
-          managerContext.getGuiManager().mainController.onLogin();
+          managerContext.getGuiManager().mainController.updateNavigation();
         } else {
           passwordField.getStyleClass().add("error-text-field");
           passwordErrorMessageLabel.setVisible(true);
@@ -123,5 +123,3 @@ public class LoginController extends Controller {
   }
 
 }
-
-

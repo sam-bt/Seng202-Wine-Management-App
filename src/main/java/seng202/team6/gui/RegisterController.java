@@ -59,7 +59,7 @@ public class RegisterController extends Controller {
   }
 
   @FXML
-  private void onConfirm() { // TODO EXTRACT
+  private void onConfirm() {
     resetFields();
 
     String username = usernameField.getText();
@@ -77,7 +77,7 @@ public class RegisterController extends Controller {
 
       if (response == AuthenticationResponse.REGISTER_SUCCESS) {
         // managerContext.getAuthenticationManager().validateLogin(username, password);
-        managerContext.getGuiManager().mainController.onLogin();
+        managerContext.getGuiManager().mainController.updateNavigation();
         managerContext.getGuiManager().mainController.openWineScreen();
       } else {
 //      registerMessageLabel.setText(response.getMessage());

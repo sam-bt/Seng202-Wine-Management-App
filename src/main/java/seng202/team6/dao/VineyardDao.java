@@ -13,6 +13,7 @@ import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardFilters;
 import seng202.team6.model.VineyardTour;
+import seng202.team6.service.VineyardDataStatService;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
 
@@ -26,13 +27,16 @@ public class VineyardDao extends Dao {
    */
   private final DatabaseObjectUniquer<Vineyard> vineyardCache = new DatabaseObjectUniquer<>();
 
+  private final VineyardDataStatService vineyardDataStatService;
+
   /**
    * Constructs a new VineyardDAO with the given database connection.
    *
    * @param connection The database connection to be used for vineyard operations
    */
-  public VineyardDao(Connection connection) {
+  public VineyardDao(Connection connection, VineyardDataStatService vineyardDataStatService) {
     super(connection, VineyardDao.class);
+    this.vineyardDataStatService = vineyardDataStatService;
   }
 
   /**
@@ -88,10 +92,12 @@ public class VineyardDao extends Dao {
   public ObservableList<Vineyard> getAllInRange(int begin, int end,
       VineyardFilters vineyardFilters) {
     Timer timer = new Timer(); // todo - make query not use limit and offset
-    String sql = "SELECT * FROM VINEYARD "
+    String sql = "SELECT VINEYARD.ID as vineyard_id, VINEYARD.*, GEOLOCATION.LATITUDE, "
+        + "GEOLOCATION.LONGITUDE "
+        + "FROM VINEYARD "
         + "LEFT JOIN GEOLOCATION ON LOWER(VINEYARD.ADDRESS) LIKE LOWER(GEOLOCATION.NAME)"
         + (vineyardFilters == null ? "" :
-        "where NAME like ? "
+        "where VINEYARD.NAME like ? "
             + "and ADDRESS like ? "
             + "and REGION like ? ")
         + "ORDER BY VINEYARD.ID "
@@ -112,7 +118,8 @@ public class VineyardDao extends Dao {
       statement.setInt(paramIndex, begin);
 
       try (ResultSet resultSet = statement.executeQuery()) {
-        ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet);
+        ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet,
+            "vineyard_id");
         log.info("Successfully retrieved {} vineyards in range {}-{} in {}ms",
             vineyards.size(), begin, end, timer.currentOffsetMilliseconds());
         return vineyards;
@@ -131,7 +138,9 @@ public class VineyardDao extends Dao {
    */
   public Vineyard get(String name) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM VINEYARD "
+    String sql = "SELECT VINEYARD.ID as vineyard_id, VINEYARD.*, GEOLOCATION.LATITUDE, "
+        + "GEOLOCATION.LONGITUDE "
+        + "FROM VINEYARD "
         + "LEFT JOIN GEOLOCATION ON LOWER(VINEYARD.ADDRESS) LIKE LOWER(GEOLOCATION.NAME) "
         + "WHERE VINEYARD.NAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -140,7 +149,7 @@ public class VineyardDao extends Dao {
         if (resultSet.next()) {
           log.info("Successfully retrieved vineyard with name '{}' in {}ms", name,
               timer.currentOffsetMilliseconds());
-          return extractVineyardFromResultSet(resultSet);
+          return extractVineyardFromResultSet(resultSet, "vineyard_id");
         }
         log.warn("Could not retrieve vineyard with name '{}' in {}ms", name,
             timer.currentOffsetMilliseconds());
@@ -179,6 +188,52 @@ public class VineyardDao extends Dao {
   }
 
   /**
+   * Create a vineyard and inserts it into the VINEYARD table.
+   *
+   * @param name        the name of the vineyard
+   * @param address     the address of the vineyard
+   * @param region      the region of the vineyard
+   * @param website     the website of the vineyard
+   * @param description the description of the vineyard
+   * @param logoUrl     the logoUrl of the vineyard
+   * @param geoLocation the geoLocation of the vineyard
+   */
+  public Vineyard add(String name, String address, String region, String website,
+      String description, String logoUrl, GeoLocation geoLocation) {
+    Timer timer = new Timer();
+    String sql = "INSERT INTO VINEYARD values (null, ?, ?, ?, ?, ?, ?);";
+    try (PreparedStatement statement = connection.prepareStatement(sql,
+        Statement.RETURN_GENERATED_KEYS)) {
+      statement.setString(1, name);
+      statement.setString(2, address);
+      statement.setString(3, region);
+      statement.setString(4, website);
+      statement.setString(5, description);
+      statement.setString(6, logoUrl);
+      statement.executeUpdate();
+
+      try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+        if (generatedKeys.next()) {
+          long id = generatedKeys.getLong(1);
+          log.info("Successfully created vineyard with ID {} in {}ms",
+              id, timer.currentOffsetMilliseconds());
+          Vineyard vineyard = new Vineyard(id, name, address, region, website, description, logoUrl,
+              geoLocation);
+          if (useCache()) {
+            vineyardCache.addObject(id, vineyard);
+          }
+          return vineyard;
+        }
+        log.warn("Could not create vineyard with name '{}' in {}ms",
+            name, timer.currentOffsetMilliseconds());
+      }
+    } catch (SQLException error) {
+      log.error("Failed to create vineyard", error);
+    }
+    return null;
+  }
+
+  /**
    * Retrieves all vineyards associated with a given vineyard tour.
    *
    * @param vineyardTour The VineyardTour object.
@@ -186,22 +241,56 @@ public class VineyardDao extends Dao {
    */
   public List<Vineyard> getAllFromTour(VineyardTour vineyardTour) {
     Timer timer = new Timer();
-    String sql = "SELECT ID FROM VINEYARD_TOUR_ITEM "
+    String sql = "SELECT VINEYARD.ID as vineyard_id, VINEYARD.*, GEOLOCATION.LATITUDE, "
+        + "GEOLOCATION.LONGITUDE "
+        + "FROM VINEYARD_TOUR_ITEM "
         + "LEFT JOIN VINEYARD ON VINEYARD.ID = VINEYARD_TOUR_ITEM.VINEYARD_ID "
+        + "LEFT JOIN GEOLOCATION ON LOWER(VINEYARD.ADDRESS) LIKE LOWER(GEOLOCATION.NAME)"
         + "WHERE TOUR_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setLong(1, vineyardTour.getId());
 
       try (ResultSet resultSet = statement.executeQuery()) {
-        ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet);
-        log.info("Successfully retrieved all {} vineyards in tour '{}' in {}ms",
-            vineyards.size(), vineyardTour.getName(), timer.currentOffsetMilliseconds());
+        ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet,
+            "vineyard_id");
+        log.info("Successfully retrieved all {} vineyards in tour '{}' with id '{}' in "
+                + "{}ms",
+            vineyards.size(), vineyardTour.getName(), vineyardTour.getId(),
+            timer.currentOffsetMilliseconds());
         return vineyards;
       }
     } catch (SQLException error) {
-      log.info("Failed to retrieve vineyards in tour '{}'", vineyardTour.getName(), error);
+      log.info("Failed to retrieve vineyards in tour '{}' with id '{}'",
+          vineyardTour.getName(), vineyardTour.getId(), error);
     }
     return FXCollections.emptyObservableList();
+  }
+
+  /**
+   * Updates a range of unique values using the vineyards data stat service.
+   *
+   * <p>
+   * When the cache is invalidated by write operations to the database this must be called.
+   * </p>
+   */
+  public void updateUniques() {
+    Timer timer = new Timer();
+    String query = "SELECT NAME, ADDRESS, REGION FROM VINEYARD";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          String name = resultSet.getString("NAME");
+          String address = resultSet.getString("ADDRESS");
+          String region = resultSet.getString("REGION");
+          vineyardDataStatService.getUniqueNames().add(name);
+          vineyardDataStatService.getUniqueAddresses().add(address);
+          vineyardDataStatService.getUniqueRegions().add(region);
+        }
+      }
+      log.info("Successfully updated unique values vineyard cache");
+    } catch (SQLException e) {
+      log.error("Failed to update unique values vineyard cache", e);
+    }
   }
 
   /**
@@ -211,11 +300,12 @@ public class VineyardDao extends Dao {
    * @return An ObservableList of Vineyard objects
    * @throws SQLException If an error occurs while processing the ResultSet
    */
-  private ObservableList<Vineyard> extractAllVineyardsFromResultSet(ResultSet resultSet)
+  private ObservableList<Vineyard> extractAllVineyardsFromResultSet(ResultSet resultSet,
+      String idColumnName)
       throws SQLException {
     ObservableList<Vineyard> vineyards = FXCollections.observableArrayList();
     while (resultSet.next()) {
-      vineyards.add(extractVineyardFromResultSet(resultSet));
+      vineyards.add(extractVineyardFromResultSet(resultSet, idColumnName));
     }
     return vineyards;
   }
@@ -228,8 +318,9 @@ public class VineyardDao extends Dao {
    * @return The extracted Vineyard object
    * @throws SQLException If an error occurs while processing the ResultSet
    */
-  private Vineyard extractVineyardFromResultSet(ResultSet resultSet) throws SQLException {
-    long id = resultSet.getLong("ID");
+  private Vineyard extractVineyardFromResultSet(ResultSet resultSet, String idColumnName)
+      throws SQLException {
+    long id = resultSet.getLong(idColumnName);
     if (useCache()) {
       Vineyard cachedVineyard = vineyardCache.tryGetObject(id);
       if (cachedVineyard != null) {

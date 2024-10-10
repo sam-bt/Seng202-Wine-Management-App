@@ -1,9 +1,9 @@
 package seng202.team6.service;
 
 import java.sql.Date;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.Property;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,6 +12,7 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
+import seng202.team6.util.DateFormatter;
 
 /**
  * Wine review service for a given wine.
@@ -39,6 +40,16 @@ public class WineReviewsService {
     this.wine = wine;
   }
 
+
+  /**
+   * Default Constructor for testing purposes.
+   */
+  public WineReviewsService() {
+    this.authenticationManager = null;
+    this.databaseManager = null;
+    this.wine = null;
+  }
+
   /**
    * Initialize the service.
    */
@@ -57,7 +68,7 @@ public class WineReviewsService {
    * @param rating      rating
    * @param description description
    */
-  public void addOrUpdateUserReview(double rating, String description) {
+  public void addOrUpdateUserReview(double rating, String description) { //todo test with mock db
     User user = authenticationManager.getAuthenticatedUser();
     if (hasUserReviewed()) {
       WineReview usersReview = getUsersReview();
@@ -87,6 +98,33 @@ public class WineReviewsService {
       wineReviews.remove(wineReview);
       calculateAverageReview();
     }
+  }
+
+  /**
+   * Gets the caption for the wine review label given the review info.
+   *
+   * @param wineReview the review for that review card
+   * @return the formatted label text
+   */
+  public String getCaptionWithDateFormatted(WineReview wineReview) {
+    String formattedDate = DateFormatter.DATE_FORMAT.format(wineReview.getDate());
+    return "From " + wineReview.getUsername() + " on " + formattedDate;
+  }
+
+
+  /**
+   * Gets the StringBinding property for the wine review label given the review info.
+   *
+   * @param wineReview the review for that review card
+   * @return the binding property for that review card
+   */
+  public StringBinding getCaptionBinding(WineReview wineReview) {
+    return Bindings.createStringBinding(
+        () ->
+            "From " + wineReview.getUsername() + " on " + DateFormatter.DATE_FORMAT.format(
+                wineReview.getDate()),
+        wineReview.dateProperty()
+    );
   }
 
   /**

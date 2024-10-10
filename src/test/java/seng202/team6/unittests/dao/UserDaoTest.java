@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.sql.SQLException;
+import javafx.collections.ObservableList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -86,6 +87,43 @@ public class UserDaoTest {
     userDao.deleteAll();
     // deletes all users apart from admin
     assertEquals(1, userDao.getCount());
+  }
+
+  @Test
+  void testGetAllUsers() {
+    User test1 = new User("user", "password", "user", "salt");
+    User test2 = new User("us", "password", "user", "salt");
+    User test3 = new User("userr", "password", "user", "salt");
+    User testAdmin = new User("admin", "password", "user", "salt");
+    userDao.add(test1);
+    userDao.add(test2);
+    userDao.add(test3);
+    userDao.add(testAdmin);
+
+    ObservableList<User> result = userDao.getAll();
+
+    assertEquals(3, result.size());
+    assertEquals(test1.getUsername(), result.get(0).getUsername());
+    assertEquals(test2.getUsername(), result.get(1).getUsername());
+    assertEquals(test3.getUsername(), result.get(2).getUsername());
+  }
+
+  @Test
+  void testGetAllUsersFromSearch() {
+    User test1 = new User("user", "password", "user", "salt");
+    User test2 = new User("us", "password", "user", "salt");
+    User test3 = new User("userr", "password", "user", "salt");
+    userDao.add(test1);
+    userDao.add(test2);
+    userDao.add(test3);
+
+    String search = "user";
+
+    ObservableList<User> result = userDao.getAllFromSearch(search);
+
+    assertEquals(2, result.size());
+    assertEquals(test1.getUsername(), result.get(0).getUsername());
+    assertEquals(test3.getUsername(), result.get(1).getUsername());
   }
 
   @Test

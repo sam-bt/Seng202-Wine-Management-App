@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
  * Mapping of property to column name.
  */
 public enum WinePropertyName {
+  NONE(""),
   TITLE("Title", "Name", "Wine Name"),
   VARIETY("Variety"),
   COUNTRY("Country"),
@@ -54,7 +55,7 @@ public enum WinePropertyName {
    * @return name if valid
    */
   public static WinePropertyName tryMatch(String text) {
-    return PROPERTY_BY_NAME.get(text.toLowerCase());
+    return PROPERTY_BY_NAME.getOrDefault(text.toLowerCase(), NONE);
   }
 
   /**
@@ -63,6 +64,11 @@ public enum WinePropertyName {
    * @return name
    */
   public String getName() {
+    return name;
+  }
+
+  @Override
+  public String toString() {
     return name;
   }
 }

@@ -61,12 +61,15 @@ public class VineyardTourDao extends Dao {
    */
   public ObservableList<VineyardTour> getAll(User user) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM VINEYARD_TOUR WHERE USERNAME = ?";
+    String sql = "SELECT VINEYARD_TOUR.ID as vineyard_tour_id, VINEYARD_TOUR.* "
+        + "FROM VINEYARD_TOUR "
+        + "WHERE USERNAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setString(1, user.getUsername());
 
       try (ResultSet resultSet = statement.executeQuery()) {
-        ObservableList<VineyardTour> vineyardTours = extractVineyardToursFromResultSet(resultSet);
+        ObservableList<VineyardTour> vineyardTours = extractVineyardToursFromResultSet(resultSet,
+            "vineyard_tour_id");
         log.info("Successfully retrieved all {} vineyard tours for user '{}' in {}ms",
             vineyardTours.size(), user.getUsername(), timer.currentOffsetMilliseconds());
         return vineyardTours;
@@ -207,11 +210,11 @@ public class VineyardTourDao extends Dao {
    * @return An ObservableList of VineyardTour objects
    * @throws SQLException If an error occurs while processing the ResultSet
    */
-  private ObservableList<VineyardTour> extractVineyardToursFromResultSet(ResultSet resultSet)
-      throws SQLException {
+  private ObservableList<VineyardTour> extractVineyardToursFromResultSet(ResultSet resultSet,
+      String idColumnName) throws SQLException {
     ObservableList<VineyardTour> vineyardTours = FXCollections.observableArrayList();
     while (resultSet.next()) {
-      vineyardTours.add(extractVineyardTourFromResultSet(resultSet));
+      vineyardTours.add(extractVineyardTourFromResultSet(resultSet, idColumnName));
     }
     return vineyardTours;
   }
@@ -224,8 +227,9 @@ public class VineyardTourDao extends Dao {
    * @return The extracted vineyard tour.
    * @throws SQLException If an error occurs while processing the ResultSet
    */
-  private VineyardTour extractVineyardTourFromResultSet(ResultSet resultSet) throws SQLException {
-    long id = resultSet.getLong("ID");
+  private VineyardTour extractVineyardTourFromResultSet(ResultSet resultSet, String idColumnName)
+      throws SQLException {
+    long id = resultSet.getLong(idColumnName);
     VineyardTour cachedVineyardTour = wineTourCache.tryGetObject(id);
     if (cachedVineyardTour != null) {
       return cachedVineyardTour;

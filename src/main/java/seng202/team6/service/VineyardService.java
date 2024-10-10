@@ -1,10 +1,10 @@
 package seng202.team6.service;
 
-import java.util.SortedSet;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Vineyard;
+import seng202.team6.model.VineyardFilters;
 
 /**
  * The VineyardService class provides methods to manage vineyard data.
@@ -27,27 +27,21 @@ public class VineyardService {
    * Initializes the service by retrieving vineyards from the database.
    */
   public void init() {
-    ObservableList<Vineyard> vineyards = databaseManager.getVineyardsDao()
-        .getAllInRange(0, 100, null);
-    this.vineyards.addAll(vineyards);
+    applyFilters(null);
+    databaseManager.getVineyardsDao().updateUniques();
   }
 
   /**
-   * Adds distinct vineyard values (names, addresses, and regions) to the provided sorted sets.
+   * Clears the list of vineyards currently loaded and adds a range of vineyards which meet the
+   * specified filter criteria.
    *
-   * @param nameValues    a sorted set to hold distinct vineyard names
-   * @param addressValues a sorted set to hold distinct vineyard addresses
-   * @param regionValues  a sorted set to hold distinct vineyard regions
+   * @param filters the filters that specify what vineyards to load.
    */
-  public void addDistinctValues(SortedSet<String> nameValues, SortedSet<String> addressValues,
-      SortedSet<String> regionValues) {
-    // fixme - angus merge conflict deleted this
-    // nameValues.addAll(databaseManager
-    //     .getD("NAME", "VINEYARD"));
-    // addressValues.addAll(databaseManager
-    //     .getDistinctStringValues("ADDRESS", "VINEYARD"));
-    // regionValues.addAll(databaseManager
-    //     .getDistinctStringValues("REGION", "VINEYARD"));
+  public void applyFilters(VineyardFilters filters) {
+    vineyards.clear();
+    ObservableList<Vineyard> vineyards = databaseManager.getVineyardsDao()
+        .getAllInRange(0, 100, filters);
+    this.vineyards.addAll(vineyards);
   }
 
   /**

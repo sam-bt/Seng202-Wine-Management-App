@@ -55,10 +55,10 @@ public class WineNotesDao extends Dao {
    */
   public ObservableList<Note> getAll() {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM NOTES";
+    String sql = "SELECT NOTE.ID AS note_id, NOTE.* FROM NOTES";
     try (Statement statement = connection.createStatement()) {
       try (ResultSet resultSet = statement.executeQuery(sql)) {
-        ObservableList<Note> notes = extractAllNotesFromResultSet(resultSet);
+        ObservableList<Note> notes = extractAllNotesFromResultSet(resultSet, "note_id");
         log.info("Successfully retrieved all {} notes in {}ms",
             notes.size(), timer.currentOffsetMilliseconds());
         return notes;
@@ -77,12 +77,14 @@ public class WineNotesDao extends Dao {
    */
   public ObservableList<Note> getAll(User user) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM NOTES WHERE USERNAME = ?";
+    String sql = "SELECT NOTES.ID AS note_id, NOTES.* "
+        + "FROM NOTES "
+        + "WHERE USERNAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setString(1, user.getUsername());
 
       try (ResultSet resultSet = statement.executeQuery()) {
-        ObservableList<Note> notes = extractAllNotesFromResultSet(resultSet);
+        ObservableList<Note> notes = extractAllNotesFromResultSet(resultSet, "note_id");
         log.info("Successfully retrieved all {} notes for user '{}' in {}ms",
             notes.size(), user.getUsername(), timer.currentOffsetMilliseconds());
         return notes;
@@ -104,7 +106,9 @@ public class WineNotesDao extends Dao {
    */
   public Note get(User user, Wine wine) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM NOTES WHERE USERNAME = ? AND WINE_ID = ?";
+    String sql = "SELECT NOTES.ID AS note_id, NOTES.* "
+        + "FROM NOTES "
+        + "WHERE USERNAME = ? AND WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setString(1, user.getUsername());
       statement.setLong(2, wine.getKey());
@@ -116,7 +120,7 @@ public class WineNotesDao extends Dao {
                   + "and wine with ID {} "
                   + "in {}ms", id, user.getUsername(), wine.getKey(),
               timer.currentOffsetMilliseconds());
-          return extractNoteFromResultSet(resultSet);
+          return extractNoteFromResultSet(resultSet, "note_id");
         } else {
           log.warn(
               "Could not find note for user '{}'"
@@ -230,11 +234,11 @@ public class WineNotesDao extends Dao {
    * @return ObservableList of Note objects extracted from the ResultSet
    * @throws SQLException if a database access error occurs
    */
-  private ObservableList<Note> extractAllNotesFromResultSet(ResultSet resultSet)
-      throws SQLException {
+  private ObservableList<Note> extractAllNotesFromResultSet(ResultSet resultSet,
+      String idColumnName) throws SQLException {
     ObservableList<Note> notes = FXCollections.observableArrayList();
     while (resultSet.next()) {
-      notes.add(extractNoteFromResultSet(resultSet));
+      notes.add(extractNoteFromResultSet(resultSet, idColumnName));
     }
     return notes;
   }
@@ -247,8 +251,8 @@ public class WineNotesDao extends Dao {
    * @return The Note object extracted from the ResultSet
    * @throws SQLException if a database access error occurs
    */
-  Note extractNoteFromResultSet(ResultSet resultSet) throws SQLException {
-    long id = resultSet.getLong("ID");
+  Note extractNoteFromResultSet(ResultSet resultSet, String idColumnName) throws SQLException {
+    long id = resultSet.getLong(idColumnName);
     Note cachedNote = notesCache.tryGetObject(id);
     if (cachedNote != null) {
       return cachedNote;

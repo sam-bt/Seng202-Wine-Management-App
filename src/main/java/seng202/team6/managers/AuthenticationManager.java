@@ -6,7 +6,7 @@ import static seng202.team6.enums.AuthenticationResponse.USERNAME_ALREADY_REGIST
 import seng202.team6.dao.UserDao;
 import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.model.User;
-import seng202.team6.util.EncryptionUtil;
+import seng202.team6.util.PasswordUtil;
 
 /**
  * Manager class responsible for handling authentication-related operations. This class provides
@@ -48,7 +48,7 @@ public class AuthenticationManager {
     if (username.length() < 3 || username.length() > 15 || !username.matches("[a-zA-Z0-9_]+")) {
       return AuthenticationResponse.INVALID_USERNAME;
     }
-    if (password.length() < 3 || password.length() > 15 || !password.matches(
+    if (password.length() < 8 || password.length() > 30 || !password.matches(
         AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())) {
       return AuthenticationResponse.INVALID_PASSWORD;
     }
@@ -57,10 +57,47 @@ public class AuthenticationManager {
       return USERNAME_ALREADY_REGISTERED;
     }
 
-    String salt = EncryptionUtil.generateSalt();
-    String hashedPassword = EncryptionUtil.hashPassword(password, salt);
+    String salt = PasswordUtil.generateSalt();
+    String hashedPassword = PasswordUtil.hashPassword(password, salt);
     userDao.add(new User(username, hashedPassword, "user", salt));
     return AuthenticationResponse.REGISTER_SUCCESS;
+  }
+
+  /**
+   * Validates and processes a password reset. Used on the admin panel.
+   *
+   * @param username The username of the target user
+   * @param password The new password
+   * @param confirm  COnfirmation of the new password, to make sure it was typed correctly.
+   * @return an AuthenticationResponse with the outcome.
+   */
+  public AuthenticationResponse validatePasswordReset(
+      String username, String password, String confirm
+  ) {
+    User user = databaseManager.getUserDao().get(username);
+    if (password.isEmpty() || confirm.isEmpty()) {
+      return AuthenticationResponse.MISSING_FIELDS;
+    }
+    if (!password.equals(confirm)) {
+      return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
+    }
+    if (password.equals(user.getUsername())) {
+      return AuthenticationResponse.SAME_AS_USERNAME;
+    }
+    if (
+        password.length() < 8
+            || password.length() > 30
+            || !password.matches(AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())
+    ) {
+      return AuthenticationResponse.INVALID_PASSWORD;
+    }
+
+    String salt = PasswordUtil.generateSalt();
+    String hashedPassword = PasswordUtil.hashPassword(password, salt);
+    user.setPassword(hashedPassword);
+    user.setSalt(salt);
+    return PASSWORD_CHANGED_SUCCESS;
+
   }
 
   /**
@@ -98,7 +135,7 @@ public class AuthenticationManager {
     User user = databaseManager.getUserDao().get(username);
 
 
-    boolean validPassword = EncryptionUtil.verifyPassword(password, user.getPassword(),
+    boolean validPassword = PasswordUtil.verifyPassword(password, user.getPassword(),
         user.getSalt());
     if (validPassword) {
       setAuthenticatedUser(user);
@@ -129,7 +166,7 @@ public class AuthenticationManager {
 
     User user = databaseManager.getUserDao().get(username);
     if (user != null) {
-      boolean validPassword = EncryptionUtil.verifyPassword(oldPassword, user.getPassword(),
+      boolean validPassword = PasswordUtil.verifyPassword(oldPassword, user.getPassword(),
           user.getSalt());
       if (!validPassword) {
         return AuthenticationResponse.INCORRECT_OLD_PASSWORD;
@@ -148,8 +185,8 @@ public class AuthenticationManager {
         return AuthenticationResponse.INVALID_PASSWORD;
       }
 
-      String salt = EncryptionUtil.generateSalt();
-      String hashedPassword = EncryptionUtil.hashPassword(newPassword, salt);
+      String salt = PasswordUtil.generateSalt();
+      String hashedPassword = PasswordUtil.hashPassword(newPassword, salt);
       user.setPassword(hashedPassword);
       user.setSalt(salt);
       return PASSWORD_CHANGED_SUCCESS;
