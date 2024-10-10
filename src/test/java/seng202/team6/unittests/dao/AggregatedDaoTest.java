@@ -24,6 +24,7 @@ import seng202.team6.dao.WineReviewDao;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Note;
+import seng202.team6.model.ReviewFilters;
 import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.Wine;
@@ -132,6 +133,32 @@ public class AggregatedDaoTest {
     assertEquals(1, result.size());
     for (Pair<WineReview, Wine> pair : result) {
       assertEquals(pair.getFirst().getDescription(), "Yum!");
+      assertEquals(pair.getSecond().getTitle(), "wine");
+    }
+  }
+
+
+  @Test
+  void testGetWineReviewsAndWinesWithFilters() throws SQLException {
+    int begin = 0;
+    int end = 5;
+
+    WineReviewDao reviewDao = databaseManager.getWineReviewDao();
+
+    reviewDao.add(testUser, testWine, 5.0, "Yum!",
+        new Date(1728366112972L));
+
+    reviewDao.add(testUser, testWine, 2.0, "Yuck!",
+        new Date(1728366112972L));
+
+    ReviewFilters testFilters = new ReviewFilters("", "win", 2, 4);
+
+    ObservableList<Pair<WineReview, Wine>> result = aggregatedDao.getWineReviewsAndWines(begin, end, testFilters);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    for (Pair<WineReview, Wine> pair : result) {
+      assertEquals(pair.getFirst().getDescription(), "Yuck!");
       assertEquals(pair.getSecond().getTitle(), "wine");
     }
   }

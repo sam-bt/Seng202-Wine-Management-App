@@ -148,45 +148,7 @@ public class AggregatedDao extends Dao {
   }
 
   /**
-   * Gets a list of wine reviews and wines.
-   *
-   * @param begin begin
-   * @param end   end
-   * @return sub range of pairs between begin and end
-   */
-  public ObservableList<Pair<WineReview, Wine>> getWineReviewsAndWines(int begin, int end) {
-    Timer timer = new Timer();
-    String sql = "SELECT WINE.ID as wine_id, WINE.*, WINE_REVIEW.ID as wine_review_id, "
-        + "WINE_REVIEW.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
-        + "FROM WINE_REVIEW "
-        + "INNER JOIN WINE ON WINE_REVIEW.WINE_ID = WINE.ID "
-        + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
-        + "LIMIT ? "
-        + "OFFSET ?";
-    ObservableList<Pair<WineReview, Wine>> wineReviewPairs = FXCollections.observableArrayList();
-    try (PreparedStatement statement = connection.prepareStatement(sql)) {
-      statement.setInt(1, end - begin);
-      statement.setInt(2, begin);
-
-      try (ResultSet resultSet = statement.executeQuery()) {
-        while (resultSet.next()) {
-          WineReview wineReview = wineReviewDao.extractWineReviewFromResultSet(resultSet,
-              "wine_review_id");
-          Wine wine = wineDao.extractWineFromResultSet(resultSet, "wine_id");
-          wineReviewPairs.add(new Pair<>(wineReview, wine));
-        }
-        log.info("Successfully retrieved {} reviews with wines in range {}-{} in {}ms",
-            wineReviewPairs.size(), begin, end, timer.currentOffsetMilliseconds());
-        return wineReviewPairs;
-      }
-    } catch (SQLException e) {
-      log.error("Failed to retrieve with wines in range {}-{}", begin, end, e);
-    }
-    return wineReviewPairs;
-  }
-
-  /**
-   * Gets a list of wine reviews and wines given filters.
+   * Gets a list of wine reviews and wines given [optional] filters.
    *
    * @param begin   begin
    * @param end     end
