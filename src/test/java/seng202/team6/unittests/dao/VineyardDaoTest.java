@@ -113,7 +113,7 @@ public class VineyardDaoTest {
     UserDao userDao = databaseManager.getUserDao();
     userDao.add(testUser);
     VineyardTourDao vineyardTourDao = databaseManager.getVineyardTourDao();
-    VineyardTour testTour = vineyardTourDao.create(testUser, "testTour", Island.SOUTH);
+    VineyardTour testTour = vineyardTourDao.create(testUser, "testTour");
 
     vineyardTourDao.addVineyard(testTour, testVineyard1);
     vineyardTourDao.addVineyard(testTour, testVineyard2);

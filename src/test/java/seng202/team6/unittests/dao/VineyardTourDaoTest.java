@@ -54,7 +54,7 @@ public class VineyardTourDaoTest {
     userDao.add(testUser);
     VineyardTourDao vineyardTourDao = databaseManager.getVineyardTourDao();
 
-    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "testTour", Island.SOUTH);
+    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "testTour");
     assertEquals(testVineyardTour.getName(), "testTour");
 
   }
@@ -64,8 +64,8 @@ public class VineyardTourDaoTest {
 
     VineyardTourDao vineyardTourDao = databaseManager.getVineyardTourDao();
 
-    VineyardTour testVineyardTour1 = vineyardTourDao.create(testUser, "test2Tour", Island.SOUTH);
-    VineyardTour testVineyardTour2 = vineyardTourDao.create(testUser, "test2Tour", Island.SOUTH);
+    VineyardTour testVineyardTour1 = vineyardTourDao.create(testUser, "test2Tour");
+    VineyardTour testVineyardTour2 = vineyardTourDao.create(testUser, "test2Tour");
 
     ObservableList<VineyardTour> vineyardTours = vineyardTourDao.getAll(testUser);
 
@@ -81,7 +81,7 @@ public class VineyardTourDaoTest {
     Vineyard testVineyard = vineyardDao.add("Test1 Vineyard", "Christchurch", "Canterbury",
         "www.test.com", "test", "www.test.com", new GeoLocation(-43.532, 172.6306));
 
-    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour", Island.SOUTH);
+    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour");
 
     vineyardTourDao.addVineyard(testVineyardTour, testVineyard);
 
@@ -99,7 +99,7 @@ public class VineyardTourDaoTest {
         "www.fake.com", "oops", "www.dog.com", new GeoLocation(-45.8788,170.5028));
 
 
-    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour", Island.SOUTH);
+    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour");
 
     vineyardTourDao.addVineyard(testVineyardTour, testVineyard1);
     vineyardTourDao.addVineyard(testVineyardTour, testVineyard2);
@@ -119,7 +119,7 @@ public class VineyardTourDaoTest {
         "www.fake.com", "oops", "www.dog.com", new GeoLocation(-45.8788,170.5028));
 
 
-    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour", Island.SOUTH);
+    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour");
 
     vineyardTourDao.addVineyard(testVineyardTour, testVineyard1);
 
@@ -139,7 +139,7 @@ public class VineyardTourDaoTest {
         "www.fake.com", "oops", "www.dog.com", new GeoLocation(-45.8788,170.5028));
 
 
-    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour", Island.SOUTH);
+    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour");
 
     vineyardTourDao.addVineyard(testVineyardTour, testVineyard1);
     vineyardTourDao.addVineyard(testVineyardTour, testVineyard2);

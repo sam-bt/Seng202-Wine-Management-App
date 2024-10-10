@@ -480,7 +480,6 @@ public class WineDao extends Dao {
         update.setString(1, after);
       });
     });
-
     wine.countryProperty().addListener((observableValue, before, after) -> {
       updateAttribute(wine.getKey(), "COUNTRY", update -> {
         update.setString(1, after);

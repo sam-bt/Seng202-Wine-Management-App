@@ -40,7 +40,6 @@ public class VineyardTourDao extends Dao {
             + "ID             INTEGER       PRIMARY KEY,"
             + "USERNAME       VARCHAR(64)   NOT NULL,"
             + "NAME           VARCHAR(32)   NOT NULL,"
-            + "ISLAND         CHAR(1)       NOT NULL,"
             + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE"
             + ")",
         "CREATE TABLE IF NOT EXISTS VINEYARD_TOUR_ITEM ("
@@ -86,18 +85,16 @@ public class VineyardTourDao extends Dao {
    * @param user     The User object representing the user for whom the vineyard tour is being
    *                 created.
    * @param tourName The name of the vineyard tour to be created.
-   * @param island   The Island enumeration representing the island on which the tour takes place.
    * @return A VineyardTour object representing the newly created vineyard tour, or null if the
    *        operation fails.
    */
-  public VineyardTour create(User user, String tourName, Island island) {
+  public VineyardTour create(User user, String tourName) {
     Timer timer = new Timer();
-    String sql = "INSERT INTO VINEYARD_TOUR VALUES (NULL, ?, ?, ?)";
+    String sql = "INSERT INTO VINEYARD_TOUR VALUES (NULL, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(sql,
         Statement.RETURN_GENERATED_KEYS)) {
       statement.setString(1, user.getUsername());
       statement.setString(2, tourName);
-      statement.setString(3, String.valueOf(island.getCode()));
       statement.executeUpdate();
 
       try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -105,7 +102,7 @@ public class VineyardTourDao extends Dao {
           long id = generatedKeys.getLong(1);
           log.info("Successfully created wine tour '{}' with ID {} for user '{}' in {}ms", tourName,
               id, user.getUsername(), timer.currentOffsetMilliseconds());
-          VineyardTour vineyardTour = new VineyardTour(id, user.getUsername(), tourName, island);
+          VineyardTour vineyardTour = new VineyardTour(id, user.getUsername(), tourName);
           if (useCache()) {
             wineTourCache.addObject(id, vineyardTour);
           }
@@ -119,6 +116,31 @@ public class VineyardTourDao extends Dao {
           user.getUsername(), error);
     }
     return null;
+  }
+
+  /**
+   * Deletes a vineyard from the database.
+   *
+   * @param vineyardTour The vineyard to be deleted
+   */
+  public void remove(VineyardTour vineyardTour) {
+    Timer timer = new Timer();
+    String sql = "DELETE FROM VINEYARD_TOUR WHERE ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setLong(1, vineyardTour.getId());
+
+      int rowsAffected = statement.executeUpdate();
+      if (rowsAffected == 1) {
+        log.info("Successfully removed vineyard tour with ID {} in {}ms",
+            vineyardTour.getId(), timer.currentOffsetMilliseconds());
+      } else {
+        log.warn("Could not remove vineyard tour ID {} in {}ms", vineyardTour.getId(),
+            vineyardTour.getId(), timer.currentOffsetMilliseconds());
+      }
+    } catch (SQLException error) {
+      log.error("Failed to remove vineyard tour with ID {}",
+          vineyardTour.getId(), vineyardTour.getId(), error);
+    }
   }
 
   /**
@@ -238,8 +260,7 @@ public class VineyardTourDao extends Dao {
     VineyardTour vineyardTour = new VineyardTour(
         id,
         resultSet.getString("USERNAME"),
-        resultSet.getString("NAME"),
-        Island.byCode(resultSet.getString("USERNAME").charAt(0))
+        resultSet.getString("NAME")
     );
     if (useCache()) {
       wineTourCache.addObject(id, vineyardTour);
