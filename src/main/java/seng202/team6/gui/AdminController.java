@@ -8,10 +8,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
@@ -20,6 +22,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.enums.AuthenticationResponse;
@@ -35,6 +38,7 @@ public class AdminController extends Controller {
 
   private static final Logger log = LogManager.getLogger(AdminController.class);
   private final DatabaseManager databaseManager;
+  private final ObservableList<WineReview> selectedReviews = FXCollections.observableArrayList();
   @FXML
   TableView<WineReview> reviewsTable;
   @FXML
@@ -84,8 +88,6 @@ public class AdminController extends Controller {
   @FXML
   private Button keepAll;
   private User workingUser = null;
-  private final ObservableList<WineReview> selectedReviews = FXCollections.observableArrayList();
-
   private ObservableList<WineReview> allFlaggedReviews = FXCollections.observableArrayList();
 
   /**
@@ -292,6 +294,16 @@ public class AdminController extends Controller {
     ratingColumn.setCellValueFactory(new PropertyValueFactory<>("rating"));
     descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
+    descriptionColumn.setCellFactory(tableCell -> {
+      TableCell<WineReview, String> cell = new TableCell<WineReview, String>();
+      Text text = new Text();
+      cell.setGraphic(text);
+      cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+      text.wrappingWidthProperty().bind(descriptionColumn.widthProperty());
+      text.textProperty().bind(cell.itemProperty());
+      return cell;
+    });
+
     reviewCheckboxColumn.setCellFactory(column -> new CheckBoxTableCell<>());
     reviewCheckboxColumn.setCellValueFactory(cellData -> {
           WineReview cellValue = cellData.getValue();
@@ -350,6 +362,14 @@ public class AdminController extends Controller {
   void onDeleteSelected() {
     for (int i = 0; i < selectedReviews.size(); i++) {
       databaseManager.getWineReviewDao().delete(selectedReviews.get(i));
+      long wineId = selectedReviews.get(i).getWineId();
+      ObservableList<WineReview> theseReviews = databaseManager.getWineReviewDao()
+          .getAll(databaseManager.getWineDao().get(wineId));
+      double sum = theseReviews.stream()
+          .mapToDouble(WineReview::getRating)
+          .sum();
+      databaseManager.getWineDao().get(wineId).setAverageRating(sum / theseReviews.size());
+
     }
     selectedReviews.clear();
     allFlaggedReviews.clear();
@@ -360,6 +380,16 @@ public class AdminController extends Controller {
   @FXML
   void onDeleteAll() {
     databaseManager.getWineReviewDao().deleteAllFlaggedReviews();
+    for (int i = 0; i < allFlaggedReviews.size(); i++) {
+      long wineId = allFlaggedReviews.get(i).getWineId();
+      ObservableList<WineReview> theseReviews = databaseManager.getWineReviewDao()
+          .getAll(databaseManager.getWineDao().get(wineId));
+      double sum = theseReviews.stream()
+          .mapToDouble(WineReview::getRating)
+          .sum();
+      databaseManager.getWineDao().get(wineId).setAverageRating(sum / theseReviews.size());
+    }
+
     selectedReviews.clear();
     allFlaggedReviews.clear();
     refreshReviewTable();
@@ -384,7 +414,7 @@ public class AdminController extends Controller {
     for (int i = 0; i < selectedReviews.size(); i++) {
       selectedReviews.get(i).setFlag(0);
       databaseManager.getWineReviewDao().updateWineReviewFlag(selectedReviews.get(i));
-      selectedReviews.get(i).setSelected(false);
+      //selectedReviews.get(i).setSelected(false);
     }
     refreshReviewTable();
   }

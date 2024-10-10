@@ -321,6 +321,7 @@ public class DetailedWineViewController extends Controller {
    */
   private void flagReview(WineReview wineReview) {
     wineReview.setFlag(1);
+    wineReview.setSelected(false);
     managerContext.getDatabaseManager().getWineReviewDao().updateWineReviewFlag(wineReview);
   }
 

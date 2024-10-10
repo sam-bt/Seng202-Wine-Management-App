@@ -143,9 +143,9 @@ public class WineReviewDao extends Dao {
    * @return The WineReview object with the specified parameters
    */
   public WineReview add(User user, Wine wine, double rating, String description, Date date) {
-    Integer flag = 1;
+    int flag = 0;
     Timer timer = new Timer();
-    String insert = "INSERT INTO WINE_REVIEW VALUES (null, ?, ?, ?, ?, ?, 1)";
+    String insert = "INSERT INTO WINE_REVIEW VALUES (null, ?, ?, ?, ?, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(insert,
         Statement.RETURN_GENERATED_KEYS)) {
       statement.setString(1, user.getUsername());
@@ -153,6 +153,7 @@ public class WineReviewDao extends Dao {
       statement.setDouble(3, rating);
       statement.setString(4, description);
       statement.setDate(5, date);
+      statement.setInt(6, flag);
       statement.executeUpdate();
 
       try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -209,6 +210,8 @@ public class WineReviewDao extends Dao {
     } catch (SQLException error) {
       log.error("Failed to delete wine review with ID {}", wineReview.getId(), error);
     }
+
+    wineReviewCache.clear();
   }
 
   /**
@@ -287,6 +290,8 @@ public class WineReviewDao extends Dao {
       log.error("Failed to delete reviews in {}ms", timer.currentOffsetMilliseconds());
       log.error(e.getMessage());
     }
+
+    wineReviewCache.clear();
   }
 
   /**
