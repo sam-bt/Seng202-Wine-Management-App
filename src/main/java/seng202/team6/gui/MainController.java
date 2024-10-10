@@ -471,7 +471,7 @@ public class MainController extends Controller {
    */
   public void openUserSearchPopup() {
     openPopup("/fxml/popup/user_search_popup.fxml",
-            () -> new UserSearchPopupController(managerContext));
+        () -> new UserSearchPopupController(managerContext));
   }
 
 
@@ -579,37 +579,37 @@ public class MainController extends Controller {
             selectedReview, wine));
   }
 
-    /**
-     * Displays a popup of the error type. The popup is displayed on the screen, and the controller
-     * for the popup is returned to the caller for further customization.
-     *
-     * @return The ErrorPopupController associated with the displayed error popup.
-     */
-    public GeneralPopupController showErrorPopup() {
-        return showPopup(PopupType.ERROR);
-    }
+  /**
+   * Displays a popup of the error type. The popup is displayed on the screen, and the controller
+   * for the popup is returned to the caller for further customization.
+   *
+   * @return The ErrorPopupController associated with the displayed error popup.
+   */
+  public GeneralPopupController showErrorPopup() {
+    return showPopup(PopupType.ERROR);
+  }
 
-    /**
-     * Displays a popup of the none type.
-     *
-     * @return The GeneralPopupController associated with the displayed popup
-     */
-    public GeneralPopupController showPopup() {
-        return showPopup(PopupType.NONE);
-    }
+  /**
+   * Displays a popup of the none type.
+   *
+   * @return The GeneralPopupController associated with the displayed popup
+   */
+  public GeneralPopupController showPopup() {
+    return showPopup(PopupType.NONE);
+  }
 
-    /**
-     * Displays a popup of the specified type. The popup is displayed on the screen, and the
-     * controller for the popup is returned to the caller for further customization.
-     *
-     * @param popupType The type of the popup
-     * @return The GeneralPopupController associated with the displayed popup
-     */
-    private GeneralPopupController showPopup(PopupType popupType) {
-        GeneralPopupController popupController = new GeneralPopupController(managerContext, popupType);
-        openPopup("/fxml/popup/general_popup.fxml", () -> popupController);
-        return popupController;
-    }
+  /**
+   * Displays a popup of the specified type. The popup is displayed on the screen, and the
+   * controller for the popup is returned to the caller for further customization.
+   *
+   * @param popupType The type of the popup
+   * @return The GeneralPopupController associated with the displayed popup
+   */
+  private GeneralPopupController showPopup(PopupType popupType) {
+    GeneralPopupController popupController = new GeneralPopupController(managerContext, popupType);
+    openPopup("/fxml/popup/general_popup.fxml", () -> popupController);
+    return popupController;
+  }
 
   /**
    * Closes the popup.

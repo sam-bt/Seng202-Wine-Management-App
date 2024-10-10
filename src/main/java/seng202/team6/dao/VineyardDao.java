@@ -276,7 +276,8 @@ public class VineyardDao extends Dao {
    */
   public ObservableList<Vineyard> getAllInList(WineList wineList) {
     Timer timer = new Timer();
-    String sql = "SELECT VINEYARD.ID as vineyard_id, VINEYARD.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+    String sql = "SELECT VINEYARD.ID as vineyard_id, VINEYARD.*, "
+            + "GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
             + "FROM WINE "
             + "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID "
             + "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID "
@@ -287,7 +288,8 @@ public class VineyardDao extends Dao {
       statement.setLong(1, wineList.id());
 
       try (ResultSet resultSet = statement.executeQuery()) {
-        ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet, "vineyard_id");
+        ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(
+            resultSet, "vineyard_id");
         log.info("Successfully retrieved all {} vineyards in list '{}' in {}ms",
             vineyards.size(), wineList.name(), timer.currentOffsetMilliseconds());
         return vineyards;
