@@ -166,7 +166,6 @@ public class TourPlanningController extends Controller {
     popup.addContent(optionsWrapper);
 
     popup.addButton("Create", () -> {
-      createVineyardTour(nameTextField.getText(), popup);
       WineList wineList = wineListsComboBox.getSelectionModel().getSelectedItem();
       VineyardTour vineyardTour = createVineyardTour(nameTextField.getText(), popup);
       openVineyardTour(vineyardTour);
