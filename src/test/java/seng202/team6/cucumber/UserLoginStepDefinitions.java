@@ -62,12 +62,10 @@ public class UserLoginStepDefinitions {
 
   @Then("the account is not logged in")
   public void theAccountIsNotLoggedIn() {
-  boolean boolTwo = true;
-  assertTrue(boolTwo);
 
-//    AuthenticationResponse response = authenticationManager.validateLoginPassword(username, password);
-//    assertEquals(AuthenticationResponse.INVALID_LOGIN_PASSWORD, response);
-//    assertFalse(authenticationManager.isAuthenticated());
-//    assertNotEquals(username, authenticationManager.getAuthenticatedUsername());
+    AuthenticationResponse response = authenticationManager.validateLoginPassword(username, password);
+    assertEquals(AuthenticationResponse.INVALID_LOGIN_USERNAME, response);
+    assertFalse(authenticationManager.isAuthenticated());
+    assertNotEquals(username, authenticationManager.getAuthenticatedUsername());
   }
 }

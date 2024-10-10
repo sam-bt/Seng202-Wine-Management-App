@@ -133,7 +133,9 @@ public class AuthenticationManager {
     }
 
     User user = databaseManager.getUserDao().get(username);
-
+    if (user == null) {
+      return AuthenticationResponse.INVALID_LOGIN_USERNAME;
+    }
 
     boolean validPassword = PasswordUtil.verifyPassword(password, user.getPassword(),
         user.getSalt());
