@@ -61,7 +61,7 @@ public class UserSearchPopupController extends Controller {
    */
   @FXML
   public void openUserOnClick(MouseEvent event) {
-    if (event.getClickCount() != 2) {
+    if (event.getClickCount() == 2) {
       User user = userTableView.getSelectionModel().getSelectedItem();
       if (user != null) {
         managerContext.getGuiManager().mainController.openUserProfilePopup(user);
