@@ -64,12 +64,14 @@ public class WineReviewDao extends Dao {
    */
   public ObservableList<WineReview> getAll(Wine wine) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE_REVIEW WHERE WINE_ID = ?";
+    String sql = "SELECT WINE_REVIEW.ID as wine_review_id, WINE_REVIEW.* "
+        + "FROM WINE_REVIEW WHERE WINE_ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setLong(1, wine.getKey());
 
       try (ResultSet resultSet = statement.executeQuery()) {
-        ObservableList<WineReview> wineReviews = extractAllWineReviewsFromResultSet(resultSet);
+        ObservableList<WineReview> wineReviews = extractAllWineReviewsFromResultSet(resultSet,
+            "wine_review_id");
         log.info("Successfully retrieved all {} reviews for wine with ID {} in {}ms",
             wineReviews.size(), wine.getKey(), timer.currentOffsetMilliseconds());
         return wineReviews;
@@ -89,12 +91,15 @@ public class WineReviewDao extends Dao {
    */
   public ObservableList<WineReview> getAll(User user) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE_REVIEW WHERE USERNAME = ?";
+    String sql = "SELECT WINE_REVIEW.ID as wine_review_id, WINE_REVIEW.* "
+        + "FROM WINE_REVIEW "
+        + "WHERE USERNAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setString(1, user.getUsername());
 
       try (ResultSet resultSet = statement.executeQuery()) {
-        ObservableList<WineReview> wineReviews = extractAllWineReviewsFromResultSet(resultSet);
+        ObservableList<WineReview> wineReviews = extractAllWineReviewsFromResultSet(resultSet,
+            "wine_review_id");
         log.info("Successfully retrieved all {} reviews for user '{}' in {}ms",
             wineReviews.size(), user.getUsername(), timer.currentOffsetMilliseconds());
         return wineReviews;
@@ -114,13 +119,17 @@ public class WineReviewDao extends Dao {
    */
   public ObservableList<WineReview> getAllInRange(int begin, int end) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE_REVIEW LIMIT ? OFFSET ?";
+    String sql = "SELECT WINE_REVIEW.ID as wine_review_id, WINE_REVIEW.* "
+        + "FROM WINE_REVIEW "
+        + "LIMIT ? "
+        + "OFFSET ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setInt(1, end - begin);
       statement.setInt(2, begin);
 
       try (ResultSet resultSet = statement.executeQuery()) {
-        ObservableList<WineReview> wineReviews = extractAllWineReviewsFromResultSet(resultSet);
+        ObservableList<WineReview> wineReviews = extractAllWineReviewsFromResultSet(resultSet,
+            "wine_review_id");
         log.info("Successfully retrieved {} reviews in range {}-{} for user '{}' in {}ms",
             wineReviews.size(), begin, end, timer.currentOffsetMilliseconds());
         return wineReviews;
@@ -236,11 +245,12 @@ public class WineReviewDao extends Dao {
    * @return ObservableList of WineReview objects extracted from the ResultSet
    * @throws SQLException if a database access error occurs
    */
-  private ObservableList<WineReview> extractAllWineReviewsFromResultSet(ResultSet resultSet)
+  private ObservableList<WineReview> extractAllWineReviewsFromResultSet(ResultSet resultSet,
+      String idColumnName)
       throws SQLException {
     ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
     while (resultSet.next()) {
-      wineReviews.add(extractWineReviewFromResultSet(resultSet));
+      wineReviews.add(extractWineReviewFromResultSet(resultSet, idColumnName));
     }
     return wineReviews;
   }
@@ -253,8 +263,9 @@ public class WineReviewDao extends Dao {
    * @return The WineReview object extracted from the ResultSet
    * @throws SQLException if a database access error occurs
    */
-  public WineReview extractWineReviewFromResultSet(ResultSet resultSet) throws SQLException {
-    long id = resultSet.getLong("ID");
+  public WineReview extractWineReviewFromResultSet(ResultSet resultSet, String idColumnName)
+      throws SQLException {
+    long id = resultSet.getLong(idColumnName);
     WineReview cachedWineReview = wineReviewCache.tryGetObject(id);
     if (cachedWineReview != null) {
       return cachedWineReview;

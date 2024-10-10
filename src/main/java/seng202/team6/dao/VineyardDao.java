@@ -94,7 +94,9 @@ public class VineyardDao extends Dao {
   public ObservableList<Vineyard> getAllInRange(int begin, int end,
       VineyardFilters vineyardFilters) {
     Timer timer = new Timer(); // todo - make query not use limit and offset
-    String sql = "SELECT VINEYARD.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE FROM VINEYARD "
+    String sql = "SELECT VINEYARD.ID as vineyard_id, VINEYARD.*, GEOLOCATION.LATITUDE, "
+        + "GEOLOCATION.LONGITUDE "
+        + "FROM VINEYARD "
         + "LEFT JOIN GEOLOCATION ON LOWER(VINEYARD.ADDRESS) LIKE LOWER(GEOLOCATION.NAME)"
         + (vineyardFilters == null ? "" :
         "where VINEYARD.NAME like ? "
@@ -118,7 +120,8 @@ public class VineyardDao extends Dao {
       statement.setInt(paramIndex, begin);
 
       try (ResultSet resultSet = statement.executeQuery()) {
-        ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet);
+        ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet,
+            "vineyard_id");
         log.info("Successfully retrieved {} vineyards in range {}-{} in {}ms",
             vineyards.size(), begin, end, timer.currentOffsetMilliseconds());
         return vineyards;
@@ -137,7 +140,9 @@ public class VineyardDao extends Dao {
    */
   public Vineyard get(String name) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM VINEYARD "
+    String sql = "SELECT VINEYARD.ID as vineyard_id, VINEYARD.*, GEOLOCATION.LATITUDE, "
+        + "GEOLOCATION.LONGITUDE "
+        + "FROM VINEYARD "
         + "LEFT JOIN GEOLOCATION ON LOWER(VINEYARD.ADDRESS) LIKE LOWER(GEOLOCATION.NAME) "
         + "WHERE VINEYARD.NAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -146,7 +151,7 @@ public class VineyardDao extends Dao {
         if (resultSet.next()) {
           log.info("Successfully retrieved vineyard with name '{}' in {}ms", name,
               timer.currentOffsetMilliseconds());
-          return extractVineyardFromResultSet(resultSet);
+          return extractVineyardFromResultSet(resultSet, "vineyard_id");
         }
         log.warn("Could not retrieve vineyard with name '{}' in {}ms", name,
             timer.currentOffsetMilliseconds());
@@ -238,7 +243,9 @@ public class VineyardDao extends Dao {
    */
   public List<Vineyard> getAllFromTour(VineyardTour vineyardTour) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM VINEYARD_TOUR_ITEM "
+    String sql = "SELECT VINEYARD.ID as vineyard_id, VINEYARD.*, GEOLOCATION.LATITUDE, "
+        + "GEOLOCATION.LONGITUDE "
+        + "FROM VINEYARD_TOUR_ITEM "
         + "LEFT JOIN VINEYARD ON VINEYARD.ID = VINEYARD_TOUR_ITEM.VINEYARD_ID "
         + "LEFT JOIN GEOLOCATION ON LOWER(VINEYARD.ADDRESS) LIKE LOWER(GEOLOCATION.NAME)"
         + "WHERE TOUR_ID = ?";
@@ -246,7 +253,8 @@ public class VineyardDao extends Dao {
       statement.setLong(1, vineyardTour.getId());
 
       try (ResultSet resultSet = statement.executeQuery()) {
-        ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet);
+        ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(resultSet,
+            "vineyard_id");
         log.info("Successfully retrieved all {} vineyards in tour '{}' with id '{}' in "
                 + "{}ms",
             vineyards.size(), vineyardTour.getName(), vineyardTour.getId(),
@@ -294,11 +302,12 @@ public class VineyardDao extends Dao {
    * @return An ObservableList of Vineyard objects
    * @throws SQLException If an error occurs while processing the ResultSet
    */
-  private ObservableList<Vineyard> extractAllVineyardsFromResultSet(ResultSet resultSet)
+  private ObservableList<Vineyard> extractAllVineyardsFromResultSet(ResultSet resultSet,
+      String idColumnName)
       throws SQLException {
     ObservableList<Vineyard> vineyards = FXCollections.observableArrayList();
     while (resultSet.next()) {
-      vineyards.add(extractVineyardFromResultSet(resultSet));
+      vineyards.add(extractVineyardFromResultSet(resultSet, idColumnName));
     }
     return vineyards;
   }
@@ -311,8 +320,9 @@ public class VineyardDao extends Dao {
    * @return The extracted Vineyard object
    * @throws SQLException If an error occurs while processing the ResultSet
    */
-  private Vineyard extractVineyardFromResultSet(ResultSet resultSet) throws SQLException {
-    long id = resultSet.getLong("ID");
+  private Vineyard extractVineyardFromResultSet(ResultSet resultSet, String idColumnName)
+      throws SQLException {
+    long id = resultSet.getLong(idColumnName);
     if (useCache()) {
       Vineyard cachedVineyard = vineyardCache.tryGetObject(id);
       if (cachedVineyard != null) {

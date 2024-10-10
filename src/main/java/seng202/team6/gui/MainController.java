@@ -584,6 +584,9 @@ public class MainController extends Controller {
             modifyingVineyardTour));
   }
 
+  /**
+   * Launches the user search popup.
+   */
   public void openUserSearchPopup() {
     openPopup("/fxml/popup/user_search_popup.fxml",
         () -> new UserSearchPopupController(managerContext));

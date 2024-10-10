@@ -57,7 +57,8 @@ public class AggregatedDao extends Dao {
    */
   public ObservableMap<Wine, Note> getAllNotesMappedWithWinesByUser(User user) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM NOTES "
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, NOTES.ID as note_id, NOTES.* "
+        + "FROM NOTES "
         + "INNER JOIN WINE ON NOTES.WINE_ID = WINE.ID "
         + "WHERE NOTES.USERNAME = ?";
     ObservableMap<Wine, Note> wineAndNotes = FXCollections.observableHashMap();
@@ -66,8 +67,8 @@ public class AggregatedDao extends Dao {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
-          Wine wine = wineDao.extractWineFromResultSet(resultSet);
-          Note note = wineNotesDao.extractNoteFromResultSet(resultSet);
+          Wine wine = wineDao.extractWineFromResultSet(resultSet, "wine_id");
+          Note note = wineNotesDao.extractNoteFromResultSet(resultSet, "note_id");
           wineAndNotes.put(wine, note);
         }
       }
@@ -87,7 +88,9 @@ public class AggregatedDao extends Dao {
    */
   public ObservableList<WineDatePair> getWinesMappedWithDatesFromList(WineList wineList) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE "
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE, "
+        + "DATE_ADDED "
+        + "FROM WINE "
         + "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID "
         + "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID "
         + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
@@ -98,7 +101,7 @@ public class AggregatedDao extends Dao {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
-          Wine wine = wineDao.extractWineFromResultSet(resultSet);
+          Wine wine = wineDao.extractWineFromResultSet(resultSet, "wine_id");
           Date date = resultSet.getDate("DATE_ADDED");
           winesAndDates.add(new WineDatePair(wine, date));
         }
@@ -119,7 +122,8 @@ public class AggregatedDao extends Dao {
    */
   public ObservableList<Wine> getWinesInList(WineList wineList) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE "
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+        + "FROM WINE "
         + "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID "
         + "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID "
         + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
@@ -130,7 +134,7 @@ public class AggregatedDao extends Dao {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
-          Wine wine = wineDao.extractWineFromResultSet(resultSet);
+          Wine wine = wineDao.extractWineFromResultSet(resultSet, "wine_id");
           wines.add(wine);
         }
       }
@@ -151,7 +155,9 @@ public class AggregatedDao extends Dao {
    */
   public ObservableList<Pair<WineReview, Wine>> getWineReviewsAndWines(int begin, int end) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE_REVIEW "
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, WINE_REVIEW.ID as wine_review_id, "
+        + "WINE_REVIEW.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+        + "FROM WINE_REVIEW "
         + "INNER JOIN WINE ON WINE_REVIEW.WINE_ID = WINE.ID "
         + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
         + "LIMIT ? "
@@ -163,8 +169,9 @@ public class AggregatedDao extends Dao {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
-          WineReview wineReview = wineReviewDao.extractWineReviewFromResultSet(resultSet);
-          Wine wine = wineDao.extractWineFromResultSet(resultSet);
+          WineReview wineReview = wineReviewDao.extractWineReviewFromResultSet(resultSet,
+              "wine_review_id");
+          Wine wine = wineDao.extractWineFromResultSet(resultSet, "wine_id");
           wineReviewPairs.add(new Pair<>(wineReview, wine));
         }
         log.info("Successfully retrieved {} reviews with wines in range {}-{} in {}ms",
@@ -185,7 +192,8 @@ public class AggregatedDao extends Dao {
    */
   public ObservableList<Wine> getWinesFromVineyard(Vineyard vineyard) {
     Timer timer = new Timer();
-    String sql = "SELECT * FROM WINE "
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+        + "FROM WINE "
         + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
         + "WHERE WINERY = ?";
     ObservableList<Wine> wines = FXCollections.observableArrayList();
@@ -194,7 +202,7 @@ public class AggregatedDao extends Dao {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
-          Wine wine = wineDao.extractWineFromResultSet(resultSet);
+          Wine wine = wineDao.extractWineFromResultSet(resultSet, "wine_id");
           wines.add(wine);
         }
       }
