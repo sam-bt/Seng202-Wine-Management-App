@@ -23,6 +23,7 @@ import seng202.team6.gui.popup.CreateListPopupController;
 import seng202.team6.gui.popup.DeleteListPopupController;
 import seng202.team6.gui.popup.GeneralPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
+import seng202.team6.gui.popup.UserSearchPopupController;
 import seng202.team6.gui.popup.UserViewPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.ManagerContext;
@@ -146,7 +147,7 @@ public class MainController extends Controller {
   /**
    * Shows the submenu and positioning it directly below the parent menu graphic.
    *
-   * @param submenu the submenu to be shown
+   * @param submenu           the submenu to be shown
    * @param parentMenuGraphic the menu graphic that triggers the submenu
    */
   private void showSubmenu(VBox submenu, VBox parentMenuGraphic) {
@@ -163,10 +164,10 @@ public class MainController extends Controller {
    * Hides the submenu if the mouse cursor is not within the bounds of either the parent menu
    * graphic or the submenu itself.
    *
-   * @param submenu the submenu to be hidden
+   * @param submenu           the submenu to be hidden
    * @param parentMenuGraphic the parent menu graphic associated with the submenu
-   * @param mouseX the current X coordinate of the mouse
-   * @param mouseY the current Y coordinate of the mouse
+   * @param mouseX            the current X coordinate of the mouse
+   * @param mouseY            the current Y coordinate of the mouse
    */
   private void hideSubmenuIfNotInside(VBox submenu, VBox parentMenuGraphic, double mouseX,
       double mouseY) {
@@ -190,10 +191,10 @@ public class MainController extends Controller {
    * Checks if the mouse cursor is inside the bounds of the submenu or the parent menu graphic,
    * accounting for some padding to avoid edge cases.
    *
-   * @param submenu the submenu to check
+   * @param submenu           the submenu to check
    * @param parentMenuGraphic the parent menu graphic to check
-   * @param mouseX the current X coordinate of the mouse
-   * @param mouseY the current Y coordinate of the mouse
+   * @param mouseX            the current X coordinate of the mouse
+   * @param mouseY            the current Y coordinate of the mouse
    * @return true if the mouse is inside the submenu or parent menu graphic bounds, false otherwise
    */
   private boolean isMouseInsideSubmenu(VBox submenu, VBox parentMenuGraphic, double mouseX,
@@ -210,9 +211,9 @@ public class MainController extends Controller {
   }
 
   /**
-   * Updates the navigation menu based on the current authentication state of the user.
-   * If the user is authenticated, the profile menu and settings options are shown.
-   * If the user is not authenticated, the login and registration options are displayed.
+   * Updates the navigation menu based on the current authentication state of the user. If the user
+   * is authenticated, the profile menu and settings options are shown. If the user is not
+   * authenticated, the login and registration options are displayed.
    */
   public void updateNavigation() {
     if (managerContext.getAuthenticationManager().isAuthenticated()) {
@@ -464,6 +465,16 @@ public class MainController extends Controller {
         () -> new UserViewPopupController(managerContext, user));
   }
 
+
+  /**
+   * Launches the user search popup.
+   */
+  public void openUserSearchPopup() {
+    openPopup("/fxml/popup/user_search_popup.fxml",
+            () -> new UserSearchPopupController(managerContext));
+  }
+
+
   /**
    * Launches the social screen.
    */
@@ -568,37 +579,37 @@ public class MainController extends Controller {
             selectedReview, wine));
   }
 
-  /**
-   * Displays a popup of the error type. The popup is displayed on the screen, and the controller
-   * for the popup is returned to the caller for further customization.
-   *
-   * @return The ErrorPopupController associated with the displayed error popup.
-   */
-  public GeneralPopupController showErrorPopup() {
-    return showPopup(PopupType.ERROR);
-  }
+    /**
+     * Displays a popup of the error type. The popup is displayed on the screen, and the controller
+     * for the popup is returned to the caller for further customization.
+     *
+     * @return The ErrorPopupController associated with the displayed error popup.
+     */
+    public GeneralPopupController showErrorPopup() {
+        return showPopup(PopupType.ERROR);
+    }
 
-  /**
-   * Displays a popup of the none type.
-   *
-   * @return The GeneralPopupController associated with the displayed popup
-   */
-  public GeneralPopupController showPopup() {
-    return showPopup(PopupType.NONE);
-  }
+    /**
+     * Displays a popup of the none type.
+     *
+     * @return The GeneralPopupController associated with the displayed popup
+     */
+    public GeneralPopupController showPopup() {
+        return showPopup(PopupType.NONE);
+    }
 
-  /**
-   * Displays a popup of the specified type. The popup is displayed on the screen, and the
-   * controller for the popup is returned to the caller for further customization.
-   *
-   * @param popupType The type of the popup
-   * @return The GeneralPopupController associated with the displayed popup
-   */
-  private GeneralPopupController showPopup(PopupType popupType) {
-    GeneralPopupController popupController = new GeneralPopupController(managerContext, popupType);
-    openPopup("/fxml/popup/general_popup.fxml", () -> popupController);
-    return popupController;
-  }
+    /**
+     * Displays a popup of the specified type. The popup is displayed on the screen, and the
+     * controller for the popup is returned to the caller for further customization.
+     *
+     * @param popupType The type of the popup
+     * @return The GeneralPopupController associated with the displayed popup
+     */
+    private GeneralPopupController showPopup(PopupType popupType) {
+        GeneralPopupController popupController = new GeneralPopupController(managerContext, popupType);
+        openPopup("/fxml/popup/general_popup.fxml", () -> popupController);
+        return popupController;
+    }
 
   /**
    * Closes the popup.
