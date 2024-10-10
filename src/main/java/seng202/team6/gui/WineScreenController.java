@@ -27,6 +27,7 @@ import javafx.util.converter.IntegerStringConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.RangeSlider;
+import seng202.team6.dao.WineDao;
 import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
@@ -42,48 +43,51 @@ import seng202.team6.util.YearStringConverter;
 
 public class WineScreenController extends Controller {
 
+  // Utilities and services
   private final Logger log = LogManager.getLogger(WineScreenController.class);
   private final PageService pageService = new PageService(100);
+  // FXML elements
+  @FXML
+  private Button prevPageButtonSimpleView;
+  @FXML
+  private TextField pageNumberTextFieldSimpleView;
+  @FXML
+  private Label maxPageNumberSimpleView;
+  @FXML
+  private Button nextPageButtonSimpleView;
+  @FXML
   public TabPane tabPane;
-  public Button prevPageButtonSimpleView;
-  public TextField pageNumberTextFieldSimpleView;
-  public Label maxPageNumberSimpleView;
-  public Button nextPageButtonSimpleView;
-  @FXML
-  TableView<Wine> tableView;
-  @FXML
-  AnchorPane filtersPane;
-  @FXML
-  WebView webView;
-  @FXML
-  Button applyFiltersButton;
-  @FXML
-  Button resetFiltersButton;
-  AutoCompletionTextField countryTextField;
-  AutoCompletionTextField wineryTextField;
-  AutoCompletionTextField colorTextField;
-  @FXML
-  TextField titleTextField;
-  @FXML
-  private TilePane winesViewContainer;
+  private LeafletOsmController mapController;
+  // Custom element (added in code)
   private RangeSlider scoreSlider;
   private RangeSlider abvSlider;
   private RangeSlider priceSlider;
   private RangeSlider vintageSlider;
-  private LeafletOsmController mapController;
-
+  private AutoCompletionTextField countryTextField;
+  private AutoCompletionTextField wineryTextField;
+  private AutoCompletionTextField colorTextField;
+  @FXML
+  private TableView<Wine> tableView;
+  @FXML
+  private AnchorPane filtersPane;
+  @FXML
+  private WebView webView;
+  @FXML
+  private Button applyFiltersButton;
+  @FXML
+  private Button resetFiltersButton;
+  @FXML
+  private TextField titleTextField;
+  @FXML
+  private TilePane winesViewContainer;
   @FXML
   private Button nextPageButtonRawViewer;
-
   @FXML
   private Button prevPageButtonRawViewer;
-
   @FXML
   private TextField pageNumberTextFieldRawViewer;
-
   @FXML
   private WineFilters currentFilters;
-
   @FXML
   private Label maxPageNumberRawViewer;
 
@@ -95,6 +99,45 @@ public class WineScreenController extends Controller {
    */
   public WineScreenController(ManagerContext managerContext) {
     super(managerContext);
+  }
+
+  /**
+   * Called after the constructor for when fxml is loaded.
+   * <p>
+   * Gets, loads, and displays a table from a list of wines from the controller layer
+   * </p>
+   */
+  @Override
+  public void init() {
+    // Create AutoCompleteBoxes
+    this.countryTextField = createAutoCompleteTextField(9.0, 105.0);
+    this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
+    this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
+
+    // Setup Sliders and filters
+    sliderInit();
+    setFilterValues();
+
+    // ensure tabbing doesn't select sliders
+    colorTextField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.TAB) {
+        applyFiltersButton.requestFocus();
+      }
+    });
+
+    // Setup page navigation functionality
+    setupNavigation();
+
+    // Setup map
+    mapController = new LeafletOsmController(webView.getEngine());
+    mapController.initMap();
+
+    // Setup table with wine data
+    setupTableColumns();
+    openWineRange(null);
+
+    // Setup detailed wine
+    tableView.setOnMouseClicked(this::openWineOnClick);
   }
 
   /**
@@ -114,7 +157,7 @@ public class WineScreenController extends Controller {
     ObservableList<Wine> wines = managerContext.getDatabaseManager().getWineDao()
         .getAllInRange(begin, end, filters);
 
-    // send the wines to the map if they have a geo location
+    // send the wines to the map if they have a geolocation
     mapController.runOrQueueWhenReady(() -> {
       mapController.clearWineMarkers();
       mapController.clearHeatmap();
@@ -210,125 +253,6 @@ public class WineScreenController extends Controller {
   }
 
   /**
-   * Called after the constructor for when fxml is loaded.
-   * <p>
-   * Gets, loads, and displays a table from a list of wines from the controller layer
-   * </p>
-   */
-  @Override
-  public void init() {
-    // Create AutoCompleteBoxes
-    this.countryTextField = createAutoCompleteTextField(9.0, 105.0);
-    this.wineryTextField = createAutoCompleteTextField(9.0, 165.0);
-    this.colorTextField = createAutoCompleteTextField(9.0, 225.0);
-
-    // Create sliders
-    this.vintageSlider = createSlider(11, 290, 0, 100, 10);
-    this.scoreSlider = createSlider(11, 365, 0, 100, 10);
-    this.abvSlider = createSlider(11, 445, 0, 100, 10);
-    this.priceSlider = createSlider(11, 525, 0, 100, 10);
-
-    // Ensures the sliders are rendered before installing tooltips (Needed for css lookups)
-    filtersPane.sceneProperty().addListener((observable, oldScene, newScene) -> {
-      installRangeSliderTooltip(this.vintageSlider);
-      installRangeSliderTooltip(this.scoreSlider);
-      installRangeSliderTooltip(this.abvSlider);
-      installRangeSliderTooltip(this.priceSlider);
-    });
-
-    // Set snap to ticks
-    vintageSlider.setSnapToTicks(true);
-    scoreSlider.setSnapToTicks(true);
-    abvSlider.setSnapToTicks(true);
-    priceSlider.setSnapToTicks(true);
-
-    colorTextField.setOnKeyPressed(event -> {
-      if (event.getCode() == KeyCode.TAB) {
-        applyFiltersButton.requestFocus();
-      }
-    });
-
-    // Ensure uniques are up to date
-    managerContext.getDatabaseManager().getWineDao().updateUniques();
-    setFilterValues();
-
-    // Set button functions
-    applyFiltersButton.setOnAction(event -> onApplyFiltersButtonPressed());
-    resetFiltersButton.setOnAction(event -> onResetFiltersButtonPressed());
-    prevPageButtonRawViewer.setOnAction(actionEvent -> previousPage());
-    nextPageButtonRawViewer.setOnAction(actionEvent -> nextPage());
-    prevPageButtonSimpleView.setOnAction(actionEvent -> previousPage());
-    nextPageButtonSimpleView.setOnAction(actionEvent -> nextPage());
-
-    // Set textfield listener and on action to ensure valid inputs
-    pageNumberTextFieldRawViewer.focusedProperty()
-        .addListener((observableValue, oldValue, newValue) -> {
-          if (!newValue) {
-            // This is executed when the text field loses focus
-            ensureValidPageNumber(pageNumberTextFieldRawViewer);
-          }
-        });
-    pageNumberTextFieldRawViewer.setOnAction(
-        actionEvent -> ensureValidPageNumber(pageNumberTextFieldRawViewer));
-
-    pageNumberTextFieldSimpleView.focusedProperty()
-        .addListener((observableValue, oldValue, newValue) -> {
-          if (!newValue) {
-            ensureValidPageNumber(pageNumberTextFieldSimpleView);
-          }
-        });
-    pageNumberTextFieldSimpleView.setOnAction(
-        actionEvent -> ensureValidPageNumber(pageNumberTextFieldSimpleView));
-
-    // Set listener to pageService to change pages
-    // Disables the buttons upon hitting a limit
-    pageService.pageNumberProperty()
-        .addListener((observableValue, oldValue, newValue) -> {
-          openWineRange(this.currentFilters);
-          this.nextPageButtonRawViewer.setDisable((int) newValue == pageService.getMaxPages());
-          this.prevPageButtonRawViewer.setDisable((int) newValue == 1);
-          this.nextPageButtonSimpleView.setDisable((int) newValue == pageService.getMaxPages());
-          this.prevPageButtonSimpleView.setDisable((int) newValue == 1);
-          this.pageNumberTextFieldSimpleView.setText(newValue + "");
-          this.pageNumberTextFieldRawViewer.setText(newValue + "");
-        });
-
-    // Set up max pages
-    pageService.setTotalItems(managerContext.getDatabaseManager().getWineDao().getCount());
-    maxPageNumberRawViewer.setText("/" + pageService.getMaxPages()); // Set initial value
-    maxPageNumberSimpleView.setText("/" + pageService.getMaxPages());
-    pageService.maxPagesProperty().addListener((observableValue, oldValue, newValue) -> {
-
-      // Change max pages label when max pages changes
-      maxPageNumberRawViewer.setText("/" + newValue);
-      maxPageNumberSimpleView.setText("/" + newValue);
-
-      // ensure page number doesn't get "caught" outside range
-      if ((int) newValue < this.pageService.getPageNumber()) {
-        this.pageService.setPageNumber(this.pageService.getMaxPages());
-        this.pageNumberTextFieldRawViewer.setText(this.pageService.getMaxPages() + "");
-        this.pageNumberTextFieldSimpleView.setText(this.pageService.getMaxPages() + "");
-      }
-
-      // Ensure we reset page buttons
-      this.nextPageButtonRawViewer.setDisable(
-          pageService.getPageNumber() == pageService.getMaxPages());
-      this.prevPageButtonRawViewer.setDisable(pageService.getPageNumber() == 1);
-      this.nextPageButtonSimpleView.setDisable(
-          pageService.getPageNumber() == pageService.getMaxPages());
-      this.prevPageButtonSimpleView.setDisable(pageService.getPageNumber() == 1);
-    });
-
-    mapController = new LeafletOsmController(webView.getEngine());
-    mapController.initMap();
-
-    setupTableColumns();
-    openWineRange(null);
-
-    tableView.setOnMouseClicked(this::openWineOnClick);
-  }
-
-  /**
    * Creates a range slider element and displays it on the filters pane at the given layout
    * coordinates.
    *
@@ -347,7 +271,7 @@ public class WineScreenController extends Controller {
     rangeSlider.setShowTickLabels(true);
     rangeSlider.setBlockIncrement(blockIncrements);
     rangeSlider.setSnapToPixel(true);
-    // by default the font size matches the parent font size which is the filters title
+    // by default, the font size matches the parent font size which is the filter title
     rangeSlider.setStyle("-fx-font-size: 15px;");
     rangeSlider.getStylesheets().add("css/range_slider.css");
     filtersPane.getChildren().add(rangeSlider);
@@ -375,7 +299,7 @@ public class WineScreenController extends Controller {
 
 
   /**
-   * Is called when the apply button is pressed<br> Updates table with filtered data.
+   * Is called when the "apply" button is pressed<br> Updates table with filtered data.
    */
   public void onApplyFiltersButtonPressed() {
     currentFilters = new WineFilters(
@@ -406,14 +330,7 @@ public class WineScreenController extends Controller {
    */
   public void onResetFiltersButtonPressed() {
     // Reset all parameters
-    priceSlider.setHighValue(priceSlider.getMax());
-    priceSlider.setLowValue(priceSlider.getMin());
-    scoreSlider.setHighValue(scoreSlider.getMax());
-    scoreSlider.setLowValue(scoreSlider.getMin());
-    abvSlider.setHighValue(abvSlider.getMax());
-    abvSlider.setLowValue(abvSlider.getMin());
-    vintageSlider.setHighValue(vintageSlider.getMax());
-    vintageSlider.setLowValue(vintageSlider.getMin());
+    resetSliderThumbs();
     wineryTextField.setText("");
     countryTextField.setText("");
     titleTextField.setText("");
@@ -445,16 +362,6 @@ public class WineScreenController extends Controller {
   }
 
   /**
-   * Opens the detailed wine view for a wine.
-   *
-   * @param wine wine
-   */
-  private void openDetailedWineView(Wine wine) {
-    Runnable backAction = () -> managerContext.getGuiManager().mainController.openWineScreen();
-    managerContext.getGuiManager().mainController.openDetailedWineView(wine, backAction);
-  }
-
-  /**
    * Ensures the value in the text field is a valid page number.
    *
    * @param textField Text field to test
@@ -464,13 +371,13 @@ public class WineScreenController extends Controller {
 
     if (!isInteger(currentText)) {
       textField.setText(
-          String.valueOf(this.pageService.getPageNumber())); // Set back to current page
+          String.valueOf(this.pageService.getPageNumber())); // Set back to the current page
 
       // ensure valid range
     } else if (Integer.parseInt(currentText) > pageService.getMaxPages()
         || Integer.parseInt(currentText) < 1) {
       textField.setText(
-          String.valueOf(this.pageService.getPageNumber())); // Set back to current page
+          String.valueOf(this.pageService.getPageNumber())); // Set back to the current page
     } else {
       pageService.setPageNumber(Integer.parseInt(currentText)); // Change page if valid
     }
@@ -488,7 +395,7 @@ public class WineScreenController extends Controller {
   }
 
   /**
-   * Goes to the previous.
+   * Goes to the previous page.
    */
   public void previousPage() {
     this.pageService.previousPage();
@@ -498,15 +405,19 @@ public class WineScreenController extends Controller {
         this.pageService.pageNumberProperty().getValue().toString());
   }
 
-
   /**
    * Sets the value of the current filters based off the inputted filters.
    */
   public void setFilterValues() {
+
+    WineDao wineDao = managerContext.getDatabaseManager().getWineDao();
+    WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
+
+    // Ensure unique value are up to date
+    wineDao.updateUniques();
+
     // Auto Complete boxes and range sliders
     // Update filter checkboxes
-    WineDataStatService wineDataStatService = managerContext.getDatabaseManager()
-        .getWineDataStatService();
     final Set<String> winerySet = wineDataStatService.getUniqueWineries();
     final Set<String> countrySet = wineDataStatService.getUniqueCountries();
     final Set<String> colorSet = wineDataStatService.getUniqueColors();
@@ -519,29 +430,92 @@ public class WineScreenController extends Controller {
     final double maxAbv = wineDataStatService.getMaxAbv();
     final double minAbv = wineDataStatService.getMinAbv();
 
-    // Clear old list data
-    wineryTextField.getEntries().clear();
-    countryTextField.getEntries().clear();
-    colorTextField.getEntries().clear();
+    // Configure auto-complete data
+    configureAutoComplete(wineryTextField, winerySet);
+    configureAutoComplete(countryTextField, countrySet);
+    configureAutoComplete(colorTextField, colorSet);
 
-    // Set data for auto complete
-    wineryTextField.getEntries().addAll(winerySet);
-    countryTextField.getEntries().addAll(countrySet);
-    colorTextField.getEntries().addAll(colorSet);
+    // Configure Sliders
+    configureSlider(scoreSlider, minScore, maxScore, 1, 0);
+    configureSlider(priceSlider, minPrice, maxPrice, 100, 5);
 
-    // Following entries are commented out as we currently don't have data for them
-    // Set min and max ranges
-    scoreSlider.setMin(minScore);
-    scoreSlider.setMax(maxScore);
-    vintageSlider.setMin(minVintage);
-    vintageSlider.setMax(maxVintage);
-    priceSlider.setMin(minPrice);
-    priceSlider.setMax(maxPrice);
-    abvSlider.setMin(minAbv);
-    abvSlider.setMax(maxAbv);
+    YearStringConverter yearStringConverter = new YearStringConverter(); // For vintage
+    configureSlider(vintageSlider, minVintage, maxVintage, 1, 0,
+        yearStringConverter);
 
     // Set slider handles to min and max values
     // Fixes a graphic issue where the slider values don't change with the min and max adjustments
+    resetSliderThumbs();
+
+    // Ensure sliders are valid and disable if not
+    validateSlider(vintageSlider, minVintage, maxVintage);
+    validateSlider(scoreSlider, minScore, maxScore);
+    validateSlider(priceSlider, minPrice, maxPrice);
+    validateSlider(abvSlider, minAbv, maxAbv);
+  }
+
+  // Private helper functions
+
+  /**
+   * Configures Auto-completing text field with given entries.
+   *
+   * @param textField Target text field
+   * @param entries   Auto-complete entries
+   */
+  private void configureAutoComplete(AutoCompletionTextField textField, Set<String> entries) {
+    textField.getEntries().clear(); // Clear old data
+    textField.getEntries().addAll(entries); // Add new data for auto-complete
+  }
+
+  /**
+   * helper method to configure range slider.
+   *
+   * @param rangeSlider    Range Slider to configure
+   * @param min            Minimum range slider value
+   * @param max            Maximum range slider value
+   * @param majorTickUnit  Units between major tick
+   * @param minorTickCount Number of minor ticks
+   */
+  private void configureSlider(RangeSlider rangeSlider,
+      double min,
+      double max,
+      double majorTickUnit,
+      int minorTickCount) {
+
+    configureSlider(rangeSlider, min, max, majorTickUnit, minorTickCount, null);
+  }
+
+  /**
+   * Overloaded helper method for range slider with label formatter.
+   *
+   * @param rangeSlider    Range Slider to configure
+   * @param min            Minimum range slider value
+   * @param max            Maximum range slider value
+   * @param majorTickUnit  Units between major tick
+   * @param minorTickCount Number of minor ticks
+   * @param labelFormatter Label formatter
+   */
+  private void configureSlider(RangeSlider rangeSlider,
+      double min,
+      double max,
+      double majorTickUnit,
+      int minorTickCount,
+      StringConverter<Number> labelFormatter) {
+
+    rangeSlider.setMin(min);
+    rangeSlider.setMax(max);
+    rangeSlider.setMajorTickUnit(majorTickUnit);
+    rangeSlider.setMinorTickCount(minorTickCount);
+
+    if (labelFormatter != null) {
+      rangeSlider.setLabelFormatter(labelFormatter);
+    }
+  }
+
+  /**
+   * Resets all sliders back to their minimums and maxes.
+   */
+  private void resetSliderThumbs() {
     scoreSlider.setHighValue(scoreSlider.getMax());
     scoreSlider.setLowValue(scoreSlider.getMin());
     vintageSlider.setHighValue(vintageSlider.getMax());
@@ -550,23 +524,16 @@ public class WineScreenController extends Controller {
     priceSlider.setLowValue(priceSlider.getMin());
     abvSlider.setHighValue(abvSlider.getMax());
     abvSlider.setLowValue(abvSlider.getMin());
+  }
 
-    // Ensure the sliders display properly
-    scoreSlider.setMajorTickUnit(1);
-    vintageSlider.setMajorTickUnit(1);
-    vintageSlider.setMinorTickCount(0);
-    priceSlider.setMajorTickUnit(100);
-    priceSlider.setMinorTickCount(5);
-
-    // Ensure sliders are valid and disable if not
-    validateSlider(vintageSlider, minVintage, maxVintage);
-    validateSlider(scoreSlider, minScore, maxScore);
-    validateSlider(priceSlider, minPrice, maxPrice);
-    validateSlider(abvSlider, minAbv, maxAbv);
-
-    YearStringConverter yearStringConverter = new YearStringConverter();
-    vintageSlider.setLabelFormatter(yearStringConverter);
-
+  /**
+   * Opens the detailed wine view for a wine.
+   *
+   * @param wine wine
+   */
+  private void openDetailedWineView(Wine wine) {
+    Runnable backAction = () -> managerContext.getGuiManager().mainController.openWineScreen();
+    managerContext.getGuiManager().mainController.openDetailedWineView(wine, backAction);
   }
 
   /**
@@ -580,7 +547,7 @@ public class WineScreenController extends Controller {
    * @param max    max value to check
    */
   private void validateSlider(RangeSlider slider, double min, double max) {
-    // The vintage min is set to the max double for error handling so min > max check needed
+    // The vintage min is set to the max double for error handling, so min > max check needed
     if (min == 0 & max == 0 || min > max) {
       slider.setMin(0);
       slider.setMax(1);
@@ -633,7 +600,7 @@ public class WineScreenController extends Controller {
           upperToolTip.setText(String.format("%.0f", newValue.doubleValue())));
 
     } else {
-      LogManager.getLogger().error(
+      log.error(
           "Thumb nodes not found. Make sure the RangeSlider is added to the scene and rendered.");
     }
 
@@ -653,7 +620,7 @@ public class WineScreenController extends Controller {
           Point2D thumbLocation = thumb.localToScene(
               thumb.getBoundsInLocal().getMinX(), thumb.getBoundsInLocal().getMinY());
 
-          // Using getWindow().getX() to adjust for window postion so tool tip is located correctly
+          // Using getWindow().getX() to adjust for window position so tool tip is located correctly
           tooltip.show(thumb, thumbLocation.getX() + thumb.getScene().getWindow().getX(),
               thumbLocation.getY() + thumb.getScene().getWindow().getY() - 20);
         }
@@ -672,6 +639,96 @@ public class WineScreenController extends Controller {
 
     // Hide on mouse release
     thumb.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> tooltip.hide());
+  }
+
+  /**
+   * Initialises filter sliders.
+   */
+  private void sliderInit() {
+    // Create sliders
+    this.vintageSlider = createSlider(11, 290, 0, 100, 10);
+    this.scoreSlider = createSlider(11, 365, 0, 100, 10);
+    this.abvSlider = createSlider(11, 445, 0, 100, 10);
+    this.priceSlider = createSlider(11, 525, 0, 100, 10);
+
+    // Ensures the sliders are rendered before installing tooltips (Needed for CSS lookups)
+    filtersPane.sceneProperty().addListener((observable, oldScene, newScene) -> {
+      installRangeSliderTooltip(this.vintageSlider);
+      installRangeSliderTooltip(this.scoreSlider);
+      installRangeSliderTooltip(this.abvSlider);
+      installRangeSliderTooltip(this.priceSlider);
+    });
+
+    // Set snap to ticks
+    vintageSlider.setSnapToTicks(true);
+    scoreSlider.setSnapToTicks(true);
+    abvSlider.setSnapToTicks(true);
+    priceSlider.setSnapToTicks(true);
+
+  }
+
+  /**
+   * Sets up page navigation buttons.
+   */
+  private void setupNavigation() {
+    // Set button functions
+    applyFiltersButton.setOnAction(event -> onApplyFiltersButtonPressed());
+    resetFiltersButton.setOnAction(event -> onResetFiltersButtonPressed());
+    prevPageButtonRawViewer.setOnAction(actionEvent -> previousPage());
+    nextPageButtonRawViewer.setOnAction(actionEvent -> nextPage());
+    prevPageButtonSimpleView.setOnAction(actionEvent -> previousPage());
+    nextPageButtonSimpleView.setOnAction(actionEvent -> nextPage());
+
+    // Set text field listener and on action to ensure valid inputs
+    pageNumberTextFieldRawViewer.focusedProperty()
+        .addListener((observableValue, oldValue, newValue) -> {
+          if (!newValue) {
+            // This is executed when the text field loses focus
+            ensureValidPageNumber(pageNumberTextFieldRawViewer);
+          }
+        });
+    pageNumberTextFieldRawViewer.setOnAction(
+        actionEvent -> ensureValidPageNumber(pageNumberTextFieldRawViewer));
+
+    pageNumberTextFieldSimpleView.focusedProperty()
+        .addListener((observableValue, oldValue, newValue) -> {
+          if (!newValue) {
+            ensureValidPageNumber(pageNumberTextFieldSimpleView);
+          }
+        });
+    pageNumberTextFieldSimpleView.setOnAction(
+        actionEvent -> ensureValidPageNumber(pageNumberTextFieldSimpleView));
+
+    // Set listener to pageService to change pages
+    // Disables the buttons upon hitting a limit
+    pageService.pageNumberProperty()
+        .addListener((observableValue, oldValue, newValue) -> {
+          openWineRange(this.currentFilters);
+          this.nextPageButtonRawViewer.setDisable((int) newValue == pageService.getMaxPages());
+          this.prevPageButtonRawViewer.setDisable((int) newValue == 1);
+          this.nextPageButtonSimpleView.setDisable((int) newValue == pageService.getMaxPages());
+          this.prevPageButtonSimpleView.setDisable((int) newValue == 1);
+          this.pageNumberTextFieldSimpleView.setText(newValue + "");
+          this.pageNumberTextFieldRawViewer.setText(newValue + "");
+        });
+
+    // Set up max pages
+    pageService.setTotalItems(managerContext.getDatabaseManager().getWineDao().getCount());
+    maxPageNumberRawViewer.setText("/" + pageService.getMaxPages()); // Set initial value
+    maxPageNumberSimpleView.setText("/" + pageService.getMaxPages());
+    pageService.maxPagesProperty().addListener((observableValue, oldValue, newValue) -> {
+
+      // Change max pages label when max pages changes
+      maxPageNumberRawViewer.setText("/" + newValue);
+      maxPageNumberSimpleView.setText("/" + newValue);
+
+      // ensure page number doesn't get "caught" outside range
+      if ((int) newValue < this.pageService.getPageNumber()) {
+        this.pageService.setPageNumber(this.pageService.getMaxPages());
+        this.pageNumberTextFieldRawViewer.setText(this.pageService.getMaxPages() + "");
+        this.pageNumberTextFieldSimpleView.setText(this.pageService.getMaxPages() + "");
+      }
+    });
   }
 
   /**

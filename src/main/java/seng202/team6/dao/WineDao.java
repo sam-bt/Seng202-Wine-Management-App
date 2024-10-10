@@ -660,4 +660,13 @@ public class WineDao extends Dao {
         break;
     }
   }
+
+  /**
+   * Gets the wineDataStatService.
+   *
+   * @return wineDataStatService
+   */
+  public WineDataStatService getWineDataStatService() {
+    return wineDataStatService;
+  }
 }
