@@ -105,7 +105,7 @@ public class UserDao extends Dao {
   }
 
   /**
-   * Retrieves a list of users from the database for the given search query
+   * Retrieves a list of users from the database for the given search query.
    *
    * @param search The query to be searched
    * @return A list of all the users matching the query

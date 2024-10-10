@@ -169,7 +169,8 @@ public class AggregatedDao extends Dao {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {
-          WineReview wineReview = wineReviewDao.extractWineReviewFromResultSet(resultSet, "wine_review_id");
+          WineReview wineReview = wineReviewDao.extractWineReviewFromResultSet(resultSet,
+              "wine_review_id");
           Wine wine = wineDao.extractWineFromResultSet(resultSet, "wine_id");
           wineReviewPairs.add(new Pair<>(wineReview, wine));
         }

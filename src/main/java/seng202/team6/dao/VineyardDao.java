@@ -302,7 +302,8 @@ public class VineyardDao extends Dao {
    * @return An ObservableList of Vineyard objects
    * @throws SQLException If an error occurs while processing the ResultSet
    */
-  private ObservableList<Vineyard> extractAllVineyardsFromResultSet(ResultSet resultSet, String idColumnName)
+  private ObservableList<Vineyard> extractAllVineyardsFromResultSet(ResultSet resultSet,
+      String idColumnName)
       throws SQLException {
     ObservableList<Vineyard> vineyards = FXCollections.observableArrayList();
     while (resultSet.next()) {
@@ -319,7 +320,8 @@ public class VineyardDao extends Dao {
    * @return The extracted Vineyard object
    * @throws SQLException If an error occurs while processing the ResultSet
    */
-  private Vineyard extractVineyardFromResultSet(ResultSet resultSet, String idColumnName) throws SQLException {
+  private Vineyard extractVineyardFromResultSet(ResultSet resultSet, String idColumnName)
+      throws SQLException {
     long id = resultSet.getLong(idColumnName);
     if (useCache()) {
       Vineyard cachedVineyard = vineyardCache.tryGetObject(id);

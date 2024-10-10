@@ -119,7 +119,10 @@ public class WineReviewDao extends Dao {
    */
   public ObservableList<WineReview> getAllInRange(int begin, int end) {
     Timer timer = new Timer();
-    String sql = "SELECT WINE_REVIEW.ID as wine_review_id, WINE_REVIEW.* FROM WINE_REVIEW LIMIT ? OFFSET ?";
+    String sql = "SELECT WINE_REVIEW.ID as wine_review_id, WINE_REVIEW.* "
+        + "FROM WINE_REVIEW "
+        + "LIMIT ? "
+        + "OFFSET ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setInt(1, end - begin);
       statement.setInt(2, begin);

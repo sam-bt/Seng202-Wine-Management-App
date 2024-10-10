@@ -57,7 +57,7 @@ public class ReviewCard extends Card {
     HBox.setHgrow(imageView, Priority.NEVER);
 
     Label userName = new Label();
-    userName.setText("By: "+review.getUsername());
+    userName.setText("By: " + review.getUsername());
     userName.setStyle("-fx-font-size: 16px;");
     userName.setWrapText(true);
 

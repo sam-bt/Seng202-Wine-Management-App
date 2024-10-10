@@ -29,6 +29,9 @@ public class UserSearchPopupController extends Controller {
   @FXML
   private TableColumn<User, String> userTableColumn;
 
+  /**
+   * Called to init this controller after set up.
+   */
   public void init() {
 
     userTableView.setOnMouseClicked(this::openUserOnClick);
@@ -78,7 +81,8 @@ public class UserSearchPopupController extends Controller {
     userTableView.getItems().clear();
 
     String searchName = searchTextField.getText();
-    ObservableList<User> results = managerContext.getDatabaseManager().getUserDao().getAllFromSearch(searchName);
+    ObservableList<User> results = managerContext.getDatabaseManager().getUserDao()
+        .getAllFromSearch(searchName);
 
     userTableColumn.setCellValueFactory(cellData ->
         new SimpleStringProperty(cellData.getValue().getUsername())
