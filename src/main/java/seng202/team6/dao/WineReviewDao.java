@@ -248,6 +248,23 @@ public class WineReviewDao extends Dao {
     return wineReviews;
   }
 
+  public ObservableList<WineReview> getAllFlaggedReviews() {
+    Timer timer = new Timer();
+    ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
+    String sql = "SELECT * FROM WINE_REVIEW WHERE FLAGGED = 1";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      try (ResultSet resultSet = statement.executeQuery()) {
+        wineReviews = extractAllWineReviewsFromResultSet(resultSet);
+        log.info("Successfully retrieved all flagged reviews in {}ms", timer.currentOffsetMilliseconds());
+        return wineReviews;
+      }
+    } catch (SQLException error) {
+      log.error("Failed to retrieve flagged reviews!");
+      log.error(error.getMessage());
+    }
+  return FXCollections.emptyObservableList();
+  }
+
   /**
    * Extracts a WineReview object from the provided ResultSet. The wine review cache is checked
    * before creating a new wine list instance.

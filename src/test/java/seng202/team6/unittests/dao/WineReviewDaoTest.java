@@ -15,29 +15,42 @@ import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 
-public class WineReviewDaoTest {
+public class WineReviewDAOTest {
 
   private DatabaseManager databaseManager;
-  private WineReviewDao wineReviewDao;
-  private WineDao wineDao;
-  private UserDao userDao;
+  private WineReviewDao wineReviewDAO;
+  private WineDao wineDAO;
+  private UserDao userDAO;
   private User user;
   private Wine wine;
 
   @BeforeEach
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
-    wineReviewDao = databaseManager.getWineReviewDao();
-    wineDao = databaseManager.getWineDao();
-    userDao = databaseManager.getUserDao();
-    wineReviewDao.setUseCache(false);
+    wineReviewDAO = databaseManager.getWineReviewDao();
+    wineDAO = databaseManager.getWineDao();
+    userDAO = databaseManager.getUserDao();
+    wineReviewDAO.setUseCache(false);
 
     user = new User("username", "password", "role", "salt");
-    userDao.add(user);
+    userDAO.add(user);
 
-    wine = new Wine(-1, "wine", "blue", "nz", "christchurch", "", "", 1024, "na", 99, 25.0f,
-        50f, null, 0.0);
-    wineDao.add(wine);
+    wine = new Wine(
+            -1l,
+            "wine",
+            "blue",
+            "nz",
+            "christchurch",
+            "",
+            "blue",
+            1024,
+            "na",
+            99,
+            25.0f,
+            50f,
+            null,
+            2f);
+    wineDAO.add(wine);
   }
 
   @AfterEach
@@ -52,7 +65,7 @@ public class WineReviewDaoTest {
     WineReview initialReview = createWineReview(initial, "Initial description");
     initialReview.setRating(changed);
 
-    WineReview updatedReview = wineReviewDao.getAll(user).getFirst();
+    WineReview updatedReview = wineReviewDAO.getAll(user).getFirst();
     assertEquals(changed, updatedReview.getRating(), 0.001);
   }
 
@@ -63,11 +76,11 @@ public class WineReviewDaoTest {
     WineReview initialReview = createWineReview(4.0, initial);
     initialReview.setDescription(changed);
 
-    WineReview updatedReview = wineReviewDao.getAll(user).getFirst();
+    WineReview updatedReview = wineReviewDAO.getAll(user).getFirst();
     assertEquals(changed, updatedReview.getDescription());
   }
 
   private WineReview createWineReview(double rating, String description) {
-    return wineReviewDao.add(user, wine, rating, description, new Date(System.currentTimeMillis()));
+    return wineReviewDAO.add(user, wine, rating, description, new Date(System.currentTimeMillis()));
   }
 }

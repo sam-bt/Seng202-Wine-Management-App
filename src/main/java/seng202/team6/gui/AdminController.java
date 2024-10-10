@@ -124,6 +124,9 @@ public class AdminController extends Controller {
 
   private void setupReviewTable() {
     reviewsTable.getItems().clear();
+    ObservableList<WineReview> reviews = databaseManager.getWineReviewDao().getAllFlaggedReviews();
+
+
   }
 
   private void refreshReviewTable() {
