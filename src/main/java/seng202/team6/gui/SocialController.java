@@ -45,6 +45,8 @@ public class SocialController extends Controller {
   @Override
   public void init() {
 
+    reviewsViewContainer.setHgap(5);
+
     ObservableList<Pair<WineReview, Wine>> reviews = managerContext.getDatabaseManager()
         .getAggregatedDao().getWineReviewsAndWines(0, 100);
 
