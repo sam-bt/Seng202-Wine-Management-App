@@ -126,7 +126,7 @@ public class AggregatedDaoTest {
     reviewDao.add(testUser, testWine, 5.0, "Yum!",
         new Date(1728366112972L));
 
-    ObservableList<Pair<WineReview, Wine>> result = aggregatedDao.getWineReviewsAndWines(begin, end);
+    ObservableList<Pair<WineReview, Wine>> result = aggregatedDao.getWineReviewsAndWines(begin, end, null);
 
     assertNotNull(result);
     assertEquals(1, result.size());

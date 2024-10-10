@@ -5,7 +5,6 @@ import java.util.Map;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -44,8 +43,8 @@ public class ReviewCard extends Card {
    *
    * @param containerWidth the width of the container to which this card belongs
    * @param horizontalGap  the horizontal gap of the container.
-   * @param review           the Review object containing details to display
-   * @param wine the Wine object containing details to display
+   * @param review         the Review object containing details to display
+   * @param wine           the Wine object containing details to display
    */
   public ReviewCard(ReadOnlyDoubleProperty containerWidth,
       DoubleProperty horizontalGap, WineReview review, Wine wine) {

@@ -1,25 +1,20 @@
 package seng202.team6.gui;
 
-import java.sql.Date;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.TilePane;
 import kotlin.Pair;
-import org.controlsfx.control.Rating;
-import seng202.team6.dao.WineDao;
+import org.controlsfx.control.RangeSlider;
+import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.gui.controls.ReviewCard;
-import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.ReviewFilters;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineReviewsService;
+import seng202.team6.util.FilterUtil;
 
 
 /**
@@ -28,7 +23,14 @@ import seng202.team6.service.WineReviewsService;
 public class SocialController extends Controller {
 
   @FXML
+  AnchorPane filtersPane;
+  AutoCompletionTextField usernameTextField;
+  AutoCompletionTextField wineNameTextField;
+  @FXML
   private TilePane reviewsViewContainer;
+  @FXML
+  private ReviewFilters currentFilters;
+  private RangeSlider ratingSlider;
 
   /**
    * Constructor.
@@ -47,11 +49,26 @@ public class SocialController extends Controller {
 
     reviewsViewContainer.setHgap(5);
 
-    ObservableList<Pair<WineReview, Wine>> reviews = managerContext.getDatabaseManager()
-        .getAggregatedDao().getWineReviewsAndWines(0, 100);
+    this.wineNameTextField = FilterUtil.createAutoCompleteTextField(9.0, 215.0);
+    this.usernameTextField = FilterUtil.createAutoCompleteTextField(9.0, 275.0);
 
-    reviewsViewContainer.getChildren().clear();
-    reviews.forEach(pair -> createReviewCard(pair.getFirst(), pair.getSecond()));
+    filtersPane.getChildren().add(usernameTextField);
+    filtersPane.getChildren().add(wineNameTextField);
+
+    this.ratingSlider = FilterUtil.createSlider(11, 345, 1, 5, 1);
+    ratingSlider.setMajorTickUnit(1);
+    ratingSlider.setMinorTickCount(0);
+
+    filtersPane.getChildren().add(ratingSlider);
+
+    filtersPane.sceneProperty().addListener((observable, oldScene, newScene) -> {
+      FilterUtil.installRangeSliderTooltip(ratingSlider);
+    });
+
+    ratingSlider.setSnapToTicks(true);
+
+    openReviewsInRange(null);
+
   }
 
   /**
@@ -74,8 +91,7 @@ public class SocialController extends Controller {
    * Opens a review.
    *
    * @param selectedReview the selected review to open
-   * @param selectedWine the selected wine to open
-   *
+   * @param selectedWine   the selected wine to open
    */
   @FXML
   public void openReviewOnClick(WineReview selectedReview, Wine selectedWine) {
@@ -92,6 +108,16 @@ public class SocialController extends Controller {
         .openPopupReviewView(wineReviewsService, reviewer, selectedReview, selectedWine);
   }
 
+  private void openReviewsInRange(ReviewFilters filters) {
+
+    ObservableList<Pair<WineReview, Wine>> reviews = managerContext.getDatabaseManager()
+        .getAggregatedDao().getWineReviewsAndWines(0, 100, filters);
+
+    reviewsViewContainer.getChildren().clear();
+    reviews.forEach(pair -> createReviewCard(pair.getFirst(), pair.getSecond()));
+
+  }
+
   @FXML
   void onSearch() {
     managerContext.getGuiManager().mainController.openUserSearchPopup();
@@ -100,10 +126,28 @@ public class SocialController extends Controller {
   @FXML
   void onApply() {
 
+    currentFilters = new ReviewFilters(
+        usernameTextField.getText(),
+        wineNameTextField.getText(),
+        (int) ratingSlider.getLowValue(),
+        (int) ratingSlider.getHighValue()
+    );
+
+    openReviewsInRange(currentFilters);
+
   }
 
   @FXML
   void onReset() {
+
+    ratingSlider.setHighValue(5);
+    ratingSlider.setLowValue(1);
+    wineNameTextField.setText("");
+    usernameTextField.setText("");
+
+    this.currentFilters = null;
+
+    openReviewsInRange(null);
 
   }
 

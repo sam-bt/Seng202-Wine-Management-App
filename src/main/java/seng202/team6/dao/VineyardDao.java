@@ -3,7 +3,6 @@ package seng202.team6.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -14,7 +13,6 @@ import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardFilters;
 import seng202.team6.model.VineyardTour;
-import seng202.team6.model.Wine;
 import seng202.team6.service.VineyardDataStatService;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
@@ -192,12 +190,12 @@ public class VineyardDao extends Dao {
   /**
    * Create a vineyard and inserts it into the VINEYARD table.
    *
-   * @param name the name of the vineyard
-   * @param address the address of the vineyard
-   * @param region the region of the vineyard
-   * @param website the website of the vineyard
+   * @param name        the name of the vineyard
+   * @param address     the address of the vineyard
+   * @param region      the region of the vineyard
+   * @param website     the website of the vineyard
    * @param description the description of the vineyard
-   * @param logoUrl the logoUrl of the vineyard
+   * @param logoUrl     the logoUrl of the vineyard
    * @param geoLocation the geoLocation of the vineyard
    */
   public Vineyard add(String name, String address, String region, String website,

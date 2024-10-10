@@ -13,7 +13,6 @@ import seng202.team6.util.PasswordUtil;
 import seng202.team6.util.Timer;
 
 
-
 /**
  * Data Access Object (DAO) for handling user related database operations.
  */

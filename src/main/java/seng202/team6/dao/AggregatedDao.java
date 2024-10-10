@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import kotlin.Pair;
 import seng202.team6.model.Note;
+import seng202.team6.model.ReviewFilters;
 import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.Wine;
@@ -166,6 +167,60 @@ public class AggregatedDao extends Dao {
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setInt(1, end - begin);
       statement.setInt(2, begin);
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        while (resultSet.next()) {
+          WineReview wineReview = wineReviewDao.extractWineReviewFromResultSet(resultSet,
+              "wine_review_id");
+          Wine wine = wineDao.extractWineFromResultSet(resultSet, "wine_id");
+          wineReviewPairs.add(new Pair<>(wineReview, wine));
+        }
+        log.info("Successfully retrieved {} reviews with wines in range {}-{} in {}ms",
+            wineReviewPairs.size(), begin, end, timer.currentOffsetMilliseconds());
+        return wineReviewPairs;
+      }
+    } catch (SQLException e) {
+      log.error("Failed to retrieve with wines in range {}-{}", begin, end, e);
+    }
+    return wineReviewPairs;
+  }
+
+  /**
+   * Gets a list of wine reviews and wines given filters.
+   *
+   * @param begin   begin
+   * @param end     end
+   * @param filters the review filters to filter by
+   * @return sub range of pairs between begin and end
+   */
+  public ObservableList<Pair<WineReview, Wine>> getWineReviewsAndWines(int begin, int end,
+      ReviewFilters filters) {
+    Timer timer = new Timer();
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, WINE_REVIEW.ID as wine_review_id, "
+        + "WINE_REVIEW.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+        + "FROM WINE_REVIEW "
+        + "INNER JOIN WINE ON WINE_REVIEW.WINE_ID = WINE.ID "
+        + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+        + (filters == null ? "" : "WHERE WINE_REVIEW.USERNAME LIKE ? "
+        + "AND WINE.TITLE LIKE ? "
+        + "AND WINE_REVIEW.RATING BETWEEN ? AND ? ")
+        + "LIMIT ? "
+        + "OFFSET ?";
+    ObservableList<Pair<WineReview, Wine>> wineReviewPairs = FXCollections.observableArrayList();
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      if (filters != null) {
+        statement.setString(1,
+            filters.getUsername().isEmpty() ? "%" : "%" + filters.getUsername() + "%");
+        statement.setString(2,
+            filters.getWineName().isEmpty() ? "%" : "%" + filters.getWineName() + "%");
+        statement.setInt(3, filters.getMinRating());
+        statement.setInt(4, filters.getMaxRating());
+        statement.setInt(5, end - begin);
+        statement.setInt(6, begin);
+      } else {
+        statement.setInt(1, end - begin);
+        statement.setInt(2, begin);
+      }
 
       try (ResultSet resultSet = statement.executeQuery()) {
         while (resultSet.next()) {

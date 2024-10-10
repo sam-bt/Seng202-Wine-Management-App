@@ -30,6 +30,13 @@ public class UserSearchPopupController extends Controller {
   private TableColumn<User, String> userTableColumn;
 
   /**
+   * Constructor for the user search popup.
+   */
+  public UserSearchPopupController(ManagerContext context) {
+    super(context);
+  }
+
+  /**
    * Called to init this controller after set up.
    */
   public void init() {
@@ -45,13 +52,6 @@ public class UserSearchPopupController extends Controller {
 
     Platform.runLater(() -> searchTextField.requestFocus());
 
-  }
-
-  /**
-   * Constructor for the user search popup.
-   */
-  public UserSearchPopupController(ManagerContext context) {
-    super(context);
   }
 
   /**

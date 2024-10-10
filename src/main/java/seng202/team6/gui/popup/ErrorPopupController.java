@@ -70,7 +70,7 @@ public class ErrorPopupController extends Controller {
   /**
    * Adds a button with the specified text and click action to the error popup.
    *
-   * @param text The text to display on the button.
+   * @param text        The text to display on the button.
    * @param clickAction The action to execute when the button is clicked.
    */
   public void addButton(String text, Runnable clickAction) {
