@@ -370,8 +370,8 @@ public class TourPlanningController extends Controller {
    * @return The newly created VineyardTour object.
    */
   private VineyardTour createVineyardTour(String name, GeneralPopupController popup) {
-    if (name.length() < VineyardToursService.MIN_NAME_SIZE ||
-        name.length() > VineyardToursService.MAX_NAME_SIZE) {
+    if (name.length() < VineyardToursService.MIN_NAME_SIZE
+        || name.length() > VineyardToursService.MAX_NAME_SIZE) {
       popup.setErrorMessage("The tour name must be between " + VineyardToursService.MIN_NAME_SIZE
           + " and " + VineyardToursService.MAX_NAME_SIZE + " characters.");
       return null;
