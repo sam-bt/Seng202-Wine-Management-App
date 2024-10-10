@@ -122,6 +122,15 @@
     </GridPane>
     <AnchorPane fx:id="popupActionBlocker" disable="true" maxHeight="900.0" maxWidth="1400.0" minHeight="900.0" minWidth="1400.0" prefHeight="900.0" prefWidth="1400.0" styleClass="anchor-pane" stylesheets="@../css/popup_pane_action_blocker.css" visible="false" />
     <AnchorPane fx:id="popupContent" disable="true" layoutX="15.0" layoutY="98.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" visible="false" />
+      <BorderPane fx:id="loadingSpinnerPane" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="900.0" prefWidth="1400.0" visible="false">
+         <center>
+            <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@../img/loading_spinner.gif" />
+               </image>
+            </ImageView>
+         </center>
+      </BorderPane>
       <VBox fx:id="vineyardsSubmenu" layoutX="300.0" layoutY="200.0" styleClass="sub-menu" stylesheets="@../css/nav_bar.css">
          <children>
             <HBox alignment="CENTER" fillHeight="false" onMouseClicked="#openVineyardsScreen" styleClass="sub-menu-item">

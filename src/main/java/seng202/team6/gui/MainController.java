@@ -1,6 +1,13 @@
 package seng202.team6.gui;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +18,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Builder;
@@ -53,6 +61,9 @@ public class MainController extends Controller {
   private AnchorPane popupContent;
 
   @FXML
+  private BorderPane loadingSpinnerPane;
+
+  @FXML
   private MenuBar menuBar;
 
   @FXML
@@ -85,7 +96,10 @@ public class MainController extends Controller {
   @FXML
   private Button registerButton;
 
+  private final ExecutorService executorService;
+
   private Screen currentScreen;
+
 
   private boolean disabled = false;
 
@@ -96,6 +110,7 @@ public class MainController extends Controller {
    */
   public MainController(ManagerContext managerContext) {
     super(managerContext);
+    executorService = Executors.newFixedThreadPool(1);
 
     // This is an ugly circular dependency. It is easier to resolve here
     managerContext.getGuiManager().setMainController(this);
@@ -604,6 +619,35 @@ public class MainController extends Controller {
     popupContent.setVisible(false);
     popupContent.setDisable(true);
     popupContent.getChildren().clear();
+  }
+
+  public <T> void showLoadingAnimation(Supplier<T> action, Consumer<T> completionAction) {
+    Task<T> task = new Task<>() {
+      @Override
+      protected T call() {
+        return action.get();
+      }
+    };
+
+    // start the loading animation
+    loadingSpinnerPane.setDisable(false);
+    loadingSpinnerPane.setVisible(true);
+    popupActionBlocker.setVisible(true);
+    popupActionBlocker.setDisable(false);
+
+    // when the task is finished, go back to the main thread
+    task.setOnSucceeded(event -> Platform.runLater(() -> {
+      loadingSpinnerPane.setDisable(true);
+      loadingSpinnerPane.setVisible(false);
+      popupActionBlocker.setVisible(false);
+      popupActionBlocker.setDisable(true);
+      try {
+        completionAction.accept(task.get());
+      } catch (InterruptedException | ExecutionException e) {
+        throw new RuntimeException(e);
+      }
+    }));
+    executorService.submit(task);
   }
 
   /**

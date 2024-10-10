@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -128,38 +129,43 @@ public class WineImportController extends Controller {
    * @param replace whether to replace
    */
   private void parseWines(boolean replace) {
-    List<Wine> parsedWines = new ArrayList<>();
-    Map<WinePropertyName, Integer> valid = importService.validHashMapCreate(selectedWineProperties);
+    Supplier<Void> supplier = () -> {
+      List<Wine> parsedWines = new ArrayList<>();
+      Map<WinePropertyName, Integer> valid = importService.validHashMapCreate(
+          selectedWineProperties);
 
-    currentFileRows.forEach(row -> {
-      try {
-        parsedWines.add(WineValidator.parseWine(
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.TITLE),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VARIETY),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COUNTRY),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.REGION),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.WINERY),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COLOUR),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VINTAGE),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.DESCRIPTION),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.SCORE),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.ABV),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.NZD),
-            null
-        ));
-      } catch (ValidationException e) {
-        log.error("Could not parse a wine: {}", e.getMessage());
+      currentFileRows.forEach(row -> {
+        try {
+          parsedWines.add(WineValidator.parseWine(
+              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.TITLE),
+              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VARIETY),
+              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COUNTRY),
+              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.REGION),
+              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.WINERY),
+              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COLOUR),
+              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VINTAGE),
+              importService.extractPropertyFromRowOrDefault(valid, row,
+                  WinePropertyName.DESCRIPTION),
+              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.SCORE),
+              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.ABV),
+              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.NZD),
+              null
+          ));
+        } catch (ValidationException e) {
+          log.error("Could not parse a wine: {}", e.getMessage());
+        }
+      });
+      log.info("Successfully parsed {} out of {} wines", parsedWines.size(),
+          currentFileRows.size());
+
+      if (replace) {
+        managerContext.getDatabaseManager().getWineDao().replaceAll(parsedWines);
+      } else {
+        managerContext.getDatabaseManager().getWineDao().addAll(parsedWines);
       }
-    });
-    log.info("Successfully parsed {} out of {} wines", parsedWines.size(),
-        currentFileRows.size());
-
-    if (replace) {
-      managerContext.getDatabaseManager().getWineDao().replaceAll(parsedWines);
-    } else {
-      managerContext.getDatabaseManager().getWineDao().addAll(parsedWines);
-    }
-    reset();
+      return null;
+    };
+    managerContext.getGuiManager().mainController.showLoadingAnimation(supplier, (t) -> reset());
   }
 
 
