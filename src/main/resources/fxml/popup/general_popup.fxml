@@ -27,6 +27,7 @@
               </children>
             </HBox>
                   <VBox fx:id="contentContainer" />
+                  <Label fx:id="errorMessageLabel" alignment="CENTER" prefHeight="17.0" prefWidth="646.0" text="Error Message" textAlignment="CENTER" textFill="RED" VBox.vgrow="ALWAYS" />
             <HBox fx:id="buttonsContainer" alignment="CENTER" spacing="20.0">
                      <padding>
                         <Insets bottom="10.0" top="10.0" />

@@ -166,8 +166,11 @@ public class TourPlanningController extends Controller {
     popup.addContent(optionsWrapper);
 
     popup.addButton("Create", () -> {
-      WineList wineList = wineListsComboBox.getSelectionModel().getSelectedItem();
       VineyardTour vineyardTour = createVineyardTour(nameTextField.getText(), popup);
+      if (vineyardTour == null) {
+        return;
+      }
+      WineList wineList = wineListsComboBox.getSelectionModel().getSelectedItem();
       openVineyardTour(vineyardTour);
       managerContext.getDatabaseManager().getVineyardsDao()
           .getAllInList(wineList)
@@ -367,7 +370,18 @@ public class TourPlanningController extends Controller {
    * @return The newly created VineyardTour object.
    */
   private VineyardTour createVineyardTour(String name, GeneralPopupController popup) {
-    // todo validation
+    if (name.length() < VineyardToursService.MIN_NAME_SIZE ||
+        name.length() > VineyardToursService.MAX_NAME_SIZE) {
+      popup.setErrorMessage("The tour name must be between " + VineyardToursService.MIN_NAME_SIZE
+          + " and " + VineyardToursService.MAX_NAME_SIZE + " characters.");
+      return null;
+    }
+    if (vineyardToursService.getVineyardTours().stream()
+        .anyMatch(vineyardTour -> vineyardTour.getName().equalsIgnoreCase(name))) {
+      popup.setErrorMessage("A tour with this name already exists");
+      return null;
+    }
+
     VineyardTour vineyardTour = vineyardToursService.createVineyardTour(name);
     openVineyardTour(vineyardTour);
     popup.close();

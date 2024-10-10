@@ -41,6 +41,9 @@ public class GeneralPopupController extends Controller {
   private Label messageLabel;
 
   @FXML
+  private Label errorMessageLabel;
+
+  @FXML
   private Label titleLabel;
 
   private final PopupType popupType;
@@ -77,11 +80,11 @@ public class GeneralPopupController extends Controller {
       messageContainer.getChildren().addFirst(iconView);
     }
 
-    // initially remove the message label unless the setMessage function is called
+    // initially remove the message label, error message label and content container until
+    // their corresponding set functions are called.
     container.getChildren().remove(messageContainer);
-
-    // initially remove the content container unless the setContent function is called
     container.getChildren().remove(contentContainer);
+    container.getChildren().remove(errorMessageLabel);
   }
 
   /**
@@ -102,6 +105,24 @@ public class GeneralPopupController extends Controller {
     messageLabel.setText(message);
     if (!container.getChildren().contains(messageContainer)) {
       container.getChildren().addFirst(messageContainer);
+    }
+  }
+
+  /**
+   * Sets the message of an error inside the popup.
+   *
+   * @param message The message to display in the popup
+   */
+  public void setErrorMessage(String message) {
+    if (message == null) {
+      container.getChildren().remove(errorMessageLabel);
+      return;
+    }
+    errorMessageLabel.setText(message);
+    if (!container.getChildren().contains(errorMessageLabel)) {
+      int size = container.getChildren().size();
+      // add it above the buttons
+      container.getChildren().add(size - 1, errorMessageLabel);
     }
   }
 

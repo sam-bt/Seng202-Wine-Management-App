@@ -15,7 +15,8 @@ import seng202.team6.model.VineyardTour;
  * currently authenticated user.
  */
 public class VineyardToursService {
-
+  public static final int MIN_NAME_SIZE = 3;
+  public static final int MAX_NAME_SIZE = 32;
   private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
   private final ObservableList<VineyardTour> vineyardTours = FXCollections.observableArrayList();
