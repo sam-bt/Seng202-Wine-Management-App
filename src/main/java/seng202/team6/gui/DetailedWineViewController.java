@@ -299,8 +299,29 @@ public class DetailedWineViewController extends Controller {
 
     Rating rating = new UnmodifiableRating();
     rating.ratingProperty().bind(wineReview.ratingProperty());
-    wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel);
+
+    Button flagButton = new Button("Flag This Review");
+    flagButton.setStyle("-fx-background-color: red; -fx-border-radius: 5; -fx-text-fill: white;");
+
+    flagButton.setOnAction(e -> {
+      flagReview(wineReview);
+    });
+
+    wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel, flagButton);
+
+
+
     return wrapper;
+  }
+
+  /**
+   * Flag a wine review.
+   *
+    * @param wineReview the review to flag.
+   */
+  private void flagReview(WineReview wineReview) {
+    wineReview.setFlag(1);
+    managerContext.getDatabaseManager().getWineReviewDao().updateWineReviewFlag(wineReview);
   }
 
   /**
