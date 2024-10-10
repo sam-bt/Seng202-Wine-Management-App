@@ -12,6 +12,17 @@ public enum AuthenticationResponse {
   MISSING_FIELDS("All fields must be filled."),
 
   /**
+   * Indicates that the username field is empty.
+   */
+  MISSING_USERNAME_FIELD("Please enter a username"),
+
+  /**
+   * Indicates that the password field is empty.
+   */
+  MISSING_PASSWORD_FIELD("Please enter a password"),
+
+
+  /**
    * Indicates that the confirmed password does not match the original password.
    */
   MISMATCHING_CONFIRMED_PASSWORD("Passwords do not match."),
@@ -46,9 +57,22 @@ public enum AuthenticationResponse {
   INVALID_USERNAME_PASSWORD_COMBINATION("Username or Password is Incorrect."),
 
   /**
+   * Indicates that the username is invalid.
+   */
+  INVALID_LOGIN_USERNAME("User cannot be found"),
+  /**
+   * Indicates that the password is invalid.
+   */
+  INVALID_LOGIN_PASSWORD("Incorrect password"),
+  /**
    * Indicates a successful login.
    */
   LOGIN_SUCCESS(null),
+
+  /**
+   * Indicates the username is valid.
+   */
+  VALID_LOGIN_USERNAME(null),
 
   /**
    * Indicates that the old password provided is incorrect.

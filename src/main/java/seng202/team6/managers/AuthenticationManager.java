@@ -67,19 +67,36 @@ public class AuthenticationManager {
    * Validates and processes a user login request.
    *
    * @param username The username of the account to log in.
-   * @param password The password of the account to log in.
    * @return An AuthenticationResponse indicating the result of the login attempt.
    */
-  public AuthenticationResponse validateLogin(String username,
-      String password) {
-    if (username.isEmpty() || password.isEmpty()) {
-      return AuthenticationResponse.MISSING_FIELDS;
+  public AuthenticationResponse validateLoginUsername(String username) {
+    if (username.isEmpty()) {
+      return AuthenticationResponse.MISSING_USERNAME_FIELD;
+    } else {
+
+      User user = databaseManager.getUserDao().get(username);
+      if (user == null) {
+        return AuthenticationResponse.INVALID_LOGIN_USERNAME;
+      }
+
+      return AuthenticationResponse.VALID_LOGIN_USERNAME;
+    }
+  }
+
+  /**
+   * Validates the login password.
+   *
+   * @param username username
+   * @param password password
+   * @return AuthenticationResponse
+   */
+  public AuthenticationResponse validateLoginPassword(String username, String password) {
+    if (password.isEmpty()) {
+      return AuthenticationResponse.MISSING_PASSWORD_FIELD;
     }
 
     User user = databaseManager.getUserDao().get(username);
-    if (user == null) {
-      return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
-    }
+
 
     boolean validPassword = EncryptionUtil.verifyPassword(password, user.getPassword(),
         user.getSalt());
@@ -90,6 +107,7 @@ public class AuthenticationManager {
       return AuthenticationResponse.LOGIN_SUCCESS;
     }
     return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
+
   }
 
   /**

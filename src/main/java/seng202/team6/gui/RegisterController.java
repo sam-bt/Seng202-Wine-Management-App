@@ -62,7 +62,7 @@ public class RegisterController extends Controller {
         = managerContext.getAuthenticationManager().validateRegistration(
         username, password, confirmPassword);
     if (response == AuthenticationResponse.REGISTER_SUCCESS) {
-      managerContext.getAuthenticationManager().validateLogin(username, password);
+      // managerContext.getAuthenticationManager().validateLogin(username, password);
       managerContext.getGuiManager().mainController.onLogin();
       managerContext.getGuiManager().mainController.openWineScreen();
     } else {
