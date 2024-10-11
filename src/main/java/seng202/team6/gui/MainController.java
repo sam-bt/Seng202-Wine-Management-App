@@ -91,7 +91,7 @@ public class MainController extends Controller {
   @FXML
   private Button registerButton;
 
-  private Screen currentScreen;
+  private String currentScreenFxml;
 
   private boolean disabled = false;
 
@@ -278,21 +278,24 @@ public class MainController extends Controller {
   /**
    * Switches the current scene.
    *
+   *<p>
+   *   Scenes with fxml paths equal to the currently loaded one are skipped
+   *</p>
+   *
    * @param fxml    fxml resource path
    * @param title   window title
    * @param builder controller builder
-   * @param screen  the screen that is being switched to
    */
-  public void switchScene(String fxml, String title, Builder<?> builder, Screen screen) {
-    if (currentScreen != null && screen != null && currentScreen == screen) {
-      log.warn("Skipped loading {} as it is already open", screen.name());
+  public void switchScene(String fxml, String title, Builder<?> builder) {
+    if (currentScreenFxml != null && currentScreenFxml.equals(fxml)) {
+      log.info("Skipped loading {} as it is already open", fxml);
       return;
     }
 
     Parent parent = loadFxml(fxml, builder, pageContent);
     if (parent != null) {
       managerContext.getGuiManager().setWindowTitle(title);
-      currentScreen = screen;
+      currentScreenFxml = fxml;
     }
   }
 
@@ -373,7 +376,7 @@ public class MainController extends Controller {
   @FXML
   public void openWineScreen() {
     switchScene("/fxml/wine_screen.fxml", "Wine Information",
-        () -> new WineScreenController(managerContext), Screen.WINE_SCREEN);
+        () -> new WineScreenController(managerContext));
   }
 
   /**
@@ -382,7 +385,7 @@ public class MainController extends Controller {
   @FXML
   public void openListScreen() {
     switchScene("/fxml/list_screen.fxml", "My Lists",
-        () -> new ListScreenController(managerContext), Screen.LISTS_SCREEN);
+        () -> new ListScreenController(managerContext));
   }
 
   /**
@@ -391,7 +394,7 @@ public class MainController extends Controller {
   @FXML
   public void openLoginScreen() {
     switchScene("/fxml/login_screen.fxml", "Login",
-        () -> new LoginController(managerContext), Screen.LOGIN_SCREEN);
+        () -> new LoginController(managerContext));
   }
 
   /**
@@ -400,7 +403,7 @@ public class MainController extends Controller {
   @FXML
   public void openRegisterScreen() {
     switchScene("/fxml/register_screen.fxml", "Register",
-        () -> new RegisterController(managerContext), Screen.REGISTER_SCREEN);
+        () -> new RegisterController(managerContext));
   }
 
   /**
@@ -409,7 +412,7 @@ public class MainController extends Controller {
   @FXML
   public void openAdminScreen() {
     switchScene("/fxml/admin_screen.fxml", "Register",
-        () -> new AdminController(managerContext), Screen.ADMIN_SCREEN);
+        () -> new AdminController(managerContext));
   }
 
   /**
@@ -418,7 +421,7 @@ public class MainController extends Controller {
   @FXML
   public void openSettingsScreen() {
     switchScene("/fxml/settings_screen.fxml", "Register",
-        () -> new SettingsController(managerContext), Screen.SETTINGS_SCREEN);
+        () -> new SettingsController(managerContext));
   }
 
   /**
@@ -427,7 +430,7 @@ public class MainController extends Controller {
   @FXML
   public void openUpdatePasswordScreen() {
     switchScene("/fxml/update_password_screen.fxml", "Register",
-        () -> new UpdatePasswordController(managerContext), Screen.UPDATE_PASSWORD_SCREEN);
+        () -> new UpdatePasswordController(managerContext));
   }
 
   /**
@@ -436,7 +439,7 @@ public class MainController extends Controller {
   @FXML
   public void openNotesScreen() {
     switchScene("/fxml/notes_screen.fxml", "Notes",
-        () -> new NotesController(managerContext), Screen.NOTES_SCREEN);
+        () -> new NotesController(managerContext));
   }
 
   /**
@@ -447,7 +450,7 @@ public class MainController extends Controller {
    */
   public void openDetailedWineView(Wine wine, Runnable backButtonAction) {
     switchScene("/fxml/detailed_wine_view.fxml", "Detailed Wine View",
-        () -> new DetailedWineViewController(managerContext, wine, backButtonAction), null);
+        () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
   }
 
 
@@ -459,8 +462,7 @@ public class MainController extends Controller {
    */
   public void openDetailedVineyardView(Vineyard vineyard, Runnable backButtonAction) {
     switchScene("/fxml/detailed_vineyard_view.fxml", "Detailed Wine View",
-        () -> new DetailedVineyardViewController(managerContext, vineyard, backButtonAction),
-        null);
+        () -> new DetailedVineyardViewController(managerContext, vineyard, backButtonAction));
   }
 
   /**
@@ -489,7 +491,7 @@ public class MainController extends Controller {
   @FXML
   public void openSocialScreen() {
     switchScene("/fxml/social_screen.fxml", "Social",
-        () -> new SocialController(managerContext), Screen.SOCIAL_SCREEN);
+        () -> new SocialController(managerContext));
   }
 
   /**
@@ -498,7 +500,7 @@ public class MainController extends Controller {
   @FXML
   public void openVineyardsScreen() {
     switchScene("/fxml/vineyards_screen.fxml", "Vineyards",
-        () -> new VineyardsController(managerContext), Screen.VINEYARDS_SCREEN);
+        () -> new VineyardsController(managerContext));
   }
 
   /**
@@ -507,7 +509,7 @@ public class MainController extends Controller {
   @FXML
   public void openTourPlanningScreen() {
     switchScene("/fxml/tour_planning_screen.fxml", "Tour Planning",
-        () -> new TourPlanningController(managerContext), Screen.TOUR_PLANNING_SCREEN);
+        () -> new TourPlanningController(managerContext));
   }
 
   /**
@@ -558,7 +560,7 @@ public class MainController extends Controller {
   @FXML
   public void openConsumptionScreen() {
     switchScene("/fxml/consumption_screen.fxml", "Consumption",
-        () -> new ConsumptionController(managerContext), Screen.CONSUMPTION_SCREEN);
+        () -> new ConsumptionController(managerContext));
   }
 
   /**
@@ -567,7 +569,7 @@ public class MainController extends Controller {
   @FXML
   public void openWineCompareScreen() {
     switchScene("/fxml/wine_compare.fxml", "Wine Compare",
-        () -> new WineCompareController(managerContext, null, null), Screen.COMPARE_WINES_SCREEN);
+        () -> new WineCompareController(managerContext, null, null));
   }
 
   /**
@@ -578,8 +580,7 @@ public class MainController extends Controller {
    */
   public void openWineCompareScreen(Wine leftWine, Wine rightWine) {
     switchScene("/fxml/wine_compare.fxml", "Wine Compare",
-        () -> new WineCompareController(managerContext, leftWine, rightWine),
-        Screen.COMPARE_WINES_SCREEN);
+        () -> new WineCompareController(managerContext, leftWine, rightWine));
   }
 
   /**
