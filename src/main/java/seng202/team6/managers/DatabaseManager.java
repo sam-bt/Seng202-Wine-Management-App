@@ -97,7 +97,6 @@ public class DatabaseManager {
     this.geoLocationDao = new GeoLocationDao(connection);
     this.vineyardTourDao = new VineyardTourDao(connection);
     this.aggregatedDao = new AggregatedDao(connection, wineReviewDao, wineNotesDao, wineDao);
-    init();
 
     VineyardDefaultsService vineyardDefaultsService = new VineyardDefaultsService(geoLocationDao,
         vineyardsDao, !inMemory);

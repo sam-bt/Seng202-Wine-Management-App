@@ -48,7 +48,7 @@ public class FxWrapper {
       // If we fail to initialize the managers we are kinda screwed
       throw new RuntimeException("Failed to instantiate manager context", exception);
     }
-    loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
+//    loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
   }
 
   /**
