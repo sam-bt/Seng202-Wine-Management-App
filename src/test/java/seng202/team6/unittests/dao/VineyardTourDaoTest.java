@@ -20,6 +20,11 @@ import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
 
+/**
+ * Unit tests for the VineyardTourDao class, which manages the creation and modification of vineyard tours.
+ * These tests verify the creation of vineyard tours, the addition and removal of vineyards to tours,
+ * and querying whether a vineyard belongs to a tour.
+ */
 public class VineyardTourDaoTest {
 
   private DatabaseManager databaseManager;
@@ -29,6 +34,12 @@ public class VineyardTourDaoTest {
   User testUser;
   UserDao userDao;
 
+  /**
+   * Sets up the database manager and the VineyardTourDao before each test.
+   * Also adds a test user for use in the tests.
+   *
+   * @throws SQLException if an error occurs during database setup.
+   */
   @BeforeEach
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
@@ -41,11 +52,20 @@ public class VineyardTourDaoTest {
 
   }
 
+  /**
+   * Tears down the database after each test, removing any added data and resetting the state.
+   *
+   * @throws SQLException if an error occurs during database teardown.
+   */
   @AfterEach
   void teardown() throws SQLException {
     databaseManager.teardown();
   }
 
+  /**
+   * Tests the creation of a vineyard tour.
+   * Verifies that a vineyard tour can be created successfully and that the name is correctly set.
+   */
   @Test
   void testCreateTour() {
 
@@ -59,6 +79,10 @@ public class VineyardTourDaoTest {
 
   }
 
+  /**
+   * Tests retrieving all vineyard tours for a specific user.
+   * Verifies that the correct number of vineyard tours is retrieved and their names match the expected values.
+   */
   @Test
   void testGetToursFromUser() {
 
@@ -75,6 +99,10 @@ public class VineyardTourDaoTest {
 
   }
 
+  /**
+   * Tests adding a vineyard to a vineyard tour.
+   * Verifies that the vineyard is successfully added to the tour.
+   */
   @Test
   void testAddVineyard() {
     VineyardDao vineyardDao = databaseManager.getVineyardsDao();
@@ -89,6 +117,10 @@ public class VineyardTourDaoTest {
 
   }
 
+  /**
+   * Tests whether a vineyard is part of a specific vineyard tour.
+   * Verifies that the vineyard is correctly recognized as being part of the tour.
+   */
   @Test
   void testIsVineyardInTourTrue() {
 
@@ -109,6 +141,10 @@ public class VineyardTourDaoTest {
 
   }
 
+  /**
+   * Tests whether a vineyard is not part of a specific vineyard tour.
+   * Verifies that the vineyard is correctly recognized as not being part of the tour.
+   */
   @Test
   void testIsVineyardInTourFalse() {
 
@@ -128,7 +164,10 @@ public class VineyardTourDaoTest {
 
   }
 
-
+  /**
+   * Tests removing a vineyard from a vineyard tour.
+   * Verifies that the vineyard is correctly removed from the tour and that the other vineyards remain in the tour.
+   */
   @Test
   void testRemoveVineyardFromTour() {
 
