@@ -18,20 +18,7 @@ import seng202.team6.model.Wine;
  */
 public class WineWidgets {
 
-  private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine_cropped.png");
-  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage(
-      "/img/white_wine_cropped.png");
-  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine_cropped.png");
-  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage(
-      "/img/default_wine_cropped.png");
-  private static final Map<String, Image> wineImages = new HashMap<>() {
-    {
-      put("red", RED_WINE_IMAGE);
-      put("white", WHITE_WINE_IMAGE);
-      put("rose", ROSE_WINE_IMAGE);
-      put("rosé", ROSE_WINE_IMAGE);
-    }
-  };
+  private static WineImages wineImages = new WineImages();
 
   /**
    * Creates a card for a wine.
@@ -43,7 +30,7 @@ public class WineWidgets {
     wrapper.setPadding(new Insets(10));
     wrapper.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
 
-    Image wineImage = wineImages.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
+    Image wineImage = wineImages.getWineImage(wine.getColor());
     ImageView imageView = new ImageView(wineImage);
     imageView.setFitHeight(100);
     imageView.setPreserveRatio(true);
