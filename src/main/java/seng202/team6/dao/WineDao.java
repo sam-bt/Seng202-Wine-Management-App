@@ -252,6 +252,12 @@ public class WineDao extends Dao {
     return null;
   }
 
+  /**
+   * Retrieves a wine from the database by its exact title.
+   *
+   * @param title The exact title of the wine to retrieve.
+   * @return The Wine object if found, or null if no match is found.
+   */
   public Wine getByExactTitle(String title) {
     Timer timer = new Timer();
     String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
@@ -601,7 +607,8 @@ public class WineDao extends Dao {
    */
   public void updateUniques() {
     wineDataStatService.reset();
-    String query = "SELECT title, country, winery, color, vintage, score_percent, abv, price FROM wine";
+    String query = "SELECT title, country, winery, color, vintage, score_percent, abv, price "
+        + "FROM wine";
     try (PreparedStatement statement = connection.prepareStatement(query);
         ResultSet set = statement.executeQuery()) {
 

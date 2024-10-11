@@ -112,8 +112,9 @@ public class AutoCompletionTextField extends TextField {
         setText(result);
         positionCaret(result.length());
         entriesPopup.hide();
-        if (onSelectionAction != null)
+        if (onSelectionAction != null) {
           onSelectionAction.accept(result);
+        }
       });
     }
 

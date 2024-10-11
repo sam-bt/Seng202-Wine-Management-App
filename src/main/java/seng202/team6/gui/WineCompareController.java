@@ -29,10 +29,14 @@ import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.gui.controls.CircularScoreIndicator;
 import seng202.team6.gui.controls.UnmodifiableRating;
-import seng202.team6.gui.controls.cardcontent.WineCardContent;
+import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 
+/**
+ * Controller class for comparing wines. Displays the comparison between two wines, allowing the
+ * user to search, view details, and interact with the wine data.
+ */
 public class WineCompareController extends Controller {
 
   @FXML
@@ -55,18 +59,26 @@ public class WineCompareController extends Controller {
    * Constructs a new WineCompareController.
    *
    * @param context the manager context
+   * @param wine the initial wine to display on the left side.
    */
   public WineCompareController(ManagerContext context, Wine wine) {
     super(context);
     this.leftWine = wine;
   }
 
+  /**
+   * Initializes the WineCompareController.
+   */
   @Override
   public void init() {
     leftSide = new WineSide(leftWineContainer);
     rightSide = new WineSide(rightWineContainer);
   }
 
+  /**
+   * Inner class representing one side (left or right) of the wine comparison view.
+   * Manages the UI components and interactions for a single wine.
+   */
   class WineSide {
 
     private final VBox container;
@@ -77,6 +89,11 @@ public class WineCompareController extends Controller {
     private AutoCompletionTextField searchTextField;
     private Wine wine;
 
+    /**
+     * Constructs a WineSide and initializes the layout for displaying wine details.
+     *
+     * @param container the VBox container to hold the components of this WineSide.
+     */
     WineSide(VBox container) {
       this.container = container;
       container.setPadding(new Insets(10));
@@ -84,6 +101,9 @@ public class WineCompareController extends Controller {
       setup();
     }
 
+    /**
+     * Sets up the search field and initial layout for the wine side view.
+     */
     private void setup() {
       Set<String> uniqueTitles = managerContext.getDatabaseManager().getWineDataStatService()
           .getUniqueTitles();
@@ -107,6 +127,11 @@ public class WineCompareController extends Controller {
       container.getChildren().addAll(wrapper, separator);
     }
 
+    /**
+     * Sets the wine to be displayed on this side and updates the UI components accordingly.
+     *
+     * @param wine the Wine object to be displayed.
+     */
     private void setWine(Wine wine) {
       // clear the previous components then we add them with new wine
       if (this.wine != null) {
@@ -122,6 +147,10 @@ public class WineCompareController extends Controller {
       createButtons();
     }
 
+    /**
+     * Creates and adds the header for the wine, which includes the wine image, title, rating,
+     * and a circular score indicator.
+     */
     private void createHeader() {
       header = new GridPane();
       header.setOpaqueInsets(new Insets(0, 10, 0, 10));
@@ -134,8 +163,8 @@ public class WineCompareController extends Controller {
       header.getRowConstraints().add(new RowConstraints());
       header.getColumnConstraints().addAll(firstColumn, secondColumn, thirdColumn);
 
-      Image wineImage = WineCardContent.WINE_IMAGES.getOrDefault(wine.getColor().toLowerCase(),
-          WineCardContent.DEFAULT_WINE_IMAGE);
+      Image wineImage = WineCard.WINE_IMAGES.getOrDefault(wine.getColor().toLowerCase(),
+          WineCard.DEFAULT_WINE_IMAGE);
       ImageView wineImageView = new ImageView(wineImage);
       wineImageView.setFitHeight(150);
       wineImageView.setFitWidth(150);
@@ -177,6 +206,9 @@ public class WineCompareController extends Controller {
       GridPane.setValignment(scoreIndicator, VPos.CENTER);
     }
 
+    /**
+     * Creates and adds the description section for the wine.
+     */
     private void createDescription() {
       Label label = new Label("Description");
       TextArea textArea = new TextArea();
@@ -191,6 +223,9 @@ public class WineCompareController extends Controller {
       container.getChildren().add(description);
     }
 
+    /**
+     * Creates and adds the attributes grid for the wine, displaying various properties of a wine.
+     */
     private void createAttributes() {
       attributesGrid = new GridPane();
       attributesGrid.setOpaqueInsets(new Insets(0, 10, 0, 10));
@@ -202,21 +237,18 @@ public class WineCompareController extends Controller {
 
       ColumnConstraints labelColumn1 = new ColumnConstraints();
       ColumnConstraints valueColumn1 = new ColumnConstraints();
+      ColumnConstraints spacingColumn = new ColumnConstraints();
+      ColumnConstraints labelColumn2 = new ColumnConstraints();
+      ColumnConstraints valueColumn2 = new ColumnConstraints();
+      attributesGrid.getColumnConstraints().addAll(labelColumn1, valueColumn1, spacingColumn,
+          labelColumn2, valueColumn2);
       labelColumn1.setPercentWidth(15);
       valueColumn1.setPercentWidth(32);
       valueColumn1.setHgrow(Priority.ALWAYS);
-
-      ColumnConstraints spacingColumn = new ColumnConstraints();
       spacingColumn.setPercentWidth(6);
-
-      ColumnConstraints labelColumn2 = new ColumnConstraints();
-      ColumnConstraints valueColumn2 = new ColumnConstraints();
       labelColumn2.setPercentWidth(15);
       valueColumn2.setPercentWidth(32);
       valueColumn2.setHgrow(Priority.ALWAYS);
-
-      attributesGrid.getColumnConstraints().addAll(labelColumn1, valueColumn1, spacingColumn,
-          labelColumn2, valueColumn2);
 
       // Adjust column indices to account for the new spacing column
       addAttributeToGrid("Variety", wine.getVariety(), 0, 0);
@@ -234,6 +266,10 @@ public class WineCompareController extends Controller {
       container.getChildren().add(attributesGrid);
     }
 
+    /**
+     * Creates and adds buttons for interacting with the wine, such as viewing detailed
+     * information or adding the wine to a list.
+     */
     private void createButtons() {
       // space so buttons will be at the bottom
       HBox buttonsWrapper = new HBox();
@@ -264,6 +300,14 @@ public class WineCompareController extends Controller {
       container.getChildren().add(buttons);
     }
 
+    /**
+     * Adds an attribute and its value to the attributes grid in the specified column and row.
+     *
+     * @param text the attribute label to be displayed.
+     * @param value the value of the attribute to be displayed.
+     * @param column the column index where the label and value will be added.
+     * @param row the row index where the label and value will be added.
+     */
     private void addAttributeToGrid(String text, String value, int column, int row) {
       Label label = new Label();
       label.setText(text);
