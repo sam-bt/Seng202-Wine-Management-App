@@ -162,14 +162,12 @@ public class DetailedWineViewController extends Controller {
         saveNotes.setDisable(after.equals(note.getNote()));
       });
     } else {
-      // Not authenticated so remove unneeded buttons
       setNotesVisible(false);
       addReviewButton.setDisable(true);
       addReviewButton.setVisible(false);
       loginToReviewLabel.setVisible(true);
       loginToReviewLabel.setDisable(false);
       buttonsContainer.getChildren().remove(openListsButton);
-      buttonsContainer.getChildren().remove(saveNotes);
     }
 
     Image wineImage = wineImages.getOrDefault(colourTextbox.getText().toLowerCase(),
@@ -323,7 +321,7 @@ public class DetailedWineViewController extends Controller {
       noteLabel.setText("My Notes");
     }
     notesTextbox.setVisible(visible);
-    saveNotes.setVisible(visible);
+    buttonsContainer.getChildren().remove(saveNotes);
   }
 
   /**
