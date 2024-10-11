@@ -14,6 +14,9 @@ public class YearStringConverterTest {
 
   private final YearStringConverter converter = new YearStringConverter();
 
+  /**
+   * Tests that the to string method works with valid numbers
+   */
   @Test
   public void testToStringWithValidNumbers() {
     assertEquals("0005", converter.toString(5));
@@ -21,11 +24,17 @@ public class YearStringConverterTest {
     assertEquals("0000", converter.toString(0));
   }
 
+  /**
+   * Tests that the to string method works for null values
+   */
   @Test
   public void testToStringWithNull() {
     assertEquals("", converter.toString(null));
   }
 
+  /**
+   * Tests that the from string method works with valid numbers
+   */
   @Test
   public void testFromStringWithValidStrings() {
     assertEquals(1985, converter.fromString("1985"));
@@ -33,6 +42,9 @@ public class YearStringConverterTest {
     assertEquals(5, converter.fromString("0005"));
   }
 
+  /**
+   * Tests that the from string handles invalid strings
+   */
   @Test
   public void testFromStringWithInvalidStrings() {
     assertNull(converter.fromString(""));
@@ -41,6 +53,9 @@ public class YearStringConverterTest {
     assertEquals(-1, converter.fromString("1985.5"));
   }
 
+  /**
+   * Tests that the from string works as expected for edge cases
+   */
   @Test
   public void testFromStringWithEdgeCases() {
     assertEquals(9999, converter.fromString("9999"));

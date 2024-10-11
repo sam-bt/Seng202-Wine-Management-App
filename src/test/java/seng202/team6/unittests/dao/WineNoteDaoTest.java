@@ -17,6 +17,10 @@ import seng202.team6.model.Note;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 
+/**
+ * Unit tests for the WineNotesDao class, which handles operations related to user notes
+ * on wines. These tests ensure correct behavior when adding, modifying, and retrieving notes.
+ */
 public class WineNoteDaoTest {
 
   private DatabaseManager databaseManager;
@@ -26,6 +30,12 @@ public class WineNoteDaoTest {
   private User user;
   private Wine wine;
 
+  /**
+   * Sets up the database manager, WineNotesDao, WineDao, and UserDao before each test. Adds a
+   * test user and wine to the database.
+   *
+   * @throws SQLException if an error occurs during database setup.
+   */
   @BeforeEach
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
@@ -42,23 +52,35 @@ public class WineNoteDaoTest {
     wineDao.add(wine);
   }
 
+  /**
+   * Tears down the database after each test, removing any added data and resetting the state.
+   */
   @AfterEach
   void teardown() {
     databaseManager.teardown();
   }
 
+  /**
+   * Tests that if no note exists for a wine, an empty note is returned.
+   */
   @Test
   void testNoNoteReturnsBlank() {
     Note note = wineNotesDao.get(user, wine);
     assertTrue(note.getNote().isEmpty());
   }
 
+  /**
+   * Tests that querying a note when none exists does not add the note to the database.
+   */
   @Test
   void testNoNoteDoesNotAddToDatabase() {
     Note note = wineNotesDao.get(user, wine);
     assertTrue(wineNotesDao.getAll().isEmpty());
   }
 
+  /**
+   * Tests that modifying a blank note adds it to the database.
+   */
   @Test
   void testNoNoteModifyAddsToDatabase() {
     Note note = wineNotesDao.get(user, wine);
@@ -68,6 +90,9 @@ public class WineNoteDaoTest {
     assertEquals(newNote.getNote(), "MyNote");
   }
 
+  /**
+   * Tests that setting an existing note to blank removes it from the database.
+   */
   @Test
   void testExistingNoteMadeBlankDeletesFromDatabase() {
     Note note = wineNotesDao.get(user, wine);
@@ -78,6 +103,9 @@ public class WineNoteDaoTest {
     assertTrue(wineNotesDao.getAll().isEmpty());
   }
 
+  /**
+   * Tests that modifying an existing note updates the note in the database.
+   */
   @Test
   void testExistingNoteModifiedUpdatesDatabase() {
     Note note = wineNotesDao.get(user, wine);
@@ -91,6 +119,9 @@ public class WineNoteDaoTest {
     assertEquals("MyNewNote", newUpdatedNote.getNote());
   }
 
+  /**
+   * Tests that all notes for a user can be retrieved correctly.
+   */
   @Test
   void testGetAllNotesForUser() {
 
