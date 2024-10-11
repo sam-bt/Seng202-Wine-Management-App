@@ -67,10 +67,16 @@ public class MainController extends Controller {
   private Menu vineyardsMenu;
 
   @FXML
+  private VBox winesMenuGraphic;
+
+  @FXML
   private VBox profileMenuGraphic;
 
   @FXML
   private VBox vineyardsMenuGraphic;
+
+  @FXML
+  private VBox winesSubmenu;
 
   @FXML
   private VBox profileSubmenu;
@@ -105,40 +111,42 @@ public class MainController extends Controller {
    */
   @Override
   public void init() {
-    // mouse enter event for the profile button which shows the profile sub menu
+    // mouse enter events for the wines, vineyards and profile which shows the corresponding submenu
+    winesMenuGraphic.setOnMouseEntered(event ->
+        showSubmenu(winesSubmenu, winesMenuGraphic));
     profileMenuGraphic.setOnMouseEntered(event ->
         showSubmenu(profileSubmenu, profileMenuGraphic));
+    vineyardsMenuGraphic.setOnMouseEntered(event -> {
+      // only show the submenu if they are authenticated
+      if (managerContext.getAuthenticationManager().isAuthenticated()) {
+        showSubmenu(vineyardsSubmenu, vineyardsMenuGraphic);
+      }
+    });
 
-    // move exit events for when the profile button is open which checks if the cursor has
-    // left either the profile button or the submenu
+    // mouse exit events which checks if the cursor has left either the button or the buttons
+    // submenu
     EventHandler<MouseEvent> profileExitEvent = event ->
         hideSubmenuIfNotInside(profileSubmenu, profileMenuGraphic, event.getScreenX(),
             event.getScreenY());
     profileMenuGraphic.setOnMouseExited(profileExitEvent);
     profileSubmenu.setOnMouseExited(profileExitEvent);
 
-    // mouse enter event for the vineyard button which shows the vineyard sub menu
-    // only show the submenu if they are authenticated
-    vineyardsMenuGraphic.setOnMouseEntered(event -> {
-      if (managerContext.getAuthenticationManager().isAuthenticated()) {
-        showSubmenu(vineyardsSubmenu, vineyardsMenuGraphic);
-      }
-    });
-
-    // move exit events for when the vineyards button is open which checks if the cursor has
-    // left either the profile button or the submenu. only run if they are authenticated as the menu
-    // should only open when they are authenticated
     EventHandler<MouseEvent> vineyardsExitEvent = event ->
         hideSubmenuIfNotInside(vineyardsSubmenu, vineyardsMenuGraphic, event.getScreenX(),
             event.getScreenY());
     vineyardsMenuGraphic.setOnMouseExited(vineyardsExitEvent);
     vineyardsSubmenu.setOnMouseExited(vineyardsExitEvent);
 
-    // disable the profile and vineyards submenu when the navigation is first loaded
-    profileSubmenu.setDisable(true);
-    profileSubmenu.setVisible(false);
-    vineyardsSubmenu.setDisable(true);
-    vineyardsSubmenu.setVisible(false);
+    EventHandler<MouseEvent> winesExitEvent = event ->
+        hideSubmenuIfNotInside(winesSubmenu, winesMenuGraphic, event.getScreenX(),
+            event.getScreenY());
+    winesMenuGraphic.setOnMouseExited(winesExitEvent);
+    winesSubmenu.setOnMouseExited(winesExitEvent);
+
+    // disable the submenus when the navigation is first loaded
+    hideSubmenu(winesSubmenu);
+    hideSubmenu(profileSubmenu);
+    hideSubmenu(vineyardsSubmenu);
 
     updateNavigation();
     openWineScreen();
@@ -172,8 +180,7 @@ public class MainController extends Controller {
   private void hideSubmenuIfNotInside(VBox submenu, VBox parentMenuGraphic, double mouseX,
       double mouseY) {
     if (!isMouseInsideSubmenu(submenu, parentMenuGraphic, mouseX, mouseY)) {
-      submenu.setDisable(true);
-      submenu.setVisible(false);
+      hideSubmenu(submenu);
     }
   }
 
@@ -551,6 +558,25 @@ public class MainController extends Controller {
   public void openConsumptionScreen() {
     switchScene("/fxml/consumption_screen.fxml", "Consumption",
         () -> new ConsumptionController(managerContext), Screen.CONSUMPTION_SCREEN);
+  }
+
+  /**
+   * Launches the wine compare screen.
+   */
+  @FXML
+  public void openWineCompareScreen() {
+    switchScene("/fxml/wine_compare.fxml", "Wine Compare",
+        () -> new WineCompareController(managerContext, null), Screen.COMPARE_WINES_SCREEN);
+  }
+
+  /**
+   * Launches the wine compare screen with the specified wine.
+   *
+   * @param wine The first wine to be shown on the wine compare.
+   */
+  public void openWineCompareScreen(Wine wine) {
+    switchScene("/fxml/wine_compare.fxml", "Wine Compare",
+        () -> new WineCompareController(managerContext, wine), Screen.COMPARE_WINES_SCREEN);
   }
 
   /**
