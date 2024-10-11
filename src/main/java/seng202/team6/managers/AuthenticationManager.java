@@ -39,22 +39,22 @@ public class AuthenticationManager {
     if (username.isEmpty() || password.isEmpty() || confirmedPassword.isEmpty()) {
       return AuthenticationResponse.MISSING_FIELDS;
     }
-    if (!password.equals(confirmedPassword)) {
-      return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
-    }
-    if (password.equals(username)) {
-      return AuthenticationResponse.SAME_AS_USERNAME;
+    UserDao userDao = databaseManager.getUserDao();
+    if (userDao.get(username) != null) {
+      return USERNAME_ALREADY_REGISTERED;
     }
     if (username.length() < 3 || username.length() > 15 || !username.matches("[a-zA-Z0-9_]+")) {
       return AuthenticationResponse.INVALID_USERNAME;
+    }
+    if (password.equals(username)) {
+      return AuthenticationResponse.SAME_AS_USERNAME;
     }
     if (password.length() < 8 || password.length() > 30 || !password.matches(
         AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())) {
       return AuthenticationResponse.INVALID_PASSWORD;
     }
-    UserDao userDao = databaseManager.getUserDao();
-    if (userDao.get(username) != null) {
-      return USERNAME_ALREADY_REGISTERED;
+    if (!password.equals(confirmedPassword)) {
+      return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
     }
 
     String salt = PasswordUtil.generateSalt();

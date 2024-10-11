@@ -61,7 +61,8 @@ public class RegisterController extends Controller {
   @FXML
   private void onConfirm() {
     resetFields();
-
+    String usernameError = "";
+    String passwordError = "";
     String username = usernameField.getText();
     String password = passwordField.getText();
     String confirmPassword = confirmPasswordField.getText();
@@ -74,9 +75,74 @@ public class RegisterController extends Controller {
       AuthenticationResponse response
           = managerContext.getAuthenticationManager().validateRegistration(
           username, password, confirmPassword);
+      switch (response){
+        case AuthenticationResponse.USERNAME_ALREADY_REGISTERED:;
+          usernameField.getStyleClass().add("error-text-field");
+          passwordField.getStyleClass().add("error-text-field");
+          confirmPasswordField.getStyleClass().add("error-text-field");
+          usernameErrorLabel.setText("Username already in use");
+          usernameErrorLabel.setVisible(true);
+          passwordErrorLabel.setVisible(true);
+          confirmPasswordErrorLabel.setVisible(true);
+          break;
+        case AuthenticationResponse.INVALID_USERNAME:
+          usernameField.getStyleClass().add("error-text-field");
+          passwordField.getStyleClass().add("error-text-field");
+          confirmPasswordField.getStyleClass().add("error-text-field");
+          int userLength = usernameField.getText().length();
+          if (userLength < 3 || userLength > 15) {
+            usernameError += "Username must be between 3 and 15 characters long\n";
+          }
+          if (!username.matches("[a-zA-Z0-9_]+")) {
+            usernameError += "Username cannot contain special characters or spaces";
+          }
+          usernameErrorLabel.setText(usernameError);
+          usernameErrorLabel.setVisible(true);
+          passwordErrorLabel.setVisible(true);
+          break;
+        case AuthenticationResponse.SAME_AS_USERNAME:
+          passwordField.getStyleClass().add("error-text-field");
+          confirmPasswordField.getStyleClass().add("error-text-field");
+          passwordErrorLabel.setText("Password cannot be same as username");
+          passwordErrorLabel.setVisible(true);
+          break;
+        case AuthenticationResponse.INVALID_PASSWORD:
+          passwordField.getStyleClass().add("error-text-field");
+          confirmPasswordField.getStyleClass().add("error-text-field");
+          int passwordLength = password.length();
+          System.out.println(password);
+          if (passwordLength < 8 || passwordLength > 30) {
+            passwordError += "Pasword must be between 8 and 30 characters long\n";
+          }
+          if (password != "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*.()\\-+={\\[\\]}])"
+              + "[A-Za-z0-9!@#$%^&*.()\\-+={\\[\\]}]{8,30}$") {
+            passwordError += "Missing a ";
+            if (!password.matches("(?=.*[a-z])")) {
+              passwordError += "lowercase, ";
+            }
+            if (!password.contains("(?=.*[A-Z].*)")) {
+              passwordError += "uppercase, ";
+            }
+            if (!password.contains("(?=.*[0-9].*)")) {
+              passwordError += "number, ";
+            }
+            if (!password.contains("(?=.*[!@#$%^&*.()\\-+={\\[\\]}].*)")) {
+              passwordError += "special character";
+            }
+          }
+          passwordErrorLabel.setText(passwordError);
+          passwordErrorLabel.setVisible(true);
+          break;
+        case AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD:
+          confirmPasswordField.getStyleClass().add("error-text-field");
+          confirmPasswordErrorLabel.setText("Passwords do not match");
+          confirmPasswordErrorLabel.setVisible(true);
+          break;
+      }
+
 
       if (response == AuthenticationResponse.REGISTER_SUCCESS) {
-        // managerContext.getAuthenticationManager().validateLogin(username, password);
+        managerContext.getAuthenticationManager().validateLoginPassword(username, password);
         managerContext.getGuiManager().mainController.updateNavigation();
         managerContext.getGuiManager().mainController.openWineScreen();
       } else {
@@ -112,6 +178,9 @@ public class RegisterController extends Controller {
     passwordField.getStyleClass().remove("error-text-field");
     confirmPasswordField.getStyleClass().add("normal-text-field");
     confirmPasswordField.getStyleClass().remove("error-text-field");
+    usernameErrorLabel.setText("");
+    passwordErrorLabel.setText("");
+    confirmPasswordErrorLabel.setText("");
     usernameErrorLabel.setVisible(false);
     passwordErrorLabel.setVisible(false);
     confirmPasswordErrorLabel.setVisible(false);
