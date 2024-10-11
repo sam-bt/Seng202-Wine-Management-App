@@ -26,65 +26,46 @@ import seng202.team6.model.User;
  * Controller for the admin screen.
  */
 public class AdminController extends Controller {
+
+  private static final Logger log = LogManager.getLogger(AdminController.class);
+  private final DatabaseManager databaseManager;
   @FXML
   Label passwordBoxLabel;
-
   @FXML
   AnchorPane selectedActionsPane;
-
   @FXML
   Label passwordErrorLabel;
-
   @FXML
   Label adminMessageLabel;
-
-  @FXML
-  private Button resetPasswordButton;
-
-  @FXML
-  private Button acceptPassword;
-
-
-  @FXML
-  private Button cancelPasswordButton;
-
-  @FXML
-  private PasswordField confirmField;
-
   @FXML
   Button yesButton;
-
   @FXML
   Button noButton;
-
   @FXML
   Button deleteButton;
   @FXML
   Button deleteReviews;
-
+  @FXML
+  private Button resetPasswordButton;
+  @FXML
+  private Button acceptPassword;
+  @FXML
+  private Button cancelPasswordButton;
+  @FXML
+  private PasswordField confirmField;
   @FXML
   private ListView<User> userList;
-
   @FXML
   private Label userLabel;
-
   @FXML
   private Button deleteUser;
-
   @FXML
   private VBox importWinesScreenContainer;
-
   @FXML
   private AnchorPane passwordBox;
-
   @FXML
   private PasswordField passwordField;
-
-  private final DatabaseManager databaseManager;
-
   private User workingUser = null;
-
-  private static final Logger log = LogManager.getLogger(AdminController.class);
 
   /**
    * Constructor.
@@ -238,9 +219,9 @@ public class AdminController extends Controller {
     String password = passwordField.getText();
     String confirm = confirmField.getText();
     AuthenticationResponse response =
-            managerContext.getAuthenticationManager().validatePasswordReset(
+        managerContext.getAuthenticationManager().validatePasswordReset(
             workingUser.getUsername(), password, confirm
-    );
+        );
 
     if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
       log.info("Password updated");

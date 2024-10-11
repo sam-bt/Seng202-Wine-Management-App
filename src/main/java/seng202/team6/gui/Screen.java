@@ -63,5 +63,10 @@ public enum Screen {
   /**
    * The screen for tracking wine consumption.
    */
-  CONSUMPTION_SCREEN
+  CONSUMPTION_SCREEN,
+
+  /**
+   * The screen for comparing wines.
+   */
+  COMPARE_WINES_SCREEN
 }

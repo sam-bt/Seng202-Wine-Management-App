@@ -17,7 +17,6 @@ public class VineyardTour {
   private final ReadOnlyLongProperty id;
   private final StringProperty username;
   private final StringProperty name;
-  private final Property<Island> island;
 
   /**
    * Constructs a WineTour with the specified properties.
@@ -25,13 +24,11 @@ public class VineyardTour {
    * @param id       the unique identifier for the wine tour
    * @param username the username who created the tour.
    * @param name     the name of the wine tour
-   * @param island   the island where the wine tour is located
    */
-  public VineyardTour(long id, String username, String name, Island island) {
+  public VineyardTour(long id, String username, String name) {
     this.id = new SimpleLongProperty(id);
     this.username = new SimpleStringProperty(username);
     this.name = new SimpleStringProperty(name);
-    this.island = new SimpleObjectProperty<>(island);
   }
 
   /**
@@ -86,23 +83,5 @@ public class VineyardTour {
    */
   public String getName() {
     return name.get();
-  }
-
-  /**
-   * Returns the Property representing the island where the wine tour takes place.
-   *
-   * @return the Property for the island
-   */
-  public Property<Island> islandProperty() {
-    return island;
-  }
-
-  /**
-   * Returns the island where the wine tour takes place.
-   *
-   * @return the island of the wine tour
-   */
-  public Island getIsland() {
-    return island.getValue();
   }
 }

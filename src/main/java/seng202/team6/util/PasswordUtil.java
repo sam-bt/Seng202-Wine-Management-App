@@ -48,7 +48,7 @@ public class PasswordUtil {
    * @param password The password to hash.
    * @param salt     The salt to use in the hashing process.
    * @return A Base64 encoded string representation of the hashed password, or null if an error
-   *        occurs during the hashing process.
+   *         occurs during the hashing process.
    */
   public static String hashPassword(String password, String salt) {
     try {

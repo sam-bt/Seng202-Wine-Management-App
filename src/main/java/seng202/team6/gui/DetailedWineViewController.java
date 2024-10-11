@@ -266,6 +266,11 @@ public class DetailedWineViewController extends Controller {
         () -> managerContext.getGuiManager().mainController.openDetailedWineView(viewedWine, null));
   }
 
+  @FXML
+  void onCompareClick() {
+    managerContext.getGuiManager().mainController.openWineCompareScreen(viewedWine, null);
+  }
+
   /**
    * Creates a new VBox layout element which represents a single wine. Attributes in the wine review
    * are bind to the UI elements to ensure any changes are reflected in the UI.

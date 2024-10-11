@@ -68,11 +68,11 @@ public class AuthenticationManager {
    *
    * @param username The username of the target user
    * @param password The new password
-   * @param confirm COnfirmation of the new password, to make sure it was typed correctly.
+   * @param confirm  COnfirmation of the new password, to make sure it was typed correctly.
    * @return an AuthenticationResponse with the outcome.
    */
   public AuthenticationResponse validatePasswordReset(
-          String username, String password, String confirm
+      String username, String password, String confirm
   ) {
     User user = databaseManager.getUserDao().get(username);
     if (password.isEmpty() || confirm.isEmpty()) {
@@ -85,7 +85,7 @@ public class AuthenticationManager {
       return AuthenticationResponse.SAME_AS_USERNAME;
     }
     if (
-            password.length() < 8
+        password.length() < 8
             || password.length() > 30
             || !password.matches(AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())
     ) {
