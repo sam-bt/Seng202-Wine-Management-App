@@ -2,9 +2,9 @@ package seng202.team6.gui.controls;
 
 import java.util.HashMap;
 import java.util.Map;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -15,20 +15,21 @@ import javafx.scene.layout.VBox;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.card.Card;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineReview;
 import seng202.team6.util.ImageReader;
 
 /**
  * A class that represents a card for displaying wine information.
  */
-public class WineCard extends Card {
+public class ReviewCard extends Card {
 
-  public static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine_cropped.png");
-  public static final Image WHITE_WINE_IMAGE = ImageReader.loadImage(
+  private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine_cropped.png");
+  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage(
       "/img/white_wine_cropped.png");
-  public static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine_cropped.png");
-  public static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage(
+  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine_cropped.png");
+  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage(
       "/img/default_wine_cropped.png");
-  public static final Map<String, Image> WINE_IMAGES = new HashMap<>();
+  private static final Map<String, Image> WINE_IMAGES = new HashMap<>();
 
   static {
     WINE_IMAGES.put("red", RED_WINE_IMAGE);
@@ -38,15 +39,15 @@ public class WineCard extends Card {
   }
 
   /**
-   * Constructs a WineCard to display the specified wine's details.
+   * Constructs a ReviewCar to display the specified review's details.
    *
    * @param containerWidth the width of the container to which this card belongs
    * @param horizontalGap  the horizontal gap of the container.
+   * @param review         the Review object containing details to display
    * @param wine           the Wine object containing details to display
-   * @param showReview     a boolean indicating whether to show the review rating
    */
-  public WineCard(ReadOnlyDoubleProperty containerWidth,
-      DoubleProperty horizontalGap, Wine wine, boolean showReview) {
+  public ReviewCard(ReadOnlyDoubleProperty containerWidth,
+      DoubleProperty horizontalGap, WineReview review, Wine wine) {
     super(containerWidth, horizontalGap);
     Image wineImage = WINE_IMAGES.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
     ImageView imageView = new ImageView(wineImage);
@@ -54,24 +55,33 @@ public class WineCard extends Card {
     imageView.setPreserveRatio(true);
     HBox.setHgrow(imageView, Priority.NEVER);
 
+    Label userName = new Label();
+    userName.setText("By: " + review.getUsername());
+    userName.setStyle("-fx-font-size: 16px;");
+    userName.setWrapText(true);
+
     Label wineTitle = new Label();
-    wineTitle.textProperty().bind(wine.titleProperty());
-    wineTitle.setStyle("-fx-font-size: 16px;");
+    wineTitle.textProperty().bind(Bindings.createStringBinding(
+        () -> "For: " + wine.getTitle(),
+        wine.titleProperty()
+    ));
+    wineTitle.setStyle("-fx-font-size: 12px;");
     wineTitle.setWrapText(true);
 
-    VBox titleReview = new VBox(wineTitle);
-    titleReview.setOpaqueInsets(new Insets(0, 10, 0, 10));
-    titleReview.setSpacing(10);
-    titleReview.setAlignment(Pos.CENTER_LEFT);
+    VBox infoBox = new VBox();
+    infoBox.setSpacing(5);
+    infoBox.setAlignment(Pos.CENTER_LEFT);
 
-    if (showReview) {
-      Rating rating = new UnmodifiableRating();
-      rating.ratingProperty().bind(wine.averageRatingProperty());
-      rating.getStyleClass().add("small-rating");
-      titleReview.getChildren().add(rating);
-    }
+    infoBox.getChildren().add(userName);
 
-    HBox header = new HBox(imageView, titleReview);
+    infoBox.getChildren().add(wineTitle);
+
+    Rating rating = new UnmodifiableRating();
+    rating.ratingProperty().bind(review.ratingProperty());
+    rating.getStyleClass().add("small-rating");
+    infoBox.getChildren().add(rating);
+
+    HBox header = new HBox(imageView, infoBox);
     header.setAlignment(Pos.CENTER_LEFT);
     header.setSpacing(20);
     getChildren().add(header);

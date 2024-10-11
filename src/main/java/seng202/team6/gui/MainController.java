@@ -16,19 +16,19 @@ import javafx.scene.layout.VBox;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import seng202.team6.enums.PopupType;
 import seng202.team6.gui.popup.AddToListPopupController;
 import seng202.team6.gui.popup.AddToTourPopupController;
 import seng202.team6.gui.popup.CreateListPopupController;
 import seng202.team6.gui.popup.DeleteListPopupController;
-import seng202.team6.gui.popup.ErrorPopupController;
+import seng202.team6.gui.popup.GeneralPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
+import seng202.team6.gui.popup.UserSearchPopupController;
 import seng202.team6.gui.popup.UserViewPopupController;
-import seng202.team6.gui.popup.VineyardTourPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
-import seng202.team6.model.VineyardTour;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
@@ -68,10 +68,16 @@ public class MainController extends Controller {
   private Menu vineyardsMenu;
 
   @FXML
+  private VBox winesMenuGraphic;
+
+  @FXML
   private VBox profileMenuGraphic;
 
   @FXML
   private VBox vineyardsMenuGraphic;
+
+  @FXML
+  private VBox winesSubmenu;
 
   @FXML
   private VBox profileSubmenu;
@@ -106,40 +112,42 @@ public class MainController extends Controller {
    */
   @Override
   public void init() {
-    // mouse enter event for the profile button which shows the profile sub menu
+    // mouse enter events for the wines, vineyards and profile which shows the corresponding submenu
+    winesMenuGraphic.setOnMouseEntered(event ->
+        showSubmenu(winesSubmenu, winesMenuGraphic));
     profileMenuGraphic.setOnMouseEntered(event ->
         showSubmenu(profileSubmenu, profileMenuGraphic));
+    vineyardsMenuGraphic.setOnMouseEntered(event -> {
+      // only show the submenu if they are authenticated
+      if (managerContext.getAuthenticationManager().isAuthenticated()) {
+        showSubmenu(vineyardsSubmenu, vineyardsMenuGraphic);
+      }
+    });
 
-    // move exit events for when the profile button is open which checks if the cursor has
-    // left either the profile button or the submenu
+    // mouse exit events which checks if the cursor has left either the button or the buttons
+    // submenu
     EventHandler<MouseEvent> profileExitEvent = event ->
         hideSubmenuIfNotInside(profileSubmenu, profileMenuGraphic, event.getScreenX(),
             event.getScreenY());
     profileMenuGraphic.setOnMouseExited(profileExitEvent);
     profileSubmenu.setOnMouseExited(profileExitEvent);
 
-    // mouse enter event for the vineyard button which shows the vineyard sub menu
-    // only show the submenu if they are authenticated
-    vineyardsMenuGraphic.setOnMouseEntered(event -> {
-      if (managerContext.getAuthenticationManager().isAuthenticated()) {
-        showSubmenu(vineyardsSubmenu, vineyardsMenuGraphic);
-      }
-    });
-
-    // move exit events for when the vineyards button is open which checks if the cursor has
-    // left either the profile button or the submenu. only run if they are authenticated as the menu
-    // should only open when they are authenticated
     EventHandler<MouseEvent> vineyardsExitEvent = event ->
         hideSubmenuIfNotInside(vineyardsSubmenu, vineyardsMenuGraphic, event.getScreenX(),
             event.getScreenY());
     vineyardsMenuGraphic.setOnMouseExited(vineyardsExitEvent);
     vineyardsSubmenu.setOnMouseExited(vineyardsExitEvent);
 
-    // disable the profile and vineyards submenu when the navigation is first loaded
-    profileSubmenu.setDisable(true);
-    profileSubmenu.setVisible(false);
-    vineyardsSubmenu.setDisable(true);
-    vineyardsSubmenu.setVisible(false);
+    EventHandler<MouseEvent> winesExitEvent = event ->
+        hideSubmenuIfNotInside(winesSubmenu, winesMenuGraphic, event.getScreenX(),
+            event.getScreenY());
+    winesMenuGraphic.setOnMouseExited(winesExitEvent);
+    winesSubmenu.setOnMouseExited(winesExitEvent);
+
+    // disable the submenus when the navigation is first loaded
+    hideSubmenu(winesSubmenu);
+    hideSubmenu(profileSubmenu);
+    hideSubmenu(vineyardsSubmenu);
 
     updateNavigation();
     openWineScreen();
@@ -148,7 +156,7 @@ public class MainController extends Controller {
   /**
    * Shows the submenu and positioning it directly below the parent menu graphic.
    *
-   * @param submenu the submenu to be shown
+   * @param submenu           the submenu to be shown
    * @param parentMenuGraphic the menu graphic that triggers the submenu
    */
   private void showSubmenu(VBox submenu, VBox parentMenuGraphic) {
@@ -165,16 +173,15 @@ public class MainController extends Controller {
    * Hides the submenu if the mouse cursor is not within the bounds of either the parent menu
    * graphic or the submenu itself.
    *
-   * @param submenu the submenu to be hidden
+   * @param submenu           the submenu to be hidden
    * @param parentMenuGraphic the parent menu graphic associated with the submenu
-   * @param mouseX the current X coordinate of the mouse
-   * @param mouseY the current Y coordinate of the mouse
+   * @param mouseX            the current X coordinate of the mouse
+   * @param mouseY            the current Y coordinate of the mouse
    */
   private void hideSubmenuIfNotInside(VBox submenu, VBox parentMenuGraphic, double mouseX,
       double mouseY) {
     if (!isMouseInsideSubmenu(submenu, parentMenuGraphic, mouseX, mouseY)) {
-      submenu.setDisable(true);
-      submenu.setVisible(false);
+      hideSubmenu(submenu);
     }
   }
 
@@ -192,10 +199,10 @@ public class MainController extends Controller {
    * Checks if the mouse cursor is inside the bounds of the submenu or the parent menu graphic,
    * accounting for some padding to avoid edge cases.
    *
-   * @param submenu the submenu to check
+   * @param submenu           the submenu to check
    * @param parentMenuGraphic the parent menu graphic to check
-   * @param mouseX the current X coordinate of the mouse
-   * @param mouseY the current Y coordinate of the mouse
+   * @param mouseX            the current X coordinate of the mouse
+   * @param mouseY            the current Y coordinate of the mouse
    * @return true if the mouse is inside the submenu or parent menu graphic bounds, false otherwise
    */
   private boolean isMouseInsideSubmenu(VBox submenu, VBox parentMenuGraphic, double mouseX,
@@ -212,9 +219,9 @@ public class MainController extends Controller {
   }
 
   /**
-   * Updates the navigation menu based on the current authentication state of the user.
-   * If the user is authenticated, the profile menu and settings options are shown.
-   * If the user is not authenticated, the login and registration options are displayed.
+   * Updates the navigation menu based on the current authentication state of the user. If the user
+   * is authenticated, the profile menu and settings options are shown. If the user is not
+   * authenticated, the login and registration options are displayed.
    */
   public void updateNavigation() {
     if (managerContext.getAuthenticationManager().isAuthenticated()) {
@@ -466,6 +473,16 @@ public class MainController extends Controller {
         () -> new UserViewPopupController(managerContext, user));
   }
 
+
+  /**
+   * Launches the user search popup.
+   */
+  public void openUserSearchPopup() {
+    openPopup("/fxml/popup/user_search_popup.fxml",
+        () -> new UserSearchPopupController(managerContext));
+  }
+
+
   /**
    * Launches the social screen.
    */
@@ -545,6 +562,27 @@ public class MainController extends Controller {
   }
 
   /**
+   * Launches the wine compare screen.
+   */
+  @FXML
+  public void openWineCompareScreen() {
+    switchScene("/fxml/wine_compare.fxml", "Wine Compare",
+        () -> new WineCompareController(managerContext, null, null), Screen.COMPARE_WINES_SCREEN);
+  }
+
+  /**
+   * Launches the wine compare screen with the specified wine.
+   *
+   * @param leftWine The wine to be shown on the left side of the wine compare.
+   * @param rightRight The wine to be shown on the right side of the wine compare.
+   */
+  public void openWineCompareScreen(Wine leftWine, Wine rightRight) {
+    switchScene("/fxml/wine_compare.fxml", "Wine Compare",
+        () -> new WineCompareController(managerContext, leftWine, rightRight),
+        Screen.COMPARE_WINES_SCREEN);
+  }
+
+  /**
    * Launches the popup to add the specified vineyard to a tour.
    *
    * @param vineyard The vineyard to be added to a tour.
@@ -582,28 +620,35 @@ public class MainController extends Controller {
   }
 
   /**
-   * Launches the popup to create a vineyard tour.
-   *
-   * @param vineyardToursService  the service used for managing vineyard tours.
-   * @param modifyingVineyardTour the vineyard tour to be modified, or null if creating a new tour.
-   */
-  public void openVineyardTourPopup(VineyardToursService vineyardToursService,
-      VineyardTour modifyingVineyardTour) {
-    openPopup("/fxml/popup/create_vineyard_tour_popup.fxml",
-        () -> new VineyardTourPopupController(managerContext, vineyardToursService,
-            modifyingVineyardTour));
-  }
-
-  /**
-   * Displays an error popup. The popup is displayed on the screen, and the controller for the popup
-   * is returned to the caller for further customization.
+   * Displays a popup of the error type. The popup is displayed on the screen, and the controller
+   * for the popup is returned to the caller for further customization.
    *
    * @return The ErrorPopupController associated with the displayed error popup.
    */
-  public ErrorPopupController showErrorPopup() {
-    ErrorPopupController errorPopupController = new ErrorPopupController(managerContext);
-    openPopup("/fxml/popup/error_popup.fxml", () -> errorPopupController);
-    return errorPopupController;
+  public GeneralPopupController showErrorPopup() {
+    return showPopup(PopupType.ERROR);
+  }
+
+  /**
+   * Displays a popup of the none type.
+   *
+   * @return The GeneralPopupController associated with the displayed popup
+   */
+  public GeneralPopupController showPopup() {
+    return showPopup(PopupType.NONE);
+  }
+
+  /**
+   * Displays a popup of the specified type. The popup is displayed on the screen, and the
+   * controller for the popup is returned to the caller for further customization.
+   *
+   * @param popupType The type of the popup
+   * @return The GeneralPopupController associated with the displayed popup
+   */
+  private GeneralPopupController showPopup(PopupType popupType) {
+    GeneralPopupController popupController = new GeneralPopupController(managerContext, popupType);
+    openPopup("/fxml/popup/general_popup.fxml", () -> popupController);
+    return popupController;
   }
 
   /**

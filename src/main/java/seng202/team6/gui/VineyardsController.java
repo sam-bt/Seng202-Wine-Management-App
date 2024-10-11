@@ -1,7 +1,6 @@
 package seng202.team6.gui;
 
 import java.util.Set;
-import java.util.SortedSet;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;

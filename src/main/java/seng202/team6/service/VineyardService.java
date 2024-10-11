@@ -1,6 +1,5 @@
 package seng202.team6.service;
 
-import java.util.SortedSet;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;

@@ -145,12 +145,13 @@ public class WineDao extends Dao {
    */
   public ObservableList<Wine> getAll() {
     Timer timer = new Timer();
-    String sql = "SELECT * from WINE "
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+        + "FROM WINE "
         + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME)"
         + "ORDER BY WINE.ID ";
     try (Statement statement = connection.createStatement()) {
       try (ResultSet resultSet = statement.executeQuery(sql)) {
-        ObservableList<Wine> wines = extractAllWinesFromResultSet(resultSet);
+        ObservableList<Wine> wines = extractAllWinesFromResultSet(resultSet, "wine_id");
         log.info("Successfully retrieved all {} wines in {}ms", wines.size(),
             timer.currentOffsetMilliseconds());
         return wines;
@@ -171,31 +172,24 @@ public class WineDao extends Dao {
    */
   public ObservableList<Wine> getAllInRange(int begin, int end, WineFilters filters) {
     Timer timer = new Timer();
-    String sql = "SELECT * from "
-        + (filters == null ? "WINE " : "( " // Subquery for filtering
-        + "SELECT * from WINE "
-        + "where TITLE like ? "
-        + "and COUNTRY like ? "
-        + "and WINERY like ? "
-        + "and COLOR like ? "
-        + "and VINTAGE between ? and ? "
-        + "and SCORE_PERCENT between ? and ? "
-        + "and ABV between ? and ? "
-        + "and PRICE between ? and ? "
-        + ") "
-        + "AS filteredResults ")
-        + (filters == null
-        ? // table definition changes if subquery used or not
-        "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME) "
-            + "WHERE ID > ? "
-            + "ORDER BY WINE.ID " :
-        "LEFT JOIN GEOLOCATION ON LOWER(filteredResults.REGION) LIKE LOWER(GEOLOCATION.NAME) "
-            + "WHERE ID > ? "
-            + "ORDER BY filteredResults.ID ")
-        + "LIMIT ? ;";
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+        + "FROM WINE "
+        + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME) "
+        + "WHERE WINE.ID > ? "
+        + (filters == null ? "" : "AND TITLE LIKE ? "
+        + "AND COUNTRY LIKE ? "
+        + "AND WINERY LIKE ? "
+        + "AND COLOR LIKE ? "
+        + "AND VINTAGE BETWEEN ? AND ? "
+        + "AND SCORE_PERCENT BETWEEN ? AND ? "
+        + "AND ABV BETWEEN ? AND ? "
+        + "AND PRICE BETWEEN ? AND ? ")
+        + "ORDER BY WINE.ID "
+        + "LIMIT ?;";
 
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       int paramIndex = 1;
+      statement.setInt(paramIndex++, begin);
       if (filters != null) {
         statement.setString(paramIndex++,
             filters.getTitle().isEmpty() ? "%" : "%" + filters.getTitle() + "%");
@@ -213,14 +207,11 @@ public class WineDao extends Dao {
         statement.setDouble(paramIndex++, filters.getMaxAbv());
         statement.setDouble(paramIndex++, filters.getMinPrice());
         statement.setDouble(paramIndex++, filters.getMaxPrice());
-        statement.setInt(paramIndex++, begin);
-      } else {
-        statement.setInt(paramIndex++, begin);
       }
       statement.setInt(paramIndex, end - begin);
 
       try (ResultSet resultSet = statement.executeQuery()) {
-        ObservableList<Wine> wines = extractAllWinesFromResultSet(resultSet);
+        ObservableList<Wine> wines = extractAllWinesFromResultSet(resultSet, "wine_id");
         log.info("Successfully retrieved {} wines in range {}-{} in {}ms", wines.size(),
             begin, end, timer.currentOffsetMilliseconds());
         return wines;
@@ -238,13 +229,16 @@ public class WineDao extends Dao {
    * @return wine of given id or null
    */
   public Wine get(long id) {
-    String sql = "SELECT * FROM WINE WHERE ID = ?";
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+        + "FROM WINE "
+        + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME) "
+        + "WHERE ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setLong(1, id);
 
       try (ResultSet resultSet = statement.executeQuery()) {
         if (resultSet.next()) {
-          Wine wine = extractWineFromResultSet(resultSet);
+          Wine wine = extractWineFromResultSet(resultSet, "wine_id");
           if (wine != null) {
             log.info("Successfully retrieved wine with ID {}", id);
             return wine;
@@ -254,6 +248,39 @@ public class WineDao extends Dao {
       }
     } catch (SQLException error) {
       log.info("Failed to retrieve wine with ID {}", id);
+    }
+    return null;
+  }
+
+  /**
+   * Retrieves a wine from the database by its exact title.
+   *
+   * @param title The exact title of the wine to retrieve.
+   * @return The Wine object if found, or null if no match is found.
+   */
+  public Wine getByExactTitle(String title) {
+    Timer timer = new Timer();
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+        + "FROM WINE "
+        + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME) "
+        + "WHERE TITLE = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setString(1, title);
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        if (resultSet.next()) {
+          Wine wine = extractWineFromResultSet(resultSet, "wine_id");
+          if (wine != null) {
+            log.info("Successfully retrieved wine with title '{}' in {}ms", title,
+                timer.currentOffsetMilliseconds());
+            return wine;
+          }
+        }
+        log.info("Could not retrieve wine with title '{}' in {}ms", title,
+            timer.currentOffsetMilliseconds());
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve wine with title '{}'", title);
     }
     return null;
   }
@@ -373,11 +400,11 @@ public class WineDao extends Dao {
    * @return An ObservableList of Wine objects
    * @throws SQLException If an error occurs while processing the ResultSet
    */
-  ObservableList<Wine> extractAllWinesFromResultSet(ResultSet resultSet)
+  ObservableList<Wine> extractAllWinesFromResultSet(ResultSet resultSet, String idColumnName)
       throws SQLException {
     ObservableList<Wine> wines = FXCollections.observableArrayList();
     while (resultSet.next()) {
-      wines.add(extractWineFromResultSet(resultSet));
+      wines.add(extractWineFromResultSet(resultSet, idColumnName));
     }
     return wines;
   }
@@ -390,8 +417,8 @@ public class WineDao extends Dao {
    * @return The extracted Wine object
    * @throws SQLException If an error occurs while processing the ResultSet
    */
-  Wine extractWineFromResultSet(ResultSet resultSet) throws SQLException {
-    long id = resultSet.getLong("ID");
+  Wine extractWineFromResultSet(ResultSet resultSet, String idColumnName) throws SQLException {
+    long id = resultSet.getLong(idColumnName);
     if (useCache()) {
       Wine cachedWine = wineCache.tryGetObject(id);
       if (cachedWine != null) {
@@ -429,7 +456,7 @@ public class WineDao extends Dao {
    *
    * @param set The ResultSet from which geolocations are to be extracted
    * @return The extract Geolocation if available, otherwise null if either the latitude or
-   *        longitude were null
+   *         longitude were null
    * @throws SQLException If an error occurs while processing the ResultSet
    */
   private GeoLocation createGeoLocation(ResultSet set) throws SQLException {
@@ -486,7 +513,6 @@ public class WineDao extends Dao {
         update.setString(1, after);
       });
     });
-
     wine.countryProperty().addListener((observableValue, before, after) -> {
       updateAttribute(wine.getKey(), "COUNTRY", update -> {
         update.setString(1, after);
@@ -581,12 +607,14 @@ public class WineDao extends Dao {
    */
   public void updateUniques() {
     wineDataStatService.reset();
-    String query = "SELECT country, winery, color, vintage, score_percent, abv, price FROM wine";
+    String query = "SELECT title, country, winery, color, vintage, score_percent, abv, price "
+        + "FROM wine";
     try (PreparedStatement statement = connection.prepareStatement(query);
         ResultSet set = statement.executeQuery()) {
 
       // Go through results and add to lists
       while (set.next()) {
+        final String title = set.getString("title");
         final String country = set.getString("country");
         final String winery = set.getString("winery");
         final String color = set.getString("color");
@@ -596,6 +624,7 @@ public class WineDao extends Dao {
         final float price = set.getFloat("price");
 
         // Add to sets
+        this.wineDataStatService.getUniqueTitles().add(title);
         this.wineDataStatService.getUniqueCountries().add(country);
         this.wineDataStatService.getUniqueWineries().add(winery);
         this.wineDataStatService.getUniqueColors().add(color);
@@ -659,5 +688,14 @@ public class WineDao extends Dao {
       default:
         break;
     }
+  }
+
+  /**
+   * Gets the wineDataStatService.
+   *
+   * @return wineDataStatService
+   */
+  public WineDataStatService getWineDataStatService() {
+    return wineDataStatService;
   }
 }
