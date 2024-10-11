@@ -1,5 +1,8 @@
 package seng202.team6.enums;
 
+/**
+ * This enum is used to match wine varieties to their colours.
+ */
 public enum ColourMatch {
 
   //=========| STANDARD COLOURS |==========
@@ -25,7 +28,13 @@ public enum ColourMatch {
   TEMPRANILLO("red");
 
   private final String colour;
-  ColourMatch(String colour) {this.colour = colour;}
-  public String getColour() {return colour;}
+
+  ColourMatch(String colour) {
+    this.colour = colour;
+  }
+
+  public String getColour() {
+    return colour;
+  }
 
 }

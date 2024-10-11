@@ -35,7 +35,7 @@ public class WineWidgets {
     wrapper.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
 
     String varietySource = wine.getVariety();
-    if(varietySource.length() == 0) {
+    if (varietySource.length() == 0) {
       varietySource = wine.getColor();
       log.info("Using Colour field for wine colour");
     } else {

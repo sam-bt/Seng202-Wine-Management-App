@@ -165,7 +165,7 @@ public class DetailedWineViewController extends Controller {
     }
 
     String varietySource = viewedWine.getVariety();
-    if(varietySource.length() == 0) {
+    if (varietySource.length() == 0) {
       varietySource = viewedWine.getColor();
       log.info("Using Colour field for wine colour");
     } else {

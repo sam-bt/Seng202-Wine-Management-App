@@ -41,7 +41,7 @@ public class WineCard extends Card {
     super(containerWidth, horizontalGap);
 
     String varietySource = wine.getVariety();
-    if(varietySource.length() == 0) {
+    if (varietySource.length() == 0) {
       varietySource = wine.getColor();
     }
     Image wineImage = wineImages.getImageByVariety(varietySource);
