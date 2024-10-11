@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
@@ -26,6 +27,8 @@ public class AutoCompletionTextField extends TextField {
   private final SortedSet<String> entries;
   //popup GUI
   private final ContextMenu entriesPopup;
+
+  private Consumer<String> onSelectionAction;
 
 
   /**
@@ -109,6 +112,8 @@ public class AutoCompletionTextField extends TextField {
         setText(result);
         positionCaret(result.length());
         entriesPopup.hide();
+        if (onSelectionAction != null)
+          onSelectionAction.accept(result);
       });
     }
 
@@ -125,5 +130,9 @@ public class AutoCompletionTextField extends TextField {
    */
   public SortedSet<String> getEntries() {
     return entries;
+  }
+
+  public void setOnSelectionAction(Consumer<String> onSelectionAction) {
+    this.onSelectionAction = onSelectionAction;
   }
 }

@@ -252,6 +252,33 @@ public class WineDao extends Dao {
     return null;
   }
 
+  public Wine getByExactTitle(String title) {
+    Timer timer = new Timer();
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+        + "FROM WINE "
+        + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME) "
+        + "WHERE TITLE = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setString(1, title);
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        if (resultSet.next()) {
+          Wine wine = extractWineFromResultSet(resultSet, "wine_id");
+          if (wine != null) {
+            log.info("Successfully retrieved wine with title '{}' in {}ms", title,
+                timer.currentOffsetMilliseconds());
+            return wine;
+          }
+        }
+        log.info("Could not retrieve wine with title '{}' in {}ms", title,
+            timer.currentOffsetMilliseconds());
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve wine with title '{}'", title);
+    }
+    return null;
+  }
+
   /**
    * Replaces all wines in the WINE table by first removing all existing wines and then adding the
    * provided lists of wines.
