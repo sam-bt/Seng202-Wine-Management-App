@@ -566,17 +566,19 @@ public class MainController extends Controller {
   @FXML
   public void openWineCompareScreen() {
     switchScene("/fxml/wine_compare.fxml", "Wine Compare",
-        () -> new WineCompareController(managerContext, null), Screen.COMPARE_WINES_SCREEN);
+        () -> new WineCompareController(managerContext, null, null), Screen.COMPARE_WINES_SCREEN);
   }
 
   /**
    * Launches the wine compare screen with the specified wine.
    *
-   * @param wine The first wine to be shown on the wine compare.
+   * @param leftWine The wine to be shown on the left side of the wine compare.
+   * @param rightRight The wine to be shown on the right side of the wine compare.
    */
-  public void openWineCompareScreen(Wine wine) {
+  public void openWineCompareScreen(Wine leftWine, Wine rightRight) {
     switchScene("/fxml/wine_compare.fxml", "Wine Compare",
-        () -> new WineCompareController(managerContext, wine), Screen.COMPARE_WINES_SCREEN);
+        () -> new WineCompareController(managerContext, leftWine, rightRight),
+        Screen.COMPARE_WINES_SCREEN);
   }
 
   /**

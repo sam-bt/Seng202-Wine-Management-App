@@ -30,14 +30,28 @@ public class AutoCompletionTextField extends TextField {
 
   private Consumer<String> onSelectionAction;
 
-
   /**
-   * Default constructor.
+   * Constructor for creating an AutoCompletionTextField.
    */
   public AutoCompletionTextField() {
     super();
     this.entries = new TreeSet<>();
     this.entriesPopup = new ContextMenu();
+
+    setListener();
+  }
+
+  /**
+   * Constructor for creating an AutoCompletionTextField with a predefined
+   * text value.
+   *
+   * @param text The initial text to display in the text field.
+   */
+  public AutoCompletionTextField(String text) {
+    super();
+    this.entries = new TreeSet<>();
+    this.entriesPopup = new ContextMenu();
+    setText(text);
 
     setListener();
   }

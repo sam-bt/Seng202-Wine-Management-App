@@ -1,7 +1,7 @@
 package seng202.team6.gui;
 
 import java.util.Set;
-import javafx.beans.property.StringProperty;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -19,11 +19,9 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.AutoCompletionTextField;
@@ -41,29 +39,27 @@ public class WineCompareController extends Controller {
 
   @FXML
   private VBox leftWineContainer;
-
   @FXML
   private VBox rightWineContainer;
 
-  private WineSide leftSide;
-  private WineSide rightSide;
+  private final WineSide leftSide;
+  private final WineSide rightSide;
 
   @FXML
   private AutoCompletionTextField leftWineSearch;
   private AutoCompletionTextField rightWineSearch;
 
-  private Wine leftWine;
-  private Wine rightWine;
-
   /**
    * Constructs a new WineCompareController.
    *
    * @param context the manager context
-   * @param wine the initial wine to display on the left side.
+   * @param leftWine the initial wine to display on the left side.
+   * @param rightWine the initial wine to display on the right side.
    */
-  public WineCompareController(ManagerContext context, Wine wine) {
+  public WineCompareController(ManagerContext context, Wine leftWine, Wine rightWine) {
     super(context);
-    this.leftWine = wine;
+    this.leftSide = new WineSide(leftWine);
+    this.rightSide = new WineSide(rightWine);
   }
 
   /**
@@ -71,8 +67,8 @@ public class WineCompareController extends Controller {
    */
   @Override
   public void init() {
-    leftSide = new WineSide(leftWineContainer);
-    rightSide = new WineSide(rightWineContainer);
+    leftSide.setup(leftWineContainer);
+    rightSide.setup(rightWineContainer);
   }
 
   /**
@@ -81,7 +77,7 @@ public class WineCompareController extends Controller {
    */
   class WineSide {
 
-    private final VBox container;
+    private VBox container;
     private GridPane header;
     private VBox description;
     private GridPane attributesGrid;
@@ -92,22 +88,23 @@ public class WineCompareController extends Controller {
     /**
      * Constructs a WineSide and initializes the layout for displaying wine details.
      *
-     * @param container the VBox container to hold the components of this WineSide.
+     * @param wine the wine to initially display
      */
-    WineSide(VBox container) {
-      this.container = container;
-      container.setPadding(new Insets(10));
-      container.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
-      setup();
+    WineSide(Wine wine) {
+      this.wine = wine;
     }
 
     /**
      * Sets up the search field and initial layout for the wine side view.
      */
-    private void setup() {
+    private void setup(VBox container) {
+      this.container = container;
+      container.setPadding(new Insets(10));
+      container.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
+
       Set<String> uniqueTitles = managerContext.getDatabaseManager().getWineDataStatService()
           .getUniqueTitles();
-      searchTextField = new AutoCompletionTextField();
+      searchTextField = new AutoCompletionTextField(wine == null ? "" : wine.getTitle());
       searchTextField.setPrefWidth(300);
       searchTextField.getEntries().addAll(uniqueTitles);
       searchTextField.setOnSelectionAction(match -> {
@@ -125,6 +122,19 @@ public class WineCompareController extends Controller {
       wrapper.setAlignment(Pos.CENTER);
       wrapper.setSpacing(10);
       container.getChildren().addAll(wrapper, separator);
+
+      if (wine != null) {
+        setWine(wine);
+      }
+    }
+
+    /**
+     * Sets the container that holds the UI components for this side.
+     *
+     * @param container The container that holds the UI components
+     */
+    public void setContainer(VBox container) {
+      this.container = container;
     }
 
     /**
@@ -281,7 +291,8 @@ public class WineCompareController extends Controller {
       detailedViewButton.getStyleClass().add("secondary-button");
       detailedViewButton.setOnMouseClicked((event) ->
           managerContext.getGuiManager().mainController.openDetailedWineView(wine,
-              () -> managerContext.getGuiManager().mainController.openWineCompareScreen(wine)));
+              () -> managerContext.getGuiManager().mainController
+                  .openWineCompareScreen(leftSide.wine, rightSide.wine)));
       buttonsWrapper.getChildren().add(detailedViewButton);
 
       // only add the open lists button is they are loggied in
