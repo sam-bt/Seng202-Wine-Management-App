@@ -11,6 +11,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Wine;
 
 /**
@@ -18,6 +21,7 @@ import seng202.team6.model.Wine;
  */
 public class WineWidgets {
 
+  private static final Logger log = LogManager.getLogger(WineWidgets.class);
   private static WineImages wineImages = new WineImages();
 
   /**
@@ -30,7 +34,14 @@ public class WineWidgets {
     wrapper.setPadding(new Insets(10));
     wrapper.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
 
-    Image wineImage = wineImages.getWineImage(wine.getColor());
+    String varietySource = wine.getVariety();
+    if(varietySource.length() == 0) {
+      varietySource = wine.getColor();
+      log.info("Using Colour field for wine colour");
+    } else {
+      log.info("Using Variety field for colour");
+    }
+    Image wineImage = wineImages.getImageByVariety(varietySource);
     ImageView imageView = new ImageView(wineImage);
     imageView.setFitHeight(100);
     imageView.setPreserveRatio(true);

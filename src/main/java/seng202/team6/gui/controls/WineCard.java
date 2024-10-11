@@ -12,30 +12,21 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.card.Card;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Wine;
 import seng202.team6.util.ImageReader;
+import seng202.team6.util.WineImages;
 
 /**
  * A class that represents a card for displaying wine information.
  */
 public class WineCard extends Card {
 
-  private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine_cropped.png");
-  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage(
-      "/img/white_wine_cropped.png");
-  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine_cropped.png");
-  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage(
-      "/img/default_wine_cropped.png");
-  private static final Map<String, Image> WINE_IMAGES = new HashMap<>();
-
-  static {
-    WINE_IMAGES.put("red", RED_WINE_IMAGE);
-    WINE_IMAGES.put("white", WHITE_WINE_IMAGE);
-    WINE_IMAGES.put("rose", ROSE_WINE_IMAGE);
-    WINE_IMAGES.put("rosé", ROSE_WINE_IMAGE);
-  }
+  private WineImages wineImages = new WineImages();
 
   /**
    * Constructs a WineCard to display the specified wine's details.
@@ -48,7 +39,12 @@ public class WineCard extends Card {
   public WineCard(ReadOnlyDoubleProperty containerWidth,
       DoubleProperty horizontalGap, Wine wine, boolean showReview) {
     super(containerWidth, horizontalGap);
-    Image wineImage = WINE_IMAGES.getOrDefault(wine.getColor().toLowerCase(), DEFAULT_WINE_IMAGE);
+
+    String varietySource = wine.getVariety();
+    if(varietySource.length() == 0) {
+      varietySource = wine.getColor();
+    }
+    Image wineImage = wineImages.getImageByVariety(varietySource);
     ImageView imageView = new ImageView(wineImage);
     imageView.setFitHeight(100);
     imageView.setPreserveRatio(true);

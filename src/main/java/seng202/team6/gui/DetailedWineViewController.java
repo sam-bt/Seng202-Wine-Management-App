@@ -20,9 +20,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.CircularScoreIndicator;
 import seng202.team6.gui.controls.UnmodifiableRating;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
@@ -40,6 +43,7 @@ import seng202.team6.util.WineImages;
  */
 public class DetailedWineViewController extends Controller {
 
+  private static final Logger log = LogManager.getLogger(DetailedWineViewController.class);
   private static WineImages wineImages = new WineImages();
   private final WineReviewsService wineReviewsService;
   private final WineNoteService wineNoteService;
@@ -160,7 +164,14 @@ public class DetailedWineViewController extends Controller {
       buttonsContainer.getChildren().remove(openListsButton);
     }
 
-    Image wineImage = wineImages.getWineImage(viewedWine.getColor());
+    String varietySource = viewedWine.getVariety();
+    if(varietySource.length() == 0) {
+      varietySource = viewedWine.getColor();
+      log.info("Using Colour field for wine colour");
+    } else {
+      log.info("Using Variety field for colour");
+    }
+    Image wineImage = wineImages.getImageByVariety(varietySource);
     imageView.setImage(wineImage);
 
     ratingStars.setUpdateOnHover(false);
