@@ -133,7 +133,7 @@ public class TourPlanningController extends Controller {
    */
   @FXML
   public void onCreateTourButtonClick() {
-    managerContext.getGuiManager().mainController.openVineyardTourPopup(vineyardToursService, null);
+    managerContext.getGuiManager().openVineyardTourPopup(vineyardToursService, null);
   }
 
   /**
@@ -228,7 +228,7 @@ public class TourPlanningController extends Controller {
    * calculate a route.
    */
   private void showNotEnoughVineyardsToCalculateError() {
-    ErrorPopupController error = managerContext.getGuiManager().mainController.showErrorPopup();
+    ErrorPopupController error = managerContext.getGuiManager().showErrorPopup();
     error.setTitle("Error Calculating Route");
     error.setMessage("Please add 2 or more vineyards to your itinerary to calculate a route.");
     error.addButton("Ok", error::close);
@@ -238,7 +238,7 @@ public class TourPlanningController extends Controller {
    * Displays an error popup indicating that there was an issue calculating the route.
    */
   private void showCalculatingRouteError() {
-    ErrorPopupController error = managerContext.getGuiManager().mainController.showErrorPopup();
+    ErrorPopupController error = managerContext.getGuiManager().showErrorPopup();
     error.setTitle("Error Calculating Route");
     error.setMessage("There was an error calculating a route. Please try again later.");
     error.addButton("Ok", error::close);

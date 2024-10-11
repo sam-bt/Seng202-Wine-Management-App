@@ -135,7 +135,7 @@ public class VineyardsController extends Controller {
   }
 
   private void openDetailedVineyardView(Vineyard vineyard) {
-    Runnable backAction = () -> managerContext.getGuiManager().mainController.openVineyardsScreen();
-    managerContext.getGuiManager().mainController.openDetailedVineyardView(vineyard, backAction);
+    Runnable backAction = () -> managerContext.getGuiManager().openVineyardsScreen();
+    managerContext.getGuiManager().openDetailedVineyardView(vineyard, backAction);
   }
 }

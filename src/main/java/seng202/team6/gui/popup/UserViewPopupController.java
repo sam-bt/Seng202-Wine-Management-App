@@ -129,13 +129,13 @@ public class UserViewPopupController extends Controller {
 
   @FXML
   void onBackButtonClick() {
-    managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().closePopup();
   }
 
   private void openReviewView(WineReview review, Wine wine) {
-    managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().closePopup();
     User user = managerContext.getDatabaseManager().getUserDao().get(review.getUsername());
-    managerContext.getGuiManager().mainController.openPopupReviewView(
+    managerContext.getGuiManager().openPopupReviewView(
         new WineReviewsService(managerContext.getAuthenticationManager(),
             managerContext.getDatabaseManager(), wine), user, review, wine);
   }

@@ -427,7 +427,7 @@ public class MainController extends Controller {
    * Launches the notes screen.
    */
   @FXML
-  void openNotesScreen() {
+  public void openNotesScreen() {
     switchScene("/fxml/notes_screen.fxml", "Notes",
         () -> new NotesController(managerContext), Screen.NOTES_SCREEN);
   }
@@ -571,6 +571,17 @@ public class MainController extends Controller {
   }
 
   /**
+   * Launches the load import screen under a given node.
+   *
+   * @param parent node to add to
+   * @return node that was added
+   */
+  public Parent loadImportWineScreen(Pane parent) {
+    return loadFxml("/fxml/wine_import_screen.fxml",
+        () -> new WineImportController(managerContext), parent);
+  }
+
+  /**
    * Launches the popup to create a vineyard tour.
    *
    * @param vineyardToursService  the service used for managing vineyard tours.
@@ -604,16 +615,5 @@ public class MainController extends Controller {
     popupContent.setVisible(false);
     popupContent.setDisable(true);
     popupContent.getChildren().clear();
-  }
-
-  /**
-   * Launches the load import screen under a given node.
-   *
-   * @param parent node to add to
-   * @return node that was added
-   */
-  public Parent loadImportWineScreen(Pane parent) {
-    return loadFxml("/fxml/wine_import_screen.fxml",
-        () -> new WineImportController(managerContext), parent);
   }
 }

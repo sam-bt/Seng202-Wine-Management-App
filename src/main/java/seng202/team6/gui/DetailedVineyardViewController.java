@@ -74,7 +74,7 @@ public class DetailedVineyardViewController extends Controller {
 
   @FXML
   void onOpenToursClick() {
-    managerContext.getGuiManager().mainController.openAddToTourPopup(vineyard);
+    managerContext.getGuiManager().openAddToTourPopup(vineyard);
   }
 
   /**
@@ -94,7 +94,7 @@ public class DetailedVineyardViewController extends Controller {
   }
 
   private void openDetailedWineView(Wine wine) {
-    Runnable backAction = () -> managerContext.getGuiManager().mainController.openVineyardsScreen();
-    managerContext.getGuiManager().mainController.openDetailedWineView(wine, backAction);
+    Runnable backAction = () -> managerContext.getGuiManager().openVineyardsScreen();
+    managerContext.getGuiManager().openDetailedWineView(wine, backAction);
   }
 }

@@ -87,6 +87,6 @@ public class ErrorPopupController extends Controller {
    */
   @FXML
   public void close() {
-    managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().closePopup();
   }
 }

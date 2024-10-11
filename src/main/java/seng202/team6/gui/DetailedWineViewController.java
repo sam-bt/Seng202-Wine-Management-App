@@ -248,7 +248,7 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   void onAddReviewButtonClick() {
-    managerContext.getGuiManager().mainController.openPopupWineReview(wineReviewsService);
+    managerContext.getGuiManager().openPopupWineReview(wineReviewsService);
   }
 
   /**
@@ -256,14 +256,14 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   void onOpenListsButtonClick() {
-    managerContext.getGuiManager().mainController.openAddToListPopup(viewedWine);
+    managerContext.getGuiManager().openAddToListPopup(viewedWine);
   }
 
   @FXML
   void onViewVineyardClick() {
     // fixme - circular back buttons idk how to fix
-    managerContext.getGuiManager().mainController.openDetailedVineyardView(wineVineyard,
-        () -> managerContext.getGuiManager().mainController.openDetailedWineView(viewedWine, null));
+    managerContext.getGuiManager().openDetailedVineyardView(wineVineyard,
+        () -> managerContext.getGuiManager().openDetailedWineView(viewedWine, null));
   }
 
   /**

@@ -152,7 +152,6 @@ public class SocialController extends Controller {
         selectedWine);
     managerContext
         .getGuiManager()
-        .mainController
         .openPopupReviewView(wineReviewsService, reviewer, selectedReview.getFirst(), selectedWine);
   }
 

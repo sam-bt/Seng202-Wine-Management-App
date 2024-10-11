@@ -450,8 +450,8 @@ public class WineScreenController extends Controller {
    * @param wine wine
    */
   private void openDetailedWineView(Wine wine) {
-    Runnable backAction = () -> managerContext.getGuiManager().mainController.openWineScreen();
-    managerContext.getGuiManager().mainController.openDetailedWineView(wine, backAction);
+    Runnable backAction = () -> managerContext.getGuiManager().openWineScreen();
+    managerContext.getGuiManager().openDetailedWineView(wine, backAction);
   }
 
   /**
