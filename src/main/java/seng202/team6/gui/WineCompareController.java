@@ -290,8 +290,8 @@ public class WineCompareController extends Controller {
       detailedViewButton.setPrefWidth(200);
       detailedViewButton.getStyleClass().add("secondary-button");
       detailedViewButton.setOnMouseClicked((event) ->
-          managerContext.getGuiManager().mainController.openDetailedWineView(wine,
-              () -> managerContext.getGuiManager().mainController
+          managerContext.getGuiManager().openDetailedWineView(wine,
+              () -> managerContext.getGuiManager()
                   .openWineCompareScreen(leftSide.wine, rightSide.wine)));
       buttonsWrapper.getChildren().add(detailedViewButton);
 
@@ -301,7 +301,7 @@ public class WineCompareController extends Controller {
         openListsButton.setPrefWidth(200);
         openListsButton.getStyleClass().add("secondary-button");
         openListsButton.setOnMouseClicked((event) ->
-            managerContext.getGuiManager().mainController.openAddToListPopup(wine));
+            managerContext.getGuiManager().openAddToListPopup(wine));
         buttonsWrapper.getChildren().add(openListsButton);
       }
 
