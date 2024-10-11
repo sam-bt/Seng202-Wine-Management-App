@@ -1,7 +1,5 @@
 package seng202.team6.gui.controls;
 
-import java.util.HashMap;
-import java.util.Map;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.geometry.Insets;
@@ -12,13 +10,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.card.Card;
-import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Wine;
-import seng202.team6.util.ImageReader;
 import seng202.team6.util.WineImages;
 
 /**
