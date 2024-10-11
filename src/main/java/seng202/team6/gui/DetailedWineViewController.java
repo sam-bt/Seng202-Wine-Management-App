@@ -268,7 +268,7 @@ public class DetailedWineViewController extends Controller {
 
   @FXML
   void onCompareClick() {
-    managerContext.getGuiManager().mainController.openWineCompareScreen(viewedWine, null);
+    managerContext.getGuiManager().openWineCompareScreen(viewedWine, null);
   }
 
   /**

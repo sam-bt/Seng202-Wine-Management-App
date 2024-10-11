@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.util.Builder;
+import seng202.team6.enums.PopupType;
 import seng202.team6.gui.AdminController;
 import seng202.team6.gui.ConsumptionController;
 import seng202.team6.gui.DetailedVineyardViewController;
@@ -19,16 +20,17 @@ import seng202.team6.gui.SocialController;
 import seng202.team6.gui.TourPlanningController;
 import seng202.team6.gui.UpdatePasswordController;
 import seng202.team6.gui.VineyardsController;
+import seng202.team6.gui.WineCompareController;
 import seng202.team6.gui.WineImportController;
 import seng202.team6.gui.WineScreenController;
 import seng202.team6.gui.popup.AddToListPopupController;
 import seng202.team6.gui.popup.AddToTourPopupController;
 import seng202.team6.gui.popup.CreateListPopupController;
 import seng202.team6.gui.popup.DeleteListPopupController;
-import seng202.team6.gui.popup.ErrorPopupController;
+import seng202.team6.gui.popup.GeneralPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
+import seng202.team6.gui.popup.UserSearchPopupController;
 import seng202.team6.gui.popup.UserViewPopupController;
-import seng202.team6.gui.popup.VineyardTourPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.gui.wrapper.FxWrapper;
 import seng202.team6.model.User;
@@ -251,6 +253,23 @@ public class GuiManager {
   }
 
   /**
+   * Launches the wine compare screen.
+   */
+  public void openWineCompareScreen() {
+    mainController.openWineCompareScreen();
+  }
+
+  /**
+   * Launches the wine compare screen with the specified wine.
+   *
+   * @param leftWine The wine to be shown on the left side of the wine compare.
+   * @param rightWine The wine to be shown on the right side of the wine compare.
+   */
+  public void openWineCompareScreen(Wine leftWine, Wine rightWine) {
+    mainController.openWineCompareScreen(leftWine, rightWine);
+  }
+
+  /**
    * Launches the popup to review a wine.
    *
    * @param wineReviewsService the service used for managing wine reviews.
@@ -274,16 +293,6 @@ public class GuiManager {
     return mainController.loadImportWineScreen(parent);
   }
 
-  /**
-   * Launches the popup to create a vineyard tour.
-   *
-   * @param vineyardToursService  the service used for managing vineyard tours.
-   * @param modifyingVineyardTour the vineyard tour to be modified, or null if creating a new tour.
-   */
-  public void openVineyardTourPopup(VineyardToursService vineyardToursService,
-      VineyardTour modifyingVineyardTour) {
-    mainController.openVineyardTourPopup(vineyardToursService, modifyingVineyardTour);
-  }
 
   /**
    * Closes the popup.
@@ -311,13 +320,30 @@ public class GuiManager {
   }
 
   /**
-   * Displays an error popup. The popup is displayed on the screen, and the controller for the popup
-   * is returned to the caller for further customization.
+   * Displays a popup of the error type. The popup is displayed on the screen, and the controller
+   * for the popup is returned to the caller for further customization.
    *
    * @return The ErrorPopupController associated with the displayed error popup.
    */
-  public ErrorPopupController showErrorPopup() {
+  public GeneralPopupController showErrorPopup() {
     return mainController.showErrorPopup();
   }
+
+  /**
+   * Displays a popup of the none type.
+   *
+   * @return The GeneralPopupController associated with the displayed popup
+   */
+  public GeneralPopupController showPopup() {
+    return mainController.showPopup();
+  }
+
+  /**
+   * Launches the user search popup.
+   */
+  public void openUserSearchPopup() {
+    mainController.openUserSearchPopup();
+  }
+
 
 }

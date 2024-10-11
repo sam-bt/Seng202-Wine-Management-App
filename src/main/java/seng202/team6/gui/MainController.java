@@ -574,11 +574,11 @@ public class MainController extends Controller {
    * Launches the wine compare screen with the specified wine.
    *
    * @param leftWine The wine to be shown on the left side of the wine compare.
-   * @param rightRight The wine to be shown on the right side of the wine compare.
+   * @param rightWine The wine to be shown on the right side of the wine compare.
    */
-  public void openWineCompareScreen(Wine leftWine, Wine rightRight) {
+  public void openWineCompareScreen(Wine leftWine, Wine rightWine) {
     switchScene("/fxml/wine_compare.fxml", "Wine Compare",
-        () -> new WineCompareController(managerContext, leftWine, rightRight),
+        () -> new WineCompareController(managerContext, leftWine, rightWine),
         Screen.COMPARE_WINES_SCREEN);
   }
 

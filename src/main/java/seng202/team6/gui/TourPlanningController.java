@@ -184,7 +184,7 @@ public class TourPlanningController extends Controller {
    */
   @FXML
   public void onDeleteTourClick() {
-    GeneralPopupController popup = managerContext.getGuiManager().mainController.showPopup();
+    GeneralPopupController popup = managerContext.getGuiManager().showPopup();
     VineyardTour currentVineyardTour = currentTourPlanningService.getVineyardTour();
     popup.setTitle("Delete Tour Confirmation");
     popup.setMessage("Are you sure you would like to delete the tour '"
@@ -289,7 +289,7 @@ public class TourPlanningController extends Controller {
    * calculate a route.
    */
   private void showNotEnoughVineyardsToCalculateError() {
-    GeneralPopupController popup = managerContext.getGuiManager().mainController.showErrorPopup();
+    GeneralPopupController popup = managerContext.getGuiManager().showErrorPopup();
     popup.setTitle("Error Calculating Route");
     popup.setMessage("Please add 2 or more vineyards to your itinerary to calculate a route.");
     popup.addOkButton();
@@ -299,7 +299,7 @@ public class TourPlanningController extends Controller {
    * Displays an error popup indicating that there was an issue calculating the route.
    */
   private void showCalculatingRouteError() {
-    GeneralPopupController popup = managerContext.getGuiManager().mainController.showErrorPopup();
+    GeneralPopupController popup = managerContext.getGuiManager().showErrorPopup();
     popup.setTitle("Error Calculating Route");
     popup.setMessage("There was an error calculating a route. Please try again later.");
     popup.addOkButton();
@@ -327,7 +327,7 @@ public class TourPlanningController extends Controller {
    * @return The GeneralPopupController handling the popup.
    */
   private GeneralPopupController setupCreateTourPopup(String title) {
-    GeneralPopupController popup = managerContext.getGuiManager().mainController.showPopup();
+    GeneralPopupController popup = managerContext.getGuiManager().showPopup();
     popup.setTitle(title);
     return popup;
   }
