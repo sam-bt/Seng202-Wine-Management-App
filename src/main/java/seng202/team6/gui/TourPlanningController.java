@@ -159,9 +159,9 @@ public class TourPlanningController extends Controller {
     GeneralPopupController popup = setupCreateTourPopup("Create Vineyard Tour from List");
     VBox optionsWrapper = createTourPopupOptionsWrapper(popup);
     TextField nameTextField = createNameField(optionsWrapper);
-
     Label listLabel = new Label("List");
     ComboBox<WineList> wineListsComboBox = createWineListComboBox();
+    wineListsComboBox.setMaxWidth(Double.MAX_VALUE);
     optionsWrapper.getChildren().addAll(listLabel, wineListsComboBox);
     popup.addContent(optionsWrapper);
 
