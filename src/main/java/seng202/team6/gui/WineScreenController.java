@@ -1,6 +1,7 @@
 package seng202.team6.gui;
 
 import java.util.Set;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -46,9 +47,9 @@ public class WineScreenController extends Controller {
 
   // Utilities and services
   private final Logger log = LogManager.getLogger(WineScreenController.class);
+  private final PageService pageService = new PageService(100);
   @FXML
   public TabPane tabPane;
-  private final PageService pageService = new PageService(100);
   private WineState savedState = null;
   private WineFilters currentFilters;
   // FXML elements
@@ -153,7 +154,7 @@ public class WineScreenController extends Controller {
 
     // Check for saved state and if so, load it
     if (this.savedState != null) {
-      loadState();
+      Platform.runLater(this::loadState);
     }
   }
 
@@ -507,6 +508,11 @@ public class WineScreenController extends Controller {
         priceSlider.setHighValue(filters.getMaxPrice());
         priceSlider.setLowValue(filters.getMinPrice());
       }
+
+      // Hide all context menus → fixes a bug caused by setting the text
+      countryTextField.getEntriesPopup().hide();
+      wineryTextField.getEntriesPopup().hide();
+      colorTextField.getEntriesPopup().hide();
     }
 
     onApplyFiltersButtonPressed();
