@@ -171,10 +171,10 @@ public class TourPlanningController extends Controller {
         return;
       }
       WineList wineList = wineListsComboBox.getSelectionModel().getSelectedItem();
-      openVineyardTour(vineyardTour);
       managerContext.getDatabaseManager().getVineyardsDao()
           .getAllInList(wineList)
           .forEach(vineyard -> currentTourPlanningService.addVineyard(vineyard));
+      openVineyardTour(vineyardTour);
     });
     popup.addCancelButton();
   }
