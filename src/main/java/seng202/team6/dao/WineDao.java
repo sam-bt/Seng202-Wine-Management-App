@@ -574,12 +574,13 @@ public class WineDao extends Dao {
    */
   public void updateUniques() {
     wineDataStatService.reset();
-    String query = "SELECT country, winery, color, vintage, score_percent, abv, price FROM wine";
+    String query = "SELECT title, country, winery, color, vintage, score_percent, abv, price FROM wine";
     try (PreparedStatement statement = connection.prepareStatement(query);
         ResultSet set = statement.executeQuery()) {
 
       // Go through results and add to lists
       while (set.next()) {
+        final String title = set.getString("title");
         final String country = set.getString("country");
         final String winery = set.getString("winery");
         final String color = set.getString("color");
@@ -589,6 +590,7 @@ public class WineDao extends Dao {
         final float price = set.getFloat("price");
 
         // Add to sets
+        this.wineDataStatService.getUniqueTitles().add(title);
         this.wineDataStatService.getUniqueCountries().add(country);
         this.wineDataStatService.getUniqueWineries().add(winery);
         this.wineDataStatService.getUniqueColors().add(color);

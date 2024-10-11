@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.util.Set;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -60,8 +61,11 @@ public class WineCompareController extends Controller {
     }
 
     private void setup() {
+      Set<String> uniqueTitles = managerContext.getDatabaseManager().getWineDataStatService()
+          .getUniqueTitles();
       searchTextField = new AutoCompletionTextField();
-      searchTextField.setPrefWidth(200);
+      searchTextField.setPrefWidth(300);
+      searchTextField.getEntries().addAll(uniqueTitles);
 
       Label searchLabel = new Label("Search for a Wine");
       searchLabel.setFont(Font.font(18));
