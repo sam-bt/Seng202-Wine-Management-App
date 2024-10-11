@@ -35,6 +35,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineFilters;
 import seng202.team6.service.PageService;
 import seng202.team6.service.WineDataStatService;
+import seng202.team6.util.WineState;
 import seng202.team6.util.YearStringConverter;
 
 /**
@@ -45,7 +46,11 @@ public class WineScreenController extends Controller {
 
   // Utilities and services
   private final Logger log = LogManager.getLogger(WineScreenController.class);
+  @FXML
+  public TabPane tabPane;
   private final PageService pageService = new PageService(100);
+  private WineState savedState = null;
+  private WineFilters currentFilters;
   // FXML elements
   @FXML
   private Button prevPageButtonSimpleView;
@@ -55,8 +60,6 @@ public class WineScreenController extends Controller {
   private Label maxPageNumberSimpleView;
   @FXML
   private Button nextPageButtonSimpleView;
-  @FXML
-  public TabPane tabPane;
   private LeafletOsmController mapController;
   // Custom element (added in code)
   private RangeSlider scoreSlider;
@@ -87,8 +90,6 @@ public class WineScreenController extends Controller {
   @FXML
   private TextField pageNumberTextFieldRawViewer;
   @FXML
-  private WineFilters currentFilters;
-  @FXML
   private Label maxPageNumberRawViewer;
 
 
@@ -99,6 +100,17 @@ public class WineScreenController extends Controller {
    */
   public WineScreenController(ManagerContext managerContext) {
     super(managerContext);
+  }
+
+  /**
+   * Constructor with save state.
+   *
+   * @param managerContext manager context
+   * @param savedState     the saved state
+   */
+  public WineScreenController(ManagerContext managerContext, WineState savedState) {
+    super(managerContext);
+    this.savedState = savedState;
   }
 
   /**
@@ -138,6 +150,11 @@ public class WineScreenController extends Controller {
 
     // Setup detailed wine
     tableView.setOnMouseClicked(this::openWineOnClick);
+
+    // Check for saved state and if so, load it
+    if (this.savedState != null) {
+      loadState();
+    }
   }
 
   /**
@@ -457,6 +474,54 @@ public class WineScreenController extends Controller {
   // Private helper functions
 
   /**
+   * Loads a saved state.
+   */
+  private void loadState() {
+    WineFilters filters = savedState.getFilters();
+    PageService pageService = savedState.getPageService();
+
+    if (filters != null) {
+      // Set textfield values
+      titleTextField.setText(filters.getTitle());
+      countryTextField.setText(filters.getCountry());
+      wineryTextField.setText(filters.getWinery());
+      colorTextField.setText(filters.getColor());
+
+      // Set slider values (if not disabled)
+      if (!vintageSlider.isDisabled()) {
+        vintageSlider.setHighValue(filters.getMaxVintage());
+        vintageSlider.setLowValue(filters.getMinVintage());
+      }
+
+      if (!scoreSlider.isDisabled()) {
+        scoreSlider.setHighValue(filters.getMaxScore());
+        scoreSlider.setLowValue(filters.getMinScore());
+      }
+
+      if (!abvSlider.isDisabled()) {
+        abvSlider.setHighValue(filters.getMaxAbv());
+        abvSlider.setLowValue(filters.getMinAbv());
+      }
+
+      if (!priceSlider.isDisabled()) {
+        priceSlider.setHighValue(filters.getMaxPrice());
+        priceSlider.setLowValue(filters.getMinPrice());
+      }
+    }
+
+    onApplyFiltersButtonPressed();
+    this.pageService.setPageNumber(pageService.getPageNumber());
+    LogManager.getLogger(this.getClass().getName()).info("Successfully loaded a previous state!");
+  }
+
+  /**
+   * Saves the state of the current filters and page service.
+   */
+  private WineState saveState() {
+    return new WineState(currentFilters, pageService);
+  }
+
+  /**
    * Configures Auto-completing text field with given entries.
    *
    * @param textField Target text field
@@ -532,7 +597,14 @@ public class WineScreenController extends Controller {
    * @param wine wine
    */
   private void openDetailedWineView(Wine wine) {
-    Runnable backAction = () -> managerContext.getGuiManager().mainController.openWineScreen();
+    Runnable backAction;
+    if (currentFilters == null && pageService.getPageNumber() == 1) { // Don't need to save state
+      backAction = () -> managerContext.getGuiManager()
+          .mainController.openWineScreen();
+    } else {
+      backAction = () -> managerContext.getGuiManager()
+          .mainController.openWineScreen(this.saveState());
+    }
     managerContext.getGuiManager().mainController.openDetailedWineView(wine, backAction);
   }
 

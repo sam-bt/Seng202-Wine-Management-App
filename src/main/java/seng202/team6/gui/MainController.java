@@ -34,6 +34,7 @@ import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineListService;
 import seng202.team6.service.WineReviewsService;
+import seng202.team6.util.WineState;
 
 /**
  * Main controller from where other scenes are embedded.
@@ -92,7 +93,7 @@ public class MainController extends Controller {
 
   private Screen currentScreen;
 
-  private boolean disabled = false;
+  private final boolean disabled = false;
 
   /**
    * Constructor.
@@ -376,6 +377,16 @@ public class MainController extends Controller {
   }
 
   /**
+   * Launches the wine screen with a saved state.
+   */
+  @FXML
+  public void openWineScreen(WineState state) {
+    switchScene("/fxml/wine_screen.fxml", "Wine Information",
+        () -> new WineScreenController(managerContext, state), Screen.WINE_SCREEN);
+  }
+
+
+  /**
    * Launches the list screen.
    */
   @FXML
@@ -572,7 +583,7 @@ public class MainController extends Controller {
   /**
    * Launches the wine compare screen with the specified wine.
    *
-   * @param leftWine The wine to be shown on the left side of the wine compare.
+   * @param leftWine   The wine to be shown on the left side of the wine compare.
    * @param rightRight The wine to be shown on the right side of the wine compare.
    */
   public void openWineCompareScreen(Wine leftWine, Wine rightRight) {
