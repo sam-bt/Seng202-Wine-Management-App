@@ -50,6 +50,9 @@
         outline: none;
         border: none;
     }
+    .hidden {
+        display: none;
+    }
   </style>
 </head>
 <body>
@@ -60,12 +63,12 @@
 <div class="leaflet-top leaflet-right">
   <div class="toggle-buttons-container">
     <!-- responsible for toggling the heatmap view-->
-    <button class="toggle-button" onclick="onToggleHeatMapClick()">
+    <button class="toggle-button hidden" onclick="onToggleHeatMapClick()">
       Toggle Heatmap
     </button>
 
     <!-- responsible for toggling the markers view-->
-    <button class="toggle-button" onclick="onToggleMarkersClick()">
+    <button class="toggle-button hidden" onclick="onToggleMarkersClick()">
       Toggle Markers
     </button>
   </div>
@@ -77,10 +80,13 @@
 <!-- https://github.com/Leaflet/Leaflet.markercluster -->
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
+<script src=" https://cdn.jsdelivr.net/npm/polyline-encoded@0.0.9/Polyline.encoded.min.js "></script>
+
 <!-- https://github.com/pa7/heatmap.js -->
 <script src="https://unpkg.com/heatmap.js@2.0.5/build/heatmap.min.js"></script>
 <script
     src="https://unpkg.com/heatmap.js@2.0.5/plugins/leaflet-heatmap/leaflet-heatmap.js"></script>
+
 
 <!-- script which handles the WINO additions to the leaflet map-->
 <script>
@@ -105,10 +111,9 @@
       zoom: 6,
   };
 
-  let map, markersLayer, heatMapLayer;
+  let map, wineMarkersLayer, vineyardMarkersLayer, heatMapLayer, routePolyline;
   let markers = [];
   let heatMapData = [];
-
   let heatMapEnabled;
   let markersEnabled;
 
@@ -116,8 +121,11 @@
   const jsConnector = {
       initMap: initMap,
       addWineMarker: addWineMarker,
+      addVineyardMarker: addVineyardMarker,
+      setView: setView,
       clearMarkers: clearMarkers,
       clearHeatMap: clearHeatMap,
+    displayRoute: displayRoute,
   };
 
   // creates the leaflet map and adds the tile layer to it
@@ -162,12 +170,15 @@
 
   // clears the markers off of the map
   function clearMarkers() {
-      if (markersLayer) {
-          map.removeLayer(markersLayer);
+      if (wineMarkersLayer) {
+          map.removeLayer(wineMarkersLayer);
+      }
+      if (vineyardMarkersLayer) {
+        map.removeLayer(vineyardMarkersLayer);
       }
 
       // sets up the icon for a cluster marker
-      markersLayer = L.markerClusterGroup({
+      wineMarkersLayer = L.markerClusterGroup({
           iconCreateFunction: function (cluster) {
               const totalCount = markers.length;
               const count = cluster.getChildCount();
@@ -203,10 +214,27 @@
               });
           },
       });
+      vineyardMarkersLayer = L.markerClusterGroup({
+        iconCreateFunction: function (cluster) {
+            const count = cluster.getChildCount();
+            return L.divIcon({
+                  html: `
+                          <div style="position: relative; text-align: center;">
+                              <img src="https://www.svgrepo.com/show/44450/grapes.svg" style="width: 50px; height: 50px;" />
+                              <b style="position: absolute; top: 20px; left: 0; right: 0; color: white;">${count}</b>
+                          </div>
+                      `,
+                  className: "", // overwrites the default
+                  iconSize: [50, 50],
+              });
+        },
+        maxClusterRadius: 40, // there are less vineyards so allow there to be less clusters
+      });
 
       markers = [];
       if (markersEnabled) {
-          map.addLayer(markersLayer);
+          map.addLayer(wineMarkersLayer);
+          map.addLayer(vineyardMarkersLayer);
       }
   }
 
@@ -227,6 +255,10 @@
               break;
           case "red":
               hexColour = "#7B0323";
+              break;
+          case "rose":
+          case "rosé":
+              hexColour = "#EE7272";
               break;
           default:
               hexColour = "#000000";
@@ -252,9 +284,48 @@
           `<b>Name:</b> ${wineTitle}<br><b>Region:</b> ${region}`
       );
       markers.push(marker);
-      markersLayer.addLayer(marker);
+      wineMarkersLayer.addLayer(marker);
       heatMapData.push({ lat: latitude, lon: longitude });
       heatMapLayer.setData({ data: heatMapData });
+  }
+
+  function addVineyardMarker(latitude, longitude, vineyardName, vineyardAddress) {
+    const marker = L.marker([latitude, longitude], {
+          icon: L.divIcon({
+              html: `
+                      <div style="position: relative; text-align: center;">
+                          <img src="https://www.svgrepo.com/show/44450/grapes.svg" style="width: 50px; height: 50px; filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.5));" />
+                          </div>
+                  `,
+              className: "", // overwrites the default
+              iconSize: [45, 45],
+          }),
+          riseOnHover: true,
+      });
+      marker.bindPopup(
+          `<b>Vineyard:</b> ${vineyardName}<br><b>Address:</b> ${vineyardAddress}`
+      );
+      if (!vineyardMarkersLayer) {
+        clearMarkers();
+      }
+      markers.push(marker);
+      vineyardMarkersLayer.addLayer(marker);
+      heatMapData.push({ lat: latitude, lon: longitude });
+      heatMapLayer.setData({ data: heatMapData });
+  }
+
+  function displayRoute(geometry) {
+    if (routePolyline) {
+      routePolyline.remove();
+    }
+    const polylinePoints = L.Polyline.fromEncoded(geometry).getLatLngs();
+    routePolyline = L.polyline(polylinePoints, { color: 'blue' }).addTo(map);
+    routePolyline.addTo(map);
+    map.fitBounds(routePolyline.getBounds());
+  }
+
+  function setView(latitude, longitude) {
+    map.setView(new L.LatLng(latitude, longitude), 5);
   }
 
   // if the heat map is disabled, the heat map will be enabled and shown on the map
@@ -268,13 +339,13 @@
   }
 
   // if the markers are disabled, the markers will be enabled and shown on the map
-  // if the markers are enabled, the markers will be enabled and shown on the map
+  // if the markers are enabled, the markersv will be enabled and shown on the map
   function onToggleMarkersClick() {
       if ((markersEnabled = !markersEnabled)) {
-          map.addLayer(markersLayer);
+          map.addLayer(wineMarkersLayer);
           return;
       }
-      map.removeLayer(markersLayer);
+      map.removeLayer(wineMarkersLayer);
   }
 </script>
 </body>

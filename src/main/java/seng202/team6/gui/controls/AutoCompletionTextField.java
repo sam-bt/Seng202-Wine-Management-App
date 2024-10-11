@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
@@ -13,10 +14,11 @@ import javafx.scene.control.TextField;
 
 
 /**
- * A textbox with an auto-suggest feature based on entered text
+ * A textbox with an auto-suggest feature based on entered text.
  * <p>
  * Modified from: <a
  * href="https://stackoverflow.com/questions/36861056/javafx-textfield-auto-suggestions">...</a>
+ * </p>
  */
 public class AutoCompletionTextField extends TextField {
 
@@ -26,7 +28,11 @@ public class AutoCompletionTextField extends TextField {
   //popup GUI
   private final ContextMenu entriesPopup;
 
+  private Consumer<String> onSelectionAction;
 
+  /**
+   * Constructor for creating an AutoCompletionTextField.
+   */
   public AutoCompletionTextField() {
     super();
     this.entries = new TreeSet<>();
@@ -35,15 +41,32 @@ public class AutoCompletionTextField extends TextField {
     setListener();
   }
 
+  /**
+   * Constructor for creating an AutoCompletionTextField with a predefined
+   * text value.
+   *
+   * @param text The initial text to display in the text field.
+   */
+  public AutoCompletionTextField(String text) {
+    super();
+    this.entries = new TreeSet<>();
+    this.entriesPopup = new ContextMenu();
+    setText(text);
+
+    setListener();
+  }
+
 
   /**
-   * "Suggestion" specific listeners
+   * "Suggestion" specific listeners.
    */
   private void setListener() {
     //Add "suggestions" by changing text
     textProperty().addListener((observable, oldValue, newValue) -> {
       String enteredText = getText();
-      //always hide suggestion if nothing has been entered (only "spacebars" are disallowed in TextFieldWithLengthLimit)
+      // Always hide suggestion if nothing has been entered (only "spacebars" are disallowed in
+      // TextFieldWithLengthLimit)
+      //
       if (enteredText == null || enteredText.isEmpty()) {
         entriesPopup.hide();
       } else {
@@ -103,6 +126,9 @@ public class AutoCompletionTextField extends TextField {
         setText(result);
         positionCaret(result.length());
         entriesPopup.hide();
+        if (onSelectionAction != null) {
+          onSelectionAction.accept(result);
+        }
       });
     }
 
@@ -119,5 +145,9 @@ public class AutoCompletionTextField extends TextField {
    */
   public SortedSet<String> getEntries() {
     return entries;
+  }
+
+  public void setOnSelectionAction(Consumer<String> onSelectionAction) {
+    this.onSelectionAction = onSelectionAction;
   }
 }

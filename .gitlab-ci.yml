@@ -28,7 +28,10 @@ check_javafx_resource_path:
   script:
     - ./check_javafx_path.sh
 
-
+checkstyleMain:
+  stage: check_java_src
+  script:
+    - ./gradlew checkstyleMain
 
 generate_artifacts:
   stage: deploy

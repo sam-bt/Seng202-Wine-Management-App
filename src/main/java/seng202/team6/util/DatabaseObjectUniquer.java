@@ -6,10 +6,10 @@ import java.util.HashMap;
 
 
 /**
- * Database objects are required to be unique in memory to assure consistency
+ * Database objects are required to be unique in memory to assure consistency.
  * <p>
  * This class implements a simple weak cache to resolve that problem. Objects are stored with weak
- * references to prevent memory leaks. Map is auto cleared by java
+ * references to prevent memory leaks.
  * </p>
  *
  * @param <T> Object type
@@ -17,24 +17,24 @@ import java.util.HashMap;
 public class DatabaseObjectUniquer<T> {
 
   /**
-   * Object map
+   * Object map.
    */
   private final HashMap<Long, WeakReference<T>> objects = new HashMap<>();
 
   /**
-   * Timer for garbage collection
+   * Timer for garbage collection.
    */
   private int garbageCollectionTimer = 0;
 
   /**
-   * Tries to remove outdated references
+   * Tries to remove outdated references.
    */
   public void tryGarbageCollect() {
     objects.values().removeIf(object -> object.get() == null);
   }
 
   /**
-   * Tries to get an object from the cache
+   * Tries to get an object from the cache.
    *
    * @param id id
    * @return stored object or null
@@ -52,7 +52,7 @@ public class DatabaseObjectUniquer<T> {
   }
 
   /**
-   * Adds an object to the cache
+   * Adds an object to the cache.
    *
    * @param id     id
    * @param object object
@@ -70,7 +70,7 @@ public class DatabaseObjectUniquer<T> {
   }
 
   /**
-   * Removes an object from the cache
+   * Removes an object from the cache.
    *
    * @param id id
    */
@@ -83,8 +83,15 @@ public class DatabaseObjectUniquer<T> {
    *
    * @return number of objects in map
    */
-  int size() {
+  public int size() {
     return objects.size();
+  }
+
+  /**
+   * Clears all objects in cache.
+   */
+  public void clear() {
+    objects.clear();
   }
 
 
