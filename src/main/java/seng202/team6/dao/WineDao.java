@@ -253,6 +253,39 @@ public class WineDao extends Dao {
   }
 
   /**
+   * Retrieves a wine from the database by its exact title.
+   *
+   * @param title The exact title of the wine to retrieve.
+   * @return The Wine object if found, or null if no match is found.
+   */
+  public Wine getByExactTitle(String title) {
+    Timer timer = new Timer();
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+        + "FROM WINE "
+        + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME) "
+        + "WHERE TITLE = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setString(1, title);
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        if (resultSet.next()) {
+          Wine wine = extractWineFromResultSet(resultSet, "wine_id");
+          if (wine != null) {
+            log.info("Successfully retrieved wine with title '{}' in {}ms", title,
+                timer.currentOffsetMilliseconds());
+            return wine;
+          }
+        }
+        log.info("Could not retrieve wine with title '{}' in {}ms", title,
+            timer.currentOffsetMilliseconds());
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve wine with title '{}'", title);
+    }
+    return null;
+  }
+
+  /**
    * Replaces all wines in the WINE table by first removing all existing wines and then adding the
    * provided lists of wines.
    *
@@ -574,12 +607,14 @@ public class WineDao extends Dao {
    */
   public void updateUniques() {
     wineDataStatService.reset();
-    String query = "SELECT country, winery, color, vintage, score_percent, abv, price FROM wine";
+    String query = "SELECT title, country, winery, color, vintage, score_percent, abv, price "
+        + "FROM wine";
     try (PreparedStatement statement = connection.prepareStatement(query);
         ResultSet set = statement.executeQuery()) {
 
       // Go through results and add to lists
       while (set.next()) {
+        final String title = set.getString("title");
         final String country = set.getString("country");
         final String winery = set.getString("winery");
         final String color = set.getString("color");
@@ -589,6 +624,7 @@ public class WineDao extends Dao {
         final float price = set.getFloat("price");
 
         // Add to sets
+        this.wineDataStatService.getUniqueTitles().add(title);
         this.wineDataStatService.getUniqueCountries().add(country);
         this.wineDataStatService.getUniqueWineries().add(winery);
         this.wineDataStatService.getUniqueColors().add(color);

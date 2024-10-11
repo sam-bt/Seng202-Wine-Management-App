@@ -22,6 +22,7 @@ import java.util.Set;
 public class WineDataStatService {
 
   // Uniques
+  private final Set<String> uniqueTitles = new HashSet<>();
   private final Set<String> uniqueCountries = new HashSet<>();
   private final Set<String> uniqueWineries = new HashSet<>();
   private final Set<String> uniqueColors = new HashSet<>();
@@ -46,6 +47,7 @@ public class WineDataStatService {
    * Resets all values.
    */
   public void reset() {
+    this.uniqueTitles.clear();
     this.uniqueCountries.clear();
     this.uniqueWineries.clear();
     this.uniqueColors.clear();
@@ -57,6 +59,10 @@ public class WineDataStatService {
     this.maxAbv = 0;
     this.minPrice = Float.MAX_VALUE;
     this.maxPrice = 0;
+  }
+
+  public Set<String> getUniqueTitles() {
+    return uniqueTitles;
   }
 
   public Set<String> getUniqueCountries() {
