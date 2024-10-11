@@ -147,15 +147,17 @@ public class WineScreenController extends Controller {
 
     // Setup table with wine data
     setupTableColumns();
-    openWineRange(null);
+    // Check for saved state and if so, load it
+    if (this.savedState != null) {
+      Platform.runLater(this::loadState); // this will call open wine range
+    } else {
+      openWineRange(null);
+    }
 
     // Setup detailed wine
     tableView.setOnMouseClicked(this::openWineOnClick);
 
-    // Check for saved state and if so, load it
-    if (this.savedState != null) {
-      Platform.runLater(this::loadState);
-    }
+
   }
 
   /**
@@ -517,6 +519,8 @@ public class WineScreenController extends Controller {
 
     onApplyFiltersButtonPressed();
     this.pageService.setPageNumber(pageService.getPageNumber());
+    // Update the buttons as the listener isn't call if the value isnt updated
+    validatePageButtons(pageService.getPageNumber());
     LogManager.getLogger(this.getClass().getName()).info("Successfully loaded a previous state!");
   }
 
@@ -782,12 +786,7 @@ public class WineScreenController extends Controller {
     pageService.pageNumberProperty()
         .addListener((observableValue, oldValue, newValue) -> {
           openWineRange(this.currentFilters);
-          this.nextPageButtonRawViewer.setDisable((int) newValue == pageService.getMaxPages());
-          this.prevPageButtonRawViewer.setDisable((int) newValue == 1);
-          this.nextPageButtonSimpleView.setDisable((int) newValue == pageService.getMaxPages());
-          this.prevPageButtonSimpleView.setDisable((int) newValue == 1);
-          this.pageNumberTextFieldSimpleView.setText(newValue + "");
-          this.pageNumberTextFieldRawViewer.setText(newValue + "");
+          validatePageButtons((int) newValue);
         });
 
     // Set up max pages
@@ -805,8 +804,31 @@ public class WineScreenController extends Controller {
         this.pageService.setPageNumber(this.pageService.getMaxPages());
         this.pageNumberTextFieldRawViewer.setText(this.pageService.getMaxPages() + "");
         this.pageNumberTextFieldSimpleView.setText(this.pageService.getMaxPages() + "");
+      } else {
+        // Ensure page buttons get correctly disabled
+        // There is a listener on pageNumber that also does this,
+        // But it won't get called if we are still on page 1
+        // That's why this is here
+        validatePageButtons(this.pageService.getPageNumber());
       }
     });
+  }
+
+  /**
+   * Enables and disables nav buttons based on new page number.
+   * <p>
+   * Also sets the page text fields.
+   * </p>
+   *
+   * @param newPageNumber the new page number
+   */
+  private void validatePageButtons(Integer newPageNumber) {
+    this.nextPageButtonRawViewer.setDisable(newPageNumber == pageService.getMaxPages());
+    this.prevPageButtonRawViewer.setDisable(newPageNumber == 1);
+    this.nextPageButtonSimpleView.setDisable(newPageNumber == pageService.getMaxPages());
+    this.prevPageButtonSimpleView.setDisable(newPageNumber == 1);
+    this.pageNumberTextFieldSimpleView.setText(newPageNumber + "");
+    this.pageNumberTextFieldRawViewer.setText(newPageNumber + "");
   }
 
   /**
