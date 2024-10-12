@@ -1,6 +1,9 @@
 package seng202.team6.gui;
 
 import java.io.IOException;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.Builder;
+import javafx.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.enums.PopupType;
@@ -296,11 +300,7 @@ public class MainController extends Controller {
       return;
     }
 
-    Parent parent = loadFxml(fxml, builder, pageContent);
-    if (parent != null) {
-      managerContext.getGuiManager().setWindowTitle(title);
-      currentScreenFxml = fxml;
-    }
+    loadFxml(fxml, builder, pageContent);
   }
 
   /**
@@ -333,7 +333,6 @@ public class MainController extends Controller {
     }
     return null;
   }
-
 
   /**
    * Opens a popup.
@@ -421,7 +420,7 @@ public class MainController extends Controller {
    */
   @FXML
   public void openAdminScreen() {
-    switchScene("/fxml/admin_screen.fxml", "Register",
+    switchScene("/fxml/admin_screen.fxml", "Admin",
         () -> new AdminController(managerContext));
   }
 
@@ -430,7 +429,7 @@ public class MainController extends Controller {
    */
   @FXML
   public void openSettingsScreen() {
-    switchScene("/fxml/settings_screen.fxml", "Register",
+    switchScene("/fxml/settings_screen.fxml", "Settings",
         () -> new SettingsController(managerContext));
   }
 
@@ -439,7 +438,7 @@ public class MainController extends Controller {
    */
   @FXML
   public void openUpdatePasswordScreen() {
-    switchScene("/fxml/update_password_screen.fxml", "Register",
+    switchScene("/fxml/update_password_screen.fxml", "Update Password",
         () -> new UpdatePasswordController(managerContext));
   }
 
@@ -671,5 +670,17 @@ public class MainController extends Controller {
     popupContent.setVisible(false);
     popupContent.setDisable(true);
     popupContent.getChildren().clear();
+  }
+
+  /**
+   * Toggles the loading overlay indicator.
+   *
+   * @param show if the loading indicator should be shown or not
+   */
+  public void showLoadingIndicator(boolean show) {
+    popupActionBlocker.setDisable(!show);
+    popupActionBlocker.setVisible(show);
+    loadingSpinnerPane.setDisable(!show);
+    loadingSpinnerPane.setVisible(show);
   }
 }

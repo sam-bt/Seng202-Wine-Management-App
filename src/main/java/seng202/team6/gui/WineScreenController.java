@@ -148,29 +148,29 @@ public class WineScreenController extends Controller {
   private void openWineRange(WineFilters filters) {
     // Clear existing data
     tableView.getItems().clear();
+    winesViewContainer.getChildren().clear();
 
     // Calculate range of data to get
     int begin = this.pageService.getMinRange();
     int end = this.pageService.getMaxRange();
 
-    // Check if filters exist
-    ObservableList<Wine> wines = managerContext.getDatabaseManager().getWineDao()
-        .getAllInRange(begin, end, filters);
-
-    // send the wines to the map if they have a geolocation
-    mapController.runOrQueueWhenReady(() -> {
-      mapController.clearWineMarkers();
-      mapController.clearHeatmap();
-      wines.stream()
-          .filter(wine -> wine.getGeoLocation() != null)
-          .forEach(mapController::addWineMarker);
-    });
-
-    winesViewContainer.getChildren().clear();
-    wines.forEach(this::createWineCard);
-
-    // Set fetched data to the table
-    tableView.setItems(wines);
+    managerContext.getTaskManager().<ObservableList<Wine>>create()
+        .onBeforeRun(() -> managerContext.getGuiManager().showLoadingOverlay())
+        .onRun(() -> managerContext.getDatabaseManager().getWineDao()
+              .getAllInRange(begin, end, filters))
+        .onCompletion(wines -> {
+          managerContext.getGuiManager().hideLoadingOverlay();
+          mapController.runOrQueueWhenReady(() -> {
+            mapController.clearWineMarkers();
+            mapController.clearHeatmap();
+            wines.stream()
+                .filter(wine -> wine.getGeoLocation() != null)
+                .forEach(mapController::addWineMarker);
+          });
+          wines.forEach(this::createWineCard);
+          tableView.setItems(wines);
+        })
+        .submit();
   }
 
   /**

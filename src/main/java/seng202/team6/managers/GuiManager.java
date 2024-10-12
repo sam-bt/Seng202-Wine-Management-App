@@ -315,5 +315,17 @@ public class GuiManager {
     mainController.openUserSearchPopup();
   }
 
+  /**
+   * Shows the loading overlay.
+   */
+  public void showLoadingOverlay() {
+    mainController.showLoadingIndicator(true);
+  }
 
+  /**
+   * Hides the loading overlay.
+   */
+  public void hideLoadingOverlay() {
+    mainController.showLoadingIndicator(false);
+  }
 }

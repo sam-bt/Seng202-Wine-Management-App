@@ -44,7 +44,7 @@ public class TaskManager {
    * @param <T> The type of the result produced by the task.
    */
   public class TaskBuilder<T> {
-    private Supplier<T> onBeforeRun;  // Runs on the JavaFX thread before the task starts
+    private Runnable onBeforeRun;  // Runs on the JavaFX thread before the task starts
     private Supplier<T> onRun;        // Runs on a background thread
     private Consumer<T> onCompletion; // Runs on the JavaFX thread after the task completes
     private Consumer<Throwable> onException; // Handles exceptions in a background thread
@@ -55,7 +55,7 @@ public class TaskManager {
      * @param onBeforeRun A Supplier function that runs on the main thread before the task begins.
      * @return the current TaskBuilder instance.
      */
-    public TaskBuilder<T> onBeforeRun(Supplier<T> onBeforeRun) {
+    public TaskBuilder<T> onBeforeRun(Runnable onBeforeRun) {
       this.onBeforeRun = onBeforeRun;
       return this;
     }
@@ -102,7 +102,7 @@ public class TaskManager {
         protected T call() {
           // run onBeforeRun on the JavaFX thread if provided
           if (onBeforeRun != null) {
-            Platform.runLater(() -> onBeforeRun.get());
+            Platform.runLater(() -> onBeforeRun.run());
           }
           // run the main task logic on the background thread
           if (onRun != null) {
