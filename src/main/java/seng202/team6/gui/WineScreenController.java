@@ -414,7 +414,7 @@ public class WineScreenController extends Controller {
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
 
     // Ensure unique value are up to date
-//    wineDao.updateUniques();
+    wineDao.updateUniques();
 
     // Auto Complete boxes and range sliders
     // Update filter checkboxes
