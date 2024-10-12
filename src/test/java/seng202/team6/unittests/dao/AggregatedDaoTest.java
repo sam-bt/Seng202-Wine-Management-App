@@ -198,15 +198,17 @@ public class AggregatedDaoTest {
     reviewDao.add(testUser, testWine, 2.0, "Yuck!",
         new Date(1728366112972L));
 
+
     ReviewFilters testFilters = new ReviewFilters("", "win", 2, 4);
 
     ObservableList<Pair<WineReview, Wine>> result = aggregatedDao.getWineReviewsAndWines(begin, end, testFilters);
 
     assertNotNull(result);
     assertEquals(1, result.size());
+
     for (Pair<WineReview, Wine> pair : result) {
-      assertEquals(pair.getFirst().getDescription(), "Yuck!");
-      assertEquals(pair.getSecond().getTitle(), "wine");
+      assertEquals("Yuck!", pair.getFirst().getDescription());
+      assertEquals("wine", pair.getSecond().getTitle());
     }
   }
 

@@ -43,7 +43,6 @@ public class GeoLocationDaoTest {
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
     geoLocationDao = databaseManager.getGeoLocationDao();
-    geoLocationDao.setUseCache(false);
   }
 
   /**

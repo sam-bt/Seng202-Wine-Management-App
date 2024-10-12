@@ -171,9 +171,8 @@ public class WineNotesDao extends Dao {
         if (generatedKeys.next()) {
           long id = generatedKeys.getLong(1);
           note.setId(id);
-          if (useCache()) {
-            notesCache.addObject(id, note);
-          }
+          notesCache.addObject(id, note);
+
           log.info("Successfully added note with ID '{}' for user {}"
                   + " and wine with ID {} in {}ms",
               id, note.getUsername(), note.getWineId(), timer.currentOffsetMilliseconds());
@@ -265,9 +264,8 @@ public class WineNotesDao extends Dao {
         resultSet.getLong("WINE_ID"),
         resultSet.getString("NOTE")
     );
-    if (useCache()) {
-      notesCache.addObject(id, note);
-    }
+    notesCache.addObject(id, note);
+
     bindUpdater(note);
     return note;
   }

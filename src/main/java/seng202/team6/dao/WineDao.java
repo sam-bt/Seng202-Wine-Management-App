@@ -406,11 +406,9 @@ public class WineDao extends Dao {
    */
   Wine extractWineFromResultSet(ResultSet resultSet, String idColumnName) throws SQLException {
     long id = resultSet.getLong(idColumnName);
-    if (useCache()) {
-      Wine cachedWine = wineCache.tryGetObject(id);
-      if (cachedWine != null) {
-        return cachedWine;
-      }
+    Wine cachedWine = wineCache.tryGetObject(id);
+    if (cachedWine != null) {
+      return cachedWine;
     }
 
     GeoLocation geoLocation = createGeoLocation(resultSet);
@@ -430,9 +428,8 @@ public class WineDao extends Dao {
         geoLocation,
         resultSet.getDouble("AVERAGE_RATING")
     );
-    if (useCache()) {
-      wineCache.addObject(id, wine);
-    }
+    wineCache.addObject(id, wine);
+
     bindUpdater(wine);
     return wine;
   }

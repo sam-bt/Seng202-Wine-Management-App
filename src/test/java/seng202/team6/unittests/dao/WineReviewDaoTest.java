@@ -42,7 +42,6 @@ public class WineReviewDaoTest {
     wineReviewDao = databaseManager.getWineReviewDao();
     wineDao = databaseManager.getWineDao();
     userDao = databaseManager.getUserDao();
-    wineReviewDao.setUseCache(false);
 
     user = new User("username", "password", "role", "salt");
     userDao.add(user);

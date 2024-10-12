@@ -36,7 +36,6 @@ public class WineDaoTest {
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
     wineDao = databaseManager.getWineDao();
-    wineDao.setUseCache(false);
   }
 
   /**

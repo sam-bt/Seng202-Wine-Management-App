@@ -43,7 +43,6 @@ public class WineNoteDaoTest {
     wineNotesDao = databaseManager.getWineNotesDao();
     wineDao = databaseManager.getWineDao();
     userDao = databaseManager.getUserDao();
-    wineNotesDao.setUseCache(false);
 
     user = new User("username", "password", "role", "salt");
     userDao.add(user);

@@ -43,7 +43,6 @@ public class WineListDaoTest {
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
     wineListDao = databaseManager.getWineListDao();
-    wineListDao.setUseCache(false);
 
     testUser = new User("testUser", "testPassword1!", "user", "egsalt");
     userDao = databaseManager.getUserDao();
