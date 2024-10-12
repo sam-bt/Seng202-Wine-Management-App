@@ -9,10 +9,20 @@ import javafx.util.StringConverter;
 import org.apache.logging.log4j.LogManager;
 import org.controlsfx.control.RangeSlider;
 
+/**
+ * A custom range slider control that extends the functionality of the RangeSlider class.
+ * This class adds tooltip support to display the current values of the low and high thumbs.
+ */
 public class CustomRangeSlider extends RangeSlider {
   private final Tooltip lowerToolTip;
   private final Tooltip upperToolTip;
 
+  /**
+   * Constructs a CustomRangeSlider with the specified layout coordinates.
+   *
+   * @param layoutX the x-coordinate of the slider's layout position
+   * @param layoutY the y-coordinate of the slider's layout position
+   */
   public CustomRangeSlider(int layoutX, int layoutY) {
     this.lowerToolTip = new Tooltip();
     this.upperToolTip = new Tooltip();
@@ -21,6 +31,15 @@ public class CustomRangeSlider extends RangeSlider {
     setupSlider();
   }
 
+  /**
+   * Configures the range slider with the specified parameters.
+   *
+   * @param min             the minimum value of the slider
+   * @param max             the maximum value of the slider
+   * @param majorTickUnit   the major tick unit for the slider
+   * @param minorTickCount  the number of minor ticks between major ticks
+   * @param labelFormatter   a StringConverter for formatting the slider labels
+   */
   public void configure(double min, double max, double majorTickUnit, int minorTickCount,
       StringConverter<Number> labelFormatter) {
     if (min >= max) {
@@ -39,16 +58,28 @@ public class CustomRangeSlider extends RangeSlider {
     resetThumbs();
   }
 
+  /**
+   * Resets the thumbs of the slider to the minimum and maximum values.
+   */
   public void resetThumbs() {
     setLowValue(getMin());
     setHighValue(getMax());
   }
 
+  /**
+   * Sets the low and high values of the slider.
+   *
+   * @param low  the new low value
+   * @param high the new high value
+   */
   public void setHighLow(double low, double high) {
     setLowValue(low);
     setHighValue(high);
   }
 
+  /**
+   * Sets up the initial properties of the range slider.
+   */
   private void setupSlider() {
     setPrefWidth(300);
     setShowTickMarks(true);
@@ -63,6 +94,9 @@ public class CustomRangeSlider extends RangeSlider {
     });
   }
 
+  /**
+   * Configures the tooltips for the low and high thumbs of the slider.
+   */
   private void setupTooltips() {
     lowerToolTip.setShowDelay(Duration.ZERO);
     lowerToolTip.setHideDelay(Duration.ZERO);
@@ -78,6 +112,9 @@ public class CustomRangeSlider extends RangeSlider {
         upperToolTip.setText(String.format("%.0f", newValue.doubleValue())));
   }
 
+  /**
+   * Installs the tooltips and binds them to the corresponding thumbs.
+   */
   private void installTooltips() {
     applyCss();
     getParent().applyCss();
@@ -97,6 +134,12 @@ public class CustomRangeSlider extends RangeSlider {
     }
   }
 
+  /**
+   * Adds mouse event handlers to the specified thumb for displaying and updating the tooltip.
+   *
+   * @param thumb   the thumb node to which the event handlers are added
+   * @param tooltip the tooltip to display for the thumb
+   */
   private void addEventHandlersToThumb(Node thumb, Tooltip tooltip) {
     thumb.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
       Point2D thumbLocation = thumb.localToScene(
