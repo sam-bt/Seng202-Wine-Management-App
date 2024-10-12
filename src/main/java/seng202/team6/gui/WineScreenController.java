@@ -36,6 +36,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineFilters;
 import seng202.team6.service.PageService;
 import seng202.team6.service.WineDataStatService;
+import seng202.team6.util.FilterUtil;
 import seng202.team6.util.WineState;
 import seng202.team6.util.NoDecimalCurrencyStringConverter;
 import seng202.team6.util.YearStringConverter;
@@ -667,87 +668,6 @@ public class WineScreenController extends Controller {
   }
 
   /**
-   * Adds a tool tips to each thumb of the range slider to indicate values.
-   *
-   * @param rangeSlider range slider to add tooltips too
-   */
-  private void installRangeSliderTooltip(RangeSlider rangeSlider) {
-    rangeSlider.applyCss();
-    rangeSlider.getParent().applyCss();
-    final Tooltip lowerToolTip = new Tooltip();
-    final Tooltip upperToolTip = new Tooltip();
-
-    // Ensures that tooltips display instantly
-    lowerToolTip.setShowDelay(Duration.ZERO);
-    lowerToolTip.setHideDelay(Duration.ZERO);
-    lowerToolTip.setShowDuration(Duration.INDEFINITE);
-
-    upperToolTip.setShowDelay(Duration.ZERO);
-    upperToolTip.setHideDelay(Duration.ZERO);
-    upperToolTip.setShowDuration(Duration.INDEFINITE);
-
-    // Get thumbs
-    Node lowerThumb = rangeSlider.lookup(".low-thumb");
-    Node upperThumb = rangeSlider.lookup(".high-thumb");
-
-    if (lowerThumb != null && upperThumb != null) {
-      // add handlers for tooltip logic
-      addEventHandlersToThumb(lowerThumb, lowerToolTip);
-      addEventHandlersToThumb(upperThumb, upperToolTip);
-
-      // Set initial values
-      lowerToolTip.setText(String.format("%.0f", rangeSlider.getLowValue()));
-      upperToolTip.setText(String.format("%.0f", rangeSlider.getHighValue()));
-
-      // Add listeners
-      rangeSlider.lowValueProperty().addListener((observable, oldValue, newValue) ->
-          lowerToolTip.setText(String.format("%.0f", newValue.doubleValue())));
-      rangeSlider.highValueProperty().addListener((observable, oldValue, newValue) ->
-          upperToolTip.setText(String.format("%.0f", newValue.doubleValue())));
-
-    } else {
-      log.error(
-          "Thumb nodes not found. Make sure the RangeSlider is added to the scene and rendered.");
-    }
-
-  }
-
-  /**
-   * Adds required tooltip logic through event handlers.
-   *
-   * @param thumb   the thumb node to attach the tool tip too
-   * @param tooltip tool tip to attach
-   */
-  private void addEventHandlersToThumb(Node thumb, Tooltip tooltip) {
-
-    // Attach tooltip on click
-    thumb.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-
-          Point2D thumbLocation = thumb.localToScene(
-              thumb.getBoundsInLocal().getMinX(), thumb.getBoundsInLocal().getMinY());
-
-          // Using getWindow().getX() to adjust for window position so tool tip is located correctly
-          tooltip.show(thumb, thumbLocation.getX() + thumb.getScene().getWindow().getX(),
-              thumbLocation.getY() + thumb.getScene().getWindow().getY() - 20);
-        }
-    );
-
-    // Update tooltip as its dragged
-    thumb.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> {
-
-          Point2D thumbLocation = thumb.localToScene(
-              thumb.getBoundsInLocal().getMinX(), thumb.getBoundsInLocal().getMinY());
-
-          tooltip.setX(thumbLocation.getX() + thumb.getScene().getWindow().getX());
-          tooltip.setY(thumbLocation.getY() + thumb.getScene().getWindow().getY() - 20);
-        }
-    );
-
-    // Hide on mouse release
-    thumb.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> tooltip.hide());
-  }
-
-  /**
    * Initialises filter sliders.
    */
   private void sliderInit() {
@@ -759,10 +679,10 @@ public class WineScreenController extends Controller {
 
     // Ensures the sliders are rendered before installing tooltips (Needed for CSS lookups)
     filtersPane.sceneProperty().addListener((observable, oldScene, newScene) -> {
-      installRangeSliderTooltip(this.vintageSlider);
-      installRangeSliderTooltip(this.scoreSlider);
-      installRangeSliderTooltip(this.abvSlider);
-      installRangeSliderTooltip(this.priceSlider);
+      FilterUtil.installRangeSliderTooltip(this.vintageSlider);
+      FilterUtil.installRangeSliderTooltip(this.scoreSlider);
+      FilterUtil.installRangeSliderTooltip(this.abvSlider);
+      FilterUtil.installRangeSliderTooltip(this.priceSlider);
     });
 
     // Set snap to ticks
@@ -810,7 +730,12 @@ public class WineScreenController extends Controller {
     pageService.pageNumberProperty()
         .addListener((observableValue, oldValue, newValue) -> {
           openWineRange(this.currentFilters);
-          validatePageButtons((int) newValue);
+          this.nextPageButtonRawViewer.setDisable((int) newValue == pageService.getMaxPages());
+          this.prevPageButtonRawViewer.setDisable((int) newValue == 1);
+          this.nextPageButtonSimpleView.setDisable((int) newValue == pageService.getMaxPages());
+          this.prevPageButtonSimpleView.setDisable((int) newValue == 1);
+          this.pageNumberTextFieldSimpleView.setText(newValue + "");
+          this.pageNumberTextFieldRawViewer.setText(newValue + "");
         });
 
     // Set up max pages

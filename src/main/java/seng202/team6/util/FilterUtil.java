@@ -25,7 +25,6 @@ public class FilterUtil {
 
     // Attach tooltip on click
     thumb.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-
           Point2D thumbLocation = thumb.localToScene(
               thumb.getBoundsInLocal().getMinX(), thumb.getBoundsInLocal().getMinY());
 
@@ -37,7 +36,6 @@ public class FilterUtil {
 
     // Update tooltip as its dragged
     thumb.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> {
-
           Point2D thumbLocation = thumb.localToScene(
               thumb.getBoundsInLocal().getMinX(), thumb.getBoundsInLocal().getMinY());
 
