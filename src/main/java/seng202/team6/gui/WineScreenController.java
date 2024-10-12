@@ -154,23 +154,19 @@ public class WineScreenController extends Controller {
     int begin = this.pageService.getMinRange();
     int end = this.pageService.getMaxRange();
 
-    managerContext.getTaskManager().<ObservableList<Wine>>create()
-        .onBeforeRun(() -> managerContext.getGuiManager().showLoadingOverlay())
-        .onRun(() -> managerContext.getDatabaseManager().getWineDao()
-              .getAllInRange(begin, end, filters))
-        .onCompletion(wines -> {
-          managerContext.getGuiManager().hideLoadingOverlay();
-          mapController.runOrQueueWhenReady(() -> {
-            mapController.clearWineMarkers();
-            mapController.clearHeatmap();
-            wines.stream()
+    managerContext.getGuiManager().showLoadingIndicator(() -> {
+      ObservableList<Wine> wines = managerContext.getDatabaseManager().getWineDao()
+              .getAllInRange(begin, end, filters);
+      mapController.runOrQueueWhenReady(() -> {
+        mapController.clearWineMarkers();
+        mapController.clearHeatmap();
+        wines.stream()
                 .filter(wine -> wine.getGeoLocation() != null)
                 .forEach(mapController::addWineMarker);
-          });
-          wines.forEach(this::createWineCard);
-          tableView.setItems(wines);
-        })
-        .submit();
+      });
+      wines.forEach(this::createWineCard);
+      tableView.setItems(wines);
+    });
   }
 
   /**
@@ -412,9 +408,6 @@ public class WineScreenController extends Controller {
 
     WineDao wineDao = managerContext.getDatabaseManager().getWineDao();
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
-
-    // Ensure unique value are up to date
-    wineDao.updateUniques();
 
     // Auto Complete boxes and range sliders
     // Update filter checkboxes

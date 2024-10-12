@@ -1,7 +1,10 @@
 package seng202.team6.managers;
 
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 import seng202.team6.gui.MainController;
 import seng202.team6.gui.popup.GeneralPopupController;
 import seng202.team6.gui.wrapper.FxWrapper;
@@ -317,9 +320,23 @@ public class GuiManager {
 
   public void showLoadingIndicator(Runnable runnable) {
     mainController.showLoadingIndicator(true);
-    runnable.run();
-    mainController.showLoadingIndicator(false);
+
+    // Introduce a short delay to ensure the UI gets a chance to render
+    PauseTransition delay = new PauseTransition(Duration.millis(50));  // Adjust the delay as needed
+    delay.setOnFinished(event -> {
+      try {
+        // Run the task (on the JavaFX Application Thread)
+        runnable.run();
+      } finally {
+        // Hide the loading indicator after the task finishes
+        mainController.showLoadingIndicator(false);
+      }
+    });
+
+    // Start the delay
+    delay.play();
   }
+
 
   /**
    * Shows the loading overlay.
