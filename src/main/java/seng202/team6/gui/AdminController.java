@@ -187,6 +187,9 @@ public class AdminController extends Controller {
     //doubleclick
     if (event.getClickCount() == 2) {
       workingUser = userList.getSelectionModel().getSelectedItem();
+      if (workingUser == null) {
+        return;
+      }
       userLabel.setText(workingUser.getUsername());
       deleteUser.setDisable(false);
       deleteReviews.setDisable(false);
