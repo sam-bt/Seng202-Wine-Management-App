@@ -130,43 +130,40 @@ public class WineImportController extends Controller {
    * @param replace whether to replace
    */
   private void parseWines(boolean replace) {
-    Supplier<Void> supplier = () -> {
-      List<Wine> parsedWines = new ArrayList<>();
-      Map<WinePropertyName, Integer> valid = importService.validHashMapCreate(
-          selectedWineProperties);
+    List<Wine> parsedWines = new ArrayList<>();
+    Map<WinePropertyName, Integer> valid = importService.validHashMapCreate(
+        selectedWineProperties);
 
-      currentFileRows.forEach(row -> {
-        try {
-          parsedWines.add(WineValidator.parseWine(
-              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.TITLE),
-              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VARIETY),
-              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COUNTRY),
-              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.REGION),
-              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.WINERY),
-              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COLOUR),
-              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VINTAGE),
-              importService.extractPropertyFromRowOrDefault(valid, row,
-                  WinePropertyName.DESCRIPTION),
-              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.SCORE),
-              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.ABV),
-              importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.NZD),
-              null
-          ));
-        } catch (ValidationException e) {
-          log.error("Could not parse a wine: {}", e.getMessage());
-        }
-      });
-      log.info("Successfully parsed {} out of {} wines", parsedWines.size(),
-          currentFileRows.size());
-
-      if (replace) {
-        managerContext.getDatabaseManager().getWineDao().replaceAll(parsedWines);
-      } else {
-        managerContext.getDatabaseManager().getWineDao().addAll(parsedWines);
+    currentFileRows.forEach(row -> {
+      try {
+        parsedWines.add(WineValidator.parseWine(
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.TITLE),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VARIETY),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COUNTRY),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.REGION),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.WINERY),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COLOUR),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VINTAGE),
+            importService.extractPropertyFromRowOrDefault(valid, row,
+                WinePropertyName.DESCRIPTION),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.SCORE),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.ABV),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.NZD),
+            null
+        ));
+      } catch (ValidationException e) {
+        log.error("Could not parse a wine: {}", e.getMessage());
       }
-      return null;
-    };
-    managerContext.getGuiManager().mainController.showLoadingAnimation(supplier, (t) -> reset());
+    });
+    log.info("Successfully parsed {} out of {} wines", parsedWines.size(),
+        currentFileRows.size());
+
+    if (replace) {
+      managerContext.getDatabaseManager().getWineDao().replaceAll(parsedWines);
+    } else {
+      managerContext.getDatabaseManager().getWineDao().addAll(parsedWines);
+    }
+    reset();
   }
 
 
@@ -177,7 +174,7 @@ public class WineImportController extends Controller {
    */
   private boolean checkContainsTitleProperty() {
     if (!selectedWineProperties.containsValue(WinePropertyName.TITLE)) {
-      GeneralPopupController popup = managerContext.getGuiManager().mainController.showErrorPopup();
+      GeneralPopupController popup = managerContext.getGuiManager().showErrorPopup();
       popup.setTitle("Invalid Selections");
       popup.setMessage("The property TITLE is required but has not been selected");
       popup.addOkButton();
@@ -205,7 +202,7 @@ public class WineImportController extends Controller {
         selectedWineProperties);
 
     if (!duplicatedProperties.isEmpty()) {
-      GeneralPopupController popup = managerContext.getGuiManager().mainController.showErrorPopup();
+      GeneralPopupController popup = managerContext.getGuiManager().showErrorPopup();
       popup.setTitle("Invalid Selections");
       popup.setMessage("The property field(s) " + duplicatedProperties.stream()
           .map(WinePropertyName::name)

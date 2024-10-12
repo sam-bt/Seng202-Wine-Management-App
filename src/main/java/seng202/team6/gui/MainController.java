@@ -1,13 +1,6 @@
 package seng202.team6.gui;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -101,10 +94,7 @@ public class MainController extends Controller {
   @FXML
   private Button registerButton;
 
-  private final ExecutorService executorService;
-
-  private Screen currentScreen;
-
+  private String currentScreenFxml;
 
   private boolean disabled = false;
 
@@ -115,7 +105,6 @@ public class MainController extends Controller {
    */
   public MainController(ManagerContext managerContext) {
     super(managerContext);
-    executorService = Executors.newFixedThreadPool(1);
 
     // This is an ugly circular dependency. It is easier to resolve here
     managerContext.getGuiManager().setMainController(this);
@@ -292,21 +281,24 @@ public class MainController extends Controller {
   /**
    * Switches the current scene.
    *
+   *<p>
+   *   Scenes with fxml paths equal to the currently loaded one are skipped
+   *</p>
+   *
    * @param fxml    fxml resource path
    * @param title   window title
    * @param builder controller builder
-   * @param screen  the screen that is being switched to
    */
-  public void switchScene(String fxml, String title, Builder<?> builder, Screen screen) {
-    if (currentScreen != null && screen != null && currentScreen == screen) {
-      log.warn("Skipped loading {} as it is already open", screen.name());
+  public void switchScene(String fxml, String title, Builder<?> builder) {
+    if (currentScreenFxml != null && currentScreenFxml.equals(fxml)) {
+      log.info("Skipped loading {} as it is already open", fxml);
       return;
     }
 
     Parent parent = loadFxml(fxml, builder, pageContent);
     if (parent != null) {
       managerContext.getGuiManager().setWindowTitle(title);
-      currentScreen = screen;
+      currentScreenFxml = fxml;
     }
   }
 
@@ -387,7 +379,7 @@ public class MainController extends Controller {
   @FXML
   public void openWineScreen() {
     switchScene("/fxml/wine_screen.fxml", "Wine Information",
-        () -> new WineScreenController(managerContext), Screen.WINE_SCREEN);
+        () -> new WineScreenController(managerContext));
   }
 
   /**
@@ -396,7 +388,7 @@ public class MainController extends Controller {
   @FXML
   public void openListScreen() {
     switchScene("/fxml/list_screen.fxml", "My Lists",
-        () -> new ListScreenController(managerContext), Screen.LISTS_SCREEN);
+        () -> new ListScreenController(managerContext));
   }
 
   /**
@@ -405,7 +397,7 @@ public class MainController extends Controller {
   @FXML
   public void openLoginScreen() {
     switchScene("/fxml/login_screen.fxml", "Login",
-        () -> new LoginController(managerContext), Screen.LOGIN_SCREEN);
+        () -> new LoginController(managerContext));
   }
 
   /**
@@ -414,7 +406,7 @@ public class MainController extends Controller {
   @FXML
   public void openRegisterScreen() {
     switchScene("/fxml/register_screen.fxml", "Register",
-        () -> new RegisterController(managerContext), Screen.REGISTER_SCREEN);
+        () -> new RegisterController(managerContext));
   }
 
   /**
@@ -423,7 +415,7 @@ public class MainController extends Controller {
   @FXML
   public void openAdminScreen() {
     switchScene("/fxml/admin_screen.fxml", "Register",
-        () -> new AdminController(managerContext), Screen.ADMIN_SCREEN);
+        () -> new AdminController(managerContext));
   }
 
   /**
@@ -432,7 +424,7 @@ public class MainController extends Controller {
   @FXML
   public void openSettingsScreen() {
     switchScene("/fxml/settings_screen.fxml", "Register",
-        () -> new SettingsController(managerContext), Screen.SETTINGS_SCREEN);
+        () -> new SettingsController(managerContext));
   }
 
   /**
@@ -441,16 +433,16 @@ public class MainController extends Controller {
   @FXML
   public void openUpdatePasswordScreen() {
     switchScene("/fxml/update_password_screen.fxml", "Register",
-        () -> new UpdatePasswordController(managerContext), Screen.UPDATE_PASSWORD_SCREEN);
+        () -> new UpdatePasswordController(managerContext));
   }
 
   /**
    * Launches the notes screen.
    */
   @FXML
-  void openNotesScreen() {
+  public void openNotesScreen() {
     switchScene("/fxml/notes_screen.fxml", "Notes",
-        () -> new NotesController(managerContext), Screen.NOTES_SCREEN);
+        () -> new NotesController(managerContext));
   }
 
   /**
@@ -461,7 +453,7 @@ public class MainController extends Controller {
    */
   public void openDetailedWineView(Wine wine, Runnable backButtonAction) {
     switchScene("/fxml/detailed_wine_view.fxml", "Detailed Wine View",
-        () -> new DetailedWineViewController(managerContext, wine, backButtonAction), null);
+        () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
   }
 
 
@@ -473,8 +465,7 @@ public class MainController extends Controller {
    */
   public void openDetailedVineyardView(Vineyard vineyard, Runnable backButtonAction) {
     switchScene("/fxml/detailed_vineyard_view.fxml", "Detailed Wine View",
-        () -> new DetailedVineyardViewController(managerContext, vineyard, backButtonAction),
-        null);
+        () -> new DetailedVineyardViewController(managerContext, vineyard, backButtonAction));
   }
 
   /**
@@ -503,7 +494,7 @@ public class MainController extends Controller {
   @FXML
   public void openSocialScreen() {
     switchScene("/fxml/social_screen.fxml", "Social",
-        () -> new SocialController(managerContext), Screen.SOCIAL_SCREEN);
+        () -> new SocialController(managerContext));
   }
 
   /**
@@ -512,7 +503,7 @@ public class MainController extends Controller {
   @FXML
   public void openVineyardsScreen() {
     switchScene("/fxml/vineyards_screen.fxml", "Vineyards",
-        () -> new VineyardsController(managerContext), Screen.VINEYARDS_SCREEN);
+        () -> new VineyardsController(managerContext));
   }
 
   /**
@@ -521,7 +512,7 @@ public class MainController extends Controller {
   @FXML
   public void openTourPlanningScreen() {
     switchScene("/fxml/tour_planning_screen.fxml", "Tour Planning",
-        () -> new TourPlanningController(managerContext), Screen.TOUR_PLANNING_SCREEN);
+        () -> new TourPlanningController(managerContext));
   }
 
   /**
@@ -572,7 +563,7 @@ public class MainController extends Controller {
   @FXML
   public void openConsumptionScreen() {
     switchScene("/fxml/consumption_screen.fxml", "Consumption",
-        () -> new ConsumptionController(managerContext), Screen.CONSUMPTION_SCREEN);
+        () -> new ConsumptionController(managerContext));
   }
 
   /**
@@ -581,19 +572,18 @@ public class MainController extends Controller {
   @FXML
   public void openWineCompareScreen() {
     switchScene("/fxml/wine_compare.fxml", "Wine Compare",
-        () -> new WineCompareController(managerContext, null, null), Screen.COMPARE_WINES_SCREEN);
+        () -> new WineCompareController(managerContext, null, null));
   }
 
   /**
    * Launches the wine compare screen with the specified wine.
    *
    * @param leftWine The wine to be shown on the left side of the wine compare.
-   * @param rightRight The wine to be shown on the right side of the wine compare.
+   * @param rightWine The wine to be shown on the right side of the wine compare.
    */
-  public void openWineCompareScreen(Wine leftWine, Wine rightRight) {
+  public void openWineCompareScreen(Wine leftWine, Wine rightWine) {
     switchScene("/fxml/wine_compare.fxml", "Wine Compare",
-        () -> new WineCompareController(managerContext, leftWine, rightRight),
-        Screen.COMPARE_WINES_SCREEN);
+        () -> new WineCompareController(managerContext, leftWine, rightWine));
   }
 
   /**
@@ -620,6 +610,17 @@ public class MainController extends Controller {
     openPopup("/fxml/popup/view_review_popup.fxml",
         () -> new ReviewViewPopupController(managerContext, wineReviewsService, reviewer,
             selectedReview, wine));
+  }
+
+  /**
+   * Launches the load import screen under a given node.
+   *
+   * @param parent node to add to
+   * @return node that was added
+   */
+  public Parent loadImportWineScreen(Pane parent) {
+    return loadFxml("/fxml/wine_import_screen.fxml",
+        () -> new WineImportController(managerContext), parent);
   }
 
   /**
@@ -663,45 +664,5 @@ public class MainController extends Controller {
     popupContent.setVisible(false);
     popupContent.setDisable(true);
     popupContent.getChildren().clear();
-  }
-
-  public <T> void showLoadingAnimation(Supplier<T> action, Consumer<T> completionAction) {
-    Task<T> task = new Task<>() {
-      @Override
-      protected T call() {
-        return action.get();
-      }
-    };
-
-    // start the loading animation
-    loadingSpinnerPane.setDisable(false);
-    loadingSpinnerPane.setVisible(true);
-    popupActionBlocker.setVisible(true);
-    popupActionBlocker.setDisable(false);
-
-    // when the task is finished, go back to the main thread
-    task.setOnSucceeded(event -> Platform.runLater(() -> {
-      loadingSpinnerPane.setDisable(true);
-      loadingSpinnerPane.setVisible(false);
-      popupActionBlocker.setVisible(false);
-      popupActionBlocker.setDisable(true);
-      try {
-        completionAction.accept(task.get());
-      } catch (InterruptedException | ExecutionException e) {
-        throw new RuntimeException(e);
-      }
-    }));
-    executorService.submit(task);
-  }
-
-  /**
-   * Launches the load import screen under a given node.
-   *
-   * @param parent node to add to
-   * @return node that was added
-   */
-  public Parent loadImportWineScreen(Pane parent) {
-    return loadFxml("/fxml/wine_import_screen.fxml",
-        () -> new WineImportController(managerContext), parent);
   }
 }
