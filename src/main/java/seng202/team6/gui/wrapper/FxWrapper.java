@@ -1,6 +1,7 @@
 package seng202.team6.gui.wrapper;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -36,13 +37,27 @@ public class FxWrapper {
   public void init(Stage stage) {
     this.stage = stage;
     try {
+      Supplier<ManagerContext> managerContextSupplier = new Supplier<ManagerContext>() {
+        private ManagerContext context;
+
+        @Override
+        public ManagerContext get() {
+          return context;
+        }
+
+        public void setContext(ManagerContext context) {
+          this.context = context;
+        }
+      };
+
       DatabaseManager databaseManager = new DatabaseManager("database", "database.db");
+      GuiManager guiManager = new GuiManager(this);
       this.managerContext = new ManagerContext(
           databaseManager,
-          new GuiManager(this),
+          guiManager,
           new AuthenticationManager(databaseManager)
       );
-
+      guiManager.setManagerContext(managerContext);
       stage.setOnCloseRequest((event) -> managerContext.getDatabaseManager().teardown());
     } catch (Exception exception) {
       // If we fail to initialize the managers we are kinda screwed
@@ -84,6 +99,4 @@ public class FxWrapper {
       LogManager.getLogger(getClass()).error("Failed to load screen: {}", fxml, e);
     }
   }
-
-
 }

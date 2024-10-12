@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.controlsfx.control.RangeSlider;
 import seng202.team6.gui.controls.AutoCompletionTextField;
 
-
 /**
  * Class to handle range slider and autocomplete filters.
  */
@@ -25,7 +24,6 @@ public class FilterUtil {
 
     // Attach tooltip on click
     thumb.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-
           Point2D thumbLocation = thumb.localToScene(
               thumb.getBoundsInLocal().getMinX(), thumb.getBoundsInLocal().getMinY());
 
@@ -37,7 +35,6 @@ public class FilterUtil {
 
     // Update tooltip as its dragged
     thumb.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> {
-
           Point2D thumbLocation = thumb.localToScene(
               thumb.getBoundsInLocal().getMinX(), thumb.getBoundsInLocal().getMinY());
 

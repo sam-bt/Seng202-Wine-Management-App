@@ -1,25 +1,65 @@
 package seng202.team6.managers;
 
+import java.io.IOException;
+import java.util.function.Supplier;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.util.Builder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import seng202.team6.enums.PopupType;
+import seng202.team6.gui.AdminController;
+import seng202.team6.gui.ConsumptionController;
+import seng202.team6.gui.Controller;
+import seng202.team6.gui.DetailedVineyardViewController;
+import seng202.team6.gui.DetailedWineViewController;
+import seng202.team6.gui.ListScreenController;
+import seng202.team6.gui.LoginController;
 import seng202.team6.gui.MainController;
+import seng202.team6.gui.NotesController;
+import seng202.team6.gui.RegisterController;
+import seng202.team6.gui.SettingsController;
+import seng202.team6.gui.SocialController;
+import seng202.team6.gui.TourPlanningController;
+import seng202.team6.gui.UpdatePasswordController;
+import seng202.team6.gui.VineyardsController;
+import seng202.team6.gui.WineCompareController;
+import seng202.team6.gui.WineImportController;
+import seng202.team6.gui.WineScreenController;
+import seng202.team6.gui.popup.AddToListPopupController;
+import seng202.team6.gui.popup.AddToTourPopupController;
+import seng202.team6.gui.popup.CreateListPopupController;
+import seng202.team6.gui.popup.DeleteListPopupController;
 import seng202.team6.gui.popup.GeneralPopupController;
+import seng202.team6.gui.popup.ReviewViewPopupController;
+import seng202.team6.gui.popup.UserSearchPopupController;
+import seng202.team6.gui.popup.UserViewPopupController;
+import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.gui.wrapper.FxWrapper;
 import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineFilters;
 import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
+import seng202.team6.service.PageService;
 import seng202.team6.service.WineListService;
 import seng202.team6.service.WineReviewsService;
+import seng202.team6.util.WineState;
 
 /**
  * Manager for interacting with the GUI.
  */
 public class GuiManager {
 
+  private final Logger log = LogManager.getLogger(getClass());
   private final FxWrapper wrapper;
   private MainController mainController;
+  private String currentScreenFxml;
+  private ManagerContext managerContext;
 
   /**
    * Constructs a GUIManager.
@@ -44,14 +84,29 @@ public class GuiManager {
   }
 
   /**
-   * Sets the window title.
-   *
-   * @param title title to set
+   * Sets the manager context.
    */
-  public void setWindowTitle(String title) {
-    wrapper.setWindowTitle(title);
+  public void setManagerContext(ManagerContext managerContext) {
+    this.managerContext = managerContext;
   }
 
+  /**
+   * Enables or disables the navigation menu bar.
+   *
+   * @param disable true to disable the menu bar, false to enable it
+   */
+  public void disableNavigation(boolean disable) {
+    mainController.disableNavigation(disable);
+  }
+
+  /**
+   * Updates the navigation menu based on the current authentication state of the user. If the user
+   * is authenticated, the profile menu and settings options are shown. If the user is not
+   * authenticated, the login and registration options are displayed.
+   */
+  public void updateNavigation() {
+    mainController.updateNavigation();
+  }
 
   /**
    * Gets if screen is disabled.
@@ -63,59 +118,101 @@ public class GuiManager {
   }
 
   /**
+   * Switches the current scene.
+   *
+   *<p>
+   *   Scenes with fxml paths equal to the currently loaded one are skipped
+   *</p>
+   *
+   * @param fxml    fxml resource path
+   * @param title   window title
+   * @param builder controller builder
+   */
+  public void switchScene(String fxml, String title, Builder<?> builder) {
+    if (currentScreenFxml != null && currentScreenFxml.equals(fxml)) {
+      log.info("Skipped loading {} as it is already open", fxml);
+      return;
+    }
+
+    Parent parent = loadFxml(fxml, builder, mainController.getPageContent());
+    if (parent != null) {
+      wrapper.setWindowTitle(title);
+      currentScreenFxml = fxml;
+    }
+  }
+
+  /**
+   * Loads a scene from a fxml resource.
+   *
+   * @param fxml        fxml resource path
+   * @param builder     controller builder
+   * @param parentToAdd parent to add scene to
+   * @return added node
+   */
+  private Parent loadFxml(String fxml, Builder<?> builder, Pane parentToAdd) {
+    try {
+      FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
+      loader.setControllerFactory(param -> builder.build());
+      Parent parent = loader.load();
+      parentToAdd.getChildren().clear();
+      parentToAdd.getChildren().add(parent);
+      if (loader.getController() instanceof Controller controller) {
+        controller.init();
+      }
+      return parent;
+    } catch (IOException e) {
+      log.error("Failed to load screen {}", fxml, e);
+    }
+    return null;
+  }
+
+
+  /**
+   * Opens a popup.
+   *
+   * @param fxml    fxml resource path
+   * @param builder controller builder
+   */
+  public void openPopup(String fxml, Builder<?> builder) {
+    try {
+      FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
+      loader.setControllerFactory(param -> builder.build());
+
+      Parent parent = loader.load();
+      mainController.getPageContent().getChildren().add(parent);
+      if (loader.getController() instanceof Controller controller) {
+        controller.init();
+      }
+      AnchorPane popupContent = mainController.getPopupContent();
+      popupContent.getChildren().add(parent);
+      popupContent.setVisible(true);
+      popupContent.setDisable(false);
+
+      AnchorPane popupActionBlocker = mainController.getPopupActionBlocker();
+      popupActionBlocker.setVisible(true);
+      popupActionBlocker.setDisable(false);
+    } catch (IOException e) {
+      log.error("Failed to load screen {}", fxml, e);
+    }
+  }
+
+  /**
    * Launches the wine screen.
    */
   public void openWineScreen() {
-    mainController.openWineScreen();
+    switchScene("/fxml/wine_screen.fxml", "Wine Information",
+        () -> new WineScreenController(managerContext));
   }
 
   /**
-   * Launches the list screen.
+   * Launches the wine screen based on a previous state.
+   *
+   * @param pageService the page service from the previous state.
+   * @param wineFilters the wine filters from the previous state.
    */
-  public void openListScreen() {
-    mainController.openListScreen();
-  }
-
-  /**
-   * Launches the login screen.
-   */
-  public void openLoginScreen() {
-    mainController.openLoginScreen();
-  }
-
-  /**
-   * Launches the register screen.
-   */
-  public void openRegisterScreen() {
-    mainController.openRegisterScreen();
-  }
-
-  /**
-   * Launches the admin screen.
-   */
-  public void openAdminScreen() {
-    mainController.openAdminScreen();
-  }
-
-  /**
-   * Launches the settings screen.
-   */
-  public void openSettingsScreen() {
-    mainController.openSettingsScreen();
-  }
-
-  /**
-   * Launches the update password screen.
-   */
-  public void openUpdatePasswordScreen() {
-    mainController.openUpdatePasswordScreen();
-  }
-
-  /**
-   * Launches the notes screen.
-   */
-  public void openNotesScreen() {
-    mainController.openNotesScreen();
+  public void openWineScreen(PageService pageService, WineFilters wineFilters) {
+    switchScene("/fxml/wine_screen.fxml", "Wine Information",
+        () -> new WineScreenController(managerContext, pageService, wineFilters));
   }
 
   /**
@@ -125,9 +222,60 @@ public class GuiManager {
    * @param backButtonAction action to run when back button is pressed
    */
   public void openDetailedWineView(Wine wine, Runnable backButtonAction) {
-    mainController.openDetailedWineView(wine, backButtonAction);
+    switchScene("/fxml/detailed_wine_view.fxml", "Detailed Wine View",
+        () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
   }
 
+  /**
+   * Launches the wine compare screen.
+   */
+  public void openWineCompareScreen() {
+    switchScene("/fxml/wine_compare.fxml", "Wine Compare",
+        () -> new WineCompareController(managerContext, null, null));
+  }
+
+  /**
+   * Launches the wine compare screen with the specified wine.
+   *
+   * @param leftWine  The wine to be shown on the left side of the wine compare.
+   * @param rightWine The wine to be shown on the right side of the wine compare.
+   */
+  public void openWineCompareScreen(Wine leftWine, Wine rightWine) {
+    switchScene("/fxml/wine_compare.fxml", "Wine Compare",
+        () -> new WineCompareController(managerContext, leftWine, rightWine));
+  }
+
+  /**
+   * Launches the list screen.
+   */
+  public void openListScreen() {
+    switchScene("/fxml/list_screen.fxml", "My Lists",
+        () -> new ListScreenController(managerContext));
+  }
+
+  /**
+   * Launches the notes screen.
+   */
+  public void openNotesScreen() {
+    switchScene("/fxml/notes_screen.fxml", "My Notes",
+        () -> new NotesController(managerContext));
+  }
+
+  /**
+   * Launches the consumption screen.
+   */
+  public void openConsumptionScreen() {
+    switchScene("/fxml/consumption_screen.fxml", "Consumption",
+        () -> new ConsumptionController(managerContext));
+  }
+
+  /**
+   * Launches the vineyards screen.
+   */
+  public void openVineyardsScreen() {
+    switchScene("/fxml/vineyards_screen.fxml", "Vineyards",
+        () -> new VineyardsController(managerContext));
+  }
 
   /**
    * Launches the detailed wine view.
@@ -136,7 +284,97 @@ public class GuiManager {
    * @param backButtonAction action to run when back button is pressed
    */
   public void openDetailedVineyardView(Vineyard vineyard, Runnable backButtonAction) {
-    mainController.openDetailedVineyardView(vineyard, backButtonAction);
+    switchScene("/fxml/detailed_vineyard_view.fxml", "Detailed Wine View",
+        () -> new DetailedVineyardViewController(managerContext, vineyard,
+            backButtonAction));
+  }
+
+  /**
+   * Launches the tour planning screen.
+   */
+  public void openTourPlanningScreen() {
+    switchScene("/fxml/tour_planning_screen.fxml", "Tour Planning",
+        () -> new TourPlanningController(managerContext));
+  }
+
+  /**
+   * Launches the social screen.
+   */
+  public void openSocialScreen() {
+    switchScene("/fxml/social_screen.fxml", "Social",
+        () -> new SocialController(managerContext));
+  }
+
+  /**
+   * Launches the admin screen.
+   */
+  public void openAdminScreen() {
+    switchScene("/fxml/admin_screen.fxml", "Register",
+        () -> new AdminController(managerContext));
+  }
+
+  /**
+   * Launches the login screen.
+   */
+  public void openLoginScreen() {
+    switchScene("/fxml/login_screen.fxml", "Login",
+        () -> new LoginController(managerContext));
+  }
+
+  /**
+   * Launches the register screen.
+   */
+  public void openRegisterScreen() {
+    switchScene("/fxml/register_screen.fxml", "Register",
+        () -> new RegisterController(managerContext));
+  }
+
+  /**
+   * Launches the settings screen.
+   */
+  public void openSettingsScreen() {
+    switchScene("/fxml/settings_screen.fxml", "Settings",
+        () -> new SettingsController(managerContext));
+  }
+
+  /**
+   * Launches the update password screen.
+   */
+  public void openUpdatePasswordScreen() {
+    switchScene("/fxml/update_password_screen.fxml", "Update Password",
+        () -> new UpdatePasswordController(managerContext));
+  }
+
+  /**
+   * Displays a popup of the error type. The popup is displayed on the screen, and the controller
+   * for the popup is returned to the caller for further customization.
+   *
+   * @return The ErrorPopupController associated with the displayed error popup.
+   */
+  public GeneralPopupController showErrorPopup() {
+    return showPopup(PopupType.ERROR);
+  }
+
+  /**
+   * Displays a popup of the none type.
+   *
+   * @return The GeneralPopupController associated with the displayed popup
+   */
+  public GeneralPopupController showPopup() {
+    return showPopup(PopupType.NONE);
+  }
+
+  /**
+   * Displays a popup of the specified type. The popup is displayed on the screen, and the
+   * controller for the popup is returned to the caller for further customization.
+   *
+   * @param popupType The type of the popup
+   * @return The GeneralPopupController associated with the displayed popup
+   */
+  private GeneralPopupController showPopup(PopupType popupType) {
+    GeneralPopupController popupController = new GeneralPopupController(managerContext, popupType);
+    openPopup("/fxml/popup/general_popup.fxml", () -> popupController);
+    return popupController;
   }
 
   /**
@@ -145,28 +383,16 @@ public class GuiManager {
    * @param user the users profile to open
    */
   public void openUserProfilePopup(User user) {
-    mainController.openUserProfilePopup(user);
+    openPopup("/fxml/popup/user_view_popup.fxml",
+        () -> new UserViewPopupController(managerContext, user));
   }
 
   /**
-   * Launches the social screen.
+   * Launches the user search popup.
    */
-  public void openSocialScreen() {
-    mainController.openSocialScreen();
-  }
-
-  /**
-   * Launches the vineyards screen.
-   */
-  public void openVineyardsScreen() {
-    mainController.openVineyardsScreen();
-  }
-
-  /**
-   * Launches the tour planning screen.
-   */
-  public void openTourPlanningScreen() {
-    mainController.openTourPlanningScreen();
+  public void openUserSearchPopup() {
+    openPopup("/fxml/popup/user_search_popup.fxml",
+        () -> new UserSearchPopupController(managerContext));
   }
 
   /**
@@ -175,7 +401,8 @@ public class GuiManager {
    * @param wineReviewsService wine reviews service
    */
   public void openPopupWineReview(WineReviewsService wineReviewsService) {
-    mainController.openPopupWineReview(wineReviewsService);
+    openPopup("/fxml/popup/review_popup.fxml",
+        () -> new WineReviewPopupController(managerContext, wineReviewsService));
   }
 
   /**
@@ -184,7 +411,8 @@ public class GuiManager {
    * @param wineListService service class for wine lists.
    */
   public void openCreateListPopUp(WineListService wineListService) {
-    mainController.openCreateListPopUp(wineListService);
+    openPopup("/fxml/popup/create_list_popup.fxml",
+        () -> new CreateListPopupController(managerContext, wineListService));
   }
 
   /**
@@ -194,7 +422,8 @@ public class GuiManager {
    * @param wineListService service class for wine lists.
    */
   public void openDeleteListPopUp(WineList wineList, WineListService wineListService) {
-    mainController.openDeleteListPopUp(wineList, wineListService);
+    openPopup("/fxml/popup/delete_list_popup.fxml",
+        () -> new DeleteListPopupController(managerContext, wineList, wineListService));
   }
 
   /**
@@ -203,14 +432,8 @@ public class GuiManager {
    * @param wine wine
    */
   public void openAddToListPopup(Wine wine) {
-    mainController.openAddToListPopup(wine);
-  }
-
-  /**
-   * Launches the consumption screen.
-   */
-  public void openConsumptionScreen() {
-    mainController.openConsumptionScreen();
+    openPopup("/fxml/popup/add_to_list_popup.fxml",
+        () -> new AddToListPopupController(managerContext, wine));
   }
 
   /**
@@ -219,24 +442,8 @@ public class GuiManager {
    * @param vineyard The vineyard to be added to a tour.
    */
   public void openAddToTourPopup(Vineyard vineyard) {
-    mainController.openAddToTourPopup(vineyard);
-  }
-
-  /**
-   * Launches the wine compare screen.
-   */
-  public void openWineCompareScreen() {
-    mainController.openWineCompareScreen();
-  }
-
-  /**
-   * Launches the wine compare screen with the specified wine.
-   *
-   * @param leftWine The wine to be shown on the left side of the wine compare.
-   * @param rightWine The wine to be shown on the right side of the wine compare.
-   */
-  public void openWineCompareScreen(Wine leftWine, Wine rightWine) {
-    mainController.openWineCompareScreen(leftWine, rightWine);
+    openPopup("/fxml/popup/add_to_tour_popup.fxml",
+        () -> new AddToTourPopupController(managerContext, vineyard));
   }
 
   /**
@@ -250,7 +457,9 @@ public class GuiManager {
    */
   public void openPopupReviewView(WineReviewsService wineReviewsService, User reviewer,
       WineReview selectedReview, Wine wine) {
-    mainController.openPopupReviewView(wineReviewsService, reviewer, selectedReview, wine);
+    openPopup("/fxml/popup/view_review_popup.fxml",
+        () -> new ReviewViewPopupController(managerContext, wineReviewsService, reviewer,
+            selectedReview, wine));
   }
 
   /**
@@ -260,9 +469,9 @@ public class GuiManager {
    * @return node that was added
    */
   public Parent loadImportWineScreen(Pane parent) {
-    return mainController.loadImportWineScreen(parent);
+    return loadFxml("/fxml/wine_import_screen.fxml",
+        () -> new WineImportController(managerContext), parent);
   }
-
 
   /**
    * Closes the popup.
@@ -270,50 +479,4 @@ public class GuiManager {
   public void closePopup() {
     mainController.closePopup();
   }
-
-  /**
-   * Enables or disables the navigation menu bar.
-   *
-   * @param disable true to disable the menu bar, false to enable it
-   */
-  public void disableNavigation(boolean disable) {
-    mainController.disableNavigation(disable);
-  }
-
-  /**
-   * Updates the navigation menu based on the current authentication state of the user.
-   * If the user is authenticated, the profile menu and settings options are shown.
-   * If the user is not authenticated, the login and registration options are displayed.
-   */
-  public void updateNavigation() {
-    mainController.updateNavigation();
-  }
-
-  /**
-   * Displays a popup of the error type. The popup is displayed on the screen, and the controller
-   * for the popup is returned to the caller for further customization.
-   *
-   * @return The ErrorPopupController associated with the displayed error popup.
-   */
-  public GeneralPopupController showErrorPopup() {
-    return mainController.showErrorPopup();
-  }
-
-  /**
-   * Displays a popup of the none type.
-   *
-   * @return The GeneralPopupController associated with the displayed popup
-   */
-  public GeneralPopupController showPopup() {
-    return mainController.showPopup();
-  }
-
-  /**
-   * Launches the user search popup.
-   */
-  public void openUserSearchPopup() {
-    mainController.openUserSearchPopup();
-  }
-
-
 }
