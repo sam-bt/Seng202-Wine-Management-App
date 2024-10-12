@@ -86,10 +86,12 @@ public class WineImportController extends Controller {
       return;
     }
 
-    currentFileRows = ProcessCsv.getCsvRows(selectedFile);
-    String[] columnNames = currentFileRows.removeFirst();
-    selectedWineProperties.clear();
-    makeColumnRemapList(columnNames, currentFileRows);
+    managerContext.getGuiManager().showLoadingIndicator(() -> {
+      currentFileRows = ProcessCsv.getCsvRows(selectedFile);
+      String[] columnNames = currentFileRows.removeFirst();
+      selectedWineProperties.clear();
+      makeColumnRemapList(columnNames, currentFileRows);
+    });
   }
 
 
@@ -101,7 +103,7 @@ public class WineImportController extends Controller {
     if (!validate()) {
       return;
     }
-    parseWines(false);
+    managerContext.getGuiManager().showLoadingIndicator(() -> parseWines(false));
   }
 
   /**
@@ -112,7 +114,7 @@ public class WineImportController extends Controller {
     if (!validate()) {
       return;
     }
-    parseWines(true);
+    managerContext.getGuiManager().showLoadingIndicator(() -> parseWines(false));
   }
 
   /**
