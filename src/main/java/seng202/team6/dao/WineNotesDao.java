@@ -55,7 +55,7 @@ public class WineNotesDao extends Dao {
    */
   public ObservableList<Note> getAll() {
     Timer timer = new Timer();
-    String sql = "SELECT NOTE.ID AS note_id, NOTE.* FROM NOTES";
+    String sql = "SELECT NOTES.ID AS note_id, NOTES.* FROM NOTES";
     try (Statement statement = connection.createStatement()) {
       try (ResultSet resultSet = statement.executeQuery(sql)) {
         ObservableList<Note> notes = extractAllNotesFromResultSet(resultSet, "note_id");
