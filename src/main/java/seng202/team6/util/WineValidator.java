@@ -3,6 +3,7 @@ package seng202.team6.util;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import seng202.team6.enums.ColourMatch;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
 import seng202.team6.util.Exceptions.ValidationException;
@@ -54,7 +55,7 @@ public class WineValidator {
           country,
           region,
           winery,
-          color,
+          getOrExtractColourFromVariety(variety, color),
           getOrExtractVintageFromTitle(title, vintage),
           description,
           Objects.equals(scorePercent, "") ? 0 : Integer.parseInt(scorePercent),
@@ -84,5 +85,21 @@ public class WineValidator {
       Matcher matcher = VINTAGE_PATTERN.matcher(title);
       return matcher.find() ? Integer.parseInt(matcher.group()) : 0;
     }
+  }
+
+  /**
+   * Returns the colour associated with a wine variety, or uses the provided colour if available.
+   * If the given colour is not null or empty, it is returned as the result. Otherwise, the method
+   * attempts to determine the colour based on the wine variety.
+   *
+   * @param variety the wine variety
+   * @param colour the pre-determined colour of the wine
+   * @return the wine colour, either from the provided colour or determined from the variety
+   */
+  public static String getOrExtractColourFromVariety(String variety, String colour) {
+    if (colour != null && !colour.isEmpty()) {
+      return colour;
+    }
+    return ColourMatch.match(variety).getColour();
   }
 }

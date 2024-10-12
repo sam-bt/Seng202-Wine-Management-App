@@ -65,16 +65,18 @@ public enum ColourMatch {
    * @return the matching ColourMatch value, or null if no match is found
    */
   public static ColourMatch match(String variety) {
-    variety = variety.toLowerCase();
-    // special case for rosé which contains special character
-    if (variety.contains("rosé")) {
-      return ROSE;
-    }
-    for (ColourMatch value : values()) {
-      if (variety.contains(value.getVariety())) {
-        return value;
+    if (variety != null && !variety.isEmpty()) {
+      variety = variety.toLowerCase();
+      // special case for rosé which contains special character
+      if (variety.contains("rosé")) {
+        return ROSE;
+      }
+      for (ColourMatch value : values()) {
+        if (variety.contains(value.getVariety())) {
+          return value;
+        }
       }
     }
-    return null;
+    return DEFAULT;
   }
 }
