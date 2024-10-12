@@ -810,6 +810,9 @@ public class WineScreenController extends Controller {
         validatePageButtons(this.pageService.getPageNumber());
       }
     });
+
+    // Validate on first page launch
+    validatePageButtons(this.pageService.getPageNumber());
   }
 
   /**
