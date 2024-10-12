@@ -146,7 +146,7 @@ public class DetailedWineViewController extends Controller {
     vintageTextbox.setText(
         viewedWine.getVintage() <= 0 ? "N/A" : Integer.toString(viewedWine.getVintage()));
     priceTextbox.setText(
-        viewedWine.getPrice() <= 0 ? "N/A" : "%f.2".formatted(viewedWine.getPrice()));
+        viewedWine.getPrice() <= 0 ? "N/A" : "$%.2f".formatted(viewedWine.getPrice()));
     viewingWineTitledPane.setText("Viewing Wine: " + viewedWine.getTitle());
 
     descriptionArea.setText(getOrDefault(viewedWine.getDescription()));
