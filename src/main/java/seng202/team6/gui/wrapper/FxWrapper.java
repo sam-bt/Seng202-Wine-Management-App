@@ -1,7 +1,11 @@
 package seng202.team6.gui.wrapper;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -38,37 +42,51 @@ public class FxWrapper {
    * @param stage is the initial stage that gets loaded.
    */
   public void init(Stage stage) {
-    PauseTransition delay = new PauseTransition(Duration.millis(200));
-    delay.setOnFinished(unused -> {
-      if (!GeolocationResolver.hasValidApiKey()) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText("Invalid or missing ORS API Key");
-        alert.setContentText("An ORS API key was not found in an .env file or was invalid. "
+    FxWrapper fxWrapper = this;
+
+    // Create the executor service outside the try-with-resources
+    ExecutorService executorService = Executors.newFixedThreadPool(1);
+    Task<Void> task = new Task<>() {
+      @Override
+      protected Void call() {
+        if (!GeolocationResolver.hasValidApiKey()) {
+          Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Invalid or missing ORS API Key");
+            alert.setContentText("An ORS API key was not found in an .env file or was invalid. "
                 + "Please check the readme or manual to find out more.");
-        alert.showAndWait();
-        stage.close();
-        return;
+            alert.showAndWait();
+            stage.close();
+          });
+          return null;
+        }
+
+        // load the database manager and handle window close event
+        DatabaseManager databaseManager = new DatabaseManager("database", "database.db");
+        stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
+            event -> databaseManager.teardown());
+
+        // create the manager context
+        ManagerContext managerContext = new ManagerContext(
+            databaseManager,
+            new GuiManager(fxWrapper),
+            new AuthenticationManager(databaseManager)
+        );
+
+        // load the main screen on the javafx thread
+        Platform.runLater(() -> loadScreen("/fxml/main_screen.fxml", "Home",
+            () -> new MainController(managerContext)));
+        return null;
       }
-      // load the database manager and add an event to close the database manager when the
-      // window closes
-      DatabaseManager databaseManager = new DatabaseManager("database",
-              "database.db");
-      stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
-              event -> databaseManager.teardown());
+    };
+    executorService.submit(task);
 
-      // create the manager context
-      ManagerContext managerContext = new ManagerContext(
-              databaseManager,
-              new GuiManager(this),
-              new AuthenticationManager(databaseManager));
-
-      // load the main screen
-      loadScreen("/fxml/main_screen.fxml", "Home",
-              () -> new MainController(managerContext));
-    });
-    delay.play();
+    // shutdown the executor service after the task completes
+    task.setOnSucceeded(event -> executorService.shutdown());
+    task.setOnFailed(event -> executorService.shutdown());
     this.stage = stage;
   }
+
 
   /**
    * Sets the window title.

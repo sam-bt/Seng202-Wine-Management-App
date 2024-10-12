@@ -43,7 +43,7 @@ public class FxWindow extends Application {
 
     primaryStage.setTitle("WINO App [DEV]");
     Scene scene = new Scene(root);
-    //primaryStage.setResizable(false);
+    primaryStage.setResizable(false);
     primaryStage.setMinHeight(900);
     primaryStage.setMinWidth(1400);
     primaryStage.setScene(scene);
@@ -53,5 +53,4 @@ public class FxWindow extends Application {
     primaryStage.getIcons().add(ImageReader.loadImage("/img/icon.png"));
     primaryStage.show();
   }
-
 }
