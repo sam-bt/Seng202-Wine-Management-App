@@ -42,7 +42,6 @@ public class WineReviewDaoTest {
     wineReviewDao = databaseManager.getWineReviewDao();
     wineDao = databaseManager.getWineDao();
     userDao = databaseManager.getUserDao();
-    wineReviewDao.setUseCache(false);
 
     user = new User("username", "password", "role", "salt");
     userDao.add(user);
@@ -106,9 +105,9 @@ public class WineReviewDaoTest {
    * Tests retrieving all reviews in a specified rating range.
    */
   @Test
-  void testGetAllInRange() {
+  void testGetAllInRange() throws SQLException {
 
-    Wine testWine = new Wine(10, "wine", "pinot gris", "nz", "christchurch",
+    Wine testWine = new Wine(-1, "wine", "pinot gris", "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f,
         new GeoLocation(10,10), 5.0);
     wineDao.add(testWine);
@@ -127,9 +126,9 @@ public class WineReviewDaoTest {
    * Tests deleting a specific wine review.
    */
   @Test
-  void testDeleteReview() {
+  void testDeleteReview() throws SQLException {
 
-    Wine testWine = new Wine(10, "wine", "pinot gris", "nz", "christchurch",
+    Wine testWine = new Wine(-1, "wine", "pinot gris", "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f,
         new GeoLocation(10,10), 5.0);
     wineDao.add(testWine);
@@ -152,9 +151,9 @@ public class WineReviewDaoTest {
    * Tests deleting all reviews associated with a specific user.
    */
   @Test
-  void testDeleteAllReviewsFromUser() {
+  void testDeleteAllReviewsFromUser() throws SQLException {
 
-    Wine testWine = new Wine(10, "wine", "pinot gris", "nz", "christchurch",
+    Wine testWine = new Wine(-1, "wine", "pinot gris", "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f,
         new GeoLocation(10,10), 5.0);
     wineDao.add(testWine);
@@ -177,9 +176,9 @@ public class WineReviewDaoTest {
    * Tests retrieving all reviews for a specific wine.
    */
   @Test
-  void testGetAllReviewsForAWine() {
+  void testGetAllReviewsForAWine() throws SQLException {
 
-    Wine testWine = new Wine(10, "wine", "pinot gris", "nz", "christchurch",
+    Wine testWine = new Wine(-1, "wine", "pinot gris", "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f,
         new GeoLocation(10,10), 5.0);
     wineDao.add(testWine);
@@ -200,9 +199,9 @@ public class WineReviewDaoTest {
    * Tests retrieving all reviews for a specific user.
    */
   @Test
-  void testGetAllReviewsForAUser() {
+  void testGetAllReviewsForAUser() throws SQLException {
 
-    Wine testWine = new Wine(10, "wine", "pinot gris", "nz", "christchurch",
+    Wine testWine = new Wine(-1, "wine", "pinot gris", "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f,
         new GeoLocation(10,10), 5.0);
     wineDao.add(testWine);

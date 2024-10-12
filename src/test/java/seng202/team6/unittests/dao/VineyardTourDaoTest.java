@@ -44,7 +44,6 @@ public class VineyardTourDaoTest {
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
     vineyardTourDao = databaseManager.getVineyardTourDao();
-    vineyardTourDao.setUseCache(false);
 
     testUser = new User("testUser", "testPassword1!", "user", "egsalt");
     userDao = databaseManager.getUserDao();
@@ -69,9 +68,6 @@ public class VineyardTourDaoTest {
   @Test
   void testCreateTour() {
 
-    User testUser = new User("testUser", "testPassword1!", "user", "egsalt");
-    UserDao userDao = databaseManager.getUserDao();
-    userDao.add(testUser);
     VineyardTourDao vineyardTourDao = databaseManager.getVineyardTourDao();
 
     VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "testTour");

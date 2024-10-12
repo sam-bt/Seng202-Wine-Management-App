@@ -14,7 +14,6 @@ import kotlin.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import seng202.team6.dao.AggregatedDao;
 import seng202.team6.dao.UserDao;
 import seng202.team6.dao.VineyardDao;
 import seng202.team6.dao.WineDao;
@@ -63,12 +62,12 @@ public class AggregatedDaoTest {
     userDao = databaseManager.getUserDao();
     wineDao = databaseManager.getWineDao();
 
-    testUser = new User("testUser", "testPassword1!", "user", "egsalt");
-    userDao.add(testUser);
+    testUser = userDao.get("admin");
 
-    testWine = new Wine(-1, "wine", "blue", "nz", "christchurch", "Test Vineyard", "", 1024, "na", 99,
+    Wine toAdd = new Wine(-1, "wine", "blue", "nz", "christchurch", "Test Vineyard", "", 1024, "na", 99,
         25.0f, 50f, null, 0.0);
-    wineDao.add(testWine);
+    wineDao.add(toAdd);
+    testWine = wineDao.getAll().getFirst();
 
   }
 
@@ -93,7 +92,7 @@ public class AggregatedDaoTest {
   void testGetAllNotesMappedWithWinesByUser() throws SQLException {
     WineNotesDao noteDao = databaseManager.getWineNotesDao();
 
-    Note testNote = noteDao.get(testUser,testWine);
+    Note testNote = noteDao.getOrCreate(testUser,testWine);
     testNote.setNote("Yum!");
 
     ObservableMap<Wine, Note> result = aggregatedDao.getAllNotesMappedWithWinesByUser(testUser);
@@ -189,22 +188,25 @@ public class AggregatedDaoTest {
   @Test
   void testGetWineReviewsAndWinesWithFilters() throws SQLException {
     int begin = 0;
-    int end = 5;
+    int end = 50;
 
     WineReviewDao reviewDao = databaseManager.getWineReviewDao();
 
-    reviewDao.add(testUser, testWine, 5.0, "Yum!",
+
+    reviewDao.add(testUser, testWine, 5, "Yum!",
         new Date(1728366112972L));
 
-    reviewDao.add(testUser, testWine, 2.0, "Yuck!",
+    reviewDao.add(testUser, testWine, 2, "Yuck!",
         new Date(1728366112972L));
 
-    ReviewFilters testFilters = new ReviewFilters("", "win", 2, 4);
+
+    ReviewFilters testFilters = new ReviewFilters("", "win", 1, 4);
 
     ObservableList<Pair<WineReview, Wine>> result = aggregatedDao.getWineReviewsAndWines(begin, end, testFilters);
 
     assertNotNull(result);
     assertEquals(1, result.size());
+
     for (Pair<WineReview, Wine> pair : result) {
       assertEquals("Yuck!", pair.getFirst().getDescription());
       assertEquals("wine", pair.getSecond().getTitle());

@@ -181,9 +181,8 @@ public class WineReviewDao extends Dao {
               date,
               flag
           );
-          if (useCache()) {
-            wineReviewCache.addObject(id, wineReview);
-          }
+          wineReviewCache.addObject(id, wineReview);
+
           bindUpdater(wineReview);
           return wineReview;
         }

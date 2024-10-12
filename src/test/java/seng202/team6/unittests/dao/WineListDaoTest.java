@@ -43,7 +43,6 @@ public class WineListDaoTest {
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
     wineListDao = databaseManager.getWineListDao();
-    wineListDao.setUseCache(false);
 
     testUser = new User("testUser", "testPassword1!", "user", "egsalt");
     userDao = databaseManager.getUserDao();
@@ -110,9 +109,9 @@ public class WineListDaoTest {
    * Tests adding a wine to a wine list. Verifies that the wine is successfully added to the list.
    */
   @Test
-  void testAddWine() {
+  void testAddWine() throws SQLException {
 
-    Wine testWine = new Wine(10, "wine", "pinot gris", "nz", "christchurch",
+    Wine testWine = new Wine(-1, "wine", "pinot gris", "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f,
         new GeoLocation(10,10), 5.0);
 
@@ -131,9 +130,9 @@ public class WineListDaoTest {
    * Tests removing a wine from a wine list. Verifies that the wine is successfully removed from the list.
    */
   @Test
-  void testRemoveWine() {
+  void testRemoveWine() throws SQLException {
 
-    Wine testWine = new Wine(10, "wine", "pinot gris", "nz", "christchurch",
+    Wine testWine = new Wine(-1, "wine", "pinot gris", "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f,
         new GeoLocation(10,10), 5.0);
 

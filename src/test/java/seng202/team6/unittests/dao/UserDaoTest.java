@@ -138,11 +138,9 @@ public class UserDaoTest {
     User test1 = new User("user", "password", "user", "salt");
     User test2 = new User("us", "password", "user", "salt");
     User test3 = new User("userr", "password", "user", "salt");
-    User testAdmin = new User("admin", "password", "user", "salt");
     userDao.add(test1);
     userDao.add(test2);
     userDao.add(test3);
-    userDao.add(testAdmin);
 
     ObservableList<User> result = userDao.getAll();
 
