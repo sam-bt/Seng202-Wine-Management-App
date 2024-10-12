@@ -100,6 +100,8 @@ public class DatabaseManager {
     if (loadDefaultVineyards) {
       vineyardDefaultsService.init();
     }
+
+    wineDao.updateUniques();
   }
 
   /**
