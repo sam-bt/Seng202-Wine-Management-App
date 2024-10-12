@@ -115,7 +115,7 @@ public class WineImportController extends Controller {
     if (!validate()) {
       return;
     }
-    managerContext.getGuiManager().showLoadingIndicator(() -> parseWines(false));
+    managerContext.getGuiManager().showLoadingIndicator(() -> parseWines(true));
   }
 
   /**
