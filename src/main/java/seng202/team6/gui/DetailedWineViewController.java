@@ -321,7 +321,7 @@ public class DetailedWineViewController extends Controller {
       noteLabel.setText("My Notes");
     }
     notesTextbox.setVisible(visible);
-    buttonsContainer.getChildren().remove(saveNotes);
+    //buttonsContainer.getChildren().remove(saveNotes);
   }
 
   /**

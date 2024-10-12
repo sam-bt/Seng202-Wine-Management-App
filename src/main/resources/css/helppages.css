@@ -24,7 +24,6 @@ body {
 
 .nav-li {
     display:block;
-
     margin: 10px;
     margin-left: auto;
     margin-right: auto;
@@ -35,13 +34,22 @@ body {
 
 .nav-li:hover {
     display:block;
-
-    margin: 10px;
-    margin-left: auto;
-    margin-right: auto;
     background-color: #fca5a5;
+}
+
+.nav-li-sub {
+    margin: 10px;
+    margin-left: 507px;
+    display:block;
+    margin-right: auto;
+    background-color: #f68585;
     border-radius: 1px;
-    width: 400px;
+    width: 350px;
+}
+
+.nav-li-sub:hover {
+    display:block;
+    background-color: #fca5a5;
 }
 
 .nav-button {
