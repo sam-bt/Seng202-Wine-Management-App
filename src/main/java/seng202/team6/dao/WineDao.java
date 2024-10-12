@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -95,7 +97,6 @@ public class WineDao extends Dao {
    * @return number of wines after filtering
    */
   public int getCount(WineFilters filters) {
-    Timer timer = new Timer();
     String sql = "SELECT count(*) from WINE "
         + "where TITLE like ? "
         + "and COUNTRY like ? "
@@ -253,60 +254,58 @@ public class WineDao extends Dao {
   }
 
   /**
+   * Retrieves a wine from the database by its exact title.
+   *
+   * @param title The exact title of the wine to retrieve.
+   * @return The Wine object if found, or null if no match is found.
+   */
+  public Wine getByExactTitle(String title) {
+    Timer timer = new Timer();
+    String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+        + "FROM WINE "
+        + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME) "
+        + "WHERE TITLE = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setString(1, title);
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        if (resultSet.next()) {
+          Wine wine = extractWineFromResultSet(resultSet, "wine_id");
+          if (wine != null) {
+            log.info("Successfully retrieved wine with title '{}' in {}ms", title,
+                timer.currentOffsetMilliseconds());
+            return wine;
+          }
+        }
+        log.info("Could not retrieve wine with title '{}' in {}ms", title,
+            timer.currentOffsetMilliseconds());
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve wine with title '{}'", title);
+    }
+    return null;
+  }
+
+  /**
    * Replaces all wines in the WINE table by first removing all existing wines and then adding the
    * provided lists of wines.
    *
    * @param wines The list of wines to be added to the table
    */
-  public void replaceAll(List<Wine> wines) {
+  public void replaceAll(List<Wine> wines) throws SQLException {
     removeAll();
     addAll(wines);
   }
 
-  /**
-   * Adds a wine to the database.
-   *
-   * @param wine wine
-   */
-  public void add(Wine wine) {
-    Timer timer = new Timer();
-    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    try (PreparedStatement statement = connection.prepareStatement(sql,
-        Statement.RETURN_GENERATED_KEYS)) {
-      setWineParameters(statement, wine, 1);
-      statement.executeUpdate();
-
-      try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-        if (generatedKeys.next()) {
-          wine.setKey(generatedKeys.getLong(1));
-          log.info("Successfully added wine with ID {} in {}ms", wine.getKey(),
-              timer.currentOffsetMilliseconds());
-          if (useCache()) {
-            wineCache.addObject(wine.getKey(), wine);
-          }
-          bindUpdater(wine);
-        } else {
-          log.info("Could not add wine with ID {} in {}ms", wine.getKey(),
-              timer.currentOffsetMilliseconds());
-        }
-      }
-    } catch (SQLException error) {
-      log.error("Failed to add a batch of wines", error);
-    }
-  }
 
   /**
-   * Adds a list of wines to the WINE table in batch mode to improve performance. The batch is
-   * executed every 2048 wines to prevent excessive memory usage.
-   * <p>
-   * SQL Lite does not support batch generated key returning so all the wines in the specified list
-   * are considered invalid. After calling this method, you must then use getAll or getAllInRange in
-   * order to fetch new wine objects with valid ID's.
-   * </p>
+   * Adds a list of wines to the database.
    *
-   * @param wines The list of wines to be added to the table
+   * @param wines list of wines
+   * @throws SQLException sql exception
    */
-  public void addAll(List<Wine> wines) {
+  private void addList(List<Wine> wines) throws SQLException {
+
     Timer timer = new Timer();
     String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try {
@@ -315,31 +314,51 @@ public class WineDao extends Dao {
       log.error("Failed to disable database auto committing", error);
     }
 
-    int rowsAffected = 0;
-    int numberOfBatches = 1;
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       for (int i = 0; i < wines.size(); i++) {
+        if (wines.get(i).getKey() != -1) {
+          log.error("Adding wine that is already in the database");
+          return;
+        }
         setWineParameters(statement, wines.get(i), 1);
         statement.addBatch();
-
-        if (i > 0 && i % 2048 == 0) {
-          for (int rowsAffectedInBatch : statement.executeBatch()) {
-            rowsAffected += rowsAffectedInBatch;
-          }
-          numberOfBatches++;
-        }
       }
-      for (int rowsAffectedInBatch : statement.executeBatch()) {
-        rowsAffected += rowsAffectedInBatch;
+      statement.executeBatch();
+      ResultSet keys = statement.getGeneratedKeys();
+      int i = 0;
+      while (keys.next()) {
+        wines.get(i++).setKey(keys.getLong(1));
       }
       connection.commit();
-      connection.setAutoCommit(true);
     } catch (SQLException error) {
       log.error("Failed to add a batch of wines", error);
       return;
+    } finally {
+      connection.setAutoCommit(true);
     }
-    log.info("Successfully added {} out of {} wines using {} batches in {}ms", rowsAffected,
-        wines.size(), numberOfBatches, timer.currentOffsetMilliseconds());
+    log.info("Successfully {} wines in {}ms", wines.size(), timer.currentOffsetMilliseconds());
+
+  }
+
+  /**
+   * Adds a wine to the database.
+   *
+   * @param wine wine
+   */
+  public void add(Wine wine) throws SQLException {
+    addList(Collections.singletonList(wine));
+  }
+
+  /**
+   * Adds a list of wines to the WINE table in batch mode to improve performance. The batch is
+   * executed every 2048 wines to prevent excessive memory usage.
+   *
+   * @param wines The list of wines to be added to the table
+   */
+  public void addAll(List<Wine> wines) throws SQLException {
+    for (int i = 0; i < wines.size(); i += 2048) {
+      addList(wines.subList(i, Math.min(wines.size(), i + 2048)));
+    }
   }
 
   /**
@@ -386,11 +405,9 @@ public class WineDao extends Dao {
    */
   Wine extractWineFromResultSet(ResultSet resultSet, String idColumnName) throws SQLException {
     long id = resultSet.getLong(idColumnName);
-    if (useCache()) {
-      Wine cachedWine = wineCache.tryGetObject(id);
-      if (cachedWine != null) {
-        return cachedWine;
-      }
+    Wine cachedWine = wineCache.tryGetObject(id);
+    if (cachedWine != null) {
+      return cachedWine;
     }
 
     GeoLocation geoLocation = createGeoLocation(resultSet);
@@ -410,9 +427,8 @@ public class WineDao extends Dao {
         geoLocation,
         resultSet.getDouble("AVERAGE_RATING")
     );
-    if (useCache()) {
-      wineCache.addObject(id, wine);
-    }
+    wineCache.addObject(id, wine);
+
     bindUpdater(wine);
     return wine;
   }
@@ -480,7 +496,6 @@ public class WineDao extends Dao {
         update.setString(1, after);
       });
     });
-
     wine.countryProperty().addListener((observableValue, before, after) -> {
       updateAttribute(wine.getKey(), "COUNTRY", update -> {
         update.setString(1, after);
@@ -575,12 +590,14 @@ public class WineDao extends Dao {
    */
   public void updateUniques() {
     wineDataStatService.reset();
-    String query = "SELECT country, winery, color, vintage, score_percent, abv, price FROM wine";
+    String query = "SELECT title, country, winery, color, vintage, score_percent, abv, price "
+        + "FROM wine";
     try (PreparedStatement statement = connection.prepareStatement(query);
         ResultSet set = statement.executeQuery()) {
 
       // Go through results and add to lists
       while (set.next()) {
+        final String title = set.getString("title");
         final String country = set.getString("country");
         final String winery = set.getString("winery");
         final String color = set.getString("color");
@@ -590,6 +607,7 @@ public class WineDao extends Dao {
         final float price = set.getFloat("price");
 
         // Add to sets
+        this.wineDataStatService.getUniqueTitles().add(title);
         this.wineDataStatService.getUniqueCountries().add(country);
         this.wineDataStatService.getUniqueWineries().add(winery);
         this.wineDataStatService.getUniqueColors().add(color);

@@ -45,7 +45,7 @@ public class UpdatePasswordController extends Controller {
    * Initializes the controller.
    */
   public void initialize() {
-    disabled = managerContext.getGuiManager().mainController.isDisabled();
+    disabled = managerContext.getGuiManager().isDisabled();
     if (disabled) {
       titledPane.setText("First time admin login, please change password");
     }
@@ -86,7 +86,7 @@ public class UpdatePasswordController extends Controller {
           username, oldPassword, newPassword, confirmNewPassword);
 
       if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
-        managerContext.getGuiManager().mainController.openWineScreen();
+        managerContext.getGuiManager().openWineScreen();
         disabled = PasswordUtil.checkAdminLogin(managerContext, disabled);
       } else {
         switch (response) {

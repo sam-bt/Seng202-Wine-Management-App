@@ -19,6 +19,11 @@ import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 
+/**
+ * Unit tests for the WineListDao class, which handles the creation, retrieval, and management of
+ * wine lists for users. These tests ensure correct behavior when adding wines to lists,
+ * removing wines, and querying lists.
+ */
 public class WineListDaoTest {
 
   private DatabaseManager databaseManager;
@@ -28,11 +33,16 @@ public class WineListDaoTest {
   User testUser;
   UserDao userDao;
 
+  /**
+   * Sets up the database manager, WineListDao, and UserDao before each test. Adds a test user for
+   * associating wine lists.
+   *
+   * @throws SQLException if an error occurs during database setup.
+   */
   @BeforeEach
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
     wineListDao = databaseManager.getWineListDao();
-    wineListDao.setUseCache(false);
 
     testUser = new User("testUser", "testPassword1!", "user", "egsalt");
     userDao = databaseManager.getUserDao();
@@ -40,6 +50,9 @@ public class WineListDaoTest {
 
   }
 
+  /**
+   * Tests creating a new wine list for the test user. Verifies that the created list has the correct name.
+   */
   @Test
   void testCreateList() {
 
@@ -49,6 +62,10 @@ public class WineListDaoTest {
 
   }
 
+  /**
+   * Tests retrieving all wine lists for the test user. Verifies that the correct number of lists is
+   * retrieved and that they have the correct names.
+   */
   @Test
   void testGetLists() {
 
@@ -63,6 +80,10 @@ public class WineListDaoTest {
 
   }
 
+  /**
+   * Tests deleting a wine list for the test user. Verifies that the list is removed and that the
+   * remaining lists are correct.
+   */
   @Test
   void testDeleteList() {
 
@@ -84,10 +105,13 @@ public class WineListDaoTest {
 
   }
 
+  /**
+   * Tests adding a wine to a wine list. Verifies that the wine is successfully added to the list.
+   */
   @Test
-  void testAddWine() {
+  void testAddWine() throws SQLException {
 
-    Wine testWine = new Wine(10, "wine", "pinot gris", "nz", "christchurch",
+    Wine testWine = new Wine(-1, "wine", "pinot gris", "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f,
         new GeoLocation(10,10), 5.0);
 
@@ -102,10 +126,13 @@ public class WineListDaoTest {
 
   }
 
+  /**
+   * Tests removing a wine from a wine list. Verifies that the wine is successfully removed from the list.
+   */
   @Test
-  void testRemoveWine() {
+  void testRemoveWine() throws SQLException {
 
-    Wine testWine = new Wine(10, "wine", "pinot gris", "nz", "christchurch",
+    Wine testWine = new Wine(-1, "wine", "pinot gris", "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f,
         new GeoLocation(10,10), 5.0);
 
@@ -124,10 +151,11 @@ public class WineListDaoTest {
 
   }
 
-
-
-
-
+  /**
+   * Tears down the database after each test, removing any added data and resetting the state.
+   *
+   * @throws SQLException if an error occurs during database teardown.
+   */
   @AfterEach
   void teardown() throws SQLException {
     databaseManager.teardown();

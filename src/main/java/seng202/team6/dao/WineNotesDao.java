@@ -55,7 +55,7 @@ public class WineNotesDao extends Dao {
    */
   public ObservableList<Note> getAll() {
     Timer timer = new Timer();
-    String sql = "SELECT NOTE.ID AS note_id, NOTE.* FROM NOTES";
+    String sql = "SELECT NOTES.ID AS note_id, NOTES.* FROM NOTES";
     try (Statement statement = connection.createStatement()) {
       try (ResultSet resultSet = statement.executeQuery(sql)) {
         ObservableList<Note> notes = extractAllNotesFromResultSet(resultSet, "note_id");
@@ -104,7 +104,7 @@ public class WineNotesDao extends Dao {
    * @param wine The wine the note belongs to
    * @return The note object belonging to the specified User and Wine
    */
-  public Note get(User user, Wine wine) {
+  public Note getOrCreate(User user, Wine wine) {
     Timer timer = new Timer();
     String sql = "SELECT NOTES.ID AS note_id, NOTES.* "
         + "FROM NOTES "
@@ -122,7 +122,8 @@ public class WineNotesDao extends Dao {
               timer.currentOffsetMilliseconds());
           return extractNoteFromResultSet(resultSet, "note_id");
         } else {
-          log.warn(
+
+          log.info(
               "Could not find note for user '{}'"
                   + " and wine with ID {} so returning blank note in {}ms",
               user.getUsername(), wine.getKey(), timer.currentOffsetMilliseconds());
@@ -170,9 +171,8 @@ public class WineNotesDao extends Dao {
         if (generatedKeys.next()) {
           long id = generatedKeys.getLong(1);
           note.setId(id);
-          if (useCache()) {
-            notesCache.addObject(id, note);
-          }
+          notesCache.addObject(id, note);
+
           log.info("Successfully added note with ID '{}' for user {}"
                   + " and wine with ID {} in {}ms",
               id, note.getUsername(), note.getWineId(), timer.currentOffsetMilliseconds());
@@ -264,9 +264,8 @@ public class WineNotesDao extends Dao {
         resultSet.getLong("WINE_ID"),
         resultSet.getString("NOTE")
     );
-    if (useCache()) {
-      notesCache.addObject(id, note);
-    }
+    notesCache.addObject(id, note);
+
     bindUpdater(note);
     return note;
   }

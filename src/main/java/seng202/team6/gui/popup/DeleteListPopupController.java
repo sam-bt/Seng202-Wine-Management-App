@@ -47,7 +47,7 @@ public class DeleteListPopupController extends Controller {
    */
   @FXML
   public void onBackButtonClick() {
-    managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().closePopup();
   }
 
   /**
@@ -56,6 +56,6 @@ public class DeleteListPopupController extends Controller {
   @FXML
   public void onDeleteListConfirmClick() {
     wineListService.deleteWineList(wineListToDelete);
-    managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().closePopup();
   }
 }

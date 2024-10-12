@@ -1,6 +1,7 @@
 package seng202.team6.unittests.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
@@ -17,6 +18,10 @@ import seng202.team6.model.Note;
 import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 
+/**
+ * Unit tests for the WineNotesDao class, which handles operations related to user notes
+ * on wines. These tests ensure correct behavior when adding, modifying, and retrieving notes.
+ */
 public class WineNoteDaoTest {
 
   private DatabaseManager databaseManager;
@@ -26,13 +31,18 @@ public class WineNoteDaoTest {
   private User user;
   private Wine wine;
 
+  /**
+   * Sets up the database manager, WineNotesDao, WineDao, and UserDao before each test. Adds a
+   * test user and wine to the database.
+   *
+   * @throws SQLException if an error occurs during database setup.
+   */
   @BeforeEach
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
     wineNotesDao = databaseManager.getWineNotesDao();
     wineDao = databaseManager.getWineDao();
     userDao = databaseManager.getUserDao();
-    wineNotesDao.setUseCache(false);
 
     user = new User("username", "password", "role", "salt");
     userDao.add(user);
@@ -42,65 +52,86 @@ public class WineNoteDaoTest {
     wineDao.add(wine);
   }
 
+  /**
+   * Tears down the database after each test, removing any added data and resetting the state.
+   */
   @AfterEach
   void teardown() {
     databaseManager.teardown();
   }
 
+  /**
+   * Tests that if no note exists for a wine, null is returned
+   */
   @Test
-  void testNoNoteReturnsBlank() {
-    Note note = wineNotesDao.get(user, wine);
+  void testNoNoteReturnsEmpty() {
+    Note note = wineNotesDao.getOrCreate(user, wine);
     assertTrue(note.getNote().isEmpty());
   }
 
+  /**
+   * Tests that querying a note when none exists does not add the note to the database.
+   */
   @Test
   void testNoNoteDoesNotAddToDatabase() {
-    Note note = wineNotesDao.get(user, wine);
+    Note note = wineNotesDao.getOrCreate(user, wine);
     assertTrue(wineNotesDao.getAll().isEmpty());
   }
 
+  /**
+   * Tests that modifying a blank note adds it to the database.
+   */
   @Test
   void testNoNoteModifyAddsToDatabase() {
-    Note note = wineNotesDao.get(user, wine);
+    Note note = wineNotesDao.getOrCreate(user, wine);
     note.setNote("MyNote");
 
-    Note newNote = wineNotesDao.get(user, wine);
+    Note newNote = wineNotesDao.getOrCreate(user, wine);
     assertEquals(newNote.getNote(), "MyNote");
   }
 
+  /**
+   * Tests that setting an existing note to blank removes it from the database.
+   */
   @Test
   void testExistingNoteMadeBlankDeletesFromDatabase() {
-    Note note = wineNotesDao.get(user, wine);
-    note.setNote("MyNote");
 
-    Note newNote = wineNotesDao.get(user, wine);
+    wineNotesDao.getOrCreate(user, wine).setNote("Note");
+
+    Note newNote = wineNotesDao.getOrCreate(user, wine);
     newNote.setNote("");
     assertTrue(wineNotesDao.getAll().isEmpty());
   }
 
+  /**
+   * Tests that modifying an existing note updates the note in the database.
+   */
   @Test
   void testExistingNoteModifiedUpdatesDatabase() {
-    Note note = wineNotesDao.get(user, wine);
+    Note note = wineNotesDao.getOrCreate(user, wine);
     note.setNote("MyNote");
 
-    Note newNote = wineNotesDao.get(user, wine);
+    Note newNote = wineNotesDao.getOrCreate(user, wine);
     newNote.setNote("MyNewNote");
 
-    Note newUpdatedNote = wineNotesDao.get(user, wine);
+    Note newUpdatedNote = wineNotesDao.getOrCreate(user, wine);
     ;
     assertEquals("MyNewNote", newUpdatedNote.getNote());
   }
 
+  /**
+   * Tests that all notes for a user can be retrieved correctly.
+   */
   @Test
-  void testGetAllNotesForUser() {
+  void testGetAllNotesForUser() throws SQLException {
 
-    Wine testWine = new Wine(10, "wine", "pinot gris", "nz", "christchurch",
+    Wine testWine = new Wine(-1, "wine", "pinot gris", "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f,
         new GeoLocation(10,10), 5.0);
     wineDao.add(testWine);
 
-    Note note1 = wineNotesDao.get(user, wine);
-    Note note2 = wineNotesDao.get(user, testWine);
+    Note note1 = wineNotesDao.getOrCreate(user, wine);
+    Note note2 = wineNotesDao.getOrCreate(user, testWine);
 
     note1.setNote("Testnote1");
     note2.setNote("Testnote2");

@@ -37,7 +37,7 @@ public class CreateListPopupController extends Controller {
    * Closes the popup without creating a list.
    */
   public void onBackButtonClick() {
-    managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().closePopup();
   }
 
   /**

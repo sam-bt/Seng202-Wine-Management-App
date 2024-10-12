@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import seng202.team6.util.RegexProcessor;
 
+/**
+ * Test class for the RegexProcessor class. This class contains unit tests to verify the
+ * functionality of the regex processing methods of this class
+ */
 public class RegexProcessorTest {
 
   RegexProcessor regexProcessor = new RegexProcessor();

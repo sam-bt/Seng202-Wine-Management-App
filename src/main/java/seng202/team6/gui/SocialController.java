@@ -1,10 +1,12 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.TilePane;
 import kotlin.Pair;
+import org.apache.logging.log4j.LogManager;
 import org.controlsfx.control.RangeSlider;
 import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.gui.controls.ReviewCard;
@@ -66,8 +68,11 @@ public class SocialController extends Controller {
     });
 
     ratingSlider.setSnapToTicks(true);
-
-    openReviewsInRange(null);
+    try {
+      openReviewsInRange(null);
+    } catch (SQLException exception) {
+      LogManager.getLogger(getClass()).error("Failed to open reviews", exception);
+    }
 
   }
 
@@ -104,11 +109,10 @@ public class SocialController extends Controller {
         selectedWine);
     managerContext
         .getGuiManager()
-        .mainController
         .openPopupReviewView(wineReviewsService, reviewer, selectedReview, selectedWine);
   }
 
-  private void openReviewsInRange(ReviewFilters filters) {
+  private void openReviewsInRange(ReviewFilters filters) throws SQLException {
 
     ObservableList<Pair<WineReview, Wine>> reviews = managerContext.getDatabaseManager()
         .getAggregatedDao().getWineReviewsAndWines(0, 100, filters);
@@ -120,11 +124,11 @@ public class SocialController extends Controller {
 
   @FXML
   void onSearch() {
-    managerContext.getGuiManager().mainController.openUserSearchPopup();
+    managerContext.getGuiManager().openUserSearchPopup();
   }
 
   @FXML
-  void onApply() {
+  void onApply() throws SQLException {
 
     currentFilters = new ReviewFilters(
         usernameTextField.getText(),
@@ -146,8 +150,11 @@ public class SocialController extends Controller {
     usernameTextField.setText("");
 
     this.currentFilters = null;
-
-    openReviewsInRange(null);
+    try {
+      openReviewsInRange(null);
+    } catch (SQLException exception) {
+      LogManager.getLogger(getClass()).error("Failed to open reviews", exception);
+    }
 
   }
 

@@ -157,8 +157,8 @@ public class RegisterController extends Controller {
 
       if (response == AuthenticationResponse.REGISTER_SUCCESS) {
         managerContext.getAuthenticationManager().validateLoginPassword(username, password);
-        managerContext.getGuiManager().mainController.updateNavigation();
-        managerContext.getGuiManager().mainController.openWineScreen();
+        managerContext.getGuiManager().updateNavigation();
+        managerContext.getGuiManager().openWineScreen();
       }
     } else {
       usernameErrorLabel.setText("Please enter a username");

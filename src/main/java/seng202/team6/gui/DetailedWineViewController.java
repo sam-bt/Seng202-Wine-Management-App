@@ -248,7 +248,7 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   void onAddReviewButtonClick() {
-    managerContext.getGuiManager().mainController.openPopupWineReview(wineReviewsService);
+    managerContext.getGuiManager().openPopupWineReview(wineReviewsService);
   }
 
   /**
@@ -256,14 +256,19 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   void onOpenListsButtonClick() {
-    managerContext.getGuiManager().mainController.openAddToListPopup(viewedWine);
+    managerContext.getGuiManager().openAddToListPopup(viewedWine);
   }
 
   @FXML
   void onViewVineyardClick() {
     // fixme - circular back buttons idk how to fix
-    managerContext.getGuiManager().mainController.openDetailedVineyardView(wineVineyard,
-        () -> managerContext.getGuiManager().mainController.openDetailedWineView(viewedWine, null));
+    managerContext.getGuiManager().openDetailedVineyardView(wineVineyard,
+        () -> managerContext.getGuiManager().openDetailedWineView(viewedWine, null));
+  }
+
+  @FXML
+  void onCompareClick() {
+    managerContext.getGuiManager().openWineCompareScreen(viewedWine, null);
   }
 
   /**
@@ -299,8 +304,38 @@ public class DetailedWineViewController extends Controller {
 
     Rating rating = new UnmodifiableRating();
     rating.ratingProperty().bind(wineReview.ratingProperty());
-    wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel);
+
+    Button flagButton = new Button("Flag This Review");
+    flagButton.setStyle("-fx-background-color: red; -fx-border-radius: 5; -fx-text-fill: white;");
+    if (wineReview.getFlag() == 1) {
+      flagButton.setDisable(true);
+      flagButton.setText("Flagged for moderation");
+    }
+
+    flagButton.setId("flagButton");
+
+    flagButton.setOnAction(e -> {
+      flagReview(wineReview);
+      flagButton.setDisable(true);
+      flagButton.setText("Flagged for moderation");
+    });
+
+    wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel, flagButton);
+
+
+
     return wrapper;
+  }
+
+  /**
+   * Flag a wine review.
+   *
+    * @param wineReview the review to flag.
+   */
+  private void flagReview(WineReview wineReview) {
+    wineReview.setFlag(1);
+    wineReview.setSelected(false);
+    managerContext.getDatabaseManager().getWineReviewDao().updateWineReviewFlag(wineReview);
   }
 
   /**

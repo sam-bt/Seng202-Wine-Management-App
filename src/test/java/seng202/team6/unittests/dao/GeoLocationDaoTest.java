@@ -21,23 +21,47 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
 
+
+/**
+ * Unit tests for the GeoLocationDao class, which handles database operations
+ * related to geographic locations. These tests verify the functionality of adding
+ * multiple geolocations to the database and checking the existence of location names.
+ *
+ */
 public class GeoLocationDaoTest {
 
   private DatabaseManager databaseManager;
   private GeoLocationDao geoLocationDao;
 
+  /**
+   * Initializes the database manager and GeoLocationDao before each test.
+   * Disables caching for geolocation operations to ensure consistency in tests.
+   *
+   * @throws SQLException if there is an error initializing the database.
+   */
   @BeforeEach
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
     geoLocationDao = databaseManager.getGeoLocationDao();
-    geoLocationDao.setUseCache(false);
   }
 
+  /**
+   * Tears down the database after each test, cleaning up any added test data.
+   *
+   * @throws SQLException if there is an error during database teardown.
+   */
   @AfterEach
   void teardown() throws SQLException {
     databaseManager.teardown();
   }
 
+  /**
+   * Tests the functionality of adding multiple geolocations to the database.
+   * Verifies that the correct number of geolocations can be successfully retrieved
+   * by name, ensuring that locations were added correctly.
+   *
+   * @throws SQLException if there is an error adding or retrieving data from the database.
+   */
   @Test
   void testAddAllGeoLocations() throws SQLException {
     Map<String, GeoLocation> geoLocations = new HashMap<>();
@@ -59,6 +83,13 @@ public class GeoLocationDaoTest {
     assertEquals(3, existingLocationNames.size());
   }
 
+  /**
+   * Tests the retrieval of existing geolocations from the database by a set of location names.
+   * Verifies that the correct geolocations are returned for valid names and that non-existent
+   * locations are handled correctly.
+   *
+   * @throws SQLException if there is an error retrieving data from the database.
+   */
   @Test
   void testGetExistingGeoLocations() throws SQLException {
     Map<String, GeoLocation> geoLocations = new HashMap<>();
