@@ -53,7 +53,7 @@ public class WineDaoTest {
    * Tests adding a single wine to the database and verifies that the wine count is updated accordingly.
    */
   @Test
-  void testAddSingleWine() {
+  void testAddSingleWine() throws SQLException {
     addWines(1);
     assertEquals(1, wineDao.getAll().size());
   }
@@ -62,7 +62,7 @@ public class WineDaoTest {
    * Tests adding multiple wines to the database and verifies that the correct number of wines is added.
    */
   @Test
-  void testAddingMultipleWines() {
+  void testAddingMultipleWines() throws SQLException {
     addWines(20);
     assertEquals(20, wineDao.getAll().size());
   }
@@ -71,7 +71,7 @@ public class WineDaoTest {
    * Tests retrieving the total number of wines, verifying the correct count is returned.
    */
   @Test
-  void testGettingWineCount() {
+  void testGettingWineCount() throws SQLException {
     addWines(20);
     assertEquals(20, wineDao.getCount());
   }
@@ -80,7 +80,7 @@ public class WineDaoTest {
    * Tests removing all wines from the database and verifies that the wine count is zero afterward.
    */
   @Test
-  void testRemoveAllWines() {
+  void testRemoveAllWines() throws SQLException {
     addWines(10);
     wineDao.removeAll();
     assertEquals(0, wineDao.getAll().size());
@@ -91,7 +91,7 @@ public class WineDaoTest {
    * Verifies that the new wines replace the old ones correctly.
    */
   @Test
-  void testReplaceAllWines() {
+  void testReplaceAllWines() throws SQLException {
     addWines(10);
 
     List<Wine> wines = new ArrayList<>();
@@ -110,10 +110,10 @@ public class WineDaoTest {
    * Tests retrieving the wine count with filters applied (e.g., by vintage), ensuring the count matches the filter criteria.
    */
   @Test
-  void testGetCountWithFilters() {
-    Wine testWine1 = createWine(1,"wine1", "variety", "country", "region",
+  void testGetCountWithFilters() throws SQLException {
+    Wine testWine1 = createWine("wine1", "variety", "country", "region",
         "winery", "red", 2020, "description", 99, 25f, 10f);
-    Wine testWine2 = createWine(2,"wine2", "blue", "nz", "christchurch",
+    Wine testWine2 = createWine("wine2", "blue", "nz", "christchurch",
         "bob's wine", "red", 1999, "na", 99, 25f, 10f);
 
     WineFilters testFilters = new WineFilters();
@@ -130,10 +130,10 @@ public class WineDaoTest {
    * Verifies that the wines returned match the filter criteria.
    */
   @Test
-  void testGetAllInRangeWithFilters() {
-    Wine testWine1 = createWine(1,"wine1", "variety", "country", "region",
+  void testGetAllInRangeWithFilters() throws SQLException {
+    Wine testWine1 = createWine("wine1", "variety", "country", "region",
         "winery", "red", 2020, "description", 99, 25f, 10f);
-    Wine testWine2 = createWine(2,"wine2", "blue", "nz", "christchurch",
+    Wine testWine2 = createWine("wine2", "blue", "nz", "christchurch",
         "bob's wine", "red", 1999, "na", 99, 25f, 10f);
 
     WineFilters testFilters = new WineFilters();
@@ -152,10 +152,10 @@ public class WineDaoTest {
    * Verifies that the title change is correctly persisted.
    */
   @Test
-  void testTitleUpdatesInDatabase() {
+  void testTitleUpdatesInDatabase() throws SQLException {
     String initial = "Initial";
     String changed = "Changed";
-    Wine initialWine = createWine(1, initial, "blue", "nz", "christchurch",
+    Wine initialWine = createWine(initial, "blue", "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f);
     initialWine.setTitle(changed);
 
@@ -168,10 +168,10 @@ public class WineDaoTest {
    * Verifies that the variety change is correctly persisted.
    */
   @Test
-  void testVarietyUpdatesInDatabase() {
+  void testVarietyUpdatesInDatabase() throws SQLException {
     String initial = "Initial";
     String changed = "Changed";
-    Wine initialWine = createWine(1,"wine", initial, "nz", "christchurch",
+    Wine initialWine = createWine("wine", initial, "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f);
     initialWine.setVariety(changed);
 
@@ -184,10 +184,10 @@ public class WineDaoTest {
    * Verifies that the country change is correctly persisted.
    */
   @Test
-  void testCountryUpdatesInDatabase() {
+  void testCountryUpdatesInDatabase() throws SQLException {
     String initial = "Initial";
     String changed = "Changed";
-    Wine initialWine = createWine(1,"wine", "variety", initial, "region",
+    Wine initialWine = createWine("wine", "variety", initial, "region",
         "winery", "red", 2011, "description", 99, 25f, 10f);
     initialWine.setCountry(changed);
 
@@ -200,10 +200,10 @@ public class WineDaoTest {
    * Verifies that the region change is correctly persisted.
    */
   @Test
-  void testRegionUpdatesInDatabase() {
+  void testRegionUpdatesInDatabase() throws SQLException {
     String initial = "Initial";
     String changed = "Changed";
-    Wine initialWine = createWine(1,"wine", "variety", "country", initial,
+    Wine initialWine = createWine("wine", "variety", "country", initial,
         "winery", "red", 2011, "description", 99, 25f, 10f);
     initialWine.setRegion(changed);
 
@@ -217,10 +217,10 @@ public class WineDaoTest {
    * Verifies that the winery change is correctly persisted.
    */
   @Test
-  void testWineryUpdatesInDatabase() {
+  void testWineryUpdatesInDatabase() throws SQLException {
     String initial = "Initial";
     String changed = "Changed";
-    Wine initialWine = createWine(1,"wine", "variety", "country", "region",
+    Wine initialWine = createWine("wine", "variety", "country", "region",
         initial, "red", 2011, "description", 99, 25f, 10f);
     initialWine.setWinery(changed);
 
@@ -233,10 +233,10 @@ public class WineDaoTest {
    * Verifies that the color change is correctly persisted.
    */
   @Test
-  void testColorUpdatesInDatabase() {
+  void testColorUpdatesInDatabase() throws SQLException {
     String initial = "Red";
     String changed = "White";
-    Wine initialWine = createWine(1,"wine", "variety", "country", "region",
+    Wine initialWine = createWine("wine", "variety", "country", "region",
         "winery", initial, 2011, "description", 99, 25f, 10f);
     initialWine.setColor(changed);
 
@@ -249,10 +249,10 @@ public class WineDaoTest {
    * Verifies that the vintage change is correctly persisted.
    */
   @Test
-  void testVintageUpdatesInDatabase() {
+  void testVintageUpdatesInDatabase() throws SQLException {
     int initial = 2011;
     int changed = 2015;
-    Wine initialWine = createWine(1,"wine", "variety", "country", "region",
+    Wine initialWine = createWine("wine", "variety", "country", "region",
         "winery", "red", initial, "description", 99, 25f, 10f);
     initialWine.setVintage(changed);
 
@@ -265,10 +265,10 @@ public class WineDaoTest {
    * Verifies that the description change is correctly persisted.
    */
   @Test
-  void testDescriptionUpdatesInDatabase() {
+  void testDescriptionUpdatesInDatabase() throws SQLException {
     String initial = "Initial description";
     String changed = "Changed description";
-    Wine initialWine = createWine(1,"wine", "variety", "country", "region",
+    Wine initialWine = createWine("wine", "variety", "country", "region",
         "winery", "red", 2011, initial, 99, 25f, 10f);
     initialWine.setDescription(changed);
 
@@ -281,10 +281,10 @@ public class WineDaoTest {
    * Verifies that the score percent change is correctly persisted.
    */
   @Test
-  void testScorePercentUpdatesInDatabase() {
+  void testScorePercentUpdatesInDatabase() throws SQLException {
     int initial = 90;
     int changed = 95;
-    Wine initialWine = createWine(1,"wine", "variety", "country", "region",
+    Wine initialWine = createWine("wine", "variety", "country", "region",
         "winery", "red", 2011, "description", initial, 25f, 10f);
     initialWine.setScorePercent(changed);
 
@@ -297,10 +297,10 @@ public class WineDaoTest {
    * Verifies that the ABV change is correctly persisted.
    */
   @Test
-  void testAbvUpdatesInDatabase() {
+  void testAbvUpdatesInDatabase() throws SQLException {
     float initial = 13.5f;
     float changed = 14.0f;
-    Wine initialWine = createWine(1,"wine", "variety", "country", "region",
+    Wine initialWine = createWine("wine", "variety", "country", "region",
         "winery", "red", 2011, "description", 99, initial, 10f);
     initialWine.setAbv(changed);
 
@@ -314,10 +314,10 @@ public class WineDaoTest {
    * Verifies that the price change is correctly persisted.
    */
   @Test
-  void testPriceUpdatesInDatabase() {
+  void testPriceUpdatesInDatabase() throws SQLException {
     float initial = 25.99f;
     float changed = 29.99f;
-    Wine initialWine = createWine(1,"wine", "variety", "country", "region",
+    Wine initialWine = createWine("wine", "variety", "country", "region",
         "winery", "red", 2011, "description", 99, 13.5f, initial);
     initialWine.setPrice(changed);
 
@@ -329,14 +329,14 @@ public class WineDaoTest {
    * Test to check if the unique updater works as expected for the country field
    */
   @Test
-  public void testUpdateUniquesForCountry() {
+  public void testUpdateUniquesForCountry() throws SQLException {
 
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
     Set<String> initialUniques = wineDataStatService.getUniqueCountries();
 
     assertFalse(initialUniques.contains("Namibia"));
 
-    Wine testWine = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine testWine = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2011, "description", 99, 13.5f, 10);
 
     wineDao.updateUniques();
@@ -351,14 +351,14 @@ public class WineDaoTest {
    * Test to check if the unique updater works as expected for the minimum vintage field
    */
   @Test
-  public void testUpdateUniquesForMinVintage() {
+  public void testUpdateUniquesForMinVintage() throws SQLException {
 
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
 
-    Wine initialWine1= createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine1= createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2011, "description", 99, 13.5f, 10);
 
-    Wine initialWine2 = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine2 = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2002, "description", 99, 13.5f, 10);
 
 
@@ -368,7 +368,7 @@ public class WineDaoTest {
 
     assertEquals(initialMinVintage, 2002);
 
-    Wine finalWine = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine finalWine = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 1999, "description", 99, 13.5f, 10);
 
     wineDao.updateUniques();
@@ -383,14 +383,14 @@ public class WineDaoTest {
    * Test to check if the unique updater works as expected for the maximum vintage field
    */
   @Test
-  public void testUpdateUniquesForMaxVintage() {
+  public void testUpdateUniquesForMaxVintage() throws SQLException {
 
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
 
-    Wine initialWine1= createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine1= createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2011, "description", 99, 13.5f, 10);
 
-    Wine initialWine2 = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine2 = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2002, "description", 99, 13.5f, 10);
 
 
@@ -400,7 +400,7 @@ public class WineDaoTest {
 
     assertEquals(initialMaxVintage, 2011);
 
-    Wine finalWine = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine finalWine = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2024, "description", 99, 13.5f, 10);
 
     wineDao.updateUniques();
@@ -415,14 +415,14 @@ public class WineDaoTest {
    * Test to check if the unique updater works as expected for the minimum score field
    */
   @Test
-  public void testUpdateUniquesForMinScore() {
+  public void testUpdateUniquesForMinScore() throws SQLException {
 
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
 
-    Wine initialWine1= createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine1= createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2011, "description", 70, 13.5f, 10);
 
-    Wine initialWine2 = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine2 = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2002, "description", 30, 13.5f, 10);
 
 
@@ -432,7 +432,7 @@ public class WineDaoTest {
 
     assertEquals(initialMinScore, 30);
 
-    Wine finalWine = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine finalWine = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2024, "description", 5, 13.5f, 10);
 
     wineDao.updateUniques();
@@ -447,14 +447,14 @@ public class WineDaoTest {
    * Test to check if the unique updater works as expected for the maximum score field
    */
   @Test
-  public void testUpdateUniquesForMaxScore() {
+  public void testUpdateUniquesForMaxScore() throws SQLException {
 
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
 
-    Wine initialWine1= createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine1= createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2011, "description", 70, 13.5f, 10);
 
-    Wine initialWine2 = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine2 = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2002, "description", 10, 13.5f, 10);
 
 
@@ -464,7 +464,7 @@ public class WineDaoTest {
 
     assertEquals(initialMaxScore, 70);
 
-    Wine finalWine = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine finalWine = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2024, "description", 99, 13.5f, 10);
 
     wineDao.updateUniques();
@@ -479,14 +479,14 @@ public class WineDaoTest {
    * Test to check if the unique updater works as expected for the minimum abv field
    */
   @Test
-  public void testUpdateUniquesForMinAbv() {
+  public void testUpdateUniquesForMinAbv() throws SQLException {
 
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
 
-    Wine initialWine1= createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine1= createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2011, "description", 70, 14.0f, 10);
 
-    Wine initialWine2 = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine2 = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2002, "description", 30, 13.5f, 10);
 
 
@@ -496,7 +496,7 @@ public class WineDaoTest {
 
     assertEquals(initialMinAbv, 13.5f);
 
-    Wine finalWine = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine finalWine = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2024, "description", 5, 12.5f, 10);
 
     wineDao.updateUniques();
@@ -511,14 +511,14 @@ public class WineDaoTest {
    * Test to check if the unique updater works as expected for the maximum abv field
    */
   @Test
-  public void testUpdateUniquesForMaxAbv() {
+  public void testUpdateUniquesForMaxAbv() throws SQLException {
 
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
 
-    Wine initialWine1= createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine1= createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2011, "description", 70, 13.2f, 10);
 
-    Wine initialWine2 = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine2 = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2002, "description", 30, 13.5f, 10);
 
 
@@ -528,7 +528,7 @@ public class WineDaoTest {
 
     assertEquals(initialMaxAbv, 13.5);
 
-    Wine finalWine = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine finalWine = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2024, "description", 5, 14.0f, 10);
 
     wineDao.updateUniques();
@@ -543,15 +543,15 @@ public class WineDaoTest {
    * Test to check if the unique updater works as expected for the minimum price field
    */
   @Test
-  public void testUpdateUniquesForMinPrice() {
+  public void testUpdateUniquesForMinPrice() throws SQLException {
 
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
 
-    Wine initialWine1= createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine1= createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2011, "description", 70, 13.2f, 100f);
-
-    Wine initialWine2 = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine2 = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2002, "description", 30, 13.5f, 50f);
+
 
 
     wineDao.updateUniques();
@@ -560,7 +560,7 @@ public class WineDaoTest {
 
     assertEquals(initialMinPrice, 50f);
 
-    Wine finalWine = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine finalWine = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2024, "description", 5, 14.0f, 5f);
 
     wineDao.updateUniques();
@@ -575,14 +575,14 @@ public class WineDaoTest {
   * Test to check if the unique updater works as expected for the maximum price field
   */
   @Test
-  public void testUpdateUniquesForMaxPrice() {
+  public void testUpdateUniquesForMaxPrice() throws SQLException {
 
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
 
-    Wine initialWine1= createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine1= createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2011, "description", 70, 13.2f, 5);
 
-    Wine initialWine2 = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine initialWine2 = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2002, "description", 30, 13.5f, 100);
 
 
@@ -592,7 +592,7 @@ public class WineDaoTest {
 
     assertEquals(initialMaxPrice, 100);
 
-    Wine finalWine = createWine(1,"wine", "variety", "Namibia", "region",
+    Wine finalWine = createWine("wine", "variety", "Namibia", "region",
         "winery", "red", 2024, "description", 5, 14.0f, 350);
 
     wineDao.updateUniques();
@@ -606,7 +606,6 @@ public class WineDaoTest {
   /**
    * Helper method to create a new Wine object with the given properties and add it to the database.
    *
-   * @param key the wine's unique key or ID.
    * @param title the wine's title.
    * @param variety the variety of the wine.
    * @param country the country of origin.
@@ -621,7 +620,6 @@ public class WineDaoTest {
    * @return the Wine object that was added to the database.
    */
   private Wine createWine(
-      int key,
       String title,
       String variety,
       String country,
@@ -632,11 +630,11 @@ public class WineDaoTest {
       String description,
       int scorePercent,
       float abv,
-      float price) {
-    Wine wine = new Wine(key, title, variety, country, region, winery, color, vintage, description,
+      float price) throws SQLException {
+    Wine wine = new Wine(-1, title, variety, country, region, winery, color, vintage, description,
         scorePercent, abv, price, null, 0.0);
     wineDao.add(wine);
-    return wineDao.get(key);
+    return wineDao.get(wine.getKey());
   }
 
   /**
@@ -644,7 +642,7 @@ public class WineDaoTest {
    *
    * @param num the number of wines to add.
    */
-  private void addWines(int num) {
+  private void addWines(int num) throws SQLException {
     List<Wine> wines = new ArrayList<>();
     for (int i = 0; i < num; i++) {
       wines.add(

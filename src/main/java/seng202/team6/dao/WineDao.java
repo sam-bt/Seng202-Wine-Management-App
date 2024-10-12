@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -291,55 +293,20 @@ public class WineDao extends Dao {
    *
    * @param wines The list of wines to be added to the table
    */
-  public void replaceAll(List<Wine> wines) {
+  public void replaceAll(List<Wine> wines) throws SQLException {
     removeAll();
     addAll(wines);
   }
 
-  /**
-   * Adds a wine to the database.
-   *
-   * @param wine wine
-   */
-  public void add(Wine wine) {
-    Timer timer = new Timer();
-    String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    try (PreparedStatement statement = connection.prepareStatement(sql,
-        Statement.RETURN_GENERATED_KEYS)) {
-      setWineParameters(statement, wine, 1);
-      statement.executeUpdate();
-
-      try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-        if (generatedKeys.next()) {
-          wine.setKey(generatedKeys.getLong(1));
-          log.info("Successfully added wine with ID {} in {}ms", wine.getKey(),
-              timer.currentOffsetMilliseconds());
-          if (useCache()) {
-            wineCache.addObject(wine.getKey(), wine);
-          }
-          bindUpdater(wine);
-        } else {
-          log.info("Could not add wine with ID {} in {}ms", wine.getKey(),
-              timer.currentOffsetMilliseconds());
-        }
-      }
-    } catch (SQLException error) {
-      log.error("Failed to add a batch of wines", error);
-    }
-  }
 
   /**
-   * Adds a list of wines to the WINE table in batch mode to improve performance. The batch is
-   * executed every 2048 wines to prevent excessive memory usage.
-   * <p>
-   * SQL Lite does not support batch generated key returning so all the wines in the specified list
-   * are considered invalid. After calling this method, you must then use getAll or getAllInRange in
-   * order to fetch new wine objects with valid ID's.
-   * </p>
+   * Adds a list of wines to the database.
    *
-   * @param wines The list of wines to be added to the table
+   * @param wines list of wines
+   * @throws SQLException sql exception
    */
-  public void addAll(List<Wine> wines) {
+  private void addList(List<Wine> wines) throws SQLException {
+
     Timer timer = new Timer();
     String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try {
@@ -348,31 +315,51 @@ public class WineDao extends Dao {
       log.error("Failed to disable database auto committing", error);
     }
 
-    int rowsAffected = 0;
-    int numberOfBatches = 1;
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       for (int i = 0; i < wines.size(); i++) {
+        if (wines.get(i).getKey() != -1) {
+          log.error("Adding wine that is already in the database");
+          return;
+        }
         setWineParameters(statement, wines.get(i), 1);
         statement.addBatch();
-
-        if (i > 0 && i % 2048 == 0) {
-          for (int rowsAffectedInBatch : statement.executeBatch()) {
-            rowsAffected += rowsAffectedInBatch;
-          }
-          numberOfBatches++;
-        }
       }
-      for (int rowsAffectedInBatch : statement.executeBatch()) {
-        rowsAffected += rowsAffectedInBatch;
+      statement.executeBatch();
+      ResultSet keys = statement.getGeneratedKeys();
+      int i = 0;
+      while (keys.next()) {
+        wines.get(i++).setKey(keys.getLong(1));
       }
       connection.commit();
-      connection.setAutoCommit(true);
     } catch (SQLException error) {
       log.error("Failed to add a batch of wines", error);
       return;
+    } finally {
+      connection.setAutoCommit(true);
     }
-    log.info("Successfully added {} out of {} wines using {} batches in {}ms", rowsAffected,
-        wines.size(), numberOfBatches, timer.currentOffsetMilliseconds());
+    log.info("Successfully {} wines in {}ms", wines.size(), timer.currentOffsetMilliseconds());
+
+  }
+
+  /**
+   * Adds a wine to the database.
+   *
+   * @param wine wine
+   */
+  public void add(Wine wine) throws SQLException {
+    addList(Collections.singletonList(wine));
+  }
+
+  /**
+   * Adds a list of wines to the WINE table in batch mode to improve performance. The batch is
+   * executed every 2048 wines to prevent excessive memory usage.
+   *
+   * @param wines The list of wines to be added to the table
+   */
+  public void addAll(List<Wine> wines) throws SQLException {
+    for (int i = 0; i < wines.size(); i += 2048) {
+      addList(wines.subList(i, Math.min(wines.size(), i + 2048)));
+    }
   }
 
   /**

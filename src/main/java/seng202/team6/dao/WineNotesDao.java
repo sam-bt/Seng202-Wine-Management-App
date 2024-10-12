@@ -104,7 +104,7 @@ public class WineNotesDao extends Dao {
    * @param wine The wine the note belongs to
    * @return The note object belonging to the specified User and Wine
    */
-  public Note get(User user, Wine wine) {
+  public Note getOrCreate(User user, Wine wine) {
     Timer timer = new Timer();
     String sql = "SELECT NOTES.ID AS note_id, NOTES.* "
         + "FROM NOTES "

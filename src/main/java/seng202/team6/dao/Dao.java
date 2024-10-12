@@ -56,7 +56,7 @@ public abstract class Dao {
    * @return true if caching is enabled, otherwise false
    */
   public boolean useCache() {
-    return useCache;
+    return true;
   }
 
   /**

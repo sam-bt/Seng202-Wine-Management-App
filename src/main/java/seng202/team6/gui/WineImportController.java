@@ -1,6 +1,7 @@
 package seng202.team6.gui;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -154,11 +155,15 @@ public class WineImportController extends Controller {
     });
     log.info("Successfully parsed {} out of {} wines", parsedWines.size(),
         currentFileRows.size());
+    try {
 
-    if (replace) {
-      managerContext.getDatabaseManager().getWineDao().replaceAll(parsedWines);
-    } else {
-      managerContext.getDatabaseManager().getWineDao().addAll(parsedWines);
+      if (replace) {
+        managerContext.getDatabaseManager().getWineDao().replaceAll(parsedWines);
+      } else {
+        managerContext.getDatabaseManager().getWineDao().addAll(parsedWines);
+      }
+    } catch (SQLException exception) {
+      log.error("SQL error when replacing wines");
     }
     reset();
   }

@@ -1,6 +1,7 @@
 package seng202.team6.unittests.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
@@ -61,11 +62,11 @@ public class WineNoteDaoTest {
   }
 
   /**
-   * Tests that if no note exists for a wine, an empty note is returned.
+   * Tests that if no note exists for a wine, null is returned
    */
   @Test
-  void testNoNoteReturnsBlank() {
-    Note note = wineNotesDao.get(user, wine);
+  void testNoNoteReturnsEmpty() {
+    Note note = wineNotesDao.getOrCreate(user, wine);
     assertTrue(note.getNote().isEmpty());
   }
 
@@ -74,7 +75,7 @@ public class WineNoteDaoTest {
    */
   @Test
   void testNoNoteDoesNotAddToDatabase() {
-    Note note = wineNotesDao.get(user, wine);
+    Note note = wineNotesDao.getOrCreate(user, wine);
     assertTrue(wineNotesDao.getAll().isEmpty());
   }
 
@@ -83,10 +84,10 @@ public class WineNoteDaoTest {
    */
   @Test
   void testNoNoteModifyAddsToDatabase() {
-    Note note = wineNotesDao.get(user, wine);
+    Note note = wineNotesDao.getOrCreate(user, wine);
     note.setNote("MyNote");
 
-    Note newNote = wineNotesDao.get(user, wine);
+    Note newNote = wineNotesDao.getOrCreate(user, wine);
     assertEquals(newNote.getNote(), "MyNote");
   }
 
@@ -95,10 +96,10 @@ public class WineNoteDaoTest {
    */
   @Test
   void testExistingNoteMadeBlankDeletesFromDatabase() {
-    Note note = wineNotesDao.get(user, wine);
-    note.setNote("MyNote");
 
-    Note newNote = wineNotesDao.get(user, wine);
+    wineNotesDao.getOrCreate(user, wine).setNote("Note");
+
+    Note newNote = wineNotesDao.getOrCreate(user, wine);
     newNote.setNote("");
     assertTrue(wineNotesDao.getAll().isEmpty());
   }
@@ -108,13 +109,13 @@ public class WineNoteDaoTest {
    */
   @Test
   void testExistingNoteModifiedUpdatesDatabase() {
-    Note note = wineNotesDao.get(user, wine);
+    Note note = wineNotesDao.getOrCreate(user, wine);
     note.setNote("MyNote");
 
-    Note newNote = wineNotesDao.get(user, wine);
+    Note newNote = wineNotesDao.getOrCreate(user, wine);
     newNote.setNote("MyNewNote");
 
-    Note newUpdatedNote = wineNotesDao.get(user, wine);
+    Note newUpdatedNote = wineNotesDao.getOrCreate(user, wine);
     ;
     assertEquals("MyNewNote", newUpdatedNote.getNote());
   }
@@ -123,15 +124,15 @@ public class WineNoteDaoTest {
    * Tests that all notes for a user can be retrieved correctly.
    */
   @Test
-  void testGetAllNotesForUser() {
+  void testGetAllNotesForUser() throws SQLException {
 
-    Wine testWine = new Wine(10, "wine", "pinot gris", "nz", "christchurch",
+    Wine testWine = new Wine(-1, "wine", "pinot gris", "nz", "christchurch",
         "bob's wine", "red", 2011, "na", 99, 25f, 10f,
         new GeoLocation(10,10), 5.0);
     wineDao.add(testWine);
 
-    Note note1 = wineNotesDao.get(user, wine);
-    Note note2 = wineNotesDao.get(user, testWine);
+    Note note1 = wineNotesDao.getOrCreate(user, wine);
+    Note note2 = wineNotesDao.getOrCreate(user, testWine);
 
     note1.setNote("Testnote1");
     note2.setNote("Testnote2");
