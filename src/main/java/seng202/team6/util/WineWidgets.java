@@ -1,7 +1,5 @@
 package seng202.team6.util;
 
-import java.util.HashMap;
-import java.util.Map;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -11,19 +9,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.Wine;
 
 /**
  * Reusable wine GUI components.
  */
+// fixme - this class is only used in consumption calculator so delete when that is removed
 public class WineWidgets {
-
-  private static final Logger log = LogManager.getLogger(WineWidgets.class);
-  private static WineImages wineImages = new WineImages();
-
   /**
    * Creates a card for a wine.
    *
@@ -34,14 +26,7 @@ public class WineWidgets {
     wrapper.setPadding(new Insets(10));
     wrapper.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
 
-    String varietySource = wine.getVariety();
-    if (varietySource.length() == 0) {
-      varietySource = wine.getColor();
-      log.info("Using Colour field for wine colour");
-    } else {
-      log.info("Using Variety field for colour");
-    }
-    Image wineImage = wineImages.getImageByVariety(varietySource);
+    Image wineImage = WineImages.getImage(wine);
     ImageView imageView = new ImageView(wineImage);
     imageView.setFitHeight(100);
     imageView.setPreserveRatio(true);
@@ -58,6 +43,4 @@ public class WineWidgets {
     wrapper.getChildren().add(header);
     return wrapper;
   }
-
-
 }

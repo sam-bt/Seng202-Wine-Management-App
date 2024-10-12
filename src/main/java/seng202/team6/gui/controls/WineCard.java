@@ -19,9 +19,6 @@ import seng202.team6.util.WineImages;
  * A class that represents a card for displaying wine information.
  */
 public class WineCard extends Card {
-
-  private WineImages wineImages = new WineImages();
-
   /**
    * Constructs a WineCard to display the specified wine's details.
    *
@@ -34,11 +31,7 @@ public class WineCard extends Card {
       DoubleProperty horizontalGap, Wine wine, boolean showReview) {
     super(containerWidth, horizontalGap);
 
-    String varietySource = wine.getVariety();
-    if (varietySource.length() == 0) {
-      varietySource = wine.getColor();
-    }
-    Image wineImage = wineImages.getImageByVariety(varietySource);
+    Image wineImage = WineImages.getImage(wine);
     ImageView imageView = new ImageView(wineImage);
     imageView.setFitHeight(100);
     imageView.setPreserveRatio(true);

@@ -38,7 +38,6 @@ import seng202.team6.util.WineImages;
  */
 public class WineCompareController extends Controller {
 
-  private WineImages wineImages = new WineImages();
   @FXML
   private VBox leftWineContainer;
   @FXML
@@ -175,11 +174,7 @@ public class WineCompareController extends Controller {
       header.getRowConstraints().add(new RowConstraints());
       header.getColumnConstraints().addAll(firstColumn, secondColumn, thirdColumn);
 
-      String varietySource = wine.getVariety();
-      if (varietySource.length() == 0) {
-        varietySource = wine.getColor();
-      }
-      Image wineImage = wineImages.getImageByVariety(varietySource);
+      Image wineImage = WineImages.getImage(wine);
       ImageView wineImageView = new ImageView(wineImage);
       wineImageView.setFitHeight(150);
       wineImageView.setFitWidth(150);

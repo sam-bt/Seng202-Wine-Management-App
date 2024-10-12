@@ -44,7 +44,6 @@ import seng202.team6.util.WineImages;
 public class DetailedWineViewController extends Controller {
 
   private static final Logger log = LogManager.getLogger(DetailedWineViewController.class);
-  private static WineImages wineImages = new WineImages();
   private final WineReviewsService wineReviewsService;
   private final WineNoteService wineNoteService;
   private final Wine viewedWine;
@@ -164,14 +163,7 @@ public class DetailedWineViewController extends Controller {
       buttonsContainer.getChildren().remove(openListsButton);
     }
 
-    String varietySource = viewedWine.getVariety();
-    if (varietySource.length() == 0) {
-      varietySource = viewedWine.getColor();
-      log.info("Using Colour field for wine colour");
-    } else {
-      log.info("Using Variety field for colour");
-    }
-    Image wineImage = wineImages.getImageByVariety(varietySource);
+    Image wineImage = WineImages.getImage(viewedWine);
     imageView.setImage(wineImage);
 
     ratingStars.setUpdateOnHover(false);

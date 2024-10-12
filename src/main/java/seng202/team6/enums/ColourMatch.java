@@ -4,14 +4,13 @@ package seng202.team6.enums;
  * This enum is used to match wine varieties to their colours.
  */
 public enum ColourMatch {
-
-  //=========| STANDARD COLOURS |==========
-  RED_WINE("red"),
-  WHITE_WINE("white"),
-  ROSE_WINE("rose"),
+  // standard colours
+  RED("red"),
+  WHITE("white"),
+  ROSE("rose"),
   DEFAULT("default"),
 
-  //=========| The Top 20, less any that have the colour in the name |==========
+  // the top 20
   PINOT_GRIS("white"),
   PINOT_NOIR("red"),
   CHARDONNAY("white"),
@@ -27,14 +26,33 @@ public enum ColourMatch {
   SPARKLING("white"),
   TEMPRANILLO("red");
 
+  private final String variety;
   private final String colour;
 
   ColourMatch(String colour) {
+    this.variety = name().toLowerCase().replace("_", "");
     this.colour = colour;
+  }
+
+  public String getVariety() {
+    return variety;
   }
 
   public String getColour() {
     return colour;
   }
 
+  public static ColourMatch match(String variety) {
+    variety = variety.toLowerCase();
+    // special case for rosé which contains special character
+    if (variety.contains("rosé")) {
+      return ROSE;
+    }
+    for (ColourMatch value : values()) {
+      if (variety.contains(value.getVariety())) {
+        return value;
+      }
+    }
+    return null;
+  }
 }
