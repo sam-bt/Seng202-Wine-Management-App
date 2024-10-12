@@ -213,17 +213,19 @@ public class TourPlanningController extends Controller {
     }
 
     mapController.clearWineMarkers();
-    List<GeoLocation> vineyardLocations = currentTourPlanningService.getVineyards().stream()
-        .peek(vineyard -> mapController.addVineyardMaker(vineyard, false))
-        .map(Vineyard::getGeoLocation)
-        .toList();
-    String geometry = geolocationResolver.resolveRoute(vineyardLocations);
-    if (geometry == null) {
-      showCalculatingRouteError();
-      return;
-    }
-    mapController.addRoute(geometry);
-    tabPane.getSelectionModel().select(viewTourTab);
+    managerContext.getGuiManager().showLoadingIndicator(() -> {
+      List<GeoLocation> vineyardLocations = currentTourPlanningService.getVineyards().stream()
+          .peek(vineyard -> mapController.addVineyardMaker(vineyard, false))
+          .map(Vineyard::getGeoLocation)
+          .toList();
+      String geometry = geolocationResolver.resolveRoute(vineyardLocations);
+      if (geometry == null) {
+        showCalculatingRouteError();
+        return;
+      }
+      mapController.addRoute(geometry);
+      tabPane.getSelectionModel().select(viewTourTab);
+    });
   }
 
   /**

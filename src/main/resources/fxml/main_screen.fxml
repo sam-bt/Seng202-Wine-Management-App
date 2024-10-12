@@ -21,95 +21,95 @@
     <AnchorPane fx:id="pageContent" layoutX="15.0" layoutY="98.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" />
     <GridPane gridLinesVisible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="75.0" prefWidth="1370.0" styleClass="nav-background" stylesheets="@../css/nav_bar.css">
       <children>
-            <HBox alignment="CENTER" prefHeight="75.0" prefWidth="1467.0" GridPane.columnIndex="1">
-               <children>
-                  <MenuBar fx:id="menuBar" prefHeight="83.0" stylesheets="@../css/nav_bar.css">
-                     <menus>
-                        <Menu mnemonicParsing="false">
-                           <graphic>
-                              <VBox fx:id="winesMenuGraphic" alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
-                                 <children>
-                                    <Label text="Wines ▼" />
-                                 </children>
-                              </VBox>
-                           </graphic>
-                        </Menu>
-                        <Menu fx:id="vineyardsMenu" mnemonicParsing="false">
-                           <graphic>
-                              <VBox fx:id="vineyardsButton" alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
-                                 <children>
-                                    <Label text="Vineyards" />
-                                 </children>
-                              </VBox>
-                           </graphic>
-                        </Menu>
-                        <Menu fx:id="vineyardsDropdownMenu" mnemonicParsing="false">
-                           <graphic>
-                              <VBox fx:id="vineyardsMenuGraphic" alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
-                                 <children>
-                                    <Label text="Vineyards ▼" />
-                                 </children>
-                              </VBox>
-                           </graphic>
-                        </Menu>
-                        <Menu mnemonicParsing="false">
-                           <graphic>
-                              <VBox fx:id="socialButton" alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
-                                 <children>
-                                    <Label text="Social" />
-                                 </children>
-                              </VBox>
-                           </graphic>
-                        </Menu>
-                        <Menu fx:id="profileMenu" mnemonicParsing="false">
-                           <graphic>
-                              <VBox fx:id="profileMenuGraphic" alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
-                                 <children>
-                                    <Label text="Profile ▼" />
-                                 </children>
-                              </VBox>
-                           </graphic>
-                        </Menu>
-                        <Menu fx:id="adminMenu" mnemonicParsing="false">
-                           <graphic>
-                              <VBox fx:id="adminButton" alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
-                                 <children>
-                                    <Label text="Admin" />
-                                 </children>
-                              </VBox>
-                           </graphic>
-                        </Menu>
-                     </menus>
-                  </MenuBar>
-               </children>
-            </HBox>
-            <BorderPane prefHeight="200.0" prefWidth="200.0">
-               <center>
+        <HBox alignment="CENTER" prefHeight="75.0" prefWidth="1467.0" GridPane.columnIndex="1">
+          <children>
+            <MenuBar fx:id="menuBar" prefHeight="83.0" stylesheets="@../css/nav_bar.css">
+              <menus>
+                <Menu mnemonicParsing="false">
+                  <graphic>
+                    <VBox fx:id="winesMenuGraphic" alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
+                      <children>
+                        <Label text="Wines ▼" />
+                      </children>
+                    </VBox>
+                  </graphic>
+                </Menu>
+                <Menu fx:id="vineyardsMenu" mnemonicParsing="false">
+                  <graphic>
+                    <VBox fx:id="vineyardsButton" alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
+                      <children>
+                        <Label text="Vineyards" />
+                      </children>
+                    </VBox>
+                  </graphic>
+                </Menu>
+                <Menu fx:id="vineyardsDropdownMenu" mnemonicParsing="false">
+                  <graphic>
+                    <VBox fx:id="vineyardsMenuGraphic" alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
+                      <children>
+                        <Label text="Vineyards ▼" />
+                      </children>
+                    </VBox>
+                  </graphic>
+                </Menu>
+                <Menu mnemonicParsing="false">
+                  <graphic>
+                    <VBox fx:id="socialButton" alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
+                      <children>
+                        <Label text="Social" />
+                      </children>
+                    </VBox>
+                  </graphic>
+                </Menu>
+                <Menu fx:id="profileMenu" mnemonicParsing="false">
+                  <graphic>
+                    <VBox fx:id="profileMenuGraphic" alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
+                      <children>
+                        <Label text="Profile ▼" />
+                      </children>
+                    </VBox>
+                  </graphic>
+                </Menu>
+                <Menu fx:id="adminMenu" mnemonicParsing="false">
+                  <graphic>
+                    <VBox fx:id="adminButton" alignment="CENTER" prefHeight="200.0" prefWidth="150.0">
+                      <children>
+                        <Label text="Admin" />
+                      </children>
+                    </VBox>
+                  </graphic>
+                </Menu>
+              </menus>
+            </MenuBar>
+          </children>
+        </HBox>
+        <BorderPane prefHeight="200.0" prefWidth="200.0">
+          <center>
             <ImageView fitHeight="68.0" fitWidth="238.0" BorderPane.alignment="CENTER">
               <image>
                 <Image url="@../logo-white.png" />
               </image>
             </ImageView>
-               </center>
-            </BorderPane>
-            <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
-               <center>
-                  <HBox alignment="CENTER" fillHeight="false" spacing="10.0" BorderPane.alignment="CENTER">
-                     <children>
-                  <Button fx:id="loginButton" focusTraversable="false" minWidth="75.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="131.0" styleClass="secondary-button" text="Login">
-                    <font>
-                      <Font name="System Bold" size="20.0" />
-                    </font>
-                  </Button>
-                  <Button fx:id="registerButton" focusTraversable="false" minWidth="75.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="131.0" styleClass="secondary-button" text="Register">
-                    <font>
-                      <Font name="System Bold" size="20.0" />
-                    </font>
-                  </Button>
-                     </children>
-                  </HBox>
-               </center>
-            </BorderPane>
+          </center>
+        </BorderPane>
+        <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+          <center>
+            <HBox alignment="CENTER" fillHeight="false" spacing="10.0" BorderPane.alignment="CENTER">
+              <children>
+                <Button fx:id="loginButton" focusTraversable="false" minWidth="75.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="131.0" styleClass="secondary-button" text="Login">
+                  <font>
+                    <Font name="System Bold" size="20.0" />
+                  </font>
+                </Button>
+                <Button fx:id="registerButton" focusTraversable="false" minWidth="75.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="131.0" styleClass="secondary-button" text="Register">
+                  <font>
+                    <Font name="System Bold" size="20.0" />
+                  </font>
+                </Button>
+              </children>
+            </HBox>
+          </center>
+        </BorderPane>
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="NEVER" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
@@ -120,63 +120,72 @@
         <RowConstraints maxHeight="75.0" minHeight="75.0" prefHeight="75.0" vgrow="SOMETIMES" />
       </rowConstraints>
     </GridPane>
+    <VBox fx:id="vineyardsSubmenuContainer" layoutX="300.0" layoutY="200.0" styleClass="sub-menu" stylesheets="@../css/nav_bar.css">
+      <children>
+        <HBox fx:id="viewVineyardsButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
+          <children>
+            <Label text="View" />
+          </children>
+        </HBox>
+        <HBox fx:id="planTourButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
+          <children>
+            <Label text="Plan a Tour" />
+          </children>
+        </HBox>
+      </children>
+      <opaqueInsets>
+        <Insets />
+      </opaqueInsets>
+    </VBox>
+    <VBox fx:id="profileSubmenuContainer" layoutX="100.0" layoutY="200.0" styleClass="sub-menu" stylesheets="@../css/nav_bar.css">
+      <children>
+        <HBox fx:id="listsButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
+          <children>
+            <Label text="Lists" />
+          </children>
+        </HBox>
+        <HBox fx:id="notesButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
+          <children>
+            <Label text="Notes" />
+          </children>
+        </HBox>
+        <HBox fx:id="consumptionButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
+          <children>
+            <Label text="Consumption" />
+          </children>
+        </HBox>
+      </children>
+      <opaqueInsets>
+        <Insets />
+      </opaqueInsets>
+    </VBox>
+    <VBox fx:id="winesSubmenuContainer" layoutX="500.0" layoutY="200.0" styleClass="sub-menu" stylesheets="@../css/nav_bar.css">
+      <children>
+        <HBox fx:id="viewWinesButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
+          <children>
+            <Label text="View" />
+          </children>
+        </HBox>
+        <HBox fx:id="compareWinesButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
+          <children>
+            <Label text="Compare" />
+          </children>
+        </HBox>
+      </children>
+      <opaqueInsets>
+        <Insets />
+      </opaqueInsets>
+    </VBox>
     <AnchorPane fx:id="popupActionBlocker" disable="true" maxHeight="900.0" maxWidth="1400.0" minHeight="900.0" minWidth="1400.0" prefHeight="900.0" prefWidth="1400.0" styleClass="anchor-pane" stylesheets="@../css/popup_pane_action_blocker.css" visible="false" />
     <AnchorPane fx:id="popupContent" disable="true" layoutX="15.0" layoutY="98.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" visible="false" />
-      <VBox fx:id="vineyardsSubmenuContainer" layoutX="300.0" layoutY="200.0" styleClass="sub-menu" stylesheets="@../css/nav_bar.css">
-         <children>
-            <HBox fx:id="viewVineyardsButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
-               <children>
-                  <Label text="View" />
-               </children>
-            </HBox>
-            <HBox fx:id="planTourButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
-               <children>
-                  <Label text="Plan a Tour" />
-               </children>
-            </HBox>
-         </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-      </VBox>
-      <VBox fx:id="profileSubmenuContainer" layoutX="100.0" layoutY="200.0" styleClass="sub-menu" stylesheets="@../css/nav_bar.css">
-         <children>
-            <HBox fx:id="listsButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
-               <children>
-                  <Label text="Lists" />
-               </children>
-            </HBox>
-            <HBox fx:id="notesButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
-               <children>
-                  <Label text="Notes" />
-               </children>
-            </HBox>
-            <HBox fx:id="consumptionButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
-               <children>
-                  <Label text="Consumption" />
-               </children>
-            </HBox>
-         </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-      </VBox>
-      <VBox fx:id="winesSubmenuContainer" layoutX="500.0" layoutY="200.0" styleClass="sub-menu" stylesheets="@../css/nav_bar.css">
-         <children>
-            <HBox fx:id="viewWinesButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
-               <children>
-                  <Label text="View" />
-               </children>
-            </HBox>
-            <HBox fx:id="compareWinesButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
-               <children>
-                  <Label text="Compare" />
-               </children>
-            </HBox>
-         </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-      </VBox>
+    <BorderPane fx:id="loadingSpinnerPane" disable="true" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="900.0" prefWidth="1400.0" visible="false">
+      <center>
+        <Label text="Loading..." textFill="WHITE" BorderPane.alignment="CENTER">
+          <font>
+            <Font size="24.0" />
+          </font>
+        </Label>
+      </center>
+    </BorderPane>
   </children>
 </AnchorPane>

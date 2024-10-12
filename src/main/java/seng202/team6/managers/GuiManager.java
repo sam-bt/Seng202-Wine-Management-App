@@ -2,12 +2,14 @@ package seng202.team6.managers;
 
 import java.io.IOException;
 import java.util.function.Supplier;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Builder;
+import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.enums.PopupType;
@@ -479,4 +481,26 @@ public class GuiManager {
   public void closePopup() {
     mainController.closePopup();
   }
+
+  /**
+   * Displays a loading indicator before running the specified task, and hides
+   * the loading indicator upon completion. This method introduces a short delay
+   * to ensure the UI updates before executing the provided Runnable task.
+   *
+   * @param runnable the task to be executed while the loading indicator is visible
+   */
+  public void showLoadingIndicator(Runnable runnable) {
+    mainController.showLoadingIndicator(true);
+
+    PauseTransition delay = new PauseTransition(Duration.millis(50));
+    delay.setOnFinished(event -> {
+      try {
+        runnable.run();
+      } finally {
+        mainController.showLoadingIndicator(false);
+      }
+    });
+    delay.play();
+  }
+
 }
