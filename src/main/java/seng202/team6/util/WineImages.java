@@ -33,6 +33,12 @@ public class WineImages {
     }
   };
 
+  /**
+   * Retrieves the appropriate image for a given Wine object based on its colour.
+   *
+   * @param wine the Wine object for which the image is requested
+   * @return the Image corresponding to the wine's colour, or the default image if no match is found
+   */
   public static Image getImage(Wine wine) {
     String color = wine.getColor();
     if (color != null && !color.isEmpty()) {
