@@ -20,7 +20,7 @@ import seng202.team6.managers.ManagerContext;
 import seng202.team6.util.PasswordUtil;
 
 /**
- * Test class for the EncryptionUtil class. This class contains unit tests to verify the
+ * Test class for the PasswordUtil class. This class contains unit tests to verify the
  * functionality of the encryption utilities, including password hashing, salt generation, and
  * password verification.
  */

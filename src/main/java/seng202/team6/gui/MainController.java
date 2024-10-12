@@ -16,20 +16,19 @@ import javafx.scene.layout.VBox;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import seng202.team6.enums.PopupType;
 import seng202.team6.gui.popup.AddToListPopupController;
 import seng202.team6.gui.popup.AddToTourPopupController;
 import seng202.team6.gui.popup.CreateListPopupController;
 import seng202.team6.gui.popup.DeleteListPopupController;
-import seng202.team6.gui.popup.ErrorPopupController;
+import seng202.team6.gui.popup.GeneralPopupController;
 import seng202.team6.gui.popup.ReviewViewPopupController;
 import seng202.team6.gui.popup.UserSearchPopupController;
 import seng202.team6.gui.popup.UserViewPopupController;
-import seng202.team6.gui.popup.VineyardTourPopupController;
 import seng202.team6.gui.popup.WineReviewPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
-import seng202.team6.model.VineyardTour;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
@@ -69,10 +68,16 @@ public class MainController extends Controller {
   private Menu vineyardsMenu;
 
   @FXML
+  private VBox winesMenuGraphic;
+
+  @FXML
   private VBox profileMenuGraphic;
 
   @FXML
   private VBox vineyardsMenuGraphic;
+
+  @FXML
+  private VBox winesSubmenu;
 
   @FXML
   private VBox profileSubmenu;
@@ -86,7 +91,7 @@ public class MainController extends Controller {
   @FXML
   private Button registerButton;
 
-  private Screen currentScreen;
+  private String currentScreenFxml;
 
   private boolean disabled = false;
 
@@ -107,40 +112,42 @@ public class MainController extends Controller {
    */
   @Override
   public void init() {
-    // mouse enter event for the profile button which shows the profile sub menu
+    // mouse enter events for the wines, vineyards and profile which shows the corresponding submenu
+    winesMenuGraphic.setOnMouseEntered(event ->
+        showSubmenu(winesSubmenu, winesMenuGraphic));
     profileMenuGraphic.setOnMouseEntered(event ->
         showSubmenu(profileSubmenu, profileMenuGraphic));
+    vineyardsMenuGraphic.setOnMouseEntered(event -> {
+      // only show the submenu if they are authenticated
+      if (managerContext.getAuthenticationManager().isAuthenticated()) {
+        showSubmenu(vineyardsSubmenu, vineyardsMenuGraphic);
+      }
+    });
 
-    // move exit events for when the profile button is open which checks if the cursor has
-    // left either the profile button or the submenu
+    // mouse exit events which checks if the cursor has left either the button or the buttons
+    // submenu
     EventHandler<MouseEvent> profileExitEvent = event ->
         hideSubmenuIfNotInside(profileSubmenu, profileMenuGraphic, event.getScreenX(),
             event.getScreenY());
     profileMenuGraphic.setOnMouseExited(profileExitEvent);
     profileSubmenu.setOnMouseExited(profileExitEvent);
 
-    // mouse enter event for the vineyard button which shows the vineyard sub menu
-    // only show the submenu if they are authenticated
-    vineyardsMenuGraphic.setOnMouseEntered(event -> {
-      if (managerContext.getAuthenticationManager().isAuthenticated()) {
-        showSubmenu(vineyardsSubmenu, vineyardsMenuGraphic);
-      }
-    });
-
-    // move exit events for when the vineyards button is open which checks if the cursor has
-    // left either the profile button or the submenu. only run if they are authenticated as the menu
-    // should only open when they are authenticated
     EventHandler<MouseEvent> vineyardsExitEvent = event ->
         hideSubmenuIfNotInside(vineyardsSubmenu, vineyardsMenuGraphic, event.getScreenX(),
             event.getScreenY());
     vineyardsMenuGraphic.setOnMouseExited(vineyardsExitEvent);
     vineyardsSubmenu.setOnMouseExited(vineyardsExitEvent);
 
-    // disable the profile and vineyards submenu when the navigation is first loaded
-    profileSubmenu.setDisable(true);
-    profileSubmenu.setVisible(false);
-    vineyardsSubmenu.setDisable(true);
-    vineyardsSubmenu.setVisible(false);
+    EventHandler<MouseEvent> winesExitEvent = event ->
+        hideSubmenuIfNotInside(winesSubmenu, winesMenuGraphic, event.getScreenX(),
+            event.getScreenY());
+    winesMenuGraphic.setOnMouseExited(winesExitEvent);
+    winesSubmenu.setOnMouseExited(winesExitEvent);
+
+    // disable the submenus when the navigation is first loaded
+    hideSubmenu(winesSubmenu);
+    hideSubmenu(profileSubmenu);
+    hideSubmenu(vineyardsSubmenu);
 
     updateNavigation();
     openWineScreen();
@@ -174,8 +181,7 @@ public class MainController extends Controller {
   private void hideSubmenuIfNotInside(VBox submenu, VBox parentMenuGraphic, double mouseX,
       double mouseY) {
     if (!isMouseInsideSubmenu(submenu, parentMenuGraphic, mouseX, mouseY)) {
-      submenu.setDisable(true);
-      submenu.setVisible(false);
+      hideSubmenu(submenu);
     }
   }
 
@@ -272,21 +278,24 @@ public class MainController extends Controller {
   /**
    * Switches the current scene.
    *
+   *<p>
+   *   Scenes with fxml paths equal to the currently loaded one are skipped
+   *</p>
+   *
    * @param fxml    fxml resource path
    * @param title   window title
    * @param builder controller builder
-   * @param screen  the screen that is being switched to
    */
-  public void switchScene(String fxml, String title, Builder<?> builder, Screen screen) {
-    if (currentScreen != null && screen != null && currentScreen == screen) {
-      log.warn("Skipped loading {} as it is already open", screen.name());
+  public void switchScene(String fxml, String title, Builder<?> builder) {
+    if (currentScreenFxml != null && currentScreenFxml.equals(fxml)) {
+      log.info("Skipped loading {} as it is already open", fxml);
       return;
     }
 
     Parent parent = loadFxml(fxml, builder, pageContent);
     if (parent != null) {
       managerContext.getGuiManager().setWindowTitle(title);
-      currentScreen = screen;
+      currentScreenFxml = fxml;
     }
   }
 
@@ -367,7 +376,7 @@ public class MainController extends Controller {
   @FXML
   public void openWineScreen() {
     switchScene("/fxml/wine_screen.fxml", "Wine Information",
-        () -> new WineScreenController(managerContext), Screen.WINE_SCREEN);
+        () -> new WineScreenController(managerContext));
   }
 
   /**
@@ -376,7 +385,7 @@ public class MainController extends Controller {
   @FXML
   public void openListScreen() {
     switchScene("/fxml/list_screen.fxml", "My Lists",
-        () -> new ListScreenController(managerContext), Screen.LISTS_SCREEN);
+        () -> new ListScreenController(managerContext));
   }
 
   /**
@@ -385,7 +394,7 @@ public class MainController extends Controller {
   @FXML
   public void openLoginScreen() {
     switchScene("/fxml/login_screen.fxml", "Login",
-        () -> new LoginController(managerContext), Screen.LOGIN_SCREEN);
+        () -> new LoginController(managerContext));
   }
 
   /**
@@ -394,7 +403,7 @@ public class MainController extends Controller {
   @FXML
   public void openRegisterScreen() {
     switchScene("/fxml/register_screen.fxml", "Register",
-        () -> new RegisterController(managerContext), Screen.REGISTER_SCREEN);
+        () -> new RegisterController(managerContext));
   }
 
   /**
@@ -403,7 +412,7 @@ public class MainController extends Controller {
   @FXML
   public void openAdminScreen() {
     switchScene("/fxml/admin_screen.fxml", "Register",
-        () -> new AdminController(managerContext), Screen.ADMIN_SCREEN);
+        () -> new AdminController(managerContext));
   }
 
   /**
@@ -412,7 +421,7 @@ public class MainController extends Controller {
   @FXML
   public void openSettingsScreen() {
     switchScene("/fxml/settings_screen.fxml", "Register",
-        () -> new SettingsController(managerContext), Screen.SETTINGS_SCREEN);
+        () -> new SettingsController(managerContext));
   }
 
   /**
@@ -421,16 +430,16 @@ public class MainController extends Controller {
   @FXML
   public void openUpdatePasswordScreen() {
     switchScene("/fxml/update_password_screen.fxml", "Register",
-        () -> new UpdatePasswordController(managerContext), Screen.UPDATE_PASSWORD_SCREEN);
+        () -> new UpdatePasswordController(managerContext));
   }
 
   /**
    * Launches the notes screen.
    */
   @FXML
-  void openNotesScreen() {
+  public void openNotesScreen() {
     switchScene("/fxml/notes_screen.fxml", "Notes",
-        () -> new NotesController(managerContext), Screen.NOTES_SCREEN);
+        () -> new NotesController(managerContext));
   }
 
   /**
@@ -441,7 +450,7 @@ public class MainController extends Controller {
    */
   public void openDetailedWineView(Wine wine, Runnable backButtonAction) {
     switchScene("/fxml/detailed_wine_view.fxml", "Detailed Wine View",
-        () -> new DetailedWineViewController(managerContext, wine, backButtonAction), null);
+        () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
   }
 
 
@@ -453,8 +462,7 @@ public class MainController extends Controller {
    */
   public void openDetailedVineyardView(Vineyard vineyard, Runnable backButtonAction) {
     switchScene("/fxml/detailed_vineyard_view.fxml", "Detailed Wine View",
-        () -> new DetailedVineyardViewController(managerContext, vineyard, backButtonAction),
-        null);
+        () -> new DetailedVineyardViewController(managerContext, vineyard, backButtonAction));
   }
 
   /**
@@ -467,13 +475,23 @@ public class MainController extends Controller {
         () -> new UserViewPopupController(managerContext, user));
   }
 
+
+  /**
+   * Launches the user search popup.
+   */
+  public void openUserSearchPopup() {
+    openPopup("/fxml/popup/user_search_popup.fxml",
+        () -> new UserSearchPopupController(managerContext));
+  }
+
+
   /**
    * Launches the social screen.
    */
   @FXML
   public void openSocialScreen() {
     switchScene("/fxml/social_screen.fxml", "Social",
-        () -> new SocialController(managerContext), Screen.SOCIAL_SCREEN);
+        () -> new SocialController(managerContext));
   }
 
   /**
@@ -482,7 +500,7 @@ public class MainController extends Controller {
   @FXML
   public void openVineyardsScreen() {
     switchScene("/fxml/vineyards_screen.fxml", "Vineyards",
-        () -> new VineyardsController(managerContext), Screen.VINEYARDS_SCREEN);
+        () -> new VineyardsController(managerContext));
   }
 
   /**
@@ -491,7 +509,7 @@ public class MainController extends Controller {
   @FXML
   public void openTourPlanningScreen() {
     switchScene("/fxml/tour_planning_screen.fxml", "Tour Planning",
-        () -> new TourPlanningController(managerContext), Screen.TOUR_PLANNING_SCREEN);
+        () -> new TourPlanningController(managerContext));
   }
 
   /**
@@ -542,7 +560,27 @@ public class MainController extends Controller {
   @FXML
   public void openConsumptionScreen() {
     switchScene("/fxml/consumption_screen.fxml", "Consumption",
-        () -> new ConsumptionController(managerContext), Screen.CONSUMPTION_SCREEN);
+        () -> new ConsumptionController(managerContext));
+  }
+
+  /**
+   * Launches the wine compare screen.
+   */
+  @FXML
+  public void openWineCompareScreen() {
+    switchScene("/fxml/wine_compare.fxml", "Wine Compare",
+        () -> new WineCompareController(managerContext, null, null));
+  }
+
+  /**
+   * Launches the wine compare screen with the specified wine.
+   *
+   * @param leftWine The wine to be shown on the left side of the wine compare.
+   * @param rightWine The wine to be shown on the right side of the wine compare.
+   */
+  public void openWineCompareScreen(Wine leftWine, Wine rightWine) {
+    switchScene("/fxml/wine_compare.fxml", "Wine Compare",
+        () -> new WineCompareController(managerContext, leftWine, rightWine));
   }
 
   /**
@@ -572,36 +610,46 @@ public class MainController extends Controller {
   }
 
   /**
-   * Launches the popup to create a vineyard tour.
+   * Launches the load import screen under a given node.
    *
-   * @param vineyardToursService  the service used for managing vineyard tours.
-   * @param modifyingVineyardTour the vineyard tour to be modified, or null if creating a new tour.
+   * @param parent node to add to
+   * @return node that was added
    */
-  public void openVineyardTourPopup(VineyardToursService vineyardToursService,
-      VineyardTour modifyingVineyardTour) {
-    openPopup("/fxml/popup/create_vineyard_tour_popup.fxml",
-        () -> new VineyardTourPopupController(managerContext, vineyardToursService,
-            modifyingVineyardTour));
+  public Parent loadImportWineScreen(Pane parent) {
+    return loadFxml("/fxml/wine_import_screen.fxml",
+        () -> new WineImportController(managerContext), parent);
   }
 
   /**
-   * Launches the user search popup.
-   */
-  public void openUserSearchPopup() {
-    openPopup("/fxml/popup/user_search_popup.fxml",
-        () -> new UserSearchPopupController(managerContext));
-  }
-
-  /**
-   * Displays an error popup. The popup is displayed on the screen, and the controller for the popup
-   * is returned to the caller for further customization.
+   * Displays a popup of the error type. The popup is displayed on the screen, and the controller
+   * for the popup is returned to the caller for further customization.
    *
    * @return The ErrorPopupController associated with the displayed error popup.
    */
-  public ErrorPopupController showErrorPopup() {
-    ErrorPopupController errorPopupController = new ErrorPopupController(managerContext);
-    openPopup("/fxml/popup/error_popup.fxml", () -> errorPopupController);
-    return errorPopupController;
+  public GeneralPopupController showErrorPopup() {
+    return showPopup(PopupType.ERROR);
+  }
+
+  /**
+   * Displays a popup of the none type.
+   *
+   * @return The GeneralPopupController associated with the displayed popup
+   */
+  public GeneralPopupController showPopup() {
+    return showPopup(PopupType.NONE);
+  }
+
+  /**
+   * Displays a popup of the specified type. The popup is displayed on the screen, and the
+   * controller for the popup is returned to the caller for further customization.
+   *
+   * @param popupType The type of the popup
+   * @return The GeneralPopupController associated with the displayed popup
+   */
+  private GeneralPopupController showPopup(PopupType popupType) {
+    GeneralPopupController popupController = new GeneralPopupController(managerContext, popupType);
+    openPopup("/fxml/popup/general_popup.fxml", () -> popupController);
+    return popupController;
   }
 
   /**
@@ -613,16 +661,5 @@ public class MainController extends Controller {
     popupContent.setVisible(false);
     popupContent.setDisable(true);
     popupContent.getChildren().clear();
-  }
-
-  /**
-   * Launches the load import screen under a given node.
-   *
-   * @param parent node to add to
-   * @return node that was added
-   */
-  public Parent loadImportWineScreen(Pane parent) {
-    return loadFxml("/fxml/wine_import_screen.fxml",
-        () -> new WineImportController(managerContext), parent);
   }
 }

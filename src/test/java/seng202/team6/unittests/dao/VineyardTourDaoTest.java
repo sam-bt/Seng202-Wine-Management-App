@@ -20,6 +20,11 @@ import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;
 
+/**
+ * Unit tests for the VineyardTourDao class, which manages the creation and modification of vineyard tours.
+ * These tests verify the creation of vineyard tours, the addition and removal of vineyards to tours,
+ * and querying whether a vineyard belongs to a tour.
+ */
 public class VineyardTourDaoTest {
 
   private DatabaseManager databaseManager;
@@ -29,6 +34,12 @@ public class VineyardTourDaoTest {
   User testUser;
   UserDao userDao;
 
+  /**
+   * Sets up the database manager and the VineyardTourDao before each test.
+   * Also adds a test user for use in the tests.
+   *
+   * @throws SQLException if an error occurs during database setup.
+   */
   @BeforeEach
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
@@ -41,11 +52,20 @@ public class VineyardTourDaoTest {
 
   }
 
+  /**
+   * Tears down the database after each test, removing any added data and resetting the state.
+   *
+   * @throws SQLException if an error occurs during database teardown.
+   */
   @AfterEach
   void teardown() throws SQLException {
     databaseManager.teardown();
   }
 
+  /**
+   * Tests the creation of a vineyard tour.
+   * Verifies that a vineyard tour can be created successfully and that the name is correctly set.
+   */
   @Test
   void testCreateTour() {
 
@@ -54,18 +74,22 @@ public class VineyardTourDaoTest {
     userDao.add(testUser);
     VineyardTourDao vineyardTourDao = databaseManager.getVineyardTourDao();
 
-    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "testTour", Island.SOUTH);
+    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "testTour");
     assertEquals(testVineyardTour.getName(), "testTour");
 
   }
 
+  /**
+   * Tests retrieving all vineyard tours for a specific user.
+   * Verifies that the correct number of vineyard tours is retrieved and their names match the expected values.
+   */
   @Test
   void testGetToursFromUser() {
 
     VineyardTourDao vineyardTourDao = databaseManager.getVineyardTourDao();
 
-    VineyardTour testVineyardTour1 = vineyardTourDao.create(testUser, "test2Tour", Island.SOUTH);
-    VineyardTour testVineyardTour2 = vineyardTourDao.create(testUser, "test2Tour", Island.SOUTH);
+    VineyardTour testVineyardTour1 = vineyardTourDao.create(testUser, "test2Tour");
+    VineyardTour testVineyardTour2 = vineyardTourDao.create(testUser, "test2Tour");
 
     ObservableList<VineyardTour> vineyardTours = vineyardTourDao.getAll(testUser);
 
@@ -75,13 +99,17 @@ public class VineyardTourDaoTest {
 
   }
 
+  /**
+   * Tests adding a vineyard to a vineyard tour.
+   * Verifies that the vineyard is successfully added to the tour.
+   */
   @Test
   void testAddVineyard() {
     VineyardDao vineyardDao = databaseManager.getVineyardsDao();
     Vineyard testVineyard = vineyardDao.add("Test1 Vineyard", "Christchurch", "Canterbury",
         "www.test.com", "test", "www.test.com", new GeoLocation(-43.532, 172.6306));
 
-    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour", Island.SOUTH);
+    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour");
 
     vineyardTourDao.addVineyard(testVineyardTour, testVineyard);
 
@@ -89,6 +117,10 @@ public class VineyardTourDaoTest {
 
   }
 
+  /**
+   * Tests whether a vineyard is part of a specific vineyard tour.
+   * Verifies that the vineyard is correctly recognized as being part of the tour.
+   */
   @Test
   void testIsVineyardInTourTrue() {
 
@@ -99,7 +131,7 @@ public class VineyardTourDaoTest {
         "www.fake.com", "oops", "www.dog.com", new GeoLocation(-45.8788,170.5028));
 
 
-    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour", Island.SOUTH);
+    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour");
 
     vineyardTourDao.addVineyard(testVineyardTour, testVineyard1);
     vineyardTourDao.addVineyard(testVineyardTour, testVineyard2);
@@ -109,6 +141,10 @@ public class VineyardTourDaoTest {
 
   }
 
+  /**
+   * Tests whether a vineyard is not part of a specific vineyard tour.
+   * Verifies that the vineyard is correctly recognized as not being part of the tour.
+   */
   @Test
   void testIsVineyardInTourFalse() {
 
@@ -119,7 +155,7 @@ public class VineyardTourDaoTest {
         "www.fake.com", "oops", "www.dog.com", new GeoLocation(-45.8788,170.5028));
 
 
-    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour", Island.SOUTH);
+    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour");
 
     vineyardTourDao.addVineyard(testVineyardTour, testVineyard1);
 
@@ -128,7 +164,10 @@ public class VineyardTourDaoTest {
 
   }
 
-
+  /**
+   * Tests removing a vineyard from a vineyard tour.
+   * Verifies that the vineyard is correctly removed from the tour and that the other vineyards remain in the tour.
+   */
   @Test
   void testRemoveVineyardFromTour() {
 
@@ -139,7 +178,7 @@ public class VineyardTourDaoTest {
         "www.fake.com", "oops", "www.dog.com", new GeoLocation(-45.8788,170.5028));
 
 
-    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour", Island.SOUTH);
+    VineyardTour testVineyardTour = vineyardTourDao.create(testUser, "test2Tour");
 
     vineyardTourDao.addVineyard(testVineyardTour, testVineyard1);
     vineyardTourDao.addVineyard(testVineyardTour, testVineyard2);

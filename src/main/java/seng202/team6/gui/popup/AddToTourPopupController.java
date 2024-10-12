@@ -51,7 +51,7 @@ public class AddToTourPopupController extends Controller {
    */
   @FXML
   void onBackButtonClick() {
-    managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().closePopup();
   }
 
   /**
