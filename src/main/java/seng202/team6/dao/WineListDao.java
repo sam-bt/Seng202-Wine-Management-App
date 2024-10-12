@@ -112,9 +112,8 @@ public class WineListDao extends Dao {
           log.info("Successfully created list '{}' with ID {} for user '{}' in {}ms", listName,
               id, listName, user.getUsername(), timer.currentOffsetMilliseconds());
           WineList wineList = new WineList(id, listName);
-          if (useCache()) {
-            wineListCache.addObject(id, wineList);
-          }
+          wineListCache.addObject(id, wineList);
+
           return wineList;
         }
         log.warn("Could not create list '{}' for user '{}'", listName, user.getUsername());

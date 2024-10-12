@@ -7,13 +7,16 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.AdminController">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.AdminController">
   <children>
     <Label fx:id="loginMessageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="457.0" layoutY="218.0" prefHeight="17.0" prefWidth="456.0" textFill="RED">
       <font>
@@ -152,6 +155,49 @@
                   </AnchorPane>
             </content>
           </Tab>
+            <Tab text="Review Moderation">
+               <content>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="reviewsTable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="C1" />
+                            <TableColumn prefWidth="75.0" text="C2" />
+                          </columns>
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                        </TableView>
+                        <TitledPane animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="330.0" stylesheets="@../css/titled_pane.css" text="Selected Actions">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="220.0" prefWidth="40.0">
+                                 <children>
+                                    <Button fx:id="keepSelected" mnemonicParsing="false" onAction="#onKeepSelected" styleClass="secondary-button" text="Keep Selected" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <Button fx:id="deleteSelected" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteSelected" styleClass="primary-button" text="Delete Selected" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0" />
+                                    <Pane prefHeight="200.0" prefWidth="200.0" styleClass="primary-background" AnchorPane.bottomAnchor="115.0" AnchorPane.leftAnchor="-11.0" AnchorPane.rightAnchor="-11.0" AnchorPane.topAnchor="100.0">
+                                       <children>
+                                          <Label fx:id="bulkLabel" prefHeight="40.0" prefWidth="330.0" text="   Bulk Actions" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </Pane>
+                                    <Button fx:id="keepAll" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onKeepAll" styleClass="secondary-button" text="Keep All" AnchorPane.topAnchor="150.0" />
+                                    <Button fx:id="deleteAll" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#onDeleteAll" styleClass="primary-button" text="Delete All" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="200.0" />
+                                 </children></AnchorPane>
+                          </content>
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </TitledPane>
+                     </children>
+                  </HBox>
+               </content>
+            </Tab>
         </tabs>
       </TabPane>
   </children>

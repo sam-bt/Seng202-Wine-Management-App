@@ -103,9 +103,8 @@ public class VineyardTourDao extends Dao {
           log.info("Successfully created wine tour '{}' with ID {} for user '{}' in {}ms", tourName,
               id, user.getUsername(), timer.currentOffsetMilliseconds());
           VineyardTour vineyardTour = new VineyardTour(id, user.getUsername(), tourName);
-          if (useCache()) {
-            wineTourCache.addObject(id, vineyardTour);
-          }
+          wineTourCache.addObject(id, vineyardTour);
+
           return vineyardTour;
         }
         log.warn("Could not create wine tour '{}' for user '{}'", tourName,
@@ -262,9 +261,8 @@ public class VineyardTourDao extends Dao {
         resultSet.getString("USERNAME"),
         resultSet.getString("NAME")
     );
-    if (useCache()) {
-      wineTourCache.addObject(id, vineyardTour);
-    }
+    wineTourCache.addObject(id, vineyardTour);
+
     return vineyardTour;
   }
 }

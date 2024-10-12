@@ -171,6 +171,9 @@ public class TourPlanningController extends Controller {
         return;
       }
       WineList wineList = wineListsComboBox.getSelectionModel().getSelectedItem();
+      if (wineList == null) {
+        return;
+      }
       managerContext.getDatabaseManager().getVineyardsDao()
           .getAllInList(wineList)
           .forEach(vineyard -> currentTourPlanningService.addVineyard(vineyard));

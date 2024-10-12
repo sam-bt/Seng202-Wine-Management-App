@@ -35,6 +35,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineFilters;
 import seng202.team6.service.PageService;
 import seng202.team6.service.WineDataStatService;
+import seng202.team6.util.NoDecimalCurrencyStringConverter;
 import seng202.team6.util.YearStringConverter;
 
 /**
@@ -46,6 +47,8 @@ public class WineScreenController extends Controller {
   // Utilities and services
   private final Logger log = LogManager.getLogger(WineScreenController.class);
   private final PageService pageService = new PageService(100);
+  @FXML
+  public TabPane tabPane;
   // FXML elements
   @FXML
   private Button prevPageButtonSimpleView;
@@ -55,8 +58,6 @@ public class WineScreenController extends Controller {
   private Label maxPageNumberSimpleView;
   @FXML
   private Button nextPageButtonSimpleView;
-  @FXML
-  public TabPane tabPane;
   private LeafletOsmController mapController;
   // Custom element (added in code)
   private RangeSlider scoreSlider;
@@ -429,12 +430,14 @@ public class WineScreenController extends Controller {
     configureAutoComplete(colorTextField, colorSet);
 
     // Configure Sliders
-    configureSlider(scoreSlider, minScore, maxScore, 1, 0);
-    configureSlider(priceSlider, minPrice, maxPrice, 100, 5);
+    configureSlider(scoreSlider, minScore, maxScore, "score");
+
+    NoDecimalCurrencyStringConverter converter = new NoDecimalCurrencyStringConverter();
+    configureSlider(priceSlider, minPrice, maxPrice, "price", converter);
 
     YearStringConverter yearStringConverter = new YearStringConverter(); // For vintage
-    configureSlider(vintageSlider, minVintage, maxVintage, 1, 0,
-        yearStringConverter);
+    configureSlider(vintageSlider, minVintage, maxVintage,
+        "vintage", yearStringConverter);
 
     // Set slider handles to min and max values
     // Fixes a graphic issue where the slider values don't change with the min and max adjustments
@@ -466,16 +469,13 @@ public class WineScreenController extends Controller {
    * @param rangeSlider    Range Slider to configure
    * @param min            Minimum range slider value
    * @param max            Maximum range slider value
-   * @param majorTickUnit  Units between major tick
-   * @param minorTickCount Number of minor ticks
    */
   private void configureSlider(RangeSlider rangeSlider,
       double min,
       double max,
-      double majorTickUnit,
-      int minorTickCount) {
+      String sliderName) {
 
-    configureSlider(rangeSlider, min, max, majorTickUnit, minorTickCount, null);
+    configureSlider(rangeSlider, min, max, sliderName, null);
   }
 
   /**
@@ -484,24 +484,50 @@ public class WineScreenController extends Controller {
    * @param rangeSlider    Range Slider to configure
    * @param min            Minimum range slider value
    * @param max            Maximum range slider value
-   * @param majorTickUnit  Units between major tick
-   * @param minorTickCount Number of minor ticks
    * @param labelFormatter Label formatter
    */
   private void configureSlider(RangeSlider rangeSlider,
       double min,
       double max,
-      double majorTickUnit,
-      int minorTickCount,
-      StringConverter<Number> labelFormatter) {
+      String sliderName,
+      StringConverter<Number> labelFormatter
+  ) {
 
-    rangeSlider.setMin(min);
-    rangeSlider.setMax(max);
-    rangeSlider.setMajorTickUnit(majorTickUnit);
-    rangeSlider.setMinorTickCount(minorTickCount);
+    switch (sliderName) {
+      case "score":
+        rangeSlider.setMin(0);
+        rangeSlider.setMax(100);
+        rangeSlider.setMajorTickUnit(10);
+        rangeSlider.setMinorTickCount(5);
+        break;
+      case "price":
+        rangeSlider.setMin(min);
+        rangeSlider.setMax(max);
+        rangeSlider.setMajorTickUnit(100);
+        rangeSlider.setMinorTickCount(5);
 
-    if (labelFormatter != null) {
-      rangeSlider.setLabelFormatter(labelFormatter);
+        if (labelFormatter != null) {
+          rangeSlider.setLabelFormatter(labelFormatter);
+        }
+        break;
+      case "abv":
+        rangeSlider.setMin(0);
+        rangeSlider.setMax(max);
+        rangeSlider.setMajorTickUnit(10);
+        rangeSlider.setMinorTickCount(5);
+        break;
+      case "vintage":
+        rangeSlider.setMin(min);
+        rangeSlider.setMax(max);
+        rangeSlider.setMajorTickUnit(1);
+        rangeSlider.setMinorTickCount(0);
+
+        if (labelFormatter != null) {
+          rangeSlider.setLabelFormatter(labelFormatter);
+        }
+        break;
+      default:
+        break;
     }
   }
 
