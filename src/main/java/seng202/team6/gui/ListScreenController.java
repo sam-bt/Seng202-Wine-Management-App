@@ -47,8 +47,8 @@ public class ListScreenController extends Controller {
    */
   public ListScreenController(ManagerContext managerContext) {
     super(managerContext);
-    this.wineListService = new WineListService(managerContext.getAuthenticationManager(),
-        managerContext.getDatabaseManager());
+    this.wineListService = new WineListService(getManagerContext().getAuthenticationManager(),
+        getManagerContext().getDatabaseManager());
     bindToWineListsService();
   }
 
@@ -100,7 +100,9 @@ public class ListScreenController extends Controller {
     boolean canRemoveSelected = wineListService.canRemove(selectedWineList);
     deleteListRequestButton.setDisable(!canRemoveSelected);
     tabViewing.setText("VIEWING: " + selectedWineList.name());
-    ObservableList<Wine> observableList = managerContext.getDatabaseManager().getAggregatedDao()
+    ObservableList<Wine> observableList = getManagerContext()
+        .getDatabaseManager()
+        .getAggregatedDao()
         .getWinesInList(selectedWineList);
     setupTableView(observableList);
   }
@@ -115,24 +117,24 @@ public class ListScreenController extends Controller {
   /**
    * Opens the tab for creating lists and hides the tab for viewing lists.
    *
-   * @param actionEvent triggers this function when on action.
+   * @param ignoredActionEvent triggers this function when on action.
    */
   @FXML
-  public void onCreateListRequestButton(ActionEvent actionEvent) {
-    managerContext.getGuiManager().openCreateListPopUp(wineListService);
+  public void onCreateListRequestButton(ActionEvent ignoredActionEvent) {
+    getManagerContext().getGuiManager().openCreateListPopUp(wineListService);
   }
 
   @FXML
   void onDeleteListRequestClick(WineList wineList) {
-    managerContext.getGuiManager().openDeleteListPopUp(wineList, wineListService);
+    getManagerContext().getGuiManager().openDeleteListPopUp(wineList, wineListService);
   }
 
   /**
    * Deletes the selected list. Cannot delete the favourites or history list.
    *
-   * @param actionEvent triggers this function when on action.
+   * @param ignoredActionEvent triggers this function when on action.
    */
-  public void onDeleteListRequestButton(ActionEvent actionEvent) {
+  public void onDeleteListRequestButton(ActionEvent ignoredActionEvent) {
     if (selectedWinelist == null) {
       return;
     }

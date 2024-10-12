@@ -1,7 +1,5 @@
 package seng202.team6;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import seng202.team6.gui.wrapper.FxWindow;
 
 /**
@@ -11,7 +9,6 @@ import seng202.team6.gui.wrapper.FxWindow;
  */
 public class App {
 
-  private static final Logger log = LogManager.getLogger(App.class);
 
   /**
    * Entry point which runs the javaFX application Also shows off some different logging levels.

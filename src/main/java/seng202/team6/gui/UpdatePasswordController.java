@@ -40,10 +40,6 @@ public class UpdatePasswordController extends Controller {
    * Initializes the controller.
    */
   public void initialize() {
-    disabled = managerContext.getGuiManager().isDisabled();
-    if (disabled) {
-      titledPane.setText("First time admin login, please change password");
-    }
     oldPasswordField.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.ENTER) {
         onConfirm();
@@ -65,15 +61,15 @@ public class UpdatePasswordController extends Controller {
 
   @FXML
   private void onConfirm() {
-    String username = managerContext.getAuthenticationManager().getAuthenticatedUsername();
+    String username = getManagerContext().getAuthenticationManager().getAuthenticatedUsername();
     String oldPassword = oldPasswordField.getText();
     String newPassword = newPasswordField.getText();
     String confirmNewPassword = confirmNewPasswordField.getText();
-    AuthenticationResponse response = managerContext.getAuthenticationManager().validateUpdate(
+    AuthenticationResponse response = getManagerContext().getAuthenticationManager().validateUpdate(
         username, oldPassword, newPassword, confirmNewPassword);
     if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
-      managerContext.getGuiManager().openWineScreen();
-      disabled = PasswordUtil.checkAdminLogin(managerContext, disabled);
+      getManagerContext().getGuiManager().openWineScreen();
+      disabled = PasswordUtil.checkAdminLogin(getManagerContext(), disabled);
     } else {
       updateMessageLabel.setStyle("-fx-text-fill: red");
       updateMessageLabel.setText(response.getMessage());

@@ -82,21 +82,21 @@ public class ReviewViewPopupController extends Controller {
 
   @FXML
   void onBackButtonClick() {
-    managerContext.getGuiManager().closePopup();
+    getManagerContext().getGuiManager().closePopup();
   }
 
   @FXML
   void onWineButtonClick() {
-    Runnable backAction = () -> managerContext.getGuiManager().openSocialScreen();
-    managerContext.getGuiManager().closePopup();
-    managerContext.getGuiManager().openDetailedWineView(wineReviewsService.getWine(),
+    Runnable backAction = () -> getManagerContext().getGuiManager().openSocialScreen();
+    getManagerContext().getGuiManager().closePopup();
+    getManagerContext().getGuiManager().openDetailedWineView(wineReviewsService.getWine(),
         backAction);
   }
 
   @FXML
   void onUserButtonClick() {
-    managerContext.getGuiManager().closePopup();
-    managerContext.getGuiManager().openUserProfilePopup(reviewer);
+    getManagerContext().getGuiManager().closePopup();
+    getManagerContext().getGuiManager().openUserProfilePopup(reviewer);
   }
 
 

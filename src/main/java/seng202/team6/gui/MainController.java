@@ -84,9 +84,6 @@ public class MainController extends Controller {
   @FXML
   private Button registerButton;
 
-  private String currentScreenFxml;
-
-  private boolean disabled = false;
 
   /**
    * Constructor.
@@ -97,7 +94,7 @@ public class MainController extends Controller {
     super(managerContext);
 
     // This is an ugly circular dependency. It is easier to resolve here
-    managerContext.getGuiManager().setMainController(this);
+    getManagerContext().getGuiManager().setMainController(this);
   }
 
   /**
@@ -112,7 +109,7 @@ public class MainController extends Controller {
         showSubmenu(profileSubmenuContainer, profileMenuGraphic));
     vineyardsMenuGraphic.setOnMouseEntered(event -> {
       // only show the submenu if they are authenticated
-      if (managerContext.getAuthenticationManager().isAuthenticated()) {
+      if (getManagerContext().getAuthenticationManager().isAuthenticated()) {
         showSubmenu(vineyardsSubmenuContainer, vineyardsMenuGraphic);
       }
     });
@@ -144,7 +141,7 @@ public class MainController extends Controller {
     initButtons();
 
     updateNavigation();
-    managerContext.getGuiManager().openWineScreen();
+    getManagerContext().getGuiManager().openWineScreen();
   }
 
   /**
@@ -218,8 +215,8 @@ public class MainController extends Controller {
    * authenticated, the login and registration options are displayed.
    */
   public void updateNavigation() {
-    AuthenticationManager authenticationManager = managerContext.getAuthenticationManager();
-    GuiManager guiManager = managerContext.getGuiManager();
+    AuthenticationManager authenticationManager = getManagerContext().getAuthenticationManager();
+    GuiManager guiManager = getManagerContext().getGuiManager();
     if (authenticationManager.isAuthenticated()) {
       addIfNotPresent(profileMenu, -1);
       loginButton.setText("Settings");
@@ -288,22 +285,13 @@ public class MainController extends Controller {
    */
   @FXML
   public void logout() {
-    managerContext.getAuthenticationManager().logout();
+    getManagerContext().getAuthenticationManager().logout();
     updateNavigation();
-    managerContext.getGuiManager().openWineScreen();
-  }
-
-  /**
-   * Gets if screen is disabled.
-   *
-   * @return if currently disabled
-   */
-  public boolean isDisabled() {
-    return disabled;
+    getManagerContext().getGuiManager().openWineScreen();
   }
 
   private void initButtons() {
-    GuiManager guiManager = managerContext.getGuiManager();
+    GuiManager guiManager = getManagerContext().getGuiManager();
     // wines submenu
     viewWinesButton.setOnMouseClicked(event -> guiManager.openWineScreen());
     compareWinesButton.setOnMouseClicked(event -> guiManager.openWineCompareScreen());

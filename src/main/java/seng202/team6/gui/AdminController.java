@@ -97,7 +97,7 @@ public class AdminController extends Controller {
    */
   public AdminController(ManagerContext managerContext) {
     super(managerContext);
-    this.databaseManager = managerContext.getDatabaseManager();
+    this.databaseManager = getManagerContext().getDatabaseManager();
   }
 
   /**
@@ -117,7 +117,7 @@ public class AdminController extends Controller {
     refreshReviewActions();
 
     //==========| Data Tab |==========<
-    VBox parent = (VBox) managerContext.getGuiManager().loadImportWineScreen(
+    VBox parent = (VBox) getManagerContext().getGuiManager().loadImportWineScreen(
         importWinesScreenContainer);
     VBox.setVgrow(parent, Priority.ALWAYS);
     parent.minHeightProperty().bind(importWinesScreenContainer.minHeightProperty());
@@ -142,8 +142,8 @@ public class AdminController extends Controller {
 
   @FXML
   private void onYes() {
-    managerContext.getDatabaseManager().getUserDao().deleteAll();
-    managerContext.getGuiManager().openWineScreen();
+    getManagerContext().getDatabaseManager().getUserDao().deleteAll();
+    getManagerContext().getGuiManager().openWineScreen();
   }
 
   @FXML
@@ -255,7 +255,7 @@ public class AdminController extends Controller {
     String password = passwordField.getText();
     String confirm = confirmField.getText();
     AuthenticationResponse response =
-        managerContext.getAuthenticationManager().validatePasswordReset(
+        getManagerContext().getAuthenticationManager().validatePasswordReset(
             workingUser.getUsername(), password, confirm
         );
 
@@ -328,8 +328,10 @@ public class AdminController extends Controller {
 
     descriptionColumn.setPrefWidth(800);
 
-    reviewsTable.getColumns()
-        .addAll(reviewColumn, ratingColumn, descriptionColumn, reviewCheckboxColumn);
+    reviewsTable.getColumns().add(reviewColumn);
+    reviewsTable.getColumns().add(ratingColumn);
+    reviewsTable.getColumns().add(descriptionColumn);
+    reviewsTable.getColumns().add(reviewCheckboxColumn);
     refreshReviewTable();
 
   }
@@ -348,7 +350,7 @@ public class AdminController extends Controller {
    * Disables the action buttons if no reviews are present.
    */
   private void refreshReviewActions() {
-    if (allFlaggedReviews.size() == 0) {
+    if (allFlaggedReviews.isEmpty()) {
       keepAll.setDisable(true);
       keepSelected.setDisable(true);
       deleteAll.setDisable(true);

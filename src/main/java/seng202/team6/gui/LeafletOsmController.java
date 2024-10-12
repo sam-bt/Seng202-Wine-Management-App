@@ -81,7 +81,7 @@ public class LeafletOsmController {
           if (newState == Worker.State.SUCCEEDED) {
             // set the javascript bridge and call the initMap function in JavaScript
             // to display the map
-            JSObject window = (JSObject) webEngine.executeScript("window");
+            webEngine.executeScript("window");
             javaScriptConnector = (JSObject) webEngine.executeScript("jsConnector");
             javaScriptConnector.call("initMap");
 

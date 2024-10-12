@@ -1,8 +1,6 @@
 package seng202.team6.managers;
 
 import java.io.IOException;
-import java.util.function.Supplier;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
@@ -48,7 +46,6 @@ import seng202.team6.model.WineReview;
 import seng202.team6.service.PageService;
 import seng202.team6.service.WineListService;
 import seng202.team6.service.WineReviewsService;
-import seng202.team6.util.WineState;
 
 /**
  * Manager for interacting with the GUI.
@@ -108,14 +105,6 @@ public class GuiManager {
     mainController.updateNavigation();
   }
 
-  /**
-   * Gets if screen is disabled.
-   *
-   * @return if currently disabled
-   */
-  public boolean isDisabled() {
-    return mainController.isDisabled();
-  }
 
   /**
    * Switches the current scene.

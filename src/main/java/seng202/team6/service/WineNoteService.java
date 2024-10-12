@@ -11,7 +11,6 @@ import seng202.team6.model.Wine;
  */
 public class WineNoteService {
 
-  private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
   private final Wine wine;
   private Note note;
@@ -25,7 +24,6 @@ public class WineNoteService {
    */
   public WineNoteService(AuthenticationManager authenticationManager,
       DatabaseManager databaseManager, Wine wine) {
-    this.authenticationManager = authenticationManager;
     this.databaseManager = databaseManager;
     this.wine = wine;
   }

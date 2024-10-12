@@ -71,11 +71,6 @@ public enum AuthenticationResponse {
   PASSWORD_CHANGED_SUCCESS(null),
 
   /**
-   * Indicates a successful logout.
-   */
-  LOGOUT_SUCCESS(null),
-
-  /**
    * Indicates an unexpected error occurred.
    */
   UNEXPECTED_ERROR("An unexpected error occurred. Please try again."),

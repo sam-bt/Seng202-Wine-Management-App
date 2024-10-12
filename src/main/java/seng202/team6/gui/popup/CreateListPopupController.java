@@ -37,16 +37,16 @@ public class CreateListPopupController extends Controller {
    * Closes the popup without creating a list.
    */
   public void onBackButtonClick() {
-    managerContext.getGuiManager().closePopup();
+    getManagerContext().getGuiManager().closePopup();
   }
 
   /**
    * Creates the lists, adding it to the array and updates relevant information on screen.
    *
-   * @param actionEvent triggers this function when on action.
+   * @param ignoredActionEvent triggers this function when on action.
    */
   @FXML
-  public void onCreateListConfirmButton(ActionEvent actionEvent) {
+  public void onCreateListConfirmButton(ActionEvent ignoredActionEvent) {
     String name = listNameTextField.getText();
     List<WineList> wineLists = wineListService.getWineLists();
     if (wineLists.stream().anyMatch(wineList -> wineList.name().equals(name))) {
@@ -60,7 +60,7 @@ public class CreateListPopupController extends Controller {
       } else {
         errorText.setVisible(false);
 
-        User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
+        User user = getManagerContext().getAuthenticationManager().getAuthenticatedUser();
         wineListService.createWineList(user, name);
 
         listNameTextField.setText("");

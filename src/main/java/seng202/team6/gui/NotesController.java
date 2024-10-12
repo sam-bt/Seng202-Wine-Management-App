@@ -70,8 +70,8 @@ public class NotesController extends Controller {
    * refresh the notes in the table.
    */
   private void populateTable() {
-    User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
-    AggregatedDao aggregatedDao = managerContext.getDatabaseManager().getAggregatedDao();
+    User user = getManagerContext().getAuthenticationManager().getAuthenticatedUser();
+    AggregatedDao aggregatedDao = getManagerContext().getDatabaseManager().getAggregatedDao();
     ObservableMap<Wine, Note> allNotesMappedWithWinesByUser = aggregatedDao
         .getAllNotesMappedWithWinesByUser(user);
     ObservableList<Map.Entry<Wine, Note>> noteList = FXCollections.observableArrayList(

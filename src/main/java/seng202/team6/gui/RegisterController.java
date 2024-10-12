@@ -59,12 +59,12 @@ public class RegisterController extends Controller {
     String password = passwordField.getText();
     String confirmPassword = confirmPasswordField.getText();
     AuthenticationResponse response
-        = managerContext.getAuthenticationManager().validateRegistration(
+        = getManagerContext().getAuthenticationManager().validateRegistration(
         username, password, confirmPassword);
     if (response == AuthenticationResponse.REGISTER_SUCCESS) {
-      managerContext.getAuthenticationManager().validateLogin(username, password);
-      managerContext.getGuiManager().updateNavigation();
-      managerContext.getGuiManager().openWineScreen();
+      getManagerContext().getAuthenticationManager().validateLogin(username, password);
+      getManagerContext().getGuiManager().updateNavigation();
+      getManagerContext().getGuiManager().openWineScreen();
     } else {
       registerMessageLabel.setStyle("-fx-text-fill: red");
       registerMessageLabel.setText(response.getMessage());

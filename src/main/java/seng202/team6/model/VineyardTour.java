@@ -1,12 +1,9 @@
 package seng202.team6.model;
 
-import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import seng202.team6.enums.Island;
 
 /**
  * The WineTour class represents a wine tour which holds who the tour belongs to, the name of the

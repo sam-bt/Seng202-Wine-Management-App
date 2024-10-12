@@ -5,7 +5,6 @@ import java.util.Map;
 import javafx.scene.image.Image;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import seng202.team6.enums.ColourMatch;
 import seng202.team6.model.Wine;
 
 /**
