@@ -33,12 +33,12 @@
             <TextField fx:id="usernameField" layoutX="77.0" layoutY="65.0" prefHeight="33.0" prefWidth="300.0" promptText="Enter your username" stylesheets="@../css/text_field.css" />
                 <Label fx:id="usernameErrorMessageLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="-1.0" layoutY="108.0" prefHeight="17.0" prefWidth="456.0" textFill="RED">
                   <font>
-                    <Font size="16.0" />
+                    <Font size="14.0" />
                   </font>
                 </Label>
                   <Label fx:id="passwordErrorMessageLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="-1.0" layoutY="200.0" prefHeight="17.0" prefWidth="456.0" textFill="RED">
                      <font>
-                        <Font size="16.0" />
+                        <Font size="14.0" />
                      </font>
                   </Label>
           </children>
