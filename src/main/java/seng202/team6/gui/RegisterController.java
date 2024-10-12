@@ -76,7 +76,7 @@ public class RegisterController extends Controller {
       AuthenticationResponse response
           = managerContext.getAuthenticationManager().validateRegistration(
           username, password, confirmPassword);
-      switch (response){
+      switch (response) {
         case AuthenticationResponse.USERNAME_ALREADY_REGISTERED:;
           usernameField.getStyleClass().add("error-text-field");
           passwordField.getStyleClass().add("error-text-field");
@@ -113,7 +113,6 @@ public class RegisterController extends Controller {
           passwordField.getStyleClass().add("error-text-field");
           confirmPasswordField.getStyleClass().add("error-text-field");
           int passwordLength = password.length();
-          System.out.println(password);
           if (passwordLength < 8 || passwordLength > 30) {
             passwordError += AuthenticationResponse.INVALID_PASSWORD_LENGTH.getMessage() + "\n";
           }
@@ -151,6 +150,8 @@ public class RegisterController extends Controller {
               AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD.getMessage());
           confirmPasswordErrorLabel.setVisible(true);
           break;
+        default:
+          break;
       }
 
 
@@ -176,8 +177,8 @@ public class RegisterController extends Controller {
       }
       if (confirmPasswordNull) {
         confirmPasswordField.getStyleClass().add("error-text-field");
+      }
     }
-  }
   }
 
   private void resetFields() {

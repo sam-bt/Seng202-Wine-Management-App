@@ -15,7 +15,7 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="478.0" prefWidth="454.0">
           <children>
-                <Label fx:id="passwordErrorLabel" alignment="CENTER" contentDisplay="CENTER" ellipsisString="" focusTraversable="false" layoutX="-1.0" layoutY="208.0" prefHeight="57.0" prefWidth="456.0" text="SO ANYYNA DIFFERENTE RROR EAIOHDSUGSDHGOISDHGOIHGIOHOIFHGIGHIDHGIODFHGIODHGIODFHGDIOGH" textAlignment="CENTER" textFill="RED" wrapText="true">
+                <Label fx:id="passwordErrorLabel" alignment="CENTER" contentDisplay="CENTER" ellipsisString="" focusTraversable="false" layoutX="-1.0" layoutY="208.0" prefHeight="57.0" prefWidth="456.0" textAlignment="CENTER" textFill="RED" wrapText="true">
                   <font>
                     <Font size="14.0" />
                   </font>

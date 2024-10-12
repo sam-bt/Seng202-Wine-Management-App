@@ -58,7 +58,8 @@ public class CreateListPopupController extends Controller {
 
       if (name.length() < 3 || name.length() > 10 || !name.matches("[a-zA-Z0-9_ ]+")) {
         if ((name.length() < 3 || name.length() > 10) && !name.matches("[a-zA-Z0-9_ ]")) {
-          errorMessage += "List name must be between 3 and 10 characters and cannot contain special characters";
+          errorMessage +=
+              "List name must be between 3 and 10 characters and cannot contain special characters";
         } else if (name.length() < 3 || name.length() > 10) {
           errorMessage += "List name must be between 3 and 10 characters";
         } else if (!name.matches("[a-zA-Z0-9_ ]")) {

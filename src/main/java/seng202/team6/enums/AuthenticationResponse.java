@@ -39,7 +39,7 @@ public enum AuthenticationResponse {
   INVALID_USERNAME_LENGTH("Username must be between 3 and 15 characters long"),
 
   /**
-   * Indicates the provided username has a special character or space
+   * Indicates the provided username has a special character or space.
    */
   INVALID_USERNAME_SYMBOL("Username cannot contain special characters or spaces"),
   /**
@@ -48,6 +48,12 @@ public enum AuthenticationResponse {
   INVALID_PASSWORD(
       "Password must be between 8 and 30 characters long. Password must contain a "
           + "lowercase letter, an uppercase letter, a number and a special character."),
+
+  /**
+   * Indicates that the given password is the same as the username.
+   */
+  SAME_AS_USERNAME("Password cannot be the same as username"),
+
   /**
    * Indicates that the provided password has an invalid length.
    */
@@ -64,11 +70,11 @@ public enum AuthenticationResponse {
   INVALID_PASSWORD_HEADER("Missing a "),
 
   /**
-   * Indicates that the provided password is missing a lowercase
+   * Indicates that the provided password is missing a lowercase.
    */
   INVALID_PASSWORD_MISSING_LOWERCASE("lowercase, "),
   /**
-   * Indicates that the provided password is missing an uppercase,
+   * Indicates that the provided password is missing an uppercase.
    */
   INVALID_PASSWORD_MISSING_UPPERCASE("uppercase, "),
 
@@ -146,8 +152,6 @@ public enum AuthenticationResponse {
    */
   UNEXPECTED_ERROR("An unexpected error occurred. Please try again."),
 
-  SAME_AS_USERNAME("Password cannot be the same as username"),
-
   /**
    * Password constraints.
    */
@@ -155,12 +159,10 @@ public enum AuthenticationResponse {
       "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*.()\\-+={\\[\\]}])"
           + "[A-Za-z0-9!@#$%^&*.()\\-+={\\[\\]}]{8,30}$");
 
-
   /**
    * The message associated with the authentication response.
    */
   private final String message;
-
 
   /**
    * Constructs an AuthenticationResponse with the specified message.
