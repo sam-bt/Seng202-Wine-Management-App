@@ -33,18 +33,60 @@ public enum AuthenticationResponse {
   INVALID_USERNAME(
       "Invalid username, Please make sure that your name is between 3 and"
           + " 15 characters long and only contains letters, numbers or underscores."),
+  /**
+   * Indicates the provided username has an invalid length.
+   */
+  INVALID_USERNAME_LENGTH("Username must be between 3 and 15 characters long"),
 
+  /**
+   * Indicates the provided username has a special character or space
+   */
+  INVALID_USERNAME_SYMBOL("Username cannot contain special characters or spaces"),
   /**
    * Indicates that the provided password is invalid.
    */
   INVALID_PASSWORD(
       "Password must be between 8 and 30 characters long. Password must contain a "
           + "lowercase letter, an uppercase letter, a number and a special character."),
+  /**
+   * Indicates that the provided password has an invalid length.
+   */
+  INVALID_PASSWORD_LENGTH("Password must be between 8 and 30 characters long"),
+
+  /**
+   * Indicates that the provided password has a space.
+   */
+  INVALID_PASSWORD_CONTAINS_SPACES("Password cannot contain spaces"),
+
+  /**
+   * Indicates that the provided password is missing a symbol.
+   */
+  INVALID_PASSWORD_HEADER("Missing a "),
+
+  /**
+   * Indicates that the provided password is missing a lowercase
+   */
+  INVALID_PASSWORD_MISSING_LOWERCASE("lowercase, "),
+  /**
+   * Indicates that the provided password is missing an uppercase,
+   */
+  INVALID_PASSWORD_MISSING_UPPERCASE("uppercase, "),
+
+  /**
+   * Indicates that the provided password is missing a number.
+   */
+  INVALID_PASSWORD_MISSING_NUMBER("number, "),
+
+  /**
+   * Indicates that the provided password is missing a special character.
+   */
+
+  INVALID_PASSWORD_MISSING_SPECIAL_CHAR("special character"),
 
   /**
    * Indicates that the given username is already registered.
    */
-  USERNAME_ALREADY_REGISTERED("The given username is already registered to an account."),
+  USERNAME_ALREADY_REGISTERED("Username is already in use"),
 
   /**
    * Indicates a successful registration.
@@ -104,7 +146,7 @@ public enum AuthenticationResponse {
    */
   UNEXPECTED_ERROR("An unexpected error occurred. Please try again."),
 
-  SAME_AS_USERNAME("Your password cannot be the same as your username"),
+  SAME_AS_USERNAME("Password cannot be the same as username"),
 
   /**
    * Password constraints.
@@ -112,6 +154,8 @@ public enum AuthenticationResponse {
   PASSWORD_CONSTRAINTS(
       "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*.()\\-+={\\[\\]}])"
           + "[A-Za-z0-9!@#$%^&*.()\\-+={\\[\\]}]{8,30}$");
+
+
   /**
    * The message associated with the authentication response.
    */
