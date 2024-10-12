@@ -119,12 +119,12 @@ public class ListScreenController extends Controller {
    */
   @FXML
   public void onCreateListRequestButton(ActionEvent actionEvent) {
-    managerContext.getGuiManager().mainController.openCreateListPopUp(wineListService);
+    managerContext.getGuiManager().openCreateListPopUp(wineListService);
   }
 
   @FXML
   void onDeleteListRequestClick(WineList wineList) {
-    managerContext.getGuiManager().mainController.openDeleteListPopUp(wineList, wineListService);
+    managerContext.getGuiManager().openDeleteListPopUp(wineList, wineListService);
   }
 
   /**

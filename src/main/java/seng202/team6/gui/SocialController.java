@@ -104,7 +104,6 @@ public class SocialController extends Controller {
         selectedWine);
     managerContext
         .getGuiManager()
-        .mainController
         .openPopupReviewView(wineReviewsService, reviewer, selectedReview, selectedWine);
   }
 
@@ -120,7 +119,7 @@ public class SocialController extends Controller {
 
   @FXML
   void onSearch() {
-    managerContext.getGuiManager().mainController.openUserSearchPopup();
+    managerContext.getGuiManager().openUserSearchPopup();
   }
 
   @FXML

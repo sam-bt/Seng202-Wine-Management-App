@@ -31,7 +31,7 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.enums.WinePropertyName;
-import seng202.team6.gui.popup.ErrorPopupController;
+import seng202.team6.gui.popup.GeneralPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.service.WineImportService;
@@ -171,10 +171,10 @@ public class WineImportController extends Controller {
    */
   private boolean checkContainsTitleProperty() {
     if (!selectedWineProperties.containsValue(WinePropertyName.TITLE)) {
-      ErrorPopupController error = managerContext.getGuiManager().mainController.showErrorPopup();
-      error.setTitle("Invalid Selections");
-      error.setMessage("The property TITLE is required but has not been selected");
-      error.addButton("Ok", error::close);
+      GeneralPopupController popup = managerContext.getGuiManager().showErrorPopup();
+      popup.setTitle("Invalid Selections");
+      popup.setMessage("The property TITLE is required but has not been selected");
+      popup.addOkButton();
       return false;
     }
     return true;
@@ -199,13 +199,13 @@ public class WineImportController extends Controller {
         selectedWineProperties);
 
     if (!duplicatedProperties.isEmpty()) {
-      ErrorPopupController error = managerContext.getGuiManager().mainController.showErrorPopup();
-      error.setTitle("Invalid Selections");
-      error.setMessage("The property field(s) " + duplicatedProperties.stream()
+      GeneralPopupController popup = managerContext.getGuiManager().showErrorPopup();
+      popup.setTitle("Invalid Selections");
+      popup.setMessage("The property field(s) " + duplicatedProperties.stream()
           .map(WinePropertyName::name)
           .collect(Collectors.joining(", "))
           + " have been selected more than once.");
-      error.addButton("Ok", error::close);
+      popup.addOkButton();
       return false;
     }
     return true;

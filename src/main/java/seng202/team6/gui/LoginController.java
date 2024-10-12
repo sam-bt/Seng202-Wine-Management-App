@@ -61,12 +61,12 @@ public class LoginController extends Controller {
         managerContext.getAuthenticationManager().validateLogin(username, password);
     if (response == AuthenticationResponse.LOGIN_SUCCESS) {
       if (managerContext.getAuthenticationManager().isAdminFirstLogin()) {
-        managerContext.getGuiManager().mainController.disableNavigation(true);
-        managerContext.getGuiManager().mainController.openUpdatePasswordScreen();
+        managerContext.getGuiManager().disableNavigation(true);
+        managerContext.getGuiManager().openUpdatePasswordScreen();
         return;
       }
-      managerContext.getGuiManager().mainController.openWineScreen();
-      managerContext.getGuiManager().mainController.updateNavigation();
+      managerContext.getGuiManager().openWineScreen();
+      managerContext.getGuiManager().updateNavigation();
     } else {
       loginMessageLabel.setStyle("-fx-text-fill: red");
       loginMessageLabel.setText(response.getMessage());

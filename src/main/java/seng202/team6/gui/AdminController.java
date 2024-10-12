@@ -111,13 +111,17 @@ public class AdminController extends Controller {
     resetView();
     userList.setOnMouseClicked(this::selectUser);
 
+<<<<<<< src/main/java/seng202/team6/gui/AdminController.java
     //==========| Reviews Tab |==========<
     allFlaggedReviews = databaseManager.getWineReviewDao().getAllFlaggedReviews();
     setupReviewTable();
     refreshReviewActions();
 
     //==========| Data Tab |==========<
-    VBox parent = (VBox) managerContext.getGuiManager().mainController.loadImportWineScreen(
+    VBox parent = (VBox) managerContext.getGuiManager().loadImportWineScreen(
+=======
+    VBox parent = (VBox) managerContext.getGuiManager().loadImportWineScreen(
+>>>>>>> src/main/java/seng202/team6/gui/AdminController.java
         importWinesScreenContainer);
     VBox.setVgrow(parent, Priority.ALWAYS);
     parent.minHeightProperty().bind(importWinesScreenContainer.minHeightProperty());
@@ -143,7 +147,7 @@ public class AdminController extends Controller {
   @FXML
   private void onYes() {
     managerContext.getDatabaseManager().getUserDao().deleteAll();
-    managerContext.getGuiManager().mainController.openWineScreen();
+    managerContext.getGuiManager().openWineScreen();
   }
 
   @FXML
@@ -220,6 +224,9 @@ public class AdminController extends Controller {
     //doubleclick
     if (event.getClickCount() == 2) {
       workingUser = userList.getSelectionModel().getSelectedItem();
+      if (workingUser == null) {
+        return;
+      }
       userLabel.setText(workingUser.getUsername());
       deleteUser.setDisable(false);
       deleteReviews.setDisable(false);

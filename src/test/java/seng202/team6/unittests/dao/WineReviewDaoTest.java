@@ -17,6 +17,10 @@ import seng202.team6.model.User;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 
+/**
+ * Unit tests for the WineReviewDao class, which handles operations related to wine reviews.
+ * These tests ensure correct behavior when adding, modifying, and retrieving reviews.
+ */
 public class WineReviewDaoTest {
 
   private DatabaseManager databaseManager;
@@ -26,6 +30,12 @@ public class WineReviewDaoTest {
   private User user;
   private Wine wine;
 
+  /**
+   * Sets up the necessary objects and database connections
+   * before each test.
+   *
+   * @throws SQLException if a database access error occurs
+   */
   @BeforeEach
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
@@ -55,11 +65,18 @@ public class WineReviewDaoTest {
     wineDao.add(wine);
   }
 
+  /**
+   * Cleans up resources and closes database connections
+   * after each test.
+   */
   @AfterEach
   void teardown() {
     databaseManager.teardown();
   }
 
+  /**
+   * Tests if the rating update reflects correctly in the database.
+   */
   @Test
   void testRatingUpdatesInDatabase() {
     double initial = 3.5;
@@ -71,6 +88,9 @@ public class WineReviewDaoTest {
     assertEquals(changed, updatedReview.getRating(), 0.001);
   }
 
+  /**
+   * Tests if the description update reflects correctly in the database.
+   */
   @Test
   void testDescriptionUpdatesInDatabase() {
     String initial = "Initial description";
@@ -82,6 +102,9 @@ public class WineReviewDaoTest {
     assertEquals(changed, updatedReview.getDescription());
   }
 
+  /**
+   * Tests retrieving all reviews in a specified rating range.
+   */
   @Test
   void testGetAllInRange() {
 
@@ -100,6 +123,9 @@ public class WineReviewDaoTest {
 
   }
 
+  /**
+   * Tests deleting a specific wine review.
+   */
   @Test
   void testDeleteReview() {
 
@@ -122,6 +148,9 @@ public class WineReviewDaoTest {
 
   }
 
+  /**
+   * Tests deleting all reviews associated with a specific user.
+   */
   @Test
   void testDeleteAllReviewsFromUser() {
 
@@ -144,6 +173,9 @@ public class WineReviewDaoTest {
 
   }
 
+  /**
+   * Tests retrieving all reviews for a specific wine.
+   */
   @Test
   void testGetAllReviewsForAWine() {
 
@@ -164,6 +196,9 @@ public class WineReviewDaoTest {
 
   }
 
+  /**
+   * Tests retrieving all reviews for a specific user.
+   */
   @Test
   void testGetAllReviewsForAUser() {
 
@@ -185,7 +220,14 @@ public class WineReviewDaoTest {
 
   }
 
-
+  /**
+   * Helper method to create and add a wine review to the database.
+   *
+   * @param rating the rating of the wine review
+   * @param wine the wine being reviewed
+   * @param description the description of the wine review
+   * @return the created WineReview object
+   */
   private WineReview createWineReview(double rating, Wine wine, String description) {
     return wineReviewDao.add(user, wine, rating, description, new Date(System.currentTimeMillis()));
   }

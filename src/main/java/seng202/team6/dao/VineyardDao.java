@@ -13,6 +13,8 @@ import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardFilters;
 import seng202.team6.model.VineyardTour;
+import seng202.team6.model.Wine;
+import seng202.team6.model.WineList;
 import seng202.team6.service.VineyardDataStatService;
 import seng202.team6.util.DatabaseObjectUniquer;
 import seng202.team6.util.Timer;
@@ -262,6 +264,38 @@ public class VineyardDao extends Dao {
     } catch (SQLException error) {
       log.info("Failed to retrieve vineyards in tour '{}' with id '{}'",
           vineyardTour.getName(), vineyardTour.getId(), error);
+    }
+    return FXCollections.emptyObservableList();
+  }
+
+  /**
+   * Retrieves all vineyards which wines in a list contain.
+   *
+   * @param wineList The WineList to search for vineyards from wines.
+   * @return A list of Vineyard objects associated with the tour.
+   */
+  public ObservableList<Vineyard> getAllInList(WineList wineList) {
+    Timer timer = new Timer();
+    String sql = "SELECT VINEYARD.ID as vineyard_id, VINEYARD.*, "
+            + "GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
+            + "FROM WINE "
+            + "INNER JOIN LIST_ITEMS ON WINE.ID = LIST_ITEMS.WINE_ID "
+            + "INNER JOIN LIST_NAME ON LIST_ITEMS.LIST_ID = LIST_NAME.ID "
+            + "INNER JOIN VINEYARD ON VINEYARD.NAME = WINE.WINERY "
+            + "LEFT JOIN GEOLOCATION on lower(WINE.REGION) like lower(GEOLOCATION.NAME) "
+            + "WHERE LIST_NAME.ID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setLong(1, wineList.id());
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        ObservableList<Vineyard> vineyards = extractAllVineyardsFromResultSet(
+            resultSet, "vineyard_id");
+        log.info("Successfully retrieved all {} vineyards in list '{}' in {}ms",
+            vineyards.size(), wineList.name(), timer.currentOffsetMilliseconds());
+        return vineyards;
+      }
+    } catch (SQLException error) {
+      log.info("Failed to retrieve vineyards in list '{}'", wineList.name(), error);
     }
     return FXCollections.emptyObservableList();
   }
