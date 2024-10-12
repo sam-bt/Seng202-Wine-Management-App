@@ -35,6 +35,7 @@ import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineListService;
 import seng202.team6.service.WineReviewsService;
+import seng202.team6.util.Timer;
 
 /**
  * Main controller from where other scenes are embedded.
@@ -312,13 +313,19 @@ public class MainController extends Controller {
    */
   private Parent loadFxml(String fxml, Builder<?> builder, Pane parentToAdd) {
     try {
+      Timer timer = new Timer();
       FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
       loader.setControllerFactory(param -> builder.build());
       Parent parent = loader.load();
       parentToAdd.getChildren().clear();
       parentToAdd.getChildren().add(parent);
+      log.info("Loaded fxml file '{}' in {}ms", fxml, timer.currentOffsetMilliseconds());
+
       if (loader.getController() instanceof Controller controller) {
+        timer = new Timer();
         controller.init();
+        log.info("Initialised '{}'s controller in {}ms", fxml,
+            timer.currentOffsetMilliseconds());
       }
       return parent;
     } catch (IOException e) {

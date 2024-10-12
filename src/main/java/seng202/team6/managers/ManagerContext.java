@@ -5,11 +5,13 @@ package seng202.team6.managers;
  */
 public class ManagerContext {
 
-  final DatabaseManager databaseManager;
+  private final DatabaseManager databaseManager;
 
-  final GuiManager guiManager;
+  private final GuiManager guiManager;
 
-  final AuthenticationManager authenticationManager;
+  private final AuthenticationManager authenticationManager;
+
+  private final TaskManager taskManager;
 
   /**
    * Constructor for ManagerContext.
@@ -21,22 +23,27 @@ public class ManagerContext {
   public ManagerContext(
       DatabaseManager databaseManager,
       GuiManager guiManager,
-      AuthenticationManager authenticationManager
+      AuthenticationManager authenticationManager, TaskManager taskManager
   ) {
     this.databaseManager = databaseManager;
     this.guiManager = guiManager;
     this.authenticationManager = authenticationManager;
+    this.taskManager = taskManager;
   }
 
   public DatabaseManager getDatabaseManager() {
     return databaseManager;
   }
 
-  public seng202.team6.managers.GuiManager getGuiManager() {
+  public GuiManager getGuiManager() {
     return guiManager;
   }
 
   public AuthenticationManager getAuthenticationManager() {
     return authenticationManager;
+  }
+
+  public TaskManager getTaskManager() {
+    return taskManager;
   }
 }

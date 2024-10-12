@@ -17,7 +17,6 @@ import seng202.team6.managers.DatabaseManager;
 import seng202.team6.managers.GuiManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.managers.TaskManager;
-import seng202.team6.managers.TaskManager.CallbackTask;
 import seng202.team6.util.GeolocationResolver;
 
 /**
@@ -43,38 +42,35 @@ public class FxWrapper {
     stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
         event -> taskManager.teardown());
 
-    taskManager.submit(new CallbackTask<ManagerContext>() {
-      @Override
-      public ManagerContext onRun() {
-        if (!GeolocationResolver.hasValidApiKey()) {
-          Alert alert = new Alert(Alert.AlertType.ERROR);
-          alert.setHeaderText("Invalid or missing ORS API Key");
-          alert.setContentText("An ORS API key was not found in an .env file or was invalid. "
-              + "Please check the readme or manual to find out more.");
-          alert.showAndWait();
-          return null;
-        }
+    taskManager.<ManagerContext>create()
+        .onRun(() -> {
+          if (!GeolocationResolver.hasValidApiKey()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Invalid or missing ORS API Key");
+            alert.setContentText("An ORS API key was not found in an .env file or was invalid. "
+                + "Please check the readme or manual to find out more.");
+            alert.showAndWait();
+            return null;
+          }
 
-        DatabaseManager databaseManager = new DatabaseManager("database",
-            "database.db");
-        stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
-            event -> databaseManager.teardown());
-        return new ManagerContext(
-            databaseManager,
-            new GuiManager(wrapper),
-            new AuthenticationManager(databaseManager)
-        );
-      }
-
-      @Override
-      public void onCompletion(ManagerContext managerContext) {
-        if (managerContext != null) {
-          loadScreen("/fxml/main_screen.fxml", "Home",
-              () -> new MainController(managerContext));
-        }
-      }
-    });
-
+          DatabaseManager databaseManager = new DatabaseManager("database",
+              "database.db");
+          stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
+              event -> databaseManager.teardown());
+          return new ManagerContext(
+              databaseManager,
+              new GuiManager(wrapper),
+              new AuthenticationManager(databaseManager),
+              taskManager
+          );
+        })
+        .onCompletion((managerContext) -> {
+          if (managerContext != null) {
+            loadScreen("/fxml/main_screen.fxml", "Home",
+                () -> new MainController(managerContext));
+          }
+        })
+        .submit();
     this.stage = stage;
   }
 
