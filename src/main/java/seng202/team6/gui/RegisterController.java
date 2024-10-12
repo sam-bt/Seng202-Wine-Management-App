@@ -114,19 +114,19 @@ public class RegisterController extends Controller {
           if (passwordLength < 8 || passwordLength > 30) {
             passwordError += "Pasword must be between 8 and 30 characters long\n";
           }
-          if (password != "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*.()\\-+={\\[\\]}])"
-              + "[A-Za-z0-9!@#$%^&*.()\\-+={\\[\\]}]{8,30}$") {
+          if (!password.equals("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*.()\\-+={\\[\\]}])"
+              + "[A-Za-z0-9!@#$%^&*.()\\-+={\\[\\]}]{8,30}$")) {
             passwordError += "Missing a ";
-            if (!password.matches("(?=.*[a-z])")) {
+            if (!password.matches(".*[a-z].*")) {
               passwordError += "lowercase, ";
             }
-            if (!password.contains("(?=.*[A-Z].*)")) {
+            if (!password.matches(".*[A-Z].*")) {
               passwordError += "uppercase, ";
             }
-            if (!password.contains("(?=.*[0-9].*)")) {
+            if (!password.matches("(.*[0-9].*)")) {
               passwordError += "number, ";
             }
-            if (!password.contains("(?=.*[!@#$%^&*.()\\-+={\\[\\]}].*)")) {
+            if (!password.matches("(.*[!@#$%^&*.()\\-+={\\[\\]}].*)")) {
               passwordError += "special character";
             }
           }
