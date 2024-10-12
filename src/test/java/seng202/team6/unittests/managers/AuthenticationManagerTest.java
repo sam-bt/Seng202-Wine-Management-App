@@ -36,7 +36,7 @@ public class AuthenticationManagerTest {
   }
 
   /**
-   * Closes the database manager connection after each test method
+   * Closes the database manager connection after each test method.
    */
   @AfterEach
   public void close() {
@@ -197,7 +197,7 @@ public class AuthenticationManagerTest {
   }
 
   /**
-   * Tests a valid user registration scenario.
+   * Tests an invalid user registration scenario.
    */
   @Test
   public void testUpdatePassEqualUsername() {
@@ -207,7 +207,7 @@ public class AuthenticationManagerTest {
 
     AuthenticationResponse response = authenticationManager.validateUpdate(username, password,
         username, username);
-    assertEquals(AuthenticationResponse.SAME_AS_USERNAME, response);
+    assertEquals(AuthenticationResponse.INVALID_PASSWORD, response);
   }
 
   /**
@@ -216,7 +216,6 @@ public class AuthenticationManagerTest {
   @Test
   public void testLoginInvalidUsernamePasswordCombination() {
     String username = "MyAccount";
-//    String password = validPass;
     AuthenticationResponse response = authenticationManager.validateLoginUsername(username);
     assertEquals(AuthenticationResponse.INVALID_LOGIN_USERNAME, response);
   }
