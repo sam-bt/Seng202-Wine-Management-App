@@ -180,5 +180,8 @@ public class UpdatePasswordController extends Controller {
     newPasswordField.getStyleClass().remove("error-text-field");
     confirmNewPasswordField.getStyleClass().add("normal-text-field");
     confirmNewPasswordField.getStyleClass().remove("error-text-field");
+    oldPasswordErrorLabel.setVisible(false);
+    newPasswordErrorLabel.setVisible(false);
+    confirmNewPasswordErrorLabel.setVisible(false);
   }
 }
