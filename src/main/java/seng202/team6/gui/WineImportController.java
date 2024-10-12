@@ -171,7 +171,7 @@ public class WineImportController extends Controller {
    */
   private boolean checkContainsTitleProperty() {
     if (!selectedWineProperties.containsValue(WinePropertyName.TITLE)) {
-      GeneralPopupController popup = managerContext.getGuiManager().mainController.showErrorPopup();
+      GeneralPopupController popup = managerContext.getGuiManager().showErrorPopup();
       popup.setTitle("Invalid Selections");
       popup.setMessage("The property TITLE is required but has not been selected");
       popup.addOkButton();
@@ -199,7 +199,7 @@ public class WineImportController extends Controller {
         selectedWineProperties);
 
     if (!duplicatedProperties.isEmpty()) {
-      GeneralPopupController popup = managerContext.getGuiManager().mainController.showErrorPopup();
+      GeneralPopupController popup = managerContext.getGuiManager().showErrorPopup();
       popup.setTitle("Invalid Selections");
       popup.setMessage("The property field(s) " + duplicatedProperties.stream()
           .map(WinePropertyName::name)

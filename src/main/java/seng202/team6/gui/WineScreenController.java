@@ -156,8 +156,6 @@ public class WineScreenController extends Controller {
 
     // Setup detailed wine
     tableView.setOnMouseClicked(this::openWineOnClick);
-
-
   }
 
   /**
@@ -610,12 +608,12 @@ public class WineScreenController extends Controller {
     Runnable backAction;
     if (currentFilters == null && pageService.getPageNumber() == 1) { // Don't need to save state
       backAction = () -> managerContext.getGuiManager()
-          .mainController.openWineScreen();
+          .openWineScreen();
     } else {
       backAction = () -> managerContext.getGuiManager()
-          .mainController.openWineScreen(this.saveState());
+          .openWineScreen(this.saveState());
     }
-    managerContext.getGuiManager().mainController.openDetailedWineView(wine, backAction);
+    managerContext.getGuiManager().openDetailedWineView(wine, backAction);
   }
 
   /**
