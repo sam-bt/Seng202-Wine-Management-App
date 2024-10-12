@@ -52,8 +52,9 @@ public class CustomRangeSlider extends RangeSlider {
       setMax(max);
       setMajorTickUnit(majorTickUnit);
       setMinorTickCount(minorTickCount);
-      if (labelFormatter != null)
+      if (labelFormatter != null) {
         setLabelFormatter(labelFormatter);
+      }
     }
     resetThumbs();
   }
@@ -72,7 +73,7 @@ public class CustomRangeSlider extends RangeSlider {
    * @param low  the new low value
    * @param high the new high value
    */
-  public void setHighLow(double low, double high) {
+  public void setLowHigh(double low, double high) {
     setLowValue(low);
     setHighValue(high);
   }

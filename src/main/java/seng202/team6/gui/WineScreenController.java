@@ -23,7 +23,6 @@ import javafx.util.converter.FloatStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.controlsfx.control.RangeSlider;
 import seng202.team6.dao.WineDao;
 import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.gui.controls.CustomRangeSlider;
@@ -33,9 +32,7 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineFilters;
 import seng202.team6.service.PageService;
 import seng202.team6.service.WineDataStatService;
-import seng202.team6.util.FilterUtil;
 import seng202.team6.util.NoDecimalCurrencyStringConverter;
-import seng202.team6.util.WineState;
 import seng202.team6.util.YearStringConverter;
 
 /**
@@ -431,16 +428,16 @@ public class WineScreenController extends Controller {
 
     // Set slider values (if not disabled)
     if (!vintageSlider.isDisabled()) {
-      vintageSlider.setHighLow(currentFilters.getMinVintage(), currentFilters.getMaxVintage());
+      vintageSlider.setLowHigh(currentFilters.getMinVintage(), currentFilters.getMaxVintage());
     }
     if (!scoreSlider.isDisabled()) {
-      scoreSlider.setHighLow(currentFilters.getMinScore(), currentFilters.getMaxScore());
+      scoreSlider.setLowHigh(currentFilters.getMinScore(), currentFilters.getMaxScore());
     }
     if (!abvSlider.isDisabled()) {
-      abvSlider.setHighLow(currentFilters.getMinAbv(), currentFilters.getMaxAbv());
+      abvSlider.setLowHigh(currentFilters.getMinAbv(), currentFilters.getMaxAbv());
     }
     if (!priceSlider.isDisabled()) {
-      priceSlider.setHighLow(currentFilters.getMinPrice(), currentFilters.getMaxPrice());
+      priceSlider.setLowHigh(currentFilters.getMinPrice(), currentFilters.getMaxPrice());
     }
 
     // Hide all context menus → fixes a bug caused by setting the text
