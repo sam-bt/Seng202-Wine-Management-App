@@ -168,6 +168,7 @@ public class DetailedWineViewController extends Controller {
       loginToReviewLabel.setVisible(true);
       loginToReviewLabel.setDisable(false);
       buttonsContainer.getChildren().remove(openListsButton);
+      buttonsContainer.getChildren().remove(saveNotes);
     }
 
     Image wineImage = wineImages.getOrDefault(colourTextbox.getText().toLowerCase(),
@@ -191,6 +192,16 @@ public class DetailedWineViewController extends Controller {
 
     // everything is ready so now the wine reviews can be loaded
     wineReviewsService.init();
+
+    // Set rating label text
+    if (wineReviewsService.hasReviews()) {
+      int numberOfRatings = wineReviewsService.getWineReviews().size();
+      ratingsLabel.setText(
+          "Average %.2f From %d ratings".formatted(viewedWine.getAverageRating(),
+              numberOfRatings));
+    } else {
+      ratingsLabel.setText("This wine has not been reviewed");
+    }
   }
 
   /**
@@ -351,7 +362,7 @@ public class DetailedWineViewController extends Controller {
       noteLabel.setText("My Notes");
     }
     notesTextbox.setVisible(visible);
-    buttonsContainer.getChildren().remove(saveNotes);
+    saveNotes.setVisible(visible);
   }
 
   /**
