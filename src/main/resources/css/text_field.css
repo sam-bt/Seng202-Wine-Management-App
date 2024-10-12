@@ -1,7 +1,42 @@
-.normal-text-field {
-  -fx-background-color: #00FFFA;
+ .normal-text-field{
+  -fx-background-color: -fx-shadow-highlight-color, -fx-text-box-border, -fx-control-inner-background;
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 3, 2, 2;
+  -fx-padding: 0.25em 0.416667em  0.333333em 0.416667em; /* 3 5 4 5 */
+  -fx-text-fill: -fx-text-inner-color;
+  -fx-prompt-text-fill: derive(-fx-control-inner-background,-30%);
+  -fx-cursor: text;
 }
 
-.error-text-field {
-  -fx-background-color: #FCA5A5;
+.text-field:focused {
+  -fx-background-color: -fx-focus-color, -fx-text-box-border, -fx-control-inner-background;
+  -fx-background-insets: -0.4, 1, 2;
+  -fx-background-radius: 3.4, 2, 2;
+  -fx-prompt-text-fill: transparent;
 }
+
+.text-field:disabled {
+  -fx-opacity: -fx-disabled-opacity;
+}
+
+
+.error-text-field{
+  -fx-background-color: RED, -fx-text-box-border, #FCA5A5;
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-radius: 3, 2, 2;
+  -fx-padding: 0.25em 0.416667em  0.333333em 0.416667em; /* 3 5 4 5 */
+  -fx-text-fill: -fx-text-inner-color;
+  -fx-prompt-text-fill: derive(-fx-control-inner-background,+30%);
+  -fx-cursor: text;
+}
+
+ .text-field:focused {
+   -fx-background-color: -fx-focus-color, -fx-text-box-border, -fx-control-inner-background;
+   -fx-background-insets: -0.4, 1, 2;
+   -fx-background-radius: 3.4, 2, 2;
+   -fx-prompt-text-fill: transparent;
+ }
+
+ .text-field:disabled {
+   -fx-opacity: -fx-disabled-opacity;
+ }
