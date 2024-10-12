@@ -206,8 +206,8 @@ public class AggregatedDaoTest {
     assertNotNull(result);
     assertEquals(1, result.size());
     for (Pair<WineReview, Wine> pair : result) {
-      assertEquals(pair.getFirst().getDescription(), "Yuck!");
-      assertEquals(pair.getSecond().getTitle(), "wine");
+      assertEquals("Yuck!", pair.getFirst().getDescription());
+      assertEquals("wine", pair.getSecond().getTitle());
     }
   }
 

@@ -1,12 +1,16 @@
 package seng202.team6.model;
 
 import java.sql.Date;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyLongProperty;
 import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -22,6 +26,8 @@ public class WineReview {
   private final DoubleProperty rating;
   private final StringProperty description;
   private final Property<Date> date;
+  private IntegerProperty flag;
+  private BooleanProperty selected;
 
   /**
    * Constructor.
@@ -39,14 +45,17 @@ public class WineReview {
       String username,
       double rating,
       String description,
-      Date date
+      Date date,
+      int flag
   ) {
-    this.id = new ReadOnlyLongWrapper(id);
+    this.id = new ReadOnlyLongWrapper(this, "id", id);
     this.wineId = new ReadOnlyLongWrapper(wineId);
     this.username = new ReadOnlyStringWrapper(username);
-    this.rating = new SimpleDoubleProperty(rating);
-    this.description = new SimpleStringProperty(description);
+    this.rating = new SimpleDoubleProperty(this, "rating", rating);
+    this.description = new SimpleStringProperty(this, "description", description);
     this.date = new SimpleObjectProperty<>(date);
+    this.flag = new SimpleIntegerProperty(flag);
+    this.selected = new SimpleBooleanProperty(this, "selected", false);
   }
 
   /**
@@ -106,7 +115,7 @@ public class WineReview {
   /**
    * Gets the rating.
    *
-   * @return rating
+   * @return rating.
    */
   public double getRating() {
     return rating.get();
@@ -115,7 +124,7 @@ public class WineReview {
   /**
    * Sets the rating.
    *
-   * @param rating rating
+   * @param rating rating.
    */
   public void setRating(double rating) {
     this.rating.setValue(rating);
@@ -124,7 +133,7 @@ public class WineReview {
   /**
    * Gets the rating property.
    *
-   * @return rating
+   * @return rating.
    */
   public DoubleProperty ratingProperty() {
     return rating;
@@ -133,7 +142,7 @@ public class WineReview {
   /**
    * Gets the description.
    *
-   * @return description
+   * @return description.
    */
   public String getDescription() {
     return description.get();
@@ -142,7 +151,7 @@ public class WineReview {
   /**
    * Sets the description.
    *
-   * @param description description
+   * @param description description.
    */
   public void setDescription(String description) {
     this.description.setValue(description);
@@ -151,7 +160,7 @@ public class WineReview {
   /**
    * Gets the description property.
    *
-   * @return description
+   * @return description.
    */
   public StringProperty descriptionProperty() {
     return description;
@@ -160,7 +169,7 @@ public class WineReview {
   /**
    * Gets the date.
    *
-   * @return date
+   * @return date.
    */
   public Date getDate() {
     return date.getValue();
@@ -176,9 +185,64 @@ public class WineReview {
   /**
    * Gets the date property.
    *
-   * @return date
+   * @return date.
    */
   public Property<Date> dateProperty() {
     return date;
   }
+
+  /**
+   * Get the flag. 0 == not flagged, 1 == flagged.
+   *
+   * @return the flag.
+   */
+  public int getFlag() {
+    return flag.get();
+  }
+
+  /**
+   * Get the flag property.
+   *
+   * @return the flag property.
+   */
+  public IntegerProperty flagProperty() {
+    return flag;
+  }
+
+  /** Set the value of the flag property.
+   *
+   * @param flag The value to set.
+   */
+  public void setFlag(int flag) {
+    this.flag.set(flag);
+  }
+
+
+  /**
+   * Get the selected value. This is a boolean used in review moderation
+   * table to select multiple reviews at once for mass deletion or reinstation.
+   *
+   * @return the selected value
+   */
+  public boolean getSelected() {
+    return selected.get();
+  }
+
+  /**
+   * Get the selected property.
+   *
+   * @return the selected property.
+   */
+  public BooleanProperty selectedProperty() {
+    return selected;
+  }
+
+  /** Set the value of the selected property.
+   *
+   * @param selected The value to set.
+   */
+  public void setSelected(boolean selected) {
+    this.selected.set(selected);
+  }
+
 }

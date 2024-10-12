@@ -47,8 +47,21 @@ public class WineReviewDaoTest {
     user = new User("username", "password", "role", "salt");
     userDao.add(user);
 
-    wine = new Wine(-1, "wine", "blue", "nz", "christchurch", "", "", 1024, "na", 99, 25.0f,
-        50f, null, 0.0);
+    wine = new Wine(
+            -1l,
+            "wine",
+            "blue",
+            "nz",
+            "christchurch",
+            "",
+            "blue",
+            1024,
+            "na",
+            99,
+            25.0f,
+            50f,
+            null,
+            2f);
     wineDao.add(wine);
   }
 
