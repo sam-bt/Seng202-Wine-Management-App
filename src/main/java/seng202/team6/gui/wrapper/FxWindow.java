@@ -35,15 +35,6 @@ public class FxWindow extends Application {
    */
   @Override
   public void start(Stage primaryStage) throws IOException {
-    if (!GeolocationResolver.hasValidApiKey()) {
-      Alert alert = new Alert(Alert.AlertType.ERROR);
-      alert.setHeaderText("Invalid or missing ORS API Key");
-      alert.setContentText("An ORS API key was not found in an .env file or was invalid. "
-          + "Please check the readme or manual to find out more.");
-      alert.showAndWait();
-      return;
-    }
-
     FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/fx_wrapper.fxml"));
     Parent root = baseLoader.load();
 
@@ -52,7 +43,7 @@ public class FxWindow extends Application {
 
     primaryStage.setTitle("WINO App [DEV]");
     Scene scene = new Scene(root);
-    //primaryStage.setResizable(false);
+    primaryStage.setResizable(false);
     primaryStage.setMinHeight(900);
     primaryStage.setMinWidth(1400);
     primaryStage.setScene(scene);
@@ -62,5 +53,4 @@ public class FxWindow extends Application {
     primaryStage.getIcons().add(ImageReader.loadImage("/img/icon.png"));
     primaryStage.show();
   }
-
 }
