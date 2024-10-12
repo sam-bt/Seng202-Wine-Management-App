@@ -253,7 +253,6 @@ public class DetailedWineViewController extends Controller {
 
   @FXML
   void onViewVineyardClick() {
-    // fixme - circular back buttons idk how to fix
     managerContext.getGuiManager().openDetailedVineyardView(wineVineyard,
         () -> managerContext.getGuiManager().openDetailedWineView(viewedWine, null));
   }

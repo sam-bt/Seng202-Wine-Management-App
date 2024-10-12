@@ -14,7 +14,6 @@ import seng202.team6.model.Wine;
 /**
  * Reusable wine GUI components.
  */
-// fixme - this class is only used in consumption calculator so delete when that is removed
 public class WineWidgets {
   /**
    * Creates a card for a wine.

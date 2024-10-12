@@ -68,7 +68,7 @@ public class WineReviewsService {
    * @param rating      rating
    * @param description description
    */
-  public void addOrUpdateUserReview(double rating, String description) { //todo test with mock db
+  public void addOrUpdateUserReview(double rating, String description) {
     User user = authenticationManager.getAuthenticatedUser();
     if (hasUserReviewed()) {
       WineReview usersReview = getUsersReview();

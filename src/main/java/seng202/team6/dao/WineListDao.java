@@ -189,7 +189,6 @@ public class WineListDao extends Dao {
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setLong(1, wineList.id());
       statement.setLong(2, wine.getKey());
-      // todo - remove date from wine list
       statement.setDate(3, new Date(System.currentTimeMillis()));
 
       int rowsAffected = statement.executeUpdate();
