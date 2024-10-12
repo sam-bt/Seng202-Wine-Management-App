@@ -111,7 +111,6 @@ public class AdminController extends Controller {
     resetView();
     userList.setOnMouseClicked(this::selectUser);
 
-<<<<<<< src/main/java/seng202/team6/gui/AdminController.java
     //==========| Reviews Tab |==========<
     allFlaggedReviews = databaseManager.getWineReviewDao().getAllFlaggedReviews();
     setupReviewTable();
@@ -119,9 +118,6 @@ public class AdminController extends Controller {
 
     //==========| Data Tab |==========<
     VBox parent = (VBox) managerContext.getGuiManager().loadImportWineScreen(
-=======
-    VBox parent = (VBox) managerContext.getGuiManager().loadImportWineScreen(
->>>>>>> src/main/java/seng202/team6/gui/AdminController.java
         importWinesScreenContainer);
     VBox.setVgrow(parent, Priority.ALWAYS);
     parent.minHeightProperty().bind(importWinesScreenContainer.minHeightProperty());
