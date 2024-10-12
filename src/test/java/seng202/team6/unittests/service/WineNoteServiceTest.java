@@ -1,6 +1,6 @@
 package seng202.team6.unittests.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.SQLException;
 import org.junit.Before;
@@ -34,7 +34,6 @@ public class WineNoteServiceTest {
     wineNotesDao = databaseManager.getWineNotesDao();
     wineDao = databaseManager.getWineDao();
     userDao = databaseManager.getUserDao();
-    wineNotesDao.setUseCache(false);
 
 
     user = new User("username", "password", "role", "salt");
@@ -44,7 +43,7 @@ public class WineNoteServiceTest {
         50f, null, 0.0);
     wineDao.add(wine);
 
-    testNote = wineNotesDao.get(user, wine);
+    testNote = wineNotesDao.getOrCreate(user, wine);
     testNote.setNote("test");
 
     wineNoteService = new WineNoteService(new AuthenticationManager(databaseManager), databaseManager, wine);
