@@ -65,13 +65,14 @@ public class FxWrapper {
         DatabaseManager databaseManager = new DatabaseManager("database", "database.db");
         stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
             event -> databaseManager.teardown());
-
-        // create the manager context
+        GuiManager guiManager = new GuiManager(fxWrapper);
         ManagerContext managerContext = new ManagerContext(
             databaseManager,
-            new GuiManager(fxWrapper),
+            guiManager,
             new AuthenticationManager(databaseManager)
         );
+        guiManager.setManagerContext(managerContext);
+
 
         // load the main screen on the javafx thread
         Platform.runLater(() -> loadScreen("/fxml/main_screen.fxml", "Home",

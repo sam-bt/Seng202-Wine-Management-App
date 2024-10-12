@@ -42,8 +42,7 @@ public class AutoCompletionTextField extends TextField {
   }
 
   /**
-   * Constructor for creating an AutoCompletionTextField with a predefined
-   * text value.
+   * Constructor for creating an AutoCompletionTextField with a predefined text value.
    *
    * @param text The initial text to display in the text field.
    */
@@ -145,6 +144,10 @@ public class AutoCompletionTextField extends TextField {
    */
   public SortedSet<String> getEntries() {
     return entries;
+  }
+
+  public ContextMenu getEntriesPopup() {
+    return entriesPopup;
   }
 
   public void setOnSelectionAction(Consumer<String> onSelectionAction) {
