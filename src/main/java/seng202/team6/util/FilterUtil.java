@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.controlsfx.control.RangeSlider;
 import seng202.team6.gui.controls.AutoCompletionTextField;
 
-
 /**
  * Class to handle range slider and autocomplete filters.
  */

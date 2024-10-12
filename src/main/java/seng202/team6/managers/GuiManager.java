@@ -42,8 +42,10 @@ import seng202.team6.gui.wrapper.FxWrapper;
 import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.Wine;
+import seng202.team6.model.WineFilters;
 import seng202.team6.model.WineList;
 import seng202.team6.model.WineReview;
+import seng202.team6.service.PageService;
 import seng202.team6.service.WineListService;
 import seng202.team6.service.WineReviewsService;
 import seng202.team6.util.WineState;
@@ -205,11 +207,12 @@ public class GuiManager {
   /**
    * Launches the wine screen based on a previous state.
    *
-   * @param state previous state
+   * @param pageService the page service from the previous state.
+   * @param wineFilters the wine filters from the previous state.
    */
-  public void openWineScreen(WineState state) {
+  public void openWineScreen(PageService pageService, WineFilters wineFilters) {
     switchScene("/fxml/wine_screen.fxml", "Wine Information",
-        () -> new WineScreenController(managerContext, state));
+        () -> new WineScreenController(managerContext, pageService, wineFilters));
   }
 
   /**
