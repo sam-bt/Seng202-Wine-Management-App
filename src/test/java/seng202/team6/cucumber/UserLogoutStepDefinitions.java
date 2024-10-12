@@ -12,10 +12,12 @@ import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 
 public class UserLogoutStepDefinitions {
+
   private AuthenticationManager authenticationManager;
+
   @Before
   public void setup() throws SQLException {
     authenticationManager = new AuthenticationManager(new DatabaseManager());
@@ -24,7 +26,7 @@ public class UserLogoutStepDefinitions {
   @Given("the user is authenticated and wants to logout")
   public void theUserIsAuthenticatedAndWantsToLogout() {
     String username = "MyAccount";
-    String password = "MyPassword";
+    String password = "ValidPassword1!";
 
     AuthenticationResponse registrationResponse = authenticationManager.validateRegistration(
         username, password, password);

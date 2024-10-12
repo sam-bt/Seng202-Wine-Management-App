@@ -1,68 +1,95 @@
 package seng202.team6.gui;
 
-import java.io.IOException;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.util.Builder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import seng202.team6.gui.popup.WineReviewPopupController;
+import javafx.scene.layout.VBox;
+import seng202.team6.managers.AuthenticationManager;
+import seng202.team6.managers.GuiManager;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.model.Wine;
-import seng202.team6.service.WineReviewsService;
 
 /**
- * Main controller from where other scenes are embedded
+ * Main controller from where other scenes are embedded.
  */
 public class MainController extends Controller {
-
-  @FXML
-  private AnchorPane page;
-
+  // page content
   @FXML
   private AnchorPane pageContent;
-
   @FXML
-  private Button wineScreenButton;
-
+  private AnchorPane popupActionBlocker;
   @FXML
-  private Button listScreenButton;
-
+  private AnchorPane popupContent;
   @FXML
-  private Button dataSetsScreenButton;
+  private MenuBar menuBar;
 
+  // wines submenu
   @FXML
-  private Button adminScreenButton;
-
+  private VBox winesMenuGraphic;
   @FXML
-  private Button noteScreenButton;
+  private VBox winesSubmenuContainer;
+  @FXML
+  private HBox viewWinesButton;
+  @FXML
+  private HBox compareWinesButton;
 
+  // profile submenu
+  @FXML
+  private Menu profileMenu;
+  @FXML
+  private VBox profileMenuGraphic;
+  @FXML
+  private VBox profileSubmenuContainer;
+  @FXML
+  private HBox listsButton;
+  @FXML
+  private HBox notesButton;
+  @FXML
+  private HBox consumptionButton;
+
+  // vineyard submenu
+  @FXML
+  private Menu vineyardsDropdownMenu;
+  @FXML
+  private VBox vineyardsMenuGraphic;
+  @FXML
+  private VBox vineyardsSubmenuContainer;
+  @FXML
+  private HBox viewVineyardsButton;
+  @FXML
+  private HBox planTourButton;
+
+  // menu buttons
+  @FXML
+  private VBox vineyardsButton;
+  @FXML
+  private VBox socialButton;
+  @FXML
+  private VBox adminButton;
+
+  // menu buttons that toggle between being on the screen and not
+  @FXML
+  private Menu vineyardsMenu;
+  @FXML
+  private Menu adminMenu;
+
+  // authentication buttons
   @FXML
   private Button loginButton;
-
-
   @FXML
   private Button registerButton;
 
-  @FXML
-  private HBox navBarBox;
-
-  @FXML
-  private AnchorPane popupActionBlocker;
-
-  @FXML
-  private AnchorPane popupContent;
-
-  private final Logger log = LogManager.getLogger(getClass());
+  private String currentScreenFxml;
 
   private boolean disabled = false;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context
    */
@@ -70,193 +97,240 @@ public class MainController extends Controller {
     super(managerContext);
 
     // This is an ugly circular dependency. It is easier to resolve here
-    managerContext.GUIManager.setMainController(this);
+    managerContext.getGuiManager().setMainController(this);
   }
 
-  public void initialize() {
-    adminScreenButton.setVisible(false);
-    dataSetsScreenButton.setVisible(false);
-    navBarBox.getChildren().remove(listScreenButton);
-    navBarBox.getChildren().add(3, listScreenButton);
-    listScreenButton.setVisible(false);
-    dataSetsScreenButton.setVisible(false);
-    noteScreenButton.setVisible(false);
-    openWineScreen();
+  /**
+   * Called to init this controller after set up.
+   */
+  @Override
+  public void init() {
+    // mouse enter events for the wines, vineyards and profile which shows the corresponding submenu
+    winesMenuGraphic.setOnMouseEntered(event ->
+        showSubmenu(winesSubmenuContainer, winesMenuGraphic));
+    profileMenuGraphic.setOnMouseEntered(event ->
+        showSubmenu(profileSubmenuContainer, profileMenuGraphic));
+    vineyardsMenuGraphic.setOnMouseEntered(event -> {
+      // only show the submenu if they are authenticated
+      if (managerContext.getAuthenticationManager().isAuthenticated()) {
+        showSubmenu(vineyardsSubmenuContainer, vineyardsMenuGraphic);
+      }
+    });
+
+    // mouse exit events which checks if the cursor has left either the button or the buttons
+    // submenu
+    EventHandler<MouseEvent> profileExitEvent = event ->
+        hideSubmenuIfNotInside(profileSubmenuContainer, profileMenuGraphic, event.getScreenX(),
+            event.getScreenY());
+    profileMenuGraphic.setOnMouseExited(profileExitEvent);
+    profileSubmenuContainer.setOnMouseExited(profileExitEvent);
+
+    EventHandler<MouseEvent> vineyardsExitEvent = event ->
+        hideSubmenuIfNotInside(vineyardsSubmenuContainer, vineyardsMenuGraphic, event.getScreenX(),
+            event.getScreenY());
+    vineyardsMenuGraphic.setOnMouseExited(vineyardsExitEvent);
+    vineyardsSubmenuContainer.setOnMouseExited(vineyardsExitEvent);
+
+    EventHandler<MouseEvent> winesExitEvent = event ->
+        hideSubmenuIfNotInside(winesSubmenuContainer, winesMenuGraphic, event.getScreenX(),
+            event.getScreenY());
+    winesMenuGraphic.setOnMouseExited(winesExitEvent);
+    winesSubmenuContainer.setOnMouseExited(winesExitEvent);
+
+    // disable the submenus when the navigation is first loaded
+    hideSubmenu(winesSubmenuContainer);
+    hideSubmenu(profileSubmenuContainer);
+    hideSubmenu(vineyardsSubmenuContainer);
+    initButtons();
+
+    updateNavigation();
+    managerContext.getGuiManager().openWineScreen();
   }
 
-  public void onLogin() {
-    if (managerContext.authenticationManager.isAuthenticated()) {
-      adminScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
-      dataSetsScreenButton.setVisible(managerContext.authenticationManager.isAdmin());
-      noteScreenButton.setVisible(true);
+  /**
+   * Shows the submenu and positioning it directly below the parent menu graphic.
+   *
+   * @param submenu           the submenu to be shown
+   * @param parentMenuGraphic the menu graphic that triggers the submenu
+   */
+  private void showSubmenu(VBox submenu, VBox parentMenuGraphic) {
+    Point2D position = parentMenuGraphic.localToScene(0, parentMenuGraphic.getLayoutBounds()
+        .getMaxY());
+    submenu.setLayoutX(position.getX());
+    submenu.setLayoutY(position.getY());
+    submenu.setPrefWidth(parentMenuGraphic.getWidth());
+    submenu.setDisable(false);
+    submenu.setVisible(true);
+  }
+
+  /**
+   * Hides the submenu if the mouse cursor is not within the bounds of either the parent menu
+   * graphic or the submenu itself.
+   *
+   * @param submenu           the submenu to be hidden
+   * @param parentMenuGraphic the parent menu graphic associated with the submenu
+   * @param mouseX            the current X coordinate of the mouse
+   * @param mouseY            the current Y coordinate of the mouse
+   */
+  private void hideSubmenuIfNotInside(VBox submenu, VBox parentMenuGraphic, double mouseX,
+      double mouseY) {
+    if (!isMouseInsideSubmenu(submenu, parentMenuGraphic, mouseX, mouseY)) {
+      hideSubmenu(submenu);
+    }
+  }
+
+  /**
+   * Hides the submenu by disabling and making it invisible.
+   *
+   * @param submenu the submenu to be hidden
+   */
+  private void hideSubmenu(VBox submenu) {
+    submenu.setDisable(true);
+    submenu.setVisible(false);
+  }
+
+  /**
+   * Checks if the mouse cursor is inside the bounds of the submenu or the parent menu graphic,
+   * accounting for some padding to avoid edge cases.
+   *
+   * @param submenu           the submenu to check
+   * @param parentMenuGraphic the parent menu graphic to check
+   * @param mouseX            the current X coordinate of the mouse
+   * @param mouseY            the current Y coordinate of the mouse
+   * @return true if the mouse is inside the submenu or parent menu graphic bounds, false otherwise
+   */
+  private boolean isMouseInsideSubmenu(VBox submenu, VBox parentMenuGraphic, double mouseX,
+      double mouseY) {
+    Point2D position = parentMenuGraphic.localToScreen(0, 0);
+    // add padding to each of the bounds to resolve issues with edge cases
+    int padding = 10;
+    double minX = position.getX() + padding;
+    double maxX = minX + parentMenuGraphic.getWidth() - padding;
+    double minY = position.getY() + padding;
+    double maxY = minY + parentMenuGraphic.getHeight() + submenu.getHeight() - padding;
+
+    return mouseX > minX && mouseX < maxX && mouseY > minY && mouseY < maxY;
+  }
+
+  /**
+   * Updates the navigation menu based on the current authentication state of the user. If the user
+   * is authenticated, the profile menu and settings options are shown. If the user is not
+   * authenticated, the login and registration options are displayed.
+   */
+  public void updateNavigation() {
+    AuthenticationManager authenticationManager = managerContext.getAuthenticationManager();
+    GuiManager guiManager = managerContext.getGuiManager();
+    if (authenticationManager.isAuthenticated()) {
+      addIfNotPresent(profileMenu, -1);
       loginButton.setText("Settings");
       registerButton.setText("Logout");
-
-      navBarBox.getChildren().remove(listScreenButton);
-      navBarBox.getChildren().add(1, listScreenButton);
-      listScreenButton.setVisible(true);
-      dataSetsScreenButton.setVisible(true);
-
-      loginButton.setOnMouseClicked(event -> openSettingsScreen());
+      loginButton.setOnMouseClicked(event -> guiManager.openSettingsScreen());
       registerButton.setOnMouseClicked(event -> logout());
+
+      // replace the vineyards button with a dropdown
+      menuBar.getMenus().remove(vineyardsMenu);
+      addIfNotPresent(vineyardsDropdownMenu, 1);
     } else {
-      adminScreenButton.setVisible(false);
-      dataSetsScreenButton.setVisible(false);
+      menuBar.getMenus().remove(profileMenu);
+      loginButton.setText("Login");
+      registerButton.setText("Register");
+      loginButton.setOnMouseClicked(event -> guiManager.openLoginScreen());
+      registerButton.setOnMouseClicked(event -> guiManager.openRegisterScreen());
+      menuBar.getMenus().remove(vineyardsDropdownMenu);
+      addIfNotPresent(vineyardsMenu, 1);
+    }
+
+    if (authenticationManager.isAdmin()) {
+      addIfNotPresent(adminMenu, -1);
+    } else {
+      menuBar.getMenus().remove(adminMenu);
     }
   }
 
-  public void setDisable(Boolean status) {
-    disabled = status;
-    wineScreenButton.setDisable(status);
-    listScreenButton.setDisable(status);
-    dataSetsScreenButton.setDisable(status);
-    adminScreenButton.setDisable(status);
-  }
-
-  public void switchScene(String fxml, String title, Builder<?> builder) {
-    try {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
-      // provide a custom Controller with parameters
-      loader.setControllerFactory(param -> builder.build());
-      Parent parent = loader.load();
-      pageContent.getChildren().clear();
-      pageContent.getChildren().add(parent);
-      if (loader.getController() instanceof Controller controller) {
-        controller.init();
+  /**
+   * Adds a menu to the menu bar if it is not already present.
+   *
+   * @param menu the menu to be added
+   */
+  private void addIfNotPresent(Menu menu, int index) {
+    if (!menuBar.getMenus().contains(menu)) {
+      if (index == -1) {
+        menuBar.getMenus().add(menu);
+      } else {
+        menuBar.getMenus().add(index, menu);
       }
-      managerContext.GUIManager.setWindowTitle(title);
-    } catch (IOException e) {
-      log.error("Failed to load screen {}", fxml, e);
     }
   }
 
-  public void openPopup(String fxml, Builder<?> builder) {
-    try {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
-      loader.setControllerFactory(param -> builder.build());
-
-      Parent parent = loader.load();
-      pageContent.getChildren().add(parent);
-      if (loader.getController() instanceof Controller controller) {
-        controller.init();
-      }
-      popupContent.getChildren().add(parent);
-      popupContent.setVisible(true);
-      popupContent.setDisable(false);
-      popupActionBlocker.setVisible(true);
-      popupActionBlocker.setDisable(false);
-    } catch (IOException e) {
-      log.error("Failed to load screen {}", fxml, e);
-    }
+  /**
+   * Enables or disables the navigation menu bar.
+   *
+   * @param disable true to disable the menu bar, false to enable it
+   */
+  public void disableNavigation(boolean disable) {
+    menuBar.setDisable(disable);
   }
 
+  public AnchorPane getPageContent() {
+    return pageContent;
+  }
+
+  public AnchorPane getPopupContent() {
+    return popupContent;
+  }
+
+  public AnchorPane getPopupActionBlocker() {
+    return popupActionBlocker;
+  }
+
+  /**
+   * Logout the current user.
+   */
+  @FXML
   public void logout() {
-    managerContext.authenticationManager.logout();
-    loginButton.setText("Login");
-    registerButton.setText("Register");
-    loginButton.setOnMouseClicked(event -> openLoginScreen());
-    registerButton.setOnMouseClicked(event -> openRegisterScreen());
-    adminScreenButton.setVisible(false);
-    dataSetsScreenButton.setVisible(false);
-    noteScreenButton.setVisible(false);
-
-    navBarBox.getChildren().remove(listScreenButton);
-    navBarBox.getChildren().add(3, listScreenButton);
-    listScreenButton.setVisible(false);
-
-    openWineScreen();
+    managerContext.getAuthenticationManager().logout();
+    updateNavigation();
+    managerContext.getGuiManager().openWineScreen();
   }
 
+  /**
+   * Gets if screen is disabled.
+   *
+   * @return if currently disabled
+   */
   public boolean isDisabled() {
     return disabled;
   }
 
-  /**
-   * Launches the data set screen.
-   */
-  @FXML
-  public void openDataSetsScreen() {
-    switchScene("/fxml/dataset_import_screen.fxml", "Manage Datasets",
-        () -> new DatasetImportController(managerContext));
+  private void initButtons() {
+    GuiManager guiManager = managerContext.getGuiManager();
+    // wines submenu
+    viewWinesButton.setOnMouseClicked(event -> guiManager.openWineScreen());
+    compareWinesButton.setOnMouseClicked(event -> guiManager.openWineCompareScreen());
+
+    // profile submenu
+    listsButton.setOnMouseClicked(event -> guiManager.openListScreen());
+    notesButton.setOnMouseClicked(event -> guiManager.openNotesScreen());
+    consumptionButton.setOnMouseClicked(event -> guiManager.openConsumptionScreen());
+
+    // vineyards submenu
+    viewVineyardsButton.setOnMouseClicked(event -> guiManager.openVineyardsScreen());
+    planTourButton.setOnMouseClicked(event -> guiManager.openTourPlanningScreen());
+
+    // menu buttons
+    vineyardsButton.setOnMouseClicked(event -> guiManager.openVineyardsScreen());
+    socialButton.setOnMouseClicked(event -> guiManager.openSocialScreen());
+    adminButton.setOnMouseClicked(event -> guiManager.openAdminScreen());
   }
 
   /**
-   * Launches the wine screen.
+   * Closes the popup.
    */
-  @FXML
-  public void openWineScreen() {
-    switchScene("/fxml/wine_screen.fxml", "Wine Information",
-        () -> new WineScreenController(managerContext));
-  }
-
-  /**
-   * Launches the list screen.
-   */
-  @FXML
-  public void openListScreen() {
-    switchScene("/fxml/list_screen.fxml", "My Lists",
-        () -> new ListScreenController(managerContext));
-  }
-
-  /**
-   * Launches the login screen.
-   */
-  @FXML
-  public void openLoginScreen() {
-    switchScene("/fxml/login_screen.fxml", "Login", () -> new LoginController(managerContext));
-  }
-
-  /**
-   * Launches the register screen
-   */
-  @FXML
-  public void openRegisterScreen() {
-    switchScene("/fxml/register_screen.fxml", "Register",
-        () -> new RegisterController(managerContext));
-  }
-
-  @FXML
-  public void openAdminScreen() {
-    switchScene("/fxml/admin_screen.fxml", "Register", () -> new AdminController(managerContext));
-  }
-
-  @FXML
-  public void openSettingsScreen() {
-    switchScene("/fxml/settings_screen.fxml", "Register",
-        () -> new SettingsController(managerContext));
-  }
-
-  @FXML
-  public void openUpdatePasswordScreen() {
-    switchScene("/fxml/update_password_screen.fxml", "Register",
-        () -> new UpdatePasswordController(managerContext));
-  }
-
-  @FXML
-  void openNotesScreen() {
-    switchScene("/fxml/notes_screen.fxml", "Notes",
-        () -> new NotesController(managerContext));
-  }
-
-  public void openDetailedWineView(Wine wine, Runnable backButtonAction) {
-    switchScene("/fxml/detailed_wine_view.fxml", "Detailed Wine View",
-        () -> new DetailedWineViewController(managerContext, wine, backButtonAction));
-  }
-
-  public void openPopupWineReview(WineReviewsService wineReviewsService) {
-    openPopup("/fxml/popup/review_popup.fxml",
-        () -> new WineReviewPopupController(managerContext, wineReviewsService));
-  }
-
   public void closePopup() {
     popupActionBlocker.setVisible(false);
     popupActionBlocker.setDisable(true);
     popupContent.setVisible(false);
     popupContent.setDisable(true);
     popupContent.getChildren().clear();
-  }
-
-  public void setWholePageInteractable(boolean interactable) {
-    page.setDisable(!interactable);
   }
 }

@@ -13,9 +13,10 @@ import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 
 public class UserLoginStepDefinitions {
+
   private DatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private String username;
@@ -29,24 +30,24 @@ public class UserLoginStepDefinitions {
 
   @After
   public void close() {
-    databaseManager.close();
+    databaseManager.teardown();
   }
 
   @Given("the user is not authenticated and is logging in")
   public void theUserIsNotAuthenticatedAndIsLoggingIn() {
-    authenticationManager.setAuthenticatedUsername(null);
+    authenticationManager.setAuthenticatedUser(null);
   }
 
   @When("the user enters an invalid username or password combination")
   public void theUserEntersAnInvalidUsernameOrPasswordCombination() {
     username = "MyAccount";
-    password = "MyPassword";
+    password = "invalidpass";
   }
 
   @When("the user enters a correct username and password combination")
   public void theUserEntersACorrectUsernameAndPasswordCombination() {
     username = "MyAccount";
-    password = "MyPassword";
+    password = "ValidPassword1!";
     authenticationManager.validateRegistration(username, password, password);
   }
 

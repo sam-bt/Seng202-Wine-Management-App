@@ -13,11 +13,12 @@ import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.model.User;
-import seng202.team6.util.EncryptionUtil;
+import seng202.team6.util.PasswordUtil;
 
 public class UserChangePasswordStepDefinitions {
+
   private DatabaseManager databaseManager;
   private AuthenticationManager authenticationManager;
   private String username;
@@ -35,7 +36,7 @@ public class UserChangePasswordStepDefinitions {
   @Given("the user is authenticated and changing their password")
   public void theUserIsAuthenticatedAndChangingTheirPassword() {
     username = "MyAccount";
-    password = "MyPassword";
+    password = "ValidPassword1!";
 
     AuthenticationResponse registrationResponse = authenticationManager.validateRegistration(
         username, password, password);
@@ -48,7 +49,7 @@ public class UserChangePasswordStepDefinitions {
 
   @When("the user enters an incorrect old password")
   public void theUserEntersAnIncorrectOldPassword() {
-    oldPassword = "MyOtherPassword";
+    oldPassword = "OtherValidPass1!";
   }
 
   @When("the user enters in the correct old password")
@@ -58,22 +59,32 @@ public class UserChangePasswordStepDefinitions {
 
   @And("the user enters a valid new password")
   public void theUserEntersAValidNewPassword() {
-    newPassword = "MyNewPassword";
+    newPassword = "NewValidPass1!";
   }
 
   @And("the user enters the same valid password to confirm")
   public void theUserEntersAValidConfirmPassword() {
-    confirmNewPassword = "MyNewPassword";
+    confirmNewPassword = "NewValidPass1!";
   }
 
   @And("the user enters an invalid new password")
   public void theUserEntersAnInvalidNewPassword() {
-    newPassword = "My&New%Password";
+    newPassword = "invalidpass";
   }
 
   @And("the user enters the same invalid new confirm password")
   public void theUserEntersAnInvalidNewConfirmPassword() {
-    newPassword = "My&New%Password";
+    newPassword = "invalidpass";
+  }
+
+  @And("the user enters their username as a password")
+  public void theUserEntersUsernameAsPassword() {
+    newPassword = "MyAccount";
+  }
+
+  @And("the user enters the same password of their username to confirm")
+  public void theUserEntersUsernameAsConfirmPassword() {
+    confirmNewPassword = "MyAccount";
   }
 
   @Then("the accounts password is not changed")
@@ -82,10 +93,10 @@ public class UserChangePasswordStepDefinitions {
         newPassword, confirmNewPassword);
     assertNotEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
 
-    User user = databaseManager.getUser(username);
+    User user = databaseManager.getUserDao().get(username);
     String storedHash = user.getPassword();
-    assertFalse(EncryptionUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
-    assertTrue(EncryptionUtil.verifyPassword(password, storedHash, user.getSalt()));
+    assertFalse(PasswordUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
+    assertTrue(PasswordUtil.verifyPassword(password, storedHash, user.getSalt()));
   }
 
   @Then("the accounts password is changed")
@@ -94,9 +105,8 @@ public class UserChangePasswordStepDefinitions {
         newPassword, confirmNewPassword);
     assertEquals(AuthenticationResponse.PASSWORD_CHANGED_SUCCESS, response);
 
-    User user = databaseManager.getUser(username);
+    User user = databaseManager.getUserDao().get(username);
     String storedHash = user.getPassword();
-    assertTrue(EncryptionUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
-    assertFalse(EncryptionUtil.verifyPassword(password, storedHash, user.getSalt()));
+    assertTrue(PasswordUtil.verifyPassword(newPassword, storedHash, user.getSalt()));
   }
 }

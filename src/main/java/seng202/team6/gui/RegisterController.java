@@ -3,11 +3,12 @@ package seng202.team6.gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.model.AuthenticationResponse;
 
 /**
- * Register Controller
+ * Register Controller.
  */
 public class RegisterController extends Controller {
 
@@ -21,12 +22,34 @@ public class RegisterController extends Controller {
   private Label registerMessageLabel;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context
    */
   public RegisterController(ManagerContext managerContext) {
     super(managerContext);
+  }
+
+  @Override
+  public void init() {
+    usernameField.requestFocus();
+    //set key handlers for ENTER to attempt login on keypress
+    usernameField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        onConfirm();
+      }
+    });
+    passwordField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        onConfirm();
+      }
+    });
+    confirmPasswordField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        onConfirm();
+      }
+    });
+
   }
 
   @FXML
@@ -35,11 +58,13 @@ public class RegisterController extends Controller {
     String username = usernameField.getText();
     String password = passwordField.getText();
     String confirmPassword = confirmPasswordField.getText();
-    AuthenticationResponse response = managerContext.authenticationManager.validateRegistration(
+    AuthenticationResponse response
+        = managerContext.getAuthenticationManager().validateRegistration(
         username, password, confirmPassword);
     if (response == AuthenticationResponse.REGISTER_SUCCESS) {
-      managerContext.GUIManager.mainController.openLoginScreen();
-      managerContext.databaseManager.createList(username, "Favourites");
+      managerContext.getAuthenticationManager().validateLogin(username, password);
+      managerContext.getGuiManager().updateNavigation();
+      managerContext.getGuiManager().openWineScreen();
     } else {
       registerMessageLabel.setStyle("-fx-text-fill: red");
       registerMessageLabel.setText(response.getMessage());

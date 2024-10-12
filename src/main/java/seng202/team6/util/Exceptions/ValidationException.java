@@ -1,19 +1,19 @@
 package seng202.team6.util.Exceptions;
 
 /**
- * Thrown when validation for an item has failed
+ * Thrown when validation for an item has failed.
  */
 public class ValidationException extends Exception {
 
   /**
-   * Constructor
+   * Constructor.
    */
   public ValidationException() {
     super();
   }
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param message error message
    */
@@ -22,7 +22,7 @@ public class ValidationException extends Exception {
   }
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param message error message
    * @param cause   cause
@@ -32,7 +32,7 @@ public class ValidationException extends Exception {
   }
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param cause cause
    */

@@ -3,11 +3,12 @@ package seng202.team6.gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.model.AuthenticationResponse;
 
 /**
- * Login Controller (MORE DETAIL HERE!)
+ * Login Controller.
  */
 public class LoginController extends Controller {
 
@@ -19,32 +20,59 @@ public class LoginController extends Controller {
   private Label loginMessageLabel;
 
   /**
-   * Constructor
+   * Constructor.
    *
    * @param managerContext manager context
    */
   public LoginController(ManagerContext managerContext) {
+
     super(managerContext);
+
   }
 
   @FXML
   private void onConfirm() {
+    login();
+  }
 
+  @Override
+  public void init() {
+    usernameField.requestFocus();
+    //set key handlers for ENTER to attempt login on keypress
+    passwordField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        login();
+      }
+    });
+    usernameField.setOnKeyPressed(event -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        login();
+      }
+    });
+  }
+
+  /**
+   * Logs a user into the system.
+   */
+  private void login() {
     String username = usernameField.getText();
     String password = passwordField.getText();
-    AuthenticationResponse response = managerContext.authenticationManager.validateLogin(username,
-        password);
+    AuthenticationResponse response =
+        managerContext.getAuthenticationManager().validateLogin(username, password);
     if (response == AuthenticationResponse.LOGIN_SUCCESS) {
-      if (managerContext.authenticationManager.isAdminFirstLogin()) {
-        managerContext.GUIManager.mainController.setDisable(true);
-        managerContext.GUIManager.mainController.openUpdatePasswordScreen();
+      if (managerContext.getAuthenticationManager().isAdminFirstLogin()) {
+        managerContext.getGuiManager().disableNavigation(true);
+        managerContext.getGuiManager().openUpdatePasswordScreen();
         return;
       }
-      managerContext.GUIManager.mainController.openWineScreen();
-      managerContext.GUIManager.mainController.onLogin();
+      managerContext.getGuiManager().openWineScreen();
+      managerContext.getGuiManager().updateNavigation();
     } else {
       loginMessageLabel.setStyle("-fx-text-fill: red");
       loginMessageLabel.setText(response.getMessage());
     }
   }
+
 }
+
+

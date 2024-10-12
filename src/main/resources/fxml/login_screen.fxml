@@ -7,35 +7,37 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="780.0" maxWidth="1370.0" minHeight="780.0"
-  minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
-  xmlns="http://javafx.com/javafx/21" fx:controller="seng202.team6.gui.LoginController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" cacheShape="false" maxHeight="780.0" maxWidth="1370.0"
+  minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0"
+  xmlns="http://javafx.com/javafx/21.0.1" fx:controller="seng202.team6.gui.LoginController">
   <children>
-    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="457.0" layoutY="218.0"
-      prefHeight="17.0" prefWidth="456.0" textFill="RED" fx:id="loginMessageLabel">
+    <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false"
+      layoutX="457.0" layoutY="218.0" prefHeight="17.0" prefWidth="456.0" textFill="RED"
+      fx:id="loginMessageLabel">
       <font>
         <Font size="16.0"/>
       </font>
     </Label>
-    <TitledPane animated="false" collapsible="false" layoutX="457.0" layoutY="259.0"
-      maxWidth="456.0" minWidth="456.0" prefHeight="263.0" prefWidth="456.0"
+    <TitledPane animated="false" collapsible="false" focusTraversable="false" layoutX="457.0"
+      layoutY="259.0" maxWidth="456.0" minWidth="456.0" prefHeight="263.0" prefWidth="456.0"
       stylesheets="@../css/titled_pane.css" text="Login">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="236.0" prefWidth="454.0">
           <children>
-            <Button layoutX="127.0" layoutY="174.0" mnemonicParsing="false" onAction="#onConfirm"
-              prefHeight="35.0" prefWidth="200.0" styleClass="secondary-button"
-              stylesheets="@../css/global.css" text="Login to your Account">
+            <Button layoutX="109.0" layoutY="174.0" mnemonicParsing="false" onAction="#onConfirm"
+              prefHeight="35.0" prefWidth="236.0" styleClass="secondary-button"
+              stylesheets="@../css/global.css" text="Login to your Account"
+              fx:id="loginButton">
               <font>
                 <Font name="System Bold" size="16.0"/>
               </font>
             </Button>
-            <Label layoutX="77.0" layoutY="94.0" text="Password">
+            <Label focusTraversable="false" layoutX="77.0" layoutY="94.0" text="Password">
               <font>
                 <Font size="16.0"/>
               </font>
             </Label>
-            <Label layoutX="77.0" layoutY="14.0" text="Username">
+            <Label focusTraversable="false" layoutX="77.0" layoutY="14.0" text="Username">
               <font>
                 <Font size="16.0"/>
               </font>
