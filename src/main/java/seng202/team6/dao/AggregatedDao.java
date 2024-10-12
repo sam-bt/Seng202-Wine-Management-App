@@ -156,9 +156,10 @@ public class AggregatedDao extends Dao {
    * @return sub range of pairs between begin and end
    */
   public ObservableList<Pair<WineReview, Wine>> getWineReviewsAndWines(int begin, int end,
-      ReviewFilters filters) {
+      ReviewFilters filters) throws SQLException {
     Timer timer = new Timer();
-    String sql = "SELECT WINE.ID as wine_id, WINE.*, WINE_REVIEW.ID as wine_review_id, "
+    // We are out of columns to rename, else we have 2 descriptions and it flicks between the two
+    String sql = "SELECT WINE.ID as wine_id, WINE_REVIEW.ID as wine_review_id, "
         + "WINE_REVIEW.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
         + "FROM WINE_REVIEW "
         + "INNER JOIN WINE ON WINE_REVIEW.WINE_ID = WINE.ID "
@@ -188,17 +189,15 @@ public class AggregatedDao extends Dao {
         while (resultSet.next()) {
           WineReview wineReview = wineReviewDao.extractWineReviewFromResultSet(resultSet,
               "wine_review_id");
-          Wine wine = wineDao.extractWineFromResultSet(resultSet, "wine_id");
+          long wineKey = resultSet.getLong("wine_id");
+          Wine wine = wineDao.get(wineKey);
           wineReviewPairs.add(new Pair<>(wineReview, wine));
         }
         log.info("Successfully retrieved {} reviews with wines in range {}-{} in {}ms",
             wineReviewPairs.size(), begin, end, timer.currentOffsetMilliseconds());
         return wineReviewPairs;
       }
-    } catch (SQLException e) {
-      log.error("Failed to retrieve with wines in range {}-{}", begin, end, e);
     }
-    return wineReviewPairs;
   }
 
   /**

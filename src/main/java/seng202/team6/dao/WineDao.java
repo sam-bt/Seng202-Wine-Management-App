@@ -97,7 +97,6 @@ public class WineDao extends Dao {
    * @return number of wines after filtering
    */
   public int getCount(WineFilters filters) {
-    Timer timer = new Timer();
     String sql = "SELECT count(*) from WINE "
         + "where TITLE like ? "
         + "and COUNTRY like ? "

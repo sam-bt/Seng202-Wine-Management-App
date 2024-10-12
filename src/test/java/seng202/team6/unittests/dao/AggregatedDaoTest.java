@@ -188,18 +188,19 @@ public class AggregatedDaoTest {
   @Test
   void testGetWineReviewsAndWinesWithFilters() throws SQLException {
     int begin = 0;
-    int end = 5;
+    int end = 50;
 
     WineReviewDao reviewDao = databaseManager.getWineReviewDao();
 
-    reviewDao.add(testUser, testWine, 5.0, "Yum!",
+
+    reviewDao.add(testUser, testWine, 5, "Yum!",
         new Date(1728366112972L));
 
-    reviewDao.add(testUser, testWine, 2.0, "Yuck!",
+    reviewDao.add(testUser, testWine, 2, "Yuck!",
         new Date(1728366112972L));
 
 
-    ReviewFilters testFilters = new ReviewFilters("", "win", 2, 4);
+    ReviewFilters testFilters = new ReviewFilters("", "win", 1, 4);
 
     ObservableList<Pair<WineReview, Wine>> result = aggregatedDao.getWineReviewsAndWines(begin, end, testFilters);
 
