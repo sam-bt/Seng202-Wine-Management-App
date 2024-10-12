@@ -318,37 +318,24 @@ public class GuiManager {
     mainController.openUserSearchPopup();
   }
 
+  /**
+   * Displays a loading indicator before running the specified task, and hides
+   * the loading indicator upon completion. This method introduces a short delay
+   * to ensure the UI updates before executing the provided Runnable task.
+   *
+   * @param runnable the task to be executed while the loading indicator is visible
+   */
   public void showLoadingIndicator(Runnable runnable) {
     mainController.showLoadingIndicator(true);
 
-    // Introduce a short delay to ensure the UI gets a chance to render
-    PauseTransition delay = new PauseTransition(Duration.millis(50));  // Adjust the delay as needed
+    PauseTransition delay = new PauseTransition(Duration.millis(50));
     delay.setOnFinished(event -> {
       try {
-        // Run the task (on the JavaFX Application Thread)
         runnable.run();
       } finally {
-        // Hide the loading indicator after the task finishes
         mainController.showLoadingIndicator(false);
       }
     });
-
-    // Start the delay
     delay.play();
-  }
-
-
-  /**
-   * Shows the loading overlay.
-   */
-  public void showLoadingOverlay() {
-    mainController.showLoadingIndicator(true);
-  }
-
-  /**
-   * Hides the loading overlay.
-   */
-  public void hideLoadingOverlay() {
-    mainController.showLoadingIndicator(false);
   }
 }

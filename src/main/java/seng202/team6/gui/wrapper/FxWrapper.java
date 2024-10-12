@@ -1,6 +1,7 @@
 package seng202.team6.gui.wrapper;
 
 import java.io.IOException;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Builder;
+import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import seng202.team6.gui.Controller;
 import seng202.team6.gui.MainController;
@@ -42,35 +44,36 @@ public class FxWrapper {
     stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
         event -> taskManager.teardown());
 
-    taskManager.<ManagerContext>create()
-        .onRun(() -> {
-          if (!GeolocationResolver.hasValidApiKey()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Invalid or missing ORS API Key");
-            alert.setContentText("An ORS API key was not found in an .env file or was invalid. "
+    PauseTransition delay = new PauseTransition(Duration.millis(200));
+    delay.setOnFinished(unused -> {
+      if (!GeolocationResolver.hasValidApiKey()) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText("Invalid or missing ORS API Key");
+        alert.setContentText("An ORS API key was not found in an .env file or was invalid. "
                 + "Please check the readme or manual to find out more.");
-            alert.showAndWait();
-            return null;
-          }
-
-          DatabaseManager databaseManager = new DatabaseManager("database",
+        alert.showAndWait();
+        stage.close();
+        return;
+      }
+      // load the database manager and add an event to close the database manager when the
+      // window closes
+      DatabaseManager databaseManager = new DatabaseManager("database",
               "database.db");
-          stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
+      stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
               event -> databaseManager.teardown());
-          return new ManagerContext(
+
+      // create the manager context
+      ManagerContext managerContext = new ManagerContext(
               databaseManager,
               new GuiManager(wrapper),
               new AuthenticationManager(databaseManager),
-              taskManager
-          );
-        })
-        .onCompletion((managerContext) -> {
-          if (managerContext != null) {
-            loadScreen("/fxml/main_screen.fxml", "Home",
-                () -> new MainController(managerContext));
-          }
-        })
-        .submit();
+              taskManager);
+
+      // load the main screen
+      loadScreen("/fxml/main_screen.fxml", "Home",
+              () -> new MainController(managerContext));
+    });
+    delay.play();
     this.stage = stage;
   }
 
@@ -97,7 +100,8 @@ public class FxWrapper {
       // provide a custom Controller with parameters
       loader.setControllerFactory(param -> builder.build());
       Parent parent = loader.load();
-      pane.getChildren().clear(); // IMPORTANT
+      // clear the loading screen which is initially on the fx wrapper
+      pane.getChildren().clear();
       pane.getChildren().add(parent);
       if (loader.getController() instanceof Controller controller) {
         controller.init();
