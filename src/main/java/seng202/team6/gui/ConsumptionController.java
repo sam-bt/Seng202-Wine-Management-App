@@ -23,7 +23,6 @@ import seng202.team6.util.WineWidgets;
 /**
  * Controller for the scene that shows wine consumption.
  */
-// fixme - when this is deleted, remove wine widgets class
 public class ConsumptionController extends Controller {
 
   static final float STD_DRINK_ETHANOL_VOLUME = 12.7f;

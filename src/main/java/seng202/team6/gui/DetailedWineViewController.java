@@ -20,12 +20,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.CircularScoreIndicator;
 import seng202.team6.gui.controls.UnmodifiableRating;
-import seng202.team6.managers.DatabaseManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
@@ -35,7 +32,6 @@ import seng202.team6.model.WineReview;
 import seng202.team6.service.WineNoteService;
 import seng202.team6.service.WineReviewsService;
 import seng202.team6.util.ImageReader;
-import seng202.team6.util.WineImages;
 
 /**
  * The DetailedWineViewController is responsible for managing the detailed wine view within the
@@ -43,7 +39,18 @@ import seng202.team6.util.WineImages;
  */
 public class DetailedWineViewController extends Controller {
 
-  private static final Logger log = LogManager.getLogger(DetailedWineViewController.class);
+  private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine.png");
+  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage("/img/white_wine.png");
+  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine.png");
+  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage("/img/default_wine.png");
+  private static final Map<String, Image> wineImages = new HashMap<>() {
+    {
+      put("red", RED_WINE_IMAGE);
+      put("white", WHITE_WINE_IMAGE);
+      put("rose", ROSE_WINE_IMAGE);
+      put("rosé", ROSE_WINE_IMAGE);
+    }
+  };
   private final WineReviewsService wineReviewsService;
   private final WineNoteService wineNoteService;
   private final Wine viewedWine;
@@ -163,7 +170,8 @@ public class DetailedWineViewController extends Controller {
       buttonsContainer.getChildren().remove(openListsButton);
     }
 
-    Image wineImage = WineImages.getImage(viewedWine);
+    Image wineImage = wineImages.getOrDefault(colourTextbox.getText().toLowerCase(),
+        DEFAULT_WINE_IMAGE);
     imageView.setImage(wineImage);
 
     ratingStars.setUpdateOnHover(false);

@@ -30,7 +30,6 @@ import seng202.team6.gui.controls.UnmodifiableRating;
 import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
-import seng202.team6.util.WineImages;
 
 /**
  * Controller class for comparing wines. Displays the comparison between two wines, allowing the
@@ -174,7 +173,8 @@ public class WineCompareController extends Controller {
       header.getRowConstraints().add(new RowConstraints());
       header.getColumnConstraints().addAll(firstColumn, secondColumn, thirdColumn);
 
-      Image wineImage = WineImages.getImage(wine);
+      Image wineImage = WineCard.WINE_IMAGES.getOrDefault(wine.getColor().toLowerCase(),
+          WineCard.DEFAULT_WINE_IMAGE);
       ImageView wineImageView = new ImageView(wineImage);
       wineImageView.setFitHeight(150);
       wineImageView.setFitWidth(150);
