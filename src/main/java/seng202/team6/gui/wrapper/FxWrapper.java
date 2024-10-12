@@ -4,8 +4,10 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Builder;
 import org.apache.logging.log4j.LogManager;
 import seng202.team6.gui.Controller;
@@ -14,6 +16,9 @@ import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.managers.GuiManager;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.managers.TaskManager;
+import seng202.team6.managers.TaskManager.CallbackTask;
+import seng202.team6.util.GeolocationResolver;
 
 /**
  * FXWrapper manages a pane in which the different GUIs are loaded. Based on the code written for
@@ -25,7 +30,6 @@ public class FxWrapper {
   @FXML
   private Pane pane;
   private Stage stage;
-  private ManagerContext managerContext;
 
   /**
    * Initialises the wrapper. Responsible for creating the WinoManger and passing in functions for
@@ -34,21 +38,44 @@ public class FxWrapper {
    * @param stage is the initial stage that gets loaded.
    */
   public void init(Stage stage) {
-    this.stage = stage;
-    try {
-      DatabaseManager databaseManager = new DatabaseManager("database", "database.db");
-      this.managerContext = new ManagerContext(
-          databaseManager,
-          new GuiManager(this),
-          new AuthenticationManager(databaseManager)
-      );
+    FxWrapper wrapper = this;
+    TaskManager taskManager = new TaskManager();
+    stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
+        event -> taskManager.teardown());
 
-      stage.setOnCloseRequest((event) -> managerContext.getDatabaseManager().teardown());
-    } catch (Exception exception) {
-      // If we fail to initialize the managers we are kinda screwed
-      throw new RuntimeException("Failed to instantiate manager context", exception);
-    }
-//    loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
+    taskManager.submit(new CallbackTask<ManagerContext>() {
+      @Override
+      public ManagerContext onRun() {
+        if (!GeolocationResolver.hasValidApiKey()) {
+          Alert alert = new Alert(Alert.AlertType.ERROR);
+          alert.setHeaderText("Invalid or missing ORS API Key");
+          alert.setContentText("An ORS API key was not found in an .env file or was invalid. "
+              + "Please check the readme or manual to find out more.");
+          alert.showAndWait();
+          return null;
+        }
+
+        DatabaseManager databaseManager = new DatabaseManager("database",
+            "database.db");
+        stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
+            event -> databaseManager.teardown());
+        return new ManagerContext(
+            databaseManager,
+            new GuiManager(wrapper),
+            new AuthenticationManager(databaseManager)
+        );
+      }
+
+      @Override
+      public void onCompletion(ManagerContext managerContext) {
+        if (managerContext != null) {
+          loadScreen("/fxml/main_screen.fxml", "Home",
+              () -> new MainController(managerContext));
+        }
+      }
+    });
+
+    this.stage = stage;
   }
 
   /**
@@ -84,6 +111,4 @@ public class FxWrapper {
       LogManager.getLogger(getClass()).error("Failed to load screen: {}", fxml, e);
     }
   }
-
-
 }
