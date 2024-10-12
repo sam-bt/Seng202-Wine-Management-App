@@ -119,8 +119,9 @@ public class RegisterController extends Controller {
           if (password.matches(".*\\s.*")) {
             passwordError += AuthenticationResponse.INVALID_PASSWORD_CONTAINS_SPACES.getMessage();
           } else {
-            if (!password.equals(
-                AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())) {
+            if (!password.matches(
+                "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.()\\-+={\\[\\]}]).*")
+            ){
               passwordError +=
                   AuthenticationResponse.INVALID_PASSWORD_HEADER.getMessage();
               if (!password.matches(".*[a-z].*")) {

@@ -119,8 +119,8 @@ public class UpdatePasswordController extends Controller {
             if (newPassword.matches(".*\\s.*")) {
               passwordError += AuthenticationResponse.INVALID_PASSWORD_CONTAINS_SPACES.getMessage();
             } else {
-              if (!newPassword.equals(
-                  AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())) {
+              if (!newPassword.matches(
+                  "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.()\\-+={\\[\\]}]).*")) {
                 passwordError +=
                     AuthenticationResponse.INVALID_PASSWORD_HEADER.getMessage();
                 if (!newPassword.matches(".*[a-z].*")) {

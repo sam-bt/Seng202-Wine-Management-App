@@ -22,10 +22,7 @@ public enum AuthenticationResponse {
   MISSING_PASSWORD_FIELD("Please enter a password"),
 
 
-  /**
-   * Indicates that the confirmed password does not match the original password.
-   */
-  MISMATCHING_CONFIRMED_PASSWORD("Passwords do not match."),
+
 
   /**
    * Indicates that the provided username is invalid.
@@ -136,6 +133,11 @@ public enum AuthenticationResponse {
    * Indicates that the new password is the same as the old password.
    */
   OLD_PASSWORD_SAME_AS_NEW("New password cannot be same as old password."),
+
+  /**
+   * Indicates that the confirmed password does not match the original password.
+   */
+  MISMATCHING_CONFIRMED_PASSWORD("Passwords do not match."),
 
   /**
    * Indicates a successful password change.

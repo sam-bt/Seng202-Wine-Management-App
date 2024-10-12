@@ -78,9 +78,7 @@ public class AuthenticationManager {
     if (password.isEmpty() || confirm.isEmpty()) {
       return AuthenticationResponse.MISSING_FIELDS;
     }
-    if (!password.equals(confirm)) {
-      return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
-    }
+
     if (password.equals(user.getUsername())) {
       return AuthenticationResponse.SAME_AS_USERNAME;
     }
@@ -90,6 +88,9 @@ public class AuthenticationManager {
             || !password.matches(AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())
     ) {
       return AuthenticationResponse.INVALID_PASSWORD;
+    }
+    if (!password.equals(confirm)) {
+      return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
     }
 
     String salt = PasswordUtil.generateSalt();
@@ -162,9 +163,7 @@ public class AuthenticationManager {
     if (username.isEmpty() || oldPassword.isEmpty() || newPassword.isEmpty()) {
       return AuthenticationResponse.MISSING_FIELDS;
     }
-    if (!newPassword.equals(confirmNewPassword)) {
-      return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
-    }
+
 
     User user = databaseManager.getUserDao().get(username);
     if (user != null) {
@@ -179,12 +178,17 @@ public class AuthenticationManager {
       if (oldPassword.equals(newPassword)) {
         return AuthenticationResponse.OLD_PASSWORD_SAME_AS_NEW;
       }
-      if (newPassword.equals(username)) {
-        return AuthenticationResponse.SAME_AS_USERNAME;
-      }
+
       if (!newPassword.matches(
           AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())) {
         return AuthenticationResponse.INVALID_PASSWORD;
+      }
+      if (newPassword.equals(username)) {
+        return AuthenticationResponse.SAME_AS_USERNAME;
+      }
+
+      if (!newPassword.equals(confirmNewPassword)) {
+        return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
       }
 
       String salt = PasswordUtil.generateSalt();
