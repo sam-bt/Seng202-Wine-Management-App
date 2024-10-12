@@ -272,7 +272,7 @@ public class WineReviewDao extends Dao {
     String sql = "SELECT * FROM WINE_REVIEW WHERE FLAG = 1";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       try (ResultSet resultSet = statement.executeQuery()) {
-        wineReviews = extractAllWineReviewsFromResultSet(resultSet, "ID:");
+        wineReviews = extractAllWineReviewsFromResultSet(resultSet, "ID");
         log.info("Successfully retrieved all flagged reviews in {}ms",
             timer.currentOffsetMilliseconds());
         return wineReviews;
@@ -311,8 +311,10 @@ public class WineReviewDao extends Dao {
    * @param review The review to update.
    */
   public void updateWineReviewFlag(WineReview review) {
+    log.info("Ran updateWineReviewFlag()");
     Timer timer = new Timer();
     String sql = "UPDATE WINE_REVIEW SET FLAG = ? WHERE ID = ?";
+    log.info("Before try()");
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setInt(1, review.getFlag());
       statement.setLong(2, review.getId());

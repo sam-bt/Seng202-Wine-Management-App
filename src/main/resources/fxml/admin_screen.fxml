@@ -168,23 +168,23 @@
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </HBox.margin>
                         </TableView>
-                        <TitledPane animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="280.0" prefWidth="330.0" stylesheets="@../css/titled_pane.css" text="Selected Actions">
+                        <TitledPane animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="330.0" stylesheets="@../css/titled_pane.css" text="Selected Actions">
                           <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="220.0" prefWidth="40.0">
                                  <children>
                                     <Button fx:id="keepSelected" mnemonicParsing="false" onAction="#onKeepSelected" styleClass="secondary-button" text="Keep Selected" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                    <Button fx:id="deleteSelected" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteSelected" styleClass="primary-button" text="Delete Selected" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0" />
-                                    <Pane prefHeight="200.0" prefWidth="200.0" styleClass="primary-background" AnchorPane.bottomAnchor="95.0" AnchorPane.leftAnchor="-11.0" AnchorPane.rightAnchor="-11.0" AnchorPane.topAnchor="80.0">
+                                    <Button fx:id="deleteSelected" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteSelected" styleClass="primary-button" text="Delete Selected" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0" />
+                                    <Pane prefHeight="200.0" prefWidth="200.0" styleClass="primary-background" AnchorPane.bottomAnchor="115.0" AnchorPane.leftAnchor="-11.0" AnchorPane.rightAnchor="-11.0" AnchorPane.topAnchor="100.0">
                                        <children>
-                                          <Label fx:id="bulkLabel" prefHeight="40.0" prefWidth="328.0" text="   Bulk Actions" textFill="WHITE">
+                                          <Label fx:id="bulkLabel" prefHeight="40.0" prefWidth="330.0" text="   Bulk Actions" textFill="WHITE">
                                              <font>
                                                 <Font name="System Bold" size="16.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </Pane>
-                                    <Button fx:id="keepAll" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onKeepAll" styleClass="secondary-button" text="Keep All" AnchorPane.topAnchor="130.0" />
-                                    <Button fx:id="deleteAll" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#onDeleteAll" styleClass="primary-button" text="Delete All" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="170.0" />
+                                    <Button fx:id="keepAll" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onKeepAll" styleClass="secondary-button" text="Keep All" AnchorPane.topAnchor="150.0" />
+                                    <Button fx:id="deleteAll" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#onDeleteAll" styleClass="primary-button" text="Delete All" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="200.0" />
                                  </children></AnchorPane>
                           </content>
                            <HBox.margin>
