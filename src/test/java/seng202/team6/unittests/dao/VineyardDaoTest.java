@@ -64,7 +64,6 @@ public class VineyardDaoTest {
   void setup() throws SQLException {
     databaseManager = new DatabaseManager();
     vineyardDao = databaseManager.getVineyardsDao();
-    vineyardDao.setUseCache(false);
 
     testVineyard1 = vineyardDao.add("Test1 Vineyard", "Christchurch", "Canterbury",
         "www.test.com", "test", "www.test.com", new GeoLocation(-43.532,172.6306));

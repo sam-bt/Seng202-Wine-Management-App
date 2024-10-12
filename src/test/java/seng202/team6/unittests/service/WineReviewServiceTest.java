@@ -31,7 +31,7 @@ public class WineReviewServiceTest {
     long millis=System.currentTimeMillis();
     java.sql.Date date =new java.sql.Date(millis);
 
-    wineReview = new WineReview(id, wineId, username, rating, description, date);
+    wineReview = new WineReview(id, wineId, username, rating, description, date, 0);
   }
 
   @Test

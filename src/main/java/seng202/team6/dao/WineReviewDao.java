@@ -49,6 +49,7 @@ public class WineReviewDao extends Dao {
             + "RATING         DOUBLE        NOT NULL,"
             + "DESCRIPTION    VARCHAR(256)  NOT NULL,"
             + "DATE           DATE          NOT NULL,"
+            + "FLAG           INTEGER       NOT NULL CHECK(FLAG IN (\"0\", \"1\")),"
             + "FOREIGN KEY (USERNAME) REFERENCES USER(USERNAME) ON DELETE CASCADE,"
             + "FOREIGN KEY (WINE_ID) REFERENCES WINE(ID) ON DELETE CASCADE"
             + ")"
@@ -60,7 +61,7 @@ public class WineReviewDao extends Dao {
    *
    * @param wine The wine whose wine reviews should be returned
    * @return An ObservableList of all WineReview objects in the database belonging to the specified
-   *         wine
+   *        wine.
    */
   public ObservableList<WineReview> getAll(Wine wine) {
     Timer timer = new Timer();
@@ -151,8 +152,9 @@ public class WineReviewDao extends Dao {
    * @return The WineReview object with the specified parameters
    */
   public WineReview add(User user, Wine wine, double rating, String description, Date date) {
+    int flag = 0;
     Timer timer = new Timer();
-    String insert = "INSERT INTO WINE_REVIEW VALUES (null, ?, ?, ?, ?, ?)";
+    String insert = "INSERT INTO WINE_REVIEW VALUES (null, ?, ?, ?, ?, ?, ?)";
     try (PreparedStatement statement = connection.prepareStatement(insert,
         Statement.RETURN_GENERATED_KEYS)) {
       statement.setString(1, user.getUsername());
@@ -160,6 +162,7 @@ public class WineReviewDao extends Dao {
       statement.setDouble(3, rating);
       statement.setString(4, description);
       statement.setDate(5, date);
+      statement.setInt(6, flag);
       statement.executeUpdate();
 
       try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -175,11 +178,11 @@ public class WineReviewDao extends Dao {
               user.getUsername(),
               rating,
               description,
-              date
+              date,
+              flag
           );
-          if (useCache()) {
-            wineReviewCache.addObject(id, wineReview);
-          }
+          wineReviewCache.addObject(id, wineReview);
+
           bindUpdater(wineReview);
           return wineReview;
         }
@@ -215,6 +218,8 @@ public class WineReviewDao extends Dao {
     } catch (SQLException error) {
       log.error("Failed to delete wine review with ID {}", wineReview.getId(), error);
     }
+
+    wineReviewCache.clear();
   }
 
   /**
@@ -256,6 +261,74 @@ public class WineReviewDao extends Dao {
   }
 
   /**
+   * Get all reviews which have been flagged from the database. Used in review moderation.
+   *
+   * @return an ObservableList of flagged reviews.
+   */
+  public ObservableList<WineReview> getAllFlaggedReviews() {
+    Timer timer = new Timer();
+    ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
+    String sql = "SELECT * FROM WINE_REVIEW WHERE FLAG = 1";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      try (ResultSet resultSet = statement.executeQuery()) {
+        wineReviews = extractAllWineReviewsFromResultSet(resultSet, "ID");
+        log.info("Successfully retrieved all flagged reviews in {}ms",
+            timer.currentOffsetMilliseconds());
+        return wineReviews;
+      }
+    } catch (SQLException error) {
+      log.error("Failed to retrieve flagged reviews!");
+      log.error(error.getMessage());
+    }
+    return FXCollections.emptyObservableList();
+  }
+
+  /**
+   * Deletes all flagged reviews (FLAG = '1') from the database.
+   */
+  public void deleteAllFlaggedReviews() {
+    Timer timer = new Timer();
+    String sql = "DELETE FROM WINE_REVIEW WHERE FLAG = 1";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      int rowsAffected = statement.executeUpdate();
+      if (rowsAffected >= 1) {
+        log.info("Successfully removed {} reviews in {}ms",
+            rowsAffected, timer.currentOffsetMilliseconds());
+      }
+    } catch (SQLException e) {
+      log.error("Failed to delete reviews in {}ms", timer.currentOffsetMilliseconds());
+      log.error(e.getMessage());
+    }
+
+    wineReviewCache.clear();
+  }
+
+  /**
+   * UPdate the flag of a review. Used in wine moderation to either flag the review or unflag it
+   * from the mod panel.
+   *
+   * @param review The review to update.
+   */
+  public void updateWineReviewFlag(WineReview review) {
+    log.info("Ran updateWineReviewFlag()");
+    Timer timer = new Timer();
+    String sql = "UPDATE WINE_REVIEW SET FLAG = ? WHERE ID = ?";
+    log.info("Before try()");
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setInt(1, review.getFlag());
+      statement.setLong(2, review.getId());
+
+      int rowsAffected = statement.executeUpdate();
+      if (rowsAffected >= 1) {
+        log.info("Successfully updated {} reviews in {}ms",
+            rowsAffected, timer.currentOffsetMilliseconds());
+      }
+    } catch (SQLException error) {
+      log.error("Failed to update wine review with ID {}", review.getId(), error);
+    }
+  }
+
+  /**
    * Extracts a WineReview object from the provided ResultSet. The wine review cache is checked
    * before creating a new wine list instance.
    *
@@ -277,7 +350,8 @@ public class WineReviewDao extends Dao {
         resultSet.getString("USERNAME"),
         resultSet.getDouble("RATING"),
         resultSet.getString("DESCRIPTION"),
-        resultSet.getDate("DATE")
+        resultSet.getDate("DATE"),
+        resultSet.getInt("FLAG")
     );
     wineReviewCache.addObject(id, wineReview);
     bindUpdater(wineReview);

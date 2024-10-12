@@ -37,7 +37,7 @@ public class WineNoteService {
    * @return node
    */
   public Note loadUsersNote(User user) {
-    note = databaseManager.getWineNotesDao().get(user, wine);
+    note = databaseManager.getWineNotesDao().getOrCreate(user, wine);
     return note;
   }
 
