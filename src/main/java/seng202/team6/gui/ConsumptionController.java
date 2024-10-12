@@ -23,7 +23,6 @@ import seng202.team6.util.WineWidgets;
 /**
  * Controller for the scene that shows wine consumption.
  */
-// fixme - when this is deleted, remove wine widgets class
 public class ConsumptionController extends Controller {
 
   static final float STD_DRINK_ETHANOL_VOLUME = 12.7f;
@@ -69,7 +68,7 @@ public class ConsumptionController extends Controller {
     return managerContext.getDatabaseManager().getWineListDao().getAll(user)
         .stream()
         .filter(wineList -> Objects.equals(
-            wineList.name(), "History")).findFirst().orElse(null); //todo extract
+            wineList.name(), "History")).findFirst().orElse(null);
   }
 
   /**
