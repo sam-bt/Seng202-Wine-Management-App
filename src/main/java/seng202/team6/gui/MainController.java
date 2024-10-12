@@ -563,7 +563,7 @@ public class MainController extends Controller {
   @FXML
   public void onHelpPressed() {
     switchScene("/fxml/help_screen.fxml", "Help",
-            () -> new HelpController(managerContext));
+            () -> new HelpController(managerContext), Screen.HELP_SCREEN);
   }
 
   /**

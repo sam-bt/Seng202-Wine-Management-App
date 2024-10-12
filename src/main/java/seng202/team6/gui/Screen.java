@@ -68,5 +68,7 @@ public enum Screen {
   /**
    * The screen for comparing wines.
    */
-  COMPARE_WINES_SCREEN
+  COMPARE_WINES_SCREEN,
+
+  HELP_SCREEN
 }
