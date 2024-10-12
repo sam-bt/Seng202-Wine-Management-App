@@ -404,9 +404,11 @@ public class WineScreenController extends Controller {
     // Configure Sliders
     NoDecimalCurrencyStringConverter currencyConverter = new NoDecimalCurrencyStringConverter();
     YearStringConverter yearConverter = new YearStringConverter();
+    // Calculate vintage tick unit
+    int tickUnit = ((maxVintage - minVintage) >= 4 ? (maxVintage - minVintage) / 4 : 1);
     scoreSlider.configure(0, 100, 10, 5, null);
     priceSlider.configure(minPrice, maxPrice, 100, 5, currencyConverter);
-    vintageSlider.configure(minVintage, maxVintage, 1, 0, yearConverter);
+    vintageSlider.configure(minVintage, maxVintage, tickUnit, 0, yearConverter);
     abvSlider.configure(minAbv, maxAbv, 1, 0, null);
 
     // Set slider handles to min and max values
