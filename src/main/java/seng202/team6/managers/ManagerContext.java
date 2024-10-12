@@ -11,8 +11,6 @@ public class ManagerContext {
 
   private final AuthenticationManager authenticationManager;
 
-  private final TaskManager taskManager;
-
   /**
    * Constructor for ManagerContext.
    *
@@ -23,12 +21,11 @@ public class ManagerContext {
   public ManagerContext(
       DatabaseManager databaseManager,
       GuiManager guiManager,
-      AuthenticationManager authenticationManager, TaskManager taskManager
+      AuthenticationManager authenticationManager
   ) {
     this.databaseManager = databaseManager;
     this.guiManager = guiManager;
     this.authenticationManager = authenticationManager;
-    this.taskManager = taskManager;
   }
 
   public DatabaseManager getDatabaseManager() {
@@ -41,9 +38,5 @@ public class ManagerContext {
 
   public AuthenticationManager getAuthenticationManager() {
     return authenticationManager;
-  }
-
-  public TaskManager getTaskManager() {
-    return taskManager;
   }
 }

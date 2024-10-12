@@ -18,7 +18,6 @@ import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.managers.GuiManager;
 import seng202.team6.managers.ManagerContext;
-import seng202.team6.managers.TaskManager;
 import seng202.team6.util.GeolocationResolver;
 
 /**
@@ -39,11 +38,6 @@ public class FxWrapper {
    * @param stage is the initial stage that gets loaded.
    */
   public void init(Stage stage) {
-    FxWrapper wrapper = this;
-    TaskManager taskManager = new TaskManager();
-    stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
-        event -> taskManager.teardown());
-
     PauseTransition delay = new PauseTransition(Duration.millis(200));
     delay.setOnFinished(unused -> {
       if (!GeolocationResolver.hasValidApiKey()) {
@@ -65,9 +59,8 @@ public class FxWrapper {
       // create the manager context
       ManagerContext managerContext = new ManagerContext(
               databaseManager,
-              new GuiManager(wrapper),
-              new AuthenticationManager(databaseManager),
-              taskManager);
+              new GuiManager(this),
+              new AuthenticationManager(databaseManager));
 
       // load the main screen
       loadScreen("/fxml/main_screen.fxml", "Home",
