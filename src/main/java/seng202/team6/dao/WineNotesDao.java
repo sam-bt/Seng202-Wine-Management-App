@@ -122,7 +122,8 @@ public class WineNotesDao extends Dao {
               timer.currentOffsetMilliseconds());
           return extractNoteFromResultSet(resultSet, "note_id");
         } else {
-          log.warn(
+
+          log.info(
               "Could not find note for user '{}'"
                   + " and wine with ID {} so returning blank note in {}ms",
               user.getUsername(), wine.getKey(), timer.currentOffsetMilliseconds());
