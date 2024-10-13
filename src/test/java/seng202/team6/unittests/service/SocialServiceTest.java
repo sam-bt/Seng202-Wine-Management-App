@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.junit.jupiter.api.AfterEach;
@@ -47,7 +48,7 @@ public class SocialServiceTest {
    * Tests that the initialize function populates the user reviews.
    */
   @Test
-  void testInitPopulatesUserReviews() {
+  void testInitPopulatesUserReviews() throws SQLException {
 
     // Set up test data
     ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
