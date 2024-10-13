@@ -282,7 +282,7 @@ public class AdminController extends Controller {
     if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
       log.info("Password updated");
       togglePasswordBox(false);
-      selectedActionsPane.setPrefHeight(200);
+      selectedActionsPane.setPrefHeight(250);
     } else {
       selectedActionsPane.setPrefHeight(300);
       passwordErrorLabel.setStyle("-fx-text-fill: red");
@@ -294,7 +294,7 @@ public class AdminController extends Controller {
   @FXML
   void onNewPasswordCancel() {
     togglePasswordBox(false);
-    selectedActionsPane.setPrefHeight(200);
+    selectedActionsPane.setPrefHeight(250);
   }
 
   //=================================| REVIEW MODERATION |=================================<

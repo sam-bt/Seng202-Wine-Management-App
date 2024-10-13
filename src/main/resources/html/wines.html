@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Filtering</title>
+</head>
+<body>
+<div class="title-block">
+    <h1>Wines menu</h1>
+
+</div>
+<div class="nav-container">
+    <div class="nav-button fl-left">
+        <a class="manual-link" href="javascript:history.back()">Go Back</a>
+    </div>
+
+    <div class="nav-button fl-right">
+        <a class="manual-link" href="ManualIndex.html">Home</a>
+    </div>
+
+</div>
+<div style="clear: both"></div>
+<div class="content-block">
+    <div class="manual-item" >
+        <h3 class="card-title">The View screen</h3>
+        <p class="card-content">The View screen contains the main wine screen, the raw data viewer, and the mapping tab. Upon opening the View screen, you will be greeted with the standard Wines screen:</p>
+        <div class="diagram">
+            <img src="../img/HelpImages/winescreen.png" width="800px;">
+            <p class="d_label">Figure 1. The Wines view</p>
+        </div>
+        <p class="card-content">This screen consists of several components:</p>
+        <ol>
+            <li>
+                The Filters block. This allows you to filter the wines in the database. These filters persist across the Wines, Raw Data, and Map screens.
+            </li>
+            <li>
+                The tab bar. This allows you to switch between the main view, raw data view, and map view.
+            </li>
+            <li>
+                The Wine cards. These show the name of the wine, its colour, and its title. You can open the detailed wine view by double-clicking on one of these.
+            </li>
+        </ol>
+        <p class="card-content">More on these below:</p>
+    </div>
+    <div class="manual-item">
+        <h3 class="card-title">Filtering</h3>
+        <p class="card-content">You can filter the data shown using the area on the left. There are several filters available:</p>
+        <h4 class = "card-subheading">Text Boxes</h4>
+        <ol>
+            <li>Title: This allows you to search for a wine by its title.</li>
+            <li>Country: This allows you to filter wines by country. This field has auto-complete available; Once you start typing the name of the country you want, you can click on the country name in the list which appears.</li>
+            <li>Winery: Similar to the Country filter, this is an auto-completing filter that allows you to filter the wines by the winery which produced them.</li>
+            <li>Colour: This allows you to filter the wines by colour / variety.</li>
+        </ol>
+        <h4 class="card-subheading">Sliders</h4>
+        <ol>
+            <li>
+                Vintage: This allows you to select a range of years to filter by. This is capped to the lowest and highest year in the database.
+            </li>
+            <li>
+                Score Range: This allows you to select a range of taster scores to filter by. This is not related to the average review score (the star score shwon on the card)
+            </li>
+            <li>
+                Alcohol By Volume Range: Allows you to filter based on alcohol content.
+            </li>
+            <li>
+                Price Range: Allows you to filter based on a price range.
+            </li>
+        </ol>
+        <p class="card-content">The two buttons at the bottom allow you to apply your filters, and reset the view to an unfiltered state.</p>
+    </div>
+    <div class="manual-item">
+        <h3 class="card-title">Tab Bar</h3>
+        <p class="card-content">The tab bar allows you to switch between the Wine View, Raw Data View, and Map View. Your filters will persist across these three views.</p>
+    </div>
+    <div class="manual-item">
+        <h3 class="card-title">Wine View</h3>
+        <p class="card-content">The Wine View is displayed as a grid of Wine Cards(3). Each wine card shows the title of the wine and its average user rating (out of 5 stars). Double-clicking on a wine card will bring up that wine's <a href="detailed_view.html" class="link">detailed view</a>. At the bottom of the page is the page navigation.</p>
+        <div class="diagram">
+            <img src="../img/HelpImages/pagenav.png" width="200px">
+            <p class="d_label">Figure 2. Page Navigation</p>
+        </div>
+        <p class="card-content">The buttons can be used to cycle back and forth between pages, or you can enter the desired page in the text box.</p>
+    </div>
+
+    <div class="manual-item">
+        <h3 class="card-title">Wine Comparison</h3>
+        <p class="card-content">You can compare a wine by clicking the 'Compare' option in the wines menu on the navbar. This will bring up the Compare menu:</p>
+        <div class="diagram">
+            <img src="../img/HelpImages/compare.png" width = "700px">
+            <p class="d_label">Figure 3. The Compare screen.</p>
+        </div>
+        <p class="card-content">Above, you can search for a wine on each side to view them both at the same time. This allows you to easily compare taste, score, etc. You can also add a wine to the Compare page by clicking the 'Compare' button in the <a href="detailed_view.html" class="link">detailed view.</a></p>
+    </div>
+
+</div>
+</body>
+</html>

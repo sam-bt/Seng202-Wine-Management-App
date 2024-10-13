@@ -1,9 +1,7 @@
 package seng202.team6.managers;
 
 import java.io.IOException;
-import java.util.function.Supplier;
 import javafx.animation.PauseTransition;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
@@ -18,6 +16,7 @@ import seng202.team6.gui.ConsumptionController;
 import seng202.team6.gui.Controller;
 import seng202.team6.gui.DetailedVineyardViewController;
 import seng202.team6.gui.DetailedWineViewController;
+import seng202.team6.gui.HelpController;
 import seng202.team6.gui.ListScreenController;
 import seng202.team6.gui.LoginController;
 import seng202.team6.gui.MainController;
@@ -114,9 +113,9 @@ public class GuiManager {
   /**
    * Switches the current scene.
    *
-   *<p>
-   *   Scenes with fxml paths equal to the currently loaded one are skipped
-   *</p>
+   * <p>
+   * Scenes with fxml paths equal to the currently loaded one are skipped
+   * </p>
    *
    * @param fxml    fxml resource path
    * @param title   window title
@@ -468,6 +467,14 @@ public class GuiManager {
   }
 
   /**
+   * Open the user manual screen.
+   */
+  public void launchHelpScreen() {
+    switchScene("/fxml/help_screen.fxml", "Help",
+        () -> new HelpController(managerContext));
+  }
+
+  /**
    * Launches the manage vineyards screen under a given node.
    *
    * @param parent node to add to
@@ -486,9 +493,9 @@ public class GuiManager {
   }
 
   /**
-   * Displays a loading indicator before running the specified task, and hides
-   * the loading indicator upon completion. This method introduces a short delay
-   * to ensure the UI updates before executing the provided Runnable task.
+   * Displays a loading indicator before running the specified task, and hides the loading indicator
+   * upon completion. This method introduces a short delay to ensure the UI updates before executing
+   * the provided Runnable task.
    *
    * @param runnable the task to be executed while the loading indicator is visible
    */

@@ -75,6 +75,8 @@ public class MainController extends Controller {
   private VBox socialButton;
   @FXML
   private VBox adminButton;
+  @FXML
+  private Button helpButton;
 
   // menu buttons that toggle between being on the screen and not
   @FXML
@@ -313,6 +315,7 @@ public class MainController extends Controller {
     vineyardsButton.setOnMouseClicked(event -> guiManager.openVineyardsScreen());
     socialButton.setOnMouseClicked(event -> guiManager.openSocialScreen());
     adminButton.setOnMouseClicked(event -> guiManager.openAdminScreen());
+    helpButton.setOnAction(e -> guiManager.launchHelpScreen());
   }
 
   /**
