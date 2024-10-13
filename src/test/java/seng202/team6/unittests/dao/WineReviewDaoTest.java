@@ -26,7 +26,6 @@ public class WineReviewDaoTest {
   private DatabaseManager databaseManager;
   private WineReviewDao wineReviewDao;
   private WineDao wineDao;
-  private UserDao userDao;
   private User user;
   private Wine wine;
 
@@ -41,13 +40,13 @@ public class WineReviewDaoTest {
     databaseManager = new DatabaseManager();
     wineReviewDao = databaseManager.getWineReviewDao();
     wineDao = databaseManager.getWineDao();
-    userDao = databaseManager.getUserDao();
+    UserDao userDao = databaseManager.getUserDao();
 
     user = new User("username", "password", "role", "salt");
     userDao.add(user);
 
     wine = new Wine(
-            -1l,
+            -1L,
             "wine",
             "blue",
             "nz",
@@ -112,7 +111,6 @@ public class WineReviewDaoTest {
         new GeoLocation(10,10), 5.0);
     wineDao.add(testWine);
 
-    WineReview review1 = createWineReview(2, wine, "test1");
     WineReview review2 = createWineReview(2, testWine, "test2");
 
     ObservableList<WineReview> result = wineReviewDao.getAllInRange(1, 10);
@@ -158,9 +156,6 @@ public class WineReviewDaoTest {
         new GeoLocation(10,10), 5.0);
     wineDao.add(testWine);
 
-    WineReview review1 = createWineReview(2, wine, "test1");
-    WineReview review2 = createWineReview(2, testWine, "test2");
-
     ObservableList<WineReview> result1 = wineReviewDao.getAll(user);
 
     assertEquals(result1.size(), 2);
@@ -184,7 +179,6 @@ public class WineReviewDaoTest {
     wineDao.add(testWine);
 
     WineReview review1 = createWineReview(2, wine, "test1");
-    WineReview review2 = createWineReview(2, testWine, "test2");
     WineReview review3 = createWineReview(2, wine, "test3");
 
     ObservableList<WineReview> result = wineReviewDao.getAll(wine);

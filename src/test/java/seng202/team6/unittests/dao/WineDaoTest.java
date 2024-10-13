@@ -2,6 +2,8 @@ package seng202.team6.unittests.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.SQLException;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team6.dao.WineDao;
 import seng202.team6.managers.DatabaseManager;
+import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineFilters;
 import seng202.team6.service.WineDataStatService;
@@ -601,6 +604,29 @@ public class WineDaoTest {
     assertEquals(finalMaxPrice, 350);
 
   }
+
+  /**
+   * Test the exact title matching
+   * @throws SQLException
+   */
+  @Test
+  void testGetByExactTitle() throws SQLException {
+    addWines(1);
+    Wine result = wineDao.getByExactTitle("wine");
+    assertEquals(result.getTitle(), "wine");
+  }
+
+  /**
+   * Test the exact title matching with an invalid title
+   * @throws SQLException
+   */
+  @Test
+  void testExactWinesWithInvalidTitle() throws SQLException {
+    addWines(1);
+    Wine result = wineDao.getByExactTitle("No Wine");
+    assertNull(result);
+  }
+
 
   /**
    * Helper method to create a new Wine object with the given properties and add it to the database.
