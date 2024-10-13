@@ -207,7 +207,7 @@ public class WineScreenController extends Controller {
     final TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
     final TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
     final TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
-    final TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
+    final TableColumn<Wine, Float> priceColumn = new TableColumn<>("Price");
 
     titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
     varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));

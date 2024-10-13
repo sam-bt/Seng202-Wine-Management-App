@@ -20,7 +20,7 @@ public enum WinePropertyName {
   DESCRIPTION("Description"),
   SCORE("Score"),
   ABV("ABV"),
-  NZD("NZD");
+  PRICE("Price");
 
   public static final ObservableList<WinePropertyName> VALUES = FXCollections.observableArrayList(
       values());
