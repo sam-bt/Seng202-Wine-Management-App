@@ -24,7 +24,6 @@ body {
 
 .nav-li {
     display:block;
-
     margin: 10px;
     margin-left: auto;
     margin-right: auto;
@@ -35,13 +34,22 @@ body {
 
 .nav-li:hover {
     display:block;
-
-    margin: 10px;
-    margin-left: auto;
-    margin-right: auto;
     background-color: #fca5a5;
+}
+
+.nav-li-sub {
+    margin: 10px;
+    margin-left: 507px;
+    display:block;
+    margin-right: auto;
+    background-color: #f68585;
     border-radius: 1px;
-    width: 400px;
+    width: 350px;
+}
+
+.nav-li-sub:hover {
+    display:block;
+    background-color: #fca5a5;
 }
 
 .nav-button {
@@ -71,7 +79,7 @@ body {
 }
 
 .manual-item {
-    width: 600px;
+    width: 800px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     margin: auto;
     border-radius: 5px;
@@ -87,6 +95,7 @@ body {
 
 .card-content {
     padding: 10px;
+    margin-bottom: 10px;
 }
 
 .link {
@@ -109,4 +118,35 @@ body {
 
 .fl-right {
     float:right;
+}
+
+.diagram {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: fit-content;
+    align-items: center;
+}
+
+.d_label {
+    margin-top: -5px;
+    font-style: italic;
+    margin-left: 10px;
+
+}
+
+.diagram_img {
+    margin-left: auto;
+}
+
+img {
+    max-width: 800px;
+}
+
+.card-subheading {
+    padding: 0px;
+    margin-left: 10px;
+}
+
+ol {
+    margin-right: 10px;
 }

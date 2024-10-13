@@ -19,7 +19,7 @@ import javafx.scene.text.Text;
 public class CircularScoreIndicator extends Control {
 
   /**
-   * The score property representing the current score value
+   * The score property representing the current score value.
    */
   private final DoubleProperty score = new SimpleDoubleProperty(0);
 
@@ -32,7 +32,7 @@ public class CircularScoreIndicator extends Control {
   }
 
   /**
-   * Gets the current score
+   * Gets the current score.
    *
    * @return The current score
    */
@@ -41,7 +41,7 @@ public class CircularScoreIndicator extends Control {
   }
 
   /**
-   * Sets the score value. The score is clamped between 0 and 100
+   * Sets the score value. The score is clamped between 0 and 100.
    *
    * @param score The new score value to set
    */
@@ -50,7 +50,7 @@ public class CircularScoreIndicator extends Control {
   }
 
   /**
-   * Gets the score property
+   * Gets the score property.
    *
    * @return The DoubleProperty representing the score
    */
@@ -65,7 +65,7 @@ public class CircularScoreIndicator extends Control {
   private static class CircularWineScoreIndicatorSkin extends SkinBase<CircularScoreIndicator> {
 
     /**
-     * The main pane which contains the elements which make up the circular wine score indicator
+     * The main pane which contains the elements which make up the circular wine score indicator.
      */
     private final Pane pane;
 
@@ -76,17 +76,17 @@ public class CircularScoreIndicator extends Control {
     private final Arc backgroundArc;
 
     /**
-     * An arc which is used to display a coloured arc on top of the circle background
+     * An arc which is used to display a coloured arc on top of the circle background.
      */
     private final Arc arc;
 
     /**
-     * A vertical box which wraps the score text and the max score text
+     * A vertical box which wraps the score text and the max score text.
      */
     private final VBox scoreTextWrapper;
 
     /**
-     * Text which shows the score
+     * Text which shows the score.
      */
     private final Text scoreText;
 

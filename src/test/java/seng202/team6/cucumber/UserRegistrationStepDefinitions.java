@@ -11,7 +11,7 @@ import io.cucumber.java.en.When;
 import java.sql.SQLException;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 import seng202.team6.model.User;
 
 public class UserRegistrationStepDefinitions {
@@ -47,11 +47,9 @@ public class UserRegistrationStepDefinitions {
 
   @When("the user enters a username which has already been registered")
   public void the_user_enters_a_username_which_has_already_been_registered() {
-    // Write code here that turns the phrase above into concrete actions
     String existingUsername = "MyAccount";
     String existingPassword = "ValidPassword1!";
-    User user = new User(username, password, "user", "salt");
-    databaseManager.getUserDAO().add(user);
+    authenticationManager.validateRegistration(existingUsername, existingPassword, existingPassword);
     username = existingUsername;
     password = "OtherValidPass1!";
     confirmedPassword = password;

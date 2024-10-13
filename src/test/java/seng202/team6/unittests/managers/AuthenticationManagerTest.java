@@ -1,6 +1,8 @@
 package seng202.team6.unittests.managers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.sql.SQLException;
 import org.junit.jupiter.api.AfterEach;
@@ -8,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
+import seng202.team6.enums.AuthenticationResponse;
 
 /**
  * Test class for the AuthenticationManager. This class contains unit tests to verify the
@@ -177,6 +179,22 @@ public class AuthenticationManagerTest {
 
     AuthenticationResponse response = authenticationManager.validateLogin(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, response);
+  }
+
+  /**
+   * Tests logging out.
+   */
+  @Test
+  public void testLogout() {
+    String username = "MyAccount";
+    String password = validPass;
+    registerAccount(username, password);
+
+    authenticationManager.validateLogin(username, password);
+    authenticationManager.logout();
+    assertFalse(authenticationManager.isAuthenticated());
+    assertFalse(authenticationManager.isAdmin());
+    assertNull(authenticationManager.getAuthenticatedUser());
   }
 
   /**

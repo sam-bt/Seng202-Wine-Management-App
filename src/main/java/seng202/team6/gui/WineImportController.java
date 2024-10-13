@@ -1,10 +1,8 @@
 package seng202.team6.gui;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +15,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -26,6 +23,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
@@ -33,36 +31,48 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.enums.WinePropertyName;
+import seng202.team6.gui.popup.GeneralPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
+import seng202.team6.service.WineImportService;
 import seng202.team6.util.Exceptions.ValidationException;
-import seng202.team6.util.ProcessCSV;
+import seng202.team6.util.ProcessCsv;
 import seng202.team6.util.WineValidator;
 
+/**
+ * Controller for wine import.
+ */
 public class WineImportController extends Controller {
-  @FXML
-  private GridPane dataColumnsContainer;
-
-  @FXML
-  private CheckBox extractVintageFromTitleCheckbox;
 
   private final Logger log = LogManager.getLogger(getClass());
-
   private final Map<Integer, WinePropertyName> selectedWineProperties = new HashMap<>();
-
+  private final WineImportService importService;
+  @FXML
+  private TilePane dataColumnsContainer;
   private List<String[]> currentFileRows;
 
+  /**
+   * Constructor.
+   *
+   * @param context manager context
+   */
   public WineImportController(ManagerContext context) {
     super(context);
+    importService = new WineImportService();
   }
 
+  /**
+   * Initialize this constructor.
+   */
   @Override
   public void init() {
-    dataColumnsContainer.getRowConstraints().clear();
     dataColumnsContainer.setHgap(10);
     dataColumnsContainer.setVgap(20);
   }
 
+  /**
+   * Called when the open file button is clicked.
+   */
   @FXML
   public void onOpenFileButtonClick() {
     FileChooser fileChooser = new FileChooser();
@@ -75,56 +85,67 @@ public class WineImportController extends Controller {
       return;
     }
 
-    currentFileRows = ProcessCSV.getCSVRows(selectedFile);
+    currentFileRows = ProcessCsv.getCsvRows(selectedFile);
     String[] columnNames = currentFileRows.removeFirst();
     selectedWineProperties.clear();
     makeColumnRemapList(columnNames, currentFileRows);
   }
 
 
+  /**
+   * Called when the append data button is clicked.
+   */
   @FXML
   void onAppendDataButtonClick() {
-    if (!validate())
+    if (!validate()) {
       return;
+    }
     parseWines(false);
   }
 
+  /**
+   * Called when the replace data button is clicked.
+   */
   @FXML
   void onReplaceDataButtonClick() {
-    if (!validate())
+    if (!validate()) {
       return;
+    }
     parseWines(true);
   }
 
+  /**
+   * Resets the wine import screen.
+   */
   private void reset() {
     dataColumnsContainer.getChildren().clear();
-    dataColumnsContainer.getRowConstraints().clear();
-    dataColumnsContainer.getColumnConstraints().clear();
-    extractVintageFromTitleCheckbox.setSelected(false);
     selectedWineProperties.clear();
     currentFileRows = null;
   }
 
+  /**
+   * Parse the list of currently selected wines.
+   *
+   * @param replace whether to replace
+   */
   private void parseWines(boolean replace) {
     List<Wine> parsedWines = new ArrayList<>();
-    Map<WinePropertyName, Integer> valid = new HashMap<>() {{
-      selectedWineProperties.forEach(((integer, winePropertyName) ->
-          put(winePropertyName, integer)));
-    }};
+    Map<WinePropertyName, Integer> valid = importService.validHashMapCreate(selectedWineProperties);
+
     currentFileRows.forEach(row -> {
       try {
         parsedWines.add(WineValidator.parseWine(
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.TITLE),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VARIETY),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COUNTRY),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.REGION),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.WINERY),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COLOUR),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VINTAGE),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.DESCRIPTION),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.SCORE),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.ABV),
-            extractPropertyFromRowOrDefault(valid, row, WinePropertyName.NZD),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.TITLE),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VARIETY),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COUNTRY),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.REGION),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.WINERY),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COLOUR),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VINTAGE),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.DESCRIPTION),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.SCORE),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.ABV),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.NZD),
             null
         ));
       } catch (ValidationException e) {
@@ -132,72 +153,77 @@ public class WineImportController extends Controller {
       }
     });
     log.info("Successfully parsed {} out of {} wines", parsedWines.size(),
-      currentFileRows.size());
+        currentFileRows.size());
 
     if (replace) {
-      managerContext.databaseManager.getWineDAO().replaceAll(parsedWines);
+      managerContext.getDatabaseManager().getWineDao().replaceAll(parsedWines);
     } else {
-      managerContext.databaseManager.getWineDAO().addAll(parsedWines);
+      managerContext.getDatabaseManager().getWineDao().addAll(parsedWines);
     }
     reset();
   }
 
-  private String extractPropertyFromRowOrDefault(Map<WinePropertyName, Integer> valid, String[] row,
-      WinePropertyName winePropertyName) {
-    return valid.containsKey(winePropertyName) ? row[valid.get(winePropertyName)] : "";
+
+  /**
+   * Checks if the importer contains the title property.
+   *
+   * @return if the selection contains the title property
+   */
+  private boolean checkContainsTitleProperty() {
+    if (!selectedWineProperties.containsValue(WinePropertyName.TITLE)) {
+      GeneralPopupController popup = managerContext.getGuiManager().mainController.showErrorPopup();
+      popup.setTitle("Invalid Selections");
+      popup.setMessage("The property TITLE is required but has not been selected");
+      popup.addOkButton();
+      return false;
+    }
+    return true;
   }
 
-  private boolean validate() {
+  /**
+   * Validates the current table.
+   *
+   * @return if current table is valid
+   */
+  public boolean validate() {
     return checkContainsTitleProperty() && checkDuplicateProperties();
   }
 
-  private boolean checkContainsTitleProperty() {
-    if (!selectedWineProperties.containsValue(WinePropertyName.TITLE)) {
-      Alert alert = new Alert(AlertType.ERROR);
-      alert.setTitle("Invalid Selections");
-      alert.setHeaderText("Missing Mandatory Property");
-      alert.setContentText("The property TITLE is required but has not been selected");
-      alert.showAndWait();
-      return false;
-    }
-    return true;
-  }
-
+  /**
+   * Check for duplicate attribute names.
+   *
+   * @return true if valid
+   */
   private boolean checkDuplicateProperties() {
-    Set<WinePropertyName> duplicatedProperties = new HashSet<>();
-    Set<WinePropertyName> selectedProperties = new HashSet<>();
-    selectedWineProperties.forEach((index, winePropertyName) -> {
-      if (!selectedProperties.add(winePropertyName)) { // returns false if the set already contained
-        duplicatedProperties.add(winePropertyName);
-      }
-    });
+    Set<WinePropertyName> duplicatedProperties = importService.checkDuplicateProperties(
+        selectedWineProperties);
 
     if (!duplicatedProperties.isEmpty()) {
-      Alert alert = new Alert(AlertType.ERROR);
-      alert.setTitle("Invalid Selections");
-      alert.setHeaderText("Duplicate Properties Selected");
-      alert.setContentText("The property field(s) " + duplicatedProperties.stream()
+      GeneralPopupController popup = managerContext.getGuiManager().mainController.showErrorPopup();
+      popup.setTitle("Invalid Selections");
+      popup.setMessage("The property field(s) " + duplicatedProperties.stream()
           .map(WinePropertyName::name)
-          .collect(Collectors.joining(", ")) +
-          " have been selected more than once.");
-      alert.showAndWait();
+          .collect(Collectors.joining(", "))
+          + " have been selected more than once.");
+      popup.addOkButton();
       return false;
     }
     return true;
   }
 
+  /**
+   * Makes the column remap list.
+   *
+   * @param columnNames column names
+   * @param rows        rows
+   */
   private void makeColumnRemapList(String[] columnNames, List<String[]> rows) {
-    int columns = 4;
-    int row = 0;
-    int column = 0;
+    dataColumnsContainer.getChildren().clear();
     for (int i = 0; i < columnNames.length; i++) {
       String columnName = columnNames[i];
-      if (columnName.isBlank()) // skip if the column name is empty
+      // skip if the column name is empty
+      if (columnName.isBlank()) {
         continue;
-      if (column >= columns) {
-        addRow();
-        row++;
-        column = 0;
       }
 
       ObservableList<String> sampleValues = FXCollections.observableArrayList();
@@ -206,20 +232,22 @@ public class WineImportController extends Controller {
       }
 
       WinePropertyName possiblePropertyName = WinePropertyName.tryMatch(columnName);
-      GridPane wrapper = createSomeElement(i, columnName, possiblePropertyName, sampleValues);
-      dataColumnsContainer.add(wrapper, column, row);
-      column++;
+      GridPane wrapper = createImportBox(i, columnName, possiblePropertyName, sampleValues);
+      dataColumnsContainer.getChildren().add(wrapper);
     }
   }
 
-  private void addRow() {
-    RowConstraints rowConstraint = new RowConstraints();
-    rowConstraint.setVgrow(Priority.ALWAYS);
-    dataColumnsContainer.getRowConstraints().add(rowConstraint);
-  }
-
-  // idk what to call this
-  private GridPane createSomeElement(int index, String columnName, WinePropertyName possiblePropertyName,
+  /**
+   * Creates an import box.
+   *
+   * @param index                index
+   * @param columnName           column rename
+   * @param possiblePropertyName possible property name
+   * @param sampleValues         sample values
+   * @return created box
+   */
+  private GridPane createImportBox(int index, String columnName,
+      WinePropertyName possiblePropertyName,
       ObservableList<String> sampleValues) {
     GridPane gridPane = new GridPane();
     RowConstraints firstRow = new RowConstraints();
@@ -284,7 +312,6 @@ public class WineImportController extends Controller {
     secondColumn.setHgrow(Priority.ALWAYS);
     firstColumn.setPercentWidth(50);
     secondColumn.setPercentWidth(50);
-
 
     GridPane.setFillWidth(gridPane, true);
     return gridPane;
