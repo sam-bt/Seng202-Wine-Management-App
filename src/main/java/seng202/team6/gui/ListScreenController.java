@@ -13,6 +13,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import seng202.team6.managers.ManagerContext;
@@ -40,6 +41,15 @@ public class ListScreenController extends Controller {
   @FXML
   public TableView<Wine> tableView;
   private WineList selectedWinelist;
+
+  /**
+   * Initiates opening the detailed wine view on click.
+   */
+  @Override
+  public void init() {
+    // Setup detailed wine
+    tableView.setOnMouseClicked(this::openWineOnClick);
+  }
 
   /**
    * Constructor.
@@ -208,4 +218,32 @@ public class ListScreenController extends Controller {
     tableView.getItems().clear();
     tableView.setItems(wines);
   }
+
+  /**
+   * Opens a wine when mouse is clicked.
+   *
+   * @param event event
+   */
+  @FXML
+  public void openWineOnClick(MouseEvent event) {
+    if (event.getClickCount() != 2) {
+      Wine wine = tableView.getSelectionModel().getSelectedItem();
+      if (wine != null) {
+        openDetailedWineView(wine);
+      }
+    }
+  }
+
+  /**
+   * Opens the detailed wine view for a wine.
+   *
+   * @param wine wine
+   */
+  private void openDetailedWineView(Wine wine) {
+    Runnable backAction;
+    backAction = () -> getManagerContext().getGuiManager()
+          .openListScreen();
+    getManagerContext().getGuiManager().openDetailedWineView(wine, backAction);
+  }
+
 }
