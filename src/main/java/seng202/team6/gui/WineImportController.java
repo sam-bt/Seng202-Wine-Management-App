@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -84,10 +85,12 @@ public class WineImportController extends Controller {
       return;
     }
 
-    currentFileRows = ProcessCsv.getCsvRows(selectedFile);
-    String[] columnNames = currentFileRows.removeFirst();
-    selectedWineProperties.clear();
-    makeColumnRemapList(columnNames, currentFileRows);
+    getManagerContext().getGuiManager().showLoadingIndicator(() -> {
+      currentFileRows = ProcessCsv.getCsvRows(selectedFile);
+      String[] columnNames = currentFileRows.removeFirst();
+      selectedWineProperties.clear();
+      makeColumnRemapList(columnNames, currentFileRows);
+    });
   }
 
 
@@ -99,7 +102,7 @@ public class WineImportController extends Controller {
     if (!validate()) {
       return;
     }
-    parseWines(false);
+    getManagerContext().getGuiManager().showLoadingIndicator(() -> parseWines(false));
   }
 
   /**
@@ -110,7 +113,7 @@ public class WineImportController extends Controller {
     if (!validate()) {
       return;
     }
-    parseWines(true);
+    getManagerContext().getGuiManager().showLoadingIndicator(() -> parseWines(true));
   }
 
   /**
@@ -129,7 +132,8 @@ public class WineImportController extends Controller {
    */
   private void parseWines(boolean replace) {
     List<Wine> parsedWines = new ArrayList<>();
-    Map<WinePropertyName, Integer> valid = importService.validHashMapCreate(selectedWineProperties);
+    Map<WinePropertyName, Integer> valid = importService.validHashMapCreate(
+        selectedWineProperties);
 
     currentFileRows.forEach(row -> {
       try {
@@ -141,7 +145,8 @@ public class WineImportController extends Controller {
             importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.WINERY),
             importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.COLOUR),
             importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.VINTAGE),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.DESCRIPTION),
+            importService.extractPropertyFromRowOrDefault(valid, row,
+                WinePropertyName.DESCRIPTION),
             importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.SCORE),
             importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.ABV),
             importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.NZD),

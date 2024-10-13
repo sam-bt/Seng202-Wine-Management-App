@@ -1,12 +1,20 @@
 package seng202.team6.gui.wrapper;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Builder;
+import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import seng202.team6.gui.Controller;
 import seng202.team6.gui.MainController;
@@ -14,6 +22,7 @@ import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.managers.GuiManager;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.util.GeolocationResolver;
 
 /**
  * FXWrapper manages a pane in which the different GUIs are loaded. Based on the code written for
@@ -25,7 +34,8 @@ public class FxWrapper {
   @FXML
   private Pane pane;
   private Stage stage;
-  private ManagerContext managerContext;
+
+  ManagerContext managerContext;
 
   /**
    * Initialises the wrapper. Responsible for creating the WinoManger and passing in functions for
@@ -34,6 +44,49 @@ public class FxWrapper {
    * @param stage is the initial stage that gets loaded.
    */
   public void init(Stage stage) {
+    FxWrapper fxWrapper = this;
+
+    // Create the executor service outside the try-with-resources
+    ExecutorService executorService = Executors.newFixedThreadPool(1);
+    Task<Void> task = new Task<>() {
+      @Override
+      protected Void call() {
+        if (!GeolocationResolver.hasValidApiKey()) {
+          Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Invalid or missing ORS API Key");
+            alert.setContentText("An ORS API key was not found in an .env file or was invalid. "
+                + "Please check the readme or manual to find out more.");
+            alert.showAndWait();
+            stage.close();
+          });
+          return null;
+        }
+
+        // load the database manager and handle window close event
+        DatabaseManager databaseManager = new DatabaseManager("database", "database.db");
+        stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST,
+            event -> databaseManager.teardown());
+        GuiManager guiManager = new GuiManager(fxWrapper);
+        ManagerContext managerContext = new ManagerContext(
+            databaseManager,
+            guiManager,
+            new AuthenticationManager(databaseManager)
+        );
+        guiManager.setManagerContext(managerContext);
+
+
+        // load the main screen on the javafx thread
+        Platform.runLater(() -> loadScreen("/fxml/main_screen.fxml", "Home",
+            () -> new MainController(managerContext)));
+        return null;
+      }
+    };
+    executorService.submit(task);
+
+    // shutdown the executor service after the task completes
+    task.setOnSucceeded(event -> executorService.shutdown());
+    task.setOnFailed(event -> executorService.shutdown());
     this.stage = stage;
     try {
       DatabaseManager databaseManager = new DatabaseManager("database", "database.db");
@@ -51,6 +104,7 @@ public class FxWrapper {
     }
     loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
   }
+
 
   /**
    * Sets the window title.
@@ -75,7 +129,8 @@ public class FxWrapper {
       // provide a custom Controller with parameters
       loader.setControllerFactory(param -> builder.build());
       Parent parent = loader.load();
-      pane.getChildren().clear(); // IMPORTANT
+      // clear the loading screen which is initially on the fx wrapper
+      pane.getChildren().clear();
       pane.getChildren().add(parent);
       if (loader.getController() instanceof Controller controller) {
         controller.init();

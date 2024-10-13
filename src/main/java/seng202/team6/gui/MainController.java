@@ -8,6 +8,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import seng202.team6.managers.AuthenticationManager;
@@ -25,6 +26,9 @@ public class MainController extends Controller {
   private AnchorPane popupActionBlocker;
   @FXML
   private AnchorPane popupContent;
+  @FXML
+  private BorderPane loadingSpinnerPane;
+
   @FXML
   private MenuBar menuBar;
 
@@ -321,4 +325,17 @@ public class MainController extends Controller {
     popupContent.setDisable(true);
     popupContent.getChildren().clear();
   }
+
+  /**
+   * Toggles the loading overlay indicator.
+   *
+   * @param show if the loading indicator should be shown or not
+   */
+  public void showLoadingIndicator(boolean show) {
+    popupActionBlocker.setDisable(!show);
+    popupActionBlocker.setVisible(show);
+    loadingSpinnerPane.setDisable(!show);
+    loadingSpinnerPane.setVisible(show);
+  }
+
 }

@@ -92,7 +92,7 @@ public class VineyardDao extends Dao {
    */
   public ObservableList<Vineyard> getAllInRange(int begin, int end,
       VineyardFilters vineyardFilters) {
-    Timer timer = new Timer(); // todo - make query not use limit and offset
+    Timer timer = new Timer();
     String sql = "SELECT VINEYARD.ID as vineyard_id, VINEYARD.*, GEOLOCATION.LATITUDE, "
         + "GEOLOCATION.LONGITUDE "
         + "FROM VINEYARD "

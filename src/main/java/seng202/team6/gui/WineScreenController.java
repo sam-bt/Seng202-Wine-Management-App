@@ -163,29 +163,25 @@ public class WineScreenController extends Controller {
   private void openWineRange(WineFilters filters) {
     // Clear existing data
     tableView.getItems().clear();
+    winesViewContainer.getChildren().clear();
 
     // Calculate range of data to get
     int begin = this.pageService.getMinRange();
     int end = this.pageService.getMaxRange();
 
-    // Check if filters exist
-    ObservableList<Wine> wines = getManagerContext().getDatabaseManager().getWineDao()
-        .getAllInRange(begin, end, filters);
-
-    // send the wines to the map if they have a geolocation
-    mapController.runOrQueueWhenReady(() -> {
-      mapController.clearWineMarkers();
-      mapController.clearHeatmap();
-      wines.stream()
-          .filter(wine -> wine.getGeoLocation() != null)
-          .forEach(mapController::addWineMarker);
+    getManagerContext().getGuiManager().showLoadingIndicator(() -> {
+      ObservableList<Wine> wines = getManagerContext().getDatabaseManager().getWineDao()
+              .getAllInRange(begin, end, filters);
+      mapController.runOrQueueWhenReady(() -> {
+        mapController.clearWineMarkers();
+        mapController.clearHeatmap();
+        wines.stream()
+                .filter(wine -> wine.getGeoLocation() != null)
+                .forEach(mapController::addWineMarker);
+      });
+      wines.forEach(this::createWineCard);
+      tableView.setItems(wines);
     });
-
-    winesViewContainer.getChildren().clear();
-    wines.forEach(this::createWineCard);
-
-    // Set fetched data to the table
-    tableView.setItems(wines);
   }
 
   /**
@@ -378,9 +374,6 @@ public class WineScreenController extends Controller {
 
     WineDao wineDao = getManagerContext().getDatabaseManager().getWineDao();
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
-
-    // Ensure unique value are up to date
-    wineDao.updateUniques();
 
     // Auto Complete boxes and range sliders
     // Update filter checkboxes

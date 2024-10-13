@@ -55,10 +55,8 @@ public class DatabaseManager {
 
   /**
    * Constructs a NewDatabaseManager with an in-memory SQLite database connection.
-   *
-   * @throws SQLException if a database access error occurs
    */
-  public DatabaseManager() throws SQLException {
+  public DatabaseManager() {
     this(setupInMemoryConnection(), true, false);
   }
 
@@ -67,9 +65,8 @@ public class DatabaseManager {
    *
    * @param directoryName the directory to store the database file
    * @param fileName      the name of the database file
-   * @throws SQLException if a database access error occurs
    */
-  public DatabaseManager(String directoryName, String fileName) throws SQLException {
+  public DatabaseManager(String directoryName, String fileName) {
     this(setupPersistentConnection(directoryName, fileName), false, true);
   }
 
@@ -79,10 +76,9 @@ public class DatabaseManager {
    *
    * @param connection the database connection to use
    */
-  private DatabaseManager(Connection connection, boolean inMemory, boolean loadDefaultVineyards)
-      throws SQLException {
-    if (connection == null || connection.isClosed()) {
-      throw new InvalidParameterException("The provided connection was invalid or closed");
+  private DatabaseManager(Connection connection, boolean inMemory, boolean loadDefaultVineyards) {
+    if (connection == null) {
+      throw new InvalidParameterException("The provided connection was invalid");
     }
     this.connection = connection;
     log.info("Successfully opened a connection to the database");
@@ -104,6 +100,8 @@ public class DatabaseManager {
     if (loadDefaultVineyards) {
       vineyardDefaultsService.init();
     }
+
+    wineDao.updateUniques();
   }
 
   /**
@@ -111,21 +109,23 @@ public class DatabaseManager {
    *
    * @param jdbcUrl the JDBC URL to connect to
    * @return a Connection object to the database
-   * @throws SQLException if a database access error occurs
    */
-  private static Connection setupConnection(String jdbcUrl) throws SQLException {
-    Properties properties = new Properties();
-    properties.setProperty("foreign_keys", "true");
-    return DriverManager.getConnection(jdbcUrl, properties);
+  private static Connection setupConnection(String jdbcUrl) {
+    try {
+      Properties properties = new Properties();
+      properties.setProperty("foreign_keys", "true");
+      return DriverManager.getConnection(jdbcUrl, properties);
+    } catch (SQLException exception) {
+      throw new RuntimeException(exception);
+    }
   }
 
   /**
    * Sets up an in-memory SQLite database connection.
    *
    * @return a Connection object to an in-memory SQLite database
-   * @throws SQLException if a database access error occurs
    */
-  private static Connection setupInMemoryConnection() throws SQLException {
+  private static Connection setupInMemoryConnection() {
     return setupConnection("jdbc:sqlite::memory:");
   }
 
@@ -139,8 +139,7 @@ public class DatabaseManager {
    * @throws SQLException     if a database access error occurs
    * @throws RuntimeException if the directory cannot be created
    */
-  private static Connection setupPersistentConnection(String directoryName, String fileName)
-      throws SQLException {
+  private static Connection setupPersistentConnection(String directoryName, String fileName) {
     Path directory = Path.of(directoryName);
     if (Files.notExists(directory)) {
       try {
