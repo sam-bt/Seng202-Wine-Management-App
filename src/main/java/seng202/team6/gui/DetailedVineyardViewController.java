@@ -61,7 +61,7 @@ public class DetailedVineyardViewController extends Controller {
     websiteTextbox.textProperty().bind(vineyard.websiteProperty());
     descriptionTextbox.textProperty().bind(vineyard.descriptionProperty());
 
-    if (!managerContext.getAuthenticationManager().isAuthenticated()) {
+    if (!getManagerContext().getAuthenticationManager().isAuthenticated()) {
       buttonsContainer.getChildren().remove(openToursButton);
     }
 

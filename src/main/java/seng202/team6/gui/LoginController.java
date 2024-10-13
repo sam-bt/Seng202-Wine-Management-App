@@ -69,7 +69,7 @@ public class LoginController extends Controller {
     boolean passwordNull = (password.isEmpty());
 
     if (!usernameNull && !passwordNull) {
-      AuthenticationResponse usernameResponse = managerContext.getAuthenticationManager()
+      AuthenticationResponse usernameResponse = getManagerContext().getAuthenticationManager()
           .validateLoginUsername(username);
       if (usernameResponse == AuthenticationResponse.INVALID_LOGIN_USERNAME) {
         usernameErrorMessageLabel.setText(AuthenticationResponse
@@ -78,17 +78,17 @@ public class LoginController extends Controller {
         passwordField.getStyleClass().add("error-text-field");
         usernameErrorMessageLabel.setVisible(true);
       } else {
-        AuthenticationResponse response = managerContext.getAuthenticationManager()
+        AuthenticationResponse response = getManagerContext().getAuthenticationManager()
             .validateLoginPassword(username, password);
 
         if (response == AuthenticationResponse.LOGIN_SUCCESS) {
-          if (managerContext.getAuthenticationManager().isAdminFirstLogin()) {
-            managerContext.getGuiManager().disableNavigation(true);
-            managerContext.getGuiManager().openUpdatePasswordScreen();
+          if (getManagerContext().getAuthenticationManager().isAdminFirstLogin()) {
+            getManagerContext().getGuiManager().disableNavigation(true);
+            getManagerContext().getGuiManager().openUpdatePasswordScreen();
             return;
           }
-          managerContext.getGuiManager().openWineScreen();
-          managerContext.getGuiManager().updateNavigation();
+          getManagerContext().getGuiManager().openWineScreen();
+          getManagerContext().getGuiManager().updateNavigation();
         } else {
           passwordField.getStyleClass().add("error-text-field");
           passwordErrorMessageLabel.setVisible(true);

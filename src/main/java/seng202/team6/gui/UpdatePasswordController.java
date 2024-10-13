@@ -68,7 +68,7 @@ public class UpdatePasswordController extends Controller {
   private void onConfirm() {
     resetFields();
 
-    String username = managerContext.getAuthenticationManager().getAuthenticatedUsername();
+    String username = getManagerContext().getAuthenticationManager().getAuthenticatedUsername();
     String oldPassword = oldPasswordField.getText();
     String newPassword = newPasswordField.getText();
     String confirmNewPassword = confirmNewPasswordField.getText();
@@ -78,12 +78,12 @@ public class UpdatePasswordController extends Controller {
     boolean newPasswordNull = (newPassword.isEmpty());
     boolean confirmNewPasswordNull = (confirmNewPassword.isEmpty());
     if (!oldPasswordNull && !newPasswordNull && !confirmNewPasswordNull) {
-      AuthenticationResponse response = managerContext.getAuthenticationManager().validateUpdate(
-          username, oldPassword, newPassword, confirmNewPassword);
+      AuthenticationResponse response = getManagerContext().getAuthenticationManager()
+          .validateUpdate(username, oldPassword, newPassword, confirmNewPassword);
 
       if (response == AuthenticationResponse.PASSWORD_CHANGED_SUCCESS) {
-        managerContext.getGuiManager().openWineScreen();
-        disabled = PasswordUtil.checkAdminLogin(managerContext, disabled);
+        getManagerContext().getGuiManager().openWineScreen();
+        disabled = PasswordUtil.checkAdminLogin(getManagerContext(), disabled);
       } else {
         switch (response) {
           case AuthenticationResponse.INCORRECT_OLD_PASSWORD:
