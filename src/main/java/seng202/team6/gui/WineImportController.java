@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,8 +14,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -151,7 +148,7 @@ public class WineImportController extends Controller {
                 WinePropertyName.DESCRIPTION),
             importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.SCORE),
             importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.ABV),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.NZD),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.PRICE),
             null
         ));
       } catch (ValidationException e) {
