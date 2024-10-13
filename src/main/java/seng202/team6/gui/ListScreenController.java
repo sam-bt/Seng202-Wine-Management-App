@@ -171,7 +171,7 @@ public class ListScreenController extends Controller {
 
     final TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
 
-    final TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
+    final TableColumn<Wine, Float> priceColumn = new TableColumn<>("Price");
 
     titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
     varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));
