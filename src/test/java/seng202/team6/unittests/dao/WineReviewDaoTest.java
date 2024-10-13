@@ -77,7 +77,7 @@ public class WineReviewDaoTest {
    * Tests if the rating update reflects correctly in the database.
    */
   @Test
-  void testRatingUpdatesInDatabase() {
+  void testRatingUpdatesInDatabase() throws SQLException {
     double initial = 3.5;
     double changed = 4.0;
     WineReview initialReview = createWineReview(initial, wine, "Initial description");
@@ -91,7 +91,7 @@ public class WineReviewDaoTest {
    * Tests if the description update reflects correctly in the database.
    */
   @Test
-  void testDescriptionUpdatesInDatabase() {
+  void testDescriptionUpdatesInDatabase() throws SQLException {
     String initial = "Initial description";
     String changed = "Changed description";
     WineReview initialReview = createWineReview(4.0, wine, initial);
@@ -227,7 +227,8 @@ public class WineReviewDaoTest {
    * @param description the description of the wine review
    * @return the created WineReview object
    */
-  private WineReview createWineReview(double rating, Wine wine, String description) {
+  private WineReview createWineReview(double rating, Wine wine, String description)
+      throws SQLException {
     return wineReviewDao.add(user, wine, rating, description, new Date(System.currentTimeMillis()));
   }
 }

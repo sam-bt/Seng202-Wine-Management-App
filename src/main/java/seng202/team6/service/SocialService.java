@@ -1,5 +1,6 @@
 package seng202.team6.service;
 
+import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;
@@ -27,7 +28,7 @@ public class SocialService {
   /**
    * Initializer for the social service class.
    */
-  public void init() {
+  public void init() throws SQLException {
     userReviews.addAll(databaseManager.getWineReviewDao().getAll(user));
   }
 

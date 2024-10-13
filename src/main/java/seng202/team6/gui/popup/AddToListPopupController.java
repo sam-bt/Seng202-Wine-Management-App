@@ -1,5 +1,6 @@
 package seng202.team6.gui.popup;
 
+import java.sql.SQLException;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -42,7 +43,6 @@ public class AddToListPopupController extends Controller {
         wineListsContainer.viewportBoundsProperty(),
         wineListsContainer.widthProperty());
     wineListsContainer.setContent(addRemoveCardsContainer);
-    wineListService.init();
   }
 
   @FXML
@@ -55,12 +55,30 @@ public class AddToListPopupController extends Controller {
       while (change.next()) {
         if (change.wasAdded()) {
           change.getAddedSubList().forEach(wineList -> {
-            addRemoveCardsContainer.add(wineList, new SimpleStringProperty(wineList.name()),
-                !wineListService.isWineInList(wineList, wine),
-                () -> getManagerContext().getDatabaseManager().getWineListDao()
-                    .addWine(wineList, wine),
-                () -> getManagerContext().getDatabaseManager().getWineListDao()
-                    .removeWine(wineList, wine));
+            try {
+
+              addRemoveCardsContainer.add(wineList, new SimpleStringProperty(wineList.name()),
+                  !wineListService.isWineInList(wineList, wine),
+                  () -> {
+                    try {
+                      getManagerContext().getDatabaseManager().getWineListDao()
+                          .addWine(wineList, wine);
+                    } catch (SQLException e) {
+                      throw new RuntimeException(e);
+                    }
+                  },
+                  () -> {
+                    try {
+                      getManagerContext().getDatabaseManager().getWineListDao()
+                          .removeWine(wineList, wine);
+                    } catch (SQLException e) {
+                      throw new RuntimeException(e);
+                    }
+                  });
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+
           });
         }
       }

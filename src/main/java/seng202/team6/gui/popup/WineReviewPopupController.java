@@ -1,5 +1,6 @@
 package seng202.team6.gui.popup;
 
+import java.sql.SQLException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -88,7 +89,11 @@ public class WineReviewPopupController extends Controller {
 
   @FXML
   void onDeleteButtonClick() {
-    wineReviewsService.deleteUsersReview();
+    try {
+      wineReviewsService.deleteUsersReview();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     getManagerContext().getGuiManager().closePopup();
   }
 
@@ -96,7 +101,11 @@ public class WineReviewPopupController extends Controller {
   void onSubmitButtonClick() {
     double rating = ratingStars.getRating();
     String description = descriptionTextArea.getText();
-    wineReviewsService.addOrUpdateUserReview(rating, description);
+    try {
+      wineReviewsService.addOrUpdateUserReview(rating, description);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     getManagerContext().getGuiManager().closePopup();
   }
 }

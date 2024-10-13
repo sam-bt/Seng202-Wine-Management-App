@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.collections.ListChangeListener;
@@ -100,10 +101,15 @@ public class ListScreenController extends Controller {
     boolean canRemoveSelected = wineListService.canRemove(selectedWineList);
     deleteListRequestButton.setDisable(!canRemoveSelected);
     tabViewing.setText("VIEWING: " + selectedWineList.name());
-    ObservableList<Wine> observableList = getManagerContext()
-        .getDatabaseManager()
-        .getAggregatedDao()
-        .getWinesInList(selectedWineList);
+    ObservableList<Wine> observableList = null;
+    try {
+      observableList = getManagerContext()
+          .getDatabaseManager()
+          .getAggregatedDao()
+          .getWinesInList(selectedWineList);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     setupTableView(observableList);
   }
 
@@ -111,7 +117,11 @@ public class ListScreenController extends Controller {
    * Initializes the page making sure the tab for creating lists is hidden.
    */
   public void initialize() {
-    wineListService.init();
+    try {
+      wineListService.init();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**

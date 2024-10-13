@@ -1,5 +1,6 @@
 package seng202.team6.gui.popup;
 
+import java.sql.SQLException;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -73,7 +74,11 @@ public class CreateListPopupController extends Controller {
         errorMessageLabel.setVisible(false);
 
         User user = getManagerContext().getAuthenticationManager().getAuthenticatedUser();
-        wineListService.createWineList(user, name);
+        try {
+          wineListService.createWineList(user, name);
+        } catch (SQLException e) {
+          throw new RuntimeException(e);
+        }
 
         listNameTextField.setText("");
         onBackButtonClick();
