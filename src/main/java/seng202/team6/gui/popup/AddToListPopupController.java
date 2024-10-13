@@ -51,7 +51,7 @@ public class AddToListPopupController extends Controller {
 
   @FXML
   void onBackButtonClick() {
-    managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().closePopup();
   }
 
   private void bindToWineListService() {

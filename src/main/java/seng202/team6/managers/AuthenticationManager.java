@@ -39,22 +39,22 @@ public class AuthenticationManager {
     if (username.isEmpty() || password.isEmpty() || confirmedPassword.isEmpty()) {
       return AuthenticationResponse.MISSING_FIELDS;
     }
-    if (!password.equals(confirmedPassword)) {
-      return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
-    }
-    if (password.equals(username)) {
-      return AuthenticationResponse.SAME_AS_USERNAME;
+    UserDao userDao = databaseManager.getUserDao();
+    if (userDao.get(username) != null) {
+      return USERNAME_ALREADY_REGISTERED;
     }
     if (username.length() < 3 || username.length() > 15 || !username.matches("[a-zA-Z0-9_]+")) {
       return AuthenticationResponse.INVALID_USERNAME;
+    }
+    if (password.equals(username)) {
+      return AuthenticationResponse.SAME_AS_USERNAME;
     }
     if (password.length() < 8 || password.length() > 30 || !password.matches(
         AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())) {
       return AuthenticationResponse.INVALID_PASSWORD;
     }
-    UserDao userDao = databaseManager.getUserDao();
-    if (userDao.get(username) != null) {
-      return USERNAME_ALREADY_REGISTERED;
+    if (!password.equals(confirmedPassword)) {
+      return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
     }
 
     String salt = PasswordUtil.generateSalt();
@@ -78,9 +78,7 @@ public class AuthenticationManager {
     if (password.isEmpty() || confirm.isEmpty()) {
       return AuthenticationResponse.MISSING_FIELDS;
     }
-    if (!password.equals(confirm)) {
-      return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
-    }
+
     if (password.equals(user.getUsername())) {
       return AuthenticationResponse.SAME_AS_USERNAME;
     }
@@ -90,6 +88,9 @@ public class AuthenticationManager {
             || !password.matches(AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())
     ) {
       return AuthenticationResponse.INVALID_PASSWORD;
+    }
+    if (!password.equals(confirm)) {
+      return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
     }
 
     String salt = PasswordUtil.generateSalt();
@@ -104,18 +105,37 @@ public class AuthenticationManager {
    * Validates and processes a user login request.
    *
    * @param username The username of the account to log in.
-   * @param password The password of the account to log in.
    * @return An AuthenticationResponse indicating the result of the login attempt.
    */
-  public AuthenticationResponse validateLogin(String username,
-      String password) {
-    if (username.isEmpty() || password.isEmpty()) {
-      return AuthenticationResponse.MISSING_FIELDS;
+  public AuthenticationResponse validateLoginUsername(String username) {
+    if (username.isEmpty()) {
+      return AuthenticationResponse.MISSING_USERNAME_FIELD;
+    } else {
+
+      User user = databaseManager.getUserDao().get(username);
+      if (user == null) {
+        return AuthenticationResponse.INVALID_LOGIN_USERNAME;
+      }
+
+      return AuthenticationResponse.VALID_LOGIN_USERNAME;
+    }
+  }
+
+  /**
+   * Validates the login password.
+   *
+   * @param username username
+   * @param password password
+   * @return AuthenticationResponse
+   */
+  public AuthenticationResponse validateLoginPassword(String username, String password) {
+    if (password.isEmpty()) {
+      return AuthenticationResponse.MISSING_PASSWORD_FIELD;
     }
 
     User user = databaseManager.getUserDao().get(username);
     if (user == null) {
-      return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
+      return AuthenticationResponse.INVALID_LOGIN_USERNAME;
     }
 
     boolean validPassword = PasswordUtil.verifyPassword(password, user.getPassword(),
@@ -127,6 +147,7 @@ public class AuthenticationManager {
       return AuthenticationResponse.LOGIN_SUCCESS;
     }
     return AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION;
+
   }
 
   /**
@@ -142,9 +163,7 @@ public class AuthenticationManager {
     if (username.isEmpty() || oldPassword.isEmpty() || newPassword.isEmpty()) {
       return AuthenticationResponse.MISSING_FIELDS;
     }
-    if (!newPassword.equals(confirmNewPassword)) {
-      return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
-    }
+
 
     User user = databaseManager.getUserDao().get(username);
     if (user != null) {
@@ -159,12 +178,17 @@ public class AuthenticationManager {
       if (oldPassword.equals(newPassword)) {
         return AuthenticationResponse.OLD_PASSWORD_SAME_AS_NEW;
       }
-      if (newPassword.equals(username)) {
-        return AuthenticationResponse.SAME_AS_USERNAME;
-      }
+
       if (!newPassword.matches(
           AuthenticationResponse.PASSWORD_CONSTRAINTS.getMessage())) {
         return AuthenticationResponse.INVALID_PASSWORD;
+      }
+      if (newPassword.equals(username)) {
+        return AuthenticationResponse.SAME_AS_USERNAME;
+      }
+
+      if (!newPassword.equals(confirmNewPassword)) {
+        return AuthenticationResponse.MISMATCHING_CONFIRMED_PASSWORD;
       }
 
       String salt = PasswordUtil.generateSalt();

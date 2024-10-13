@@ -68,7 +68,7 @@ public class ConsumptionController extends Controller {
     return managerContext.getDatabaseManager().getWineListDao().getAll(user)
         .stream()
         .filter(wineList -> Objects.equals(
-            wineList.name(), "History")).findFirst().orElse(null); //todo extract
+            wineList.name(), "History")).findFirst().orElse(null);
   }
 
   /**

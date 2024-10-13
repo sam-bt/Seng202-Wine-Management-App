@@ -5,11 +5,11 @@ package seng202.team6.managers;
  */
 public class ManagerContext {
 
-  final DatabaseManager databaseManager;
+  private final DatabaseManager databaseManager;
 
-  final GuiManager guiManager;
+  private final GuiManager guiManager;
 
-  final AuthenticationManager authenticationManager;
+  private final AuthenticationManager authenticationManager;
 
   /**
    * Constructor for ManagerContext.
@@ -32,7 +32,7 @@ public class ManagerContext {
     return databaseManager;
   }
 
-  public seng202.team6.managers.GuiManager getGuiManager() {
+  public GuiManager getGuiManager() {
     return guiManager;
   }
 

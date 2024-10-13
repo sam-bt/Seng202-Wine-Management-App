@@ -93,7 +93,7 @@ public class VineyardDao extends Dao {
    */
   public ObservableList<Vineyard> getAllInRange(int begin, int end,
       VineyardFilters vineyardFilters) {
-    Timer timer = new Timer(); // todo - make query not use limit and offset
+    Timer timer = new Timer();
     String sql = "SELECT VINEYARD.ID as vineyard_id, VINEYARD.*, GEOLOCATION.LATITUDE, "
         + "GEOLOCATION.LONGITUDE "
         + "FROM VINEYARD "
@@ -221,9 +221,8 @@ public class VineyardDao extends Dao {
               id, timer.currentOffsetMilliseconds());
           Vineyard vineyard = new Vineyard(id, name, address, region, website, description, logoUrl,
               geoLocation);
-          if (useCache()) {
-            vineyardCache.addObject(id, vineyard);
-          }
+          vineyardCache.addObject(id, vineyard);
+
           return vineyard;
         }
         log.warn("Could not create vineyard with name '{}' in {}ms",
@@ -355,11 +354,9 @@ public class VineyardDao extends Dao {
   private Vineyard extractVineyardFromResultSet(ResultSet resultSet, String idColumnName)
       throws SQLException {
     long id = resultSet.getLong(idColumnName);
-    if (useCache()) {
-      Vineyard cachedVineyard = vineyardCache.tryGetObject(id);
-      if (cachedVineyard != null) {
-        return cachedVineyard;
-      }
+    Vineyard cachedVineyard = vineyardCache.tryGetObject(id);
+    if (cachedVineyard != null) {
+      return cachedVineyard;
     }
 
     GeoLocation geoLocation = createGeoLocation(resultSet);
@@ -373,9 +370,8 @@ public class VineyardDao extends Dao {
         resultSet.getString("LOGO_URL"),
         geoLocation
     );
-    if (useCache()) {
-      vineyardCache.addObject(id, vineyard);
-    }
+    vineyardCache.addObject(id, vineyard);
+
     return vineyard;
   }
 

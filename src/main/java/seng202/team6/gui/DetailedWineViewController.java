@@ -20,9 +20,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.CircularScoreIndicator;
 import seng202.team6.gui.controls.UnmodifiableRating;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
@@ -32,6 +35,7 @@ import seng202.team6.model.WineReview;
 import seng202.team6.service.WineNoteService;
 import seng202.team6.service.WineReviewsService;
 import seng202.team6.util.ImageReader;
+import seng202.team6.util.WineImages;
 
 /**
  * The DetailedWineViewController is responsible for managing the detailed wine view within the
@@ -39,18 +43,7 @@ import seng202.team6.util.ImageReader;
  */
 public class DetailedWineViewController extends Controller {
 
-  private static final Image RED_WINE_IMAGE = ImageReader.loadImage("/img/red_wine.png");
-  private static final Image WHITE_WINE_IMAGE = ImageReader.loadImage("/img/white_wine.png");
-  private static final Image ROSE_WINE_IMAGE = ImageReader.loadImage("/img/rose_wine.png");
-  private static final Image DEFAULT_WINE_IMAGE = ImageReader.loadImage("/img/default_wine.png");
-  private static final Map<String, Image> wineImages = new HashMap<>() {
-    {
-      put("red", RED_WINE_IMAGE);
-      put("white", WHITE_WINE_IMAGE);
-      put("rose", ROSE_WINE_IMAGE);
-      put("rosé", ROSE_WINE_IMAGE);
-    }
-  };
+  private static final Logger log = LogManager.getLogger(DetailedWineViewController.class);
   private final WineReviewsService wineReviewsService;
   private final WineNoteService wineNoteService;
   private final Wine viewedWine;
@@ -168,10 +161,10 @@ public class DetailedWineViewController extends Controller {
       loginToReviewLabel.setVisible(true);
       loginToReviewLabel.setDisable(false);
       buttonsContainer.getChildren().remove(openListsButton);
+      buttonsContainer.getChildren().remove(saveNotes);
     }
 
-    Image wineImage = wineImages.getOrDefault(colourTextbox.getText().toLowerCase(),
-        DEFAULT_WINE_IMAGE);
+    Image wineImage = WineImages.getImage(viewedWine);
     imageView.setImage(wineImage);
 
     ratingStars.setUpdateOnHover(false);
@@ -191,6 +184,16 @@ public class DetailedWineViewController extends Controller {
 
     // everything is ready so now the wine reviews can be loaded
     wineReviewsService.init();
+
+    // Set rating label text
+    if (wineReviewsService.hasReviews()) {
+      int numberOfRatings = wineReviewsService.getWineReviews().size();
+      ratingsLabel.setText(
+          "Average %.2f From %d ratings".formatted(viewedWine.getAverageRating(),
+              numberOfRatings));
+    } else {
+      ratingsLabel.setText("This wine has not been reviewed");
+    }
   }
 
   /**
@@ -248,7 +251,7 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   void onAddReviewButtonClick() {
-    managerContext.getGuiManager().mainController.openPopupWineReview(wineReviewsService);
+    managerContext.getGuiManager().openPopupWineReview(wineReviewsService);
   }
 
   /**
@@ -256,19 +259,18 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   void onOpenListsButtonClick() {
-    managerContext.getGuiManager().mainController.openAddToListPopup(viewedWine);
+    managerContext.getGuiManager().openAddToListPopup(viewedWine);
   }
 
   @FXML
   void onViewVineyardClick() {
-    // fixme - circular back buttons idk how to fix
-    managerContext.getGuiManager().mainController.openDetailedVineyardView(wineVineyard,
-        () -> managerContext.getGuiManager().mainController.openDetailedWineView(viewedWine, null));
+    managerContext.getGuiManager().openDetailedVineyardView(wineVineyard,
+        () -> managerContext.getGuiManager().openDetailedWineView(viewedWine, null));
   }
 
   @FXML
   void onCompareClick() {
-    managerContext.getGuiManager().mainController.openWineCompareScreen(viewedWine, null);
+    managerContext.getGuiManager().openWineCompareScreen(viewedWine, null);
   }
 
   /**
@@ -304,8 +306,38 @@ public class DetailedWineViewController extends Controller {
 
     Rating rating = new UnmodifiableRating();
     rating.ratingProperty().bind(wineReview.ratingProperty());
-    wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel);
+
+    Button flagButton = new Button("Flag This Review");
+    flagButton.setStyle("-fx-background-color: red; -fx-border-radius: 5; -fx-text-fill: white;");
+    if (wineReview.getFlag() == 1) {
+      flagButton.setDisable(true);
+      flagButton.setText("Flagged for moderation");
+    }
+
+    flagButton.setId("flagButton");
+
+    flagButton.setOnAction(e -> {
+      flagReview(wineReview);
+      flagButton.setDisable(true);
+      flagButton.setText("Flagged for moderation");
+    });
+
+    wrapper.getChildren().addAll(rating, reviewCaptionLabel, descriptionLabel, flagButton);
+
+
+
     return wrapper;
+  }
+
+  /**
+   * Flag a wine review.
+   *
+    * @param wineReview the review to flag.
+   */
+  private void flagReview(WineReview wineReview) {
+    wineReview.setFlag(1);
+    wineReview.setSelected(false);
+    managerContext.getDatabaseManager().getWineReviewDao().updateWineReviewFlag(wineReview);
   }
 
   /**
@@ -321,7 +353,7 @@ public class DetailedWineViewController extends Controller {
       noteLabel.setText("My Notes");
     }
     notesTextbox.setVisible(visible);
-    //buttonsContainer.getChildren().remove(saveNotes);
+    saveNotes.setVisible(visible);
   }
 
   /**

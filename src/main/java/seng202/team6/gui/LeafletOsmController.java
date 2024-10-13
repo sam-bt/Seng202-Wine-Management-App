@@ -94,6 +94,17 @@ public class LeafletOsmController {
   }
 
   /**
+   * Calls the enableToggleButtons function in JavaScript.
+   * <p>
+   *     The JavaScript function will enable the buttons to toggle showing the heatmap and markers
+   *     buttons.
+   * </p>
+   */
+  public void enableToggleButtons() {
+    javaScriptConnector.call("enableToggleButtons");
+  }
+
+  /**
    * Calls the clearMarkers function in JavaScript.
    * <p>
    * The JavaScript function will clear all of the markers on the map

@@ -52,6 +52,7 @@ public class VineyardsController extends Controller {
   public void init() {
     mapController = new LeafletOsmController(webView.getEngine());
     mapController.initMap();
+    mapController.runOrQueueWhenReady(() -> mapController.enableToggleButtons());
     vineyardService.init();
 
     VineyardDataStatService vineyardDataStatService = managerContext.getDatabaseManager()
@@ -134,7 +135,7 @@ public class VineyardsController extends Controller {
   }
 
   private void openDetailedVineyardView(Vineyard vineyard) {
-    Runnable backAction = () -> managerContext.getGuiManager().mainController.openVineyardsScreen();
-    managerContext.getGuiManager().mainController.openDetailedVineyardView(vineyard, backAction);
+    Runnable backAction = () -> managerContext.getGuiManager().openVineyardsScreen();
+    managerContext.getGuiManager().openDetailedVineyardView(vineyard, backAction);
   }
 }

@@ -30,6 +30,7 @@ import seng202.team6.gui.controls.UnmodifiableRating;
 import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
+import seng202.team6.util.WineImages;
 
 /**
  * Controller class for comparing wines. Displays the comparison between two wines, allowing the
@@ -173,8 +174,7 @@ public class WineCompareController extends Controller {
       header.getRowConstraints().add(new RowConstraints());
       header.getColumnConstraints().addAll(firstColumn, secondColumn, thirdColumn);
 
-      Image wineImage = WineCard.WINE_IMAGES.getOrDefault(wine.getColor().toLowerCase(),
-          WineCard.DEFAULT_WINE_IMAGE);
+      Image wineImage = WineImages.getImage(wine);
       ImageView wineImageView = new ImageView(wineImage);
       wineImageView.setFitHeight(150);
       wineImageView.setFitWidth(150);
@@ -290,8 +290,8 @@ public class WineCompareController extends Controller {
       detailedViewButton.setPrefWidth(200);
       detailedViewButton.getStyleClass().add("secondary-button");
       detailedViewButton.setOnMouseClicked((event) ->
-          managerContext.getGuiManager().mainController.openDetailedWineView(wine,
-              () -> managerContext.getGuiManager().mainController
+          managerContext.getGuiManager().openDetailedWineView(wine,
+              () -> managerContext.getGuiManager()
                   .openWineCompareScreen(leftSide.wine, rightSide.wine)));
       buttonsWrapper.getChildren().add(detailedViewButton);
 
@@ -301,7 +301,7 @@ public class WineCompareController extends Controller {
         openListsButton.setPrefWidth(200);
         openListsButton.getStyleClass().add("secondary-button");
         openListsButton.setOnMouseClicked((event) ->
-            managerContext.getGuiManager().mainController.openAddToListPopup(wine));
+            managerContext.getGuiManager().openAddToListPopup(wine));
         buttonsWrapper.getChildren().add(openListsButton);
       }
 

@@ -64,20 +64,20 @@ public class UserSearchPopupController extends Controller {
     if (event.getClickCount() == 2) {
       User user = userTableView.getSelectionModel().getSelectedItem();
       if (user != null) {
-        managerContext.getGuiManager().mainController.openUserProfilePopup(user);
+        managerContext.getGuiManager().openUserProfilePopup(user);
       }
     }
   }
 
   @FXML
   void onBackButtonClick() {
-    managerContext.getGuiManager().mainController.closePopup();
+    managerContext.getGuiManager().closePopup();
   }
 
   @FXML
   void onSearchButtonClick() {
 
-    userTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    userTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
     userTableView.getItems().clear();
 
     String searchName = searchTextField.getText();

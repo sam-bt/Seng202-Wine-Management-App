@@ -112,9 +112,8 @@ public class WineListDao extends Dao {
           log.info("Successfully created list '{}' with ID {} for user '{}' in {}ms", listName,
               id, listName, user.getUsername(), timer.currentOffsetMilliseconds());
           WineList wineList = new WineList(id, listName);
-          if (useCache()) {
-            wineListCache.addObject(id, wineList);
-          }
+          wineListCache.addObject(id, wineList);
+
           return wineList;
         }
         log.warn("Could not create list '{}' for user '{}'", listName, user.getUsername());
@@ -190,7 +189,6 @@ public class WineListDao extends Dao {
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setLong(1, wineList.id());
       statement.setLong(2, wine.getKey());
-      // todo - remove date from wine list
       statement.setDate(3, new Date(System.currentTimeMillis()));
 
       int rowsAffected = statement.executeUpdate();
