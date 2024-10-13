@@ -33,6 +33,18 @@ public class VineyardService {
     databaseManager.getVineyardsDao().updateUniques();
   }
 
+  /**
+   * Creates a new vineyard. This method also adds the geolocation to the database in case it is an
+   * address that does not yet exist.
+   *
+   * @param name the name of the vineyard
+   * @param address the address of the vineyard
+   * @param region the region of the vineyard
+   * @param website the website of the vineyard
+   * @param logoUrl the logoUrl of the vineyard
+   * @param description the description of the vineyard
+   * @param geoLocation the geoLocation of the vineyard
+   */
   public void create(String name, String address, String region, String website, String logoUrl,
       String description, GeoLocation geoLocation) {
     Vineyard vineyard = databaseManager.getVineyardsDao()
@@ -41,6 +53,11 @@ public class VineyardService {
     vineyards.add(vineyard);
   }
 
+  /**
+   * Deletes a vineyard.
+   *
+   * @param vineyard the vineyard to be deleted
+   */
   public void delete(Vineyard vineyard) {
     databaseManager.getVineyardsDao().remove(vineyard);
     vineyards.remove(vineyard);

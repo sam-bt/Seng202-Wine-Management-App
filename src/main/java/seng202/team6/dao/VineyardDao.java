@@ -235,6 +235,11 @@ public class VineyardDao extends Dao {
     return null;
   }
 
+  /**
+   * Deletes a vineyard from the database.
+   *
+   * @param vineyard the vineyard to be deleted
+   */
   public void remove(Vineyard vineyard) {
     Timer timer = new Timer();
     String sql = "DELETE FROM VINEYARD WHERE ID = ?;";

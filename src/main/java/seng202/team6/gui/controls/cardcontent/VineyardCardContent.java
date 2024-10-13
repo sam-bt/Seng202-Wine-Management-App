@@ -37,7 +37,8 @@ public class VineyardCardContent extends VBox {
     getChildren().add(wrapper);
 
     // set up the listener for logo URL changes
-    ChangeListener<String> logoUrlListener = (observable, oldValue, newValue) -> updateLogo(newValue);
+    ChangeListener<String> logoUrlListener = (observable, oldValue, newValue) ->
+        updateLogo(newValue);
     vineyard.logoUrlProperty().addListener(logoUrlListener);
 
     // initial update
