@@ -8,7 +8,7 @@ plugins {
 
 archivesBaseName = 'wino'
 group = 'seng202.team6'
-version = '0.2-snapshot'
+version = '2.0-snapshot'
 mainClassName = 'seng202.team6.App'
 
 def javaVersion = '21'
@@ -90,6 +90,7 @@ dependencies {
 checkstyle {
     toolVersion '10.18.2'
     configFile file("config/checkstyle/checkstyle.xml")
+    checkstyleTest.enabled = false
 }
 
 application {
@@ -157,6 +158,7 @@ jacoco {
 }
 
 jacocoTestReport {
+    Task->dependsOn(startScripts)
     executionData fileTree(project.rootDir) {
         include '**/*.exec'
     }

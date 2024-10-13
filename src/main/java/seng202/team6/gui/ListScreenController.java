@@ -26,7 +26,7 @@ import seng202.team6.service.WineListService;
 public class ListScreenController extends Controller {
 
   private final WineListService wineListService;
-  private final Map<WineList, Button> winelistButtons = new HashMap<>();
+  private final Map<WineList, Button> wineListButtons = new HashMap<>();
   @FXML
   public Button createListRequestButton;
   @FXML
@@ -64,20 +64,18 @@ public class ListScreenController extends Controller {
           change.getAddedSubList().forEach(wineList -> {
             Button button = createWineListElement(wineList);
             buttonList.getChildren().add(button);
-            winelistButtons.put(wineList, button);
+            wineListButtons.put(wineList, button);
             setSelected(wineLists.getLast());
           });
         }
         if (change.wasRemoved()) {
           change.getRemoved().forEach(wineList -> {
-            Button button = winelistButtons.remove(wineList);
+            Button button = wineListButtons.remove(wineList);
             if (button != null) {
               buttonList.getChildren().remove(button);
             }
           });
           setSelected(wineLists.getFirst());
-          createListRequestButton.setDisable(wineLists.size() > 2);
-
         }
       }
     });

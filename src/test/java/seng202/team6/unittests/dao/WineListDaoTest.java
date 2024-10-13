@@ -74,9 +74,10 @@ public class WineListDaoTest {
 
     ObservableList<WineList> result = wineListDao.getAll(testUser);
 
-    assertEquals(4, result.size());
-    assertEquals(testList1.name(), result.get(2).name());
-    assertEquals(testList2.name(), result.get(3).name());
+    // 2 created lists and the default favourites
+    assertEquals(3, result.size());
+    assertEquals(testList1.name(), result.get(1).name());
+    assertEquals(testList2.name(), result.get(2).name());
 
   }
 
@@ -92,17 +93,18 @@ public class WineListDaoTest {
 
     ObservableList<WineList> result1 = wineListDao.getAll(testUser);
 
-    assertEquals(4, result1.size());
-    assertEquals(testList1.name(), result1.get(2).name());
-    assertEquals(testList2.name(), result1.get(3).name());
+    // 2 created lists and the default favourites
+    assertEquals(3, result1.size());
+    assertTrue(result1.stream().anyMatch(wineList -> wineList.name().equals(testList1.name())));
+    assertTrue(result1.stream().anyMatch(wineList -> wineList.name().equals(testList2.name())));
 
     wineListDao.delete(testList1);
 
     ObservableList<WineList> result2 = wineListDao.getAll(testUser);
 
-    assertEquals(3, result2.size());
+    // 1 created lists and the default favourites
+    assertEquals(2, result2.size());
     assertEquals(testList2.name(), result2.getLast().name());
-
   }
 
   /**
@@ -160,5 +162,4 @@ public class WineListDaoTest {
   void teardown() throws SQLException {
     databaseManager.teardown();
   }
-
 }

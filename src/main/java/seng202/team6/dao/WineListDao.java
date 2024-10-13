@@ -138,6 +138,7 @@ public class WineListDao extends Dao {
         log.warn("Could not delete list '{}' with ID {}", wineList.name(),
             wineList.id());
       }
+      wineListCache.removeObject(wineList.id());
     }
   }
 

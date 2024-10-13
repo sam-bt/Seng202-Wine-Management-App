@@ -254,6 +254,7 @@ public class VineyardDao extends Dao {
         log.warn("Could not delete vineyard with ID {} in {}ms", vineyard.getId(),
             timer.currentOffsetMilliseconds());
       }
+      vineyardCache.removeObject(vineyard.getId());
     } catch (SQLException e) {
       log.error("Failed to delete vineyard with ID {}", vineyard.getId());
     }

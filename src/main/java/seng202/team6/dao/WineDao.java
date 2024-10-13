@@ -351,6 +351,7 @@ public class WineDao extends Dao {
       int rowsAffected = statement.executeUpdate(sql);
       log.info("Successfully removed {} wines in {}ms", rowsAffected,
           timer.currentOffsetMilliseconds());
+      wineCache.removeAll();
       updateUniques();
     }
   }
