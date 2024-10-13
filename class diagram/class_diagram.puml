@@ -60,7 +60,7 @@ package gui {
           class CardsContainer
         }
         package cardcontent {
-            class ItineraryItemCardContent
+            class ItineraryItemCardContent extends Card
             class VineyardCardContent extends Card
         }
         class AddRemoveButton
