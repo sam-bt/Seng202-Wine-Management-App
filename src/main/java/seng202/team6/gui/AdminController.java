@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import java.util.Optional;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
@@ -97,7 +98,7 @@ public class AdminController extends Controller {
    */
   public AdminController(ManagerContext managerContext) {
     super(managerContext);
-    this.databaseManager = managerContext.getDatabaseManager();
+    this.databaseManager = getManagerContext().getDatabaseManager();
   }
 
   /**
@@ -112,12 +113,16 @@ public class AdminController extends Controller {
     userList.setOnMouseClicked(this::selectUser);
 
     //==========| Reviews Tab |==========<
-    allFlaggedReviews = databaseManager.getWineReviewDao().getAllFlaggedReviews();
+    try {
+      allFlaggedReviews = databaseManager.getWineReviewDao().getAllFlaggedReviews();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     setupReviewTable();
     refreshReviewActions();
 
     //==========| Data Tab |==========<
-    VBox parent = (VBox) managerContext.getGuiManager().loadImportWineScreen(
+    VBox parent = (VBox) getManagerContext().getGuiManager().loadImportWineScreen(
         importWinesScreenContainer);
     VBox.setVgrow(parent, Priority.ALWAYS);
     parent.minHeightProperty().bind(importWinesScreenContainer.minHeightProperty());
@@ -142,8 +147,8 @@ public class AdminController extends Controller {
 
   @FXML
   private void onYes() {
-    managerContext.getDatabaseManager().getUserDao().deleteAll();
-    managerContext.getGuiManager().openWineScreen();
+    getManagerContext().getDatabaseManager().getUserDao().deleteAll();
+    getManagerContext().getGuiManager().openWineScreen();
   }
 
   @FXML
@@ -182,7 +187,11 @@ public class AdminController extends Controller {
             + "This action cannot be undone");
     Optional<ButtonType> result = confirmation.showAndWait();
     if (result.get() == ButtonType.OK) {
-      databaseManager.getWineReviewDao().deleteAllFromUser(workingUser);
+      try {
+        databaseManager.getWineReviewDao().deleteAllFromUser(workingUser);
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
@@ -255,7 +264,7 @@ public class AdminController extends Controller {
     String password = passwordField.getText();
     String confirm = confirmField.getText();
     AuthenticationResponse response =
-        managerContext.getAuthenticationManager().validatePasswordReset(
+        getManagerContext().getAuthenticationManager().validatePasswordReset(
             workingUser.getUsername(), password, confirm
         );
 
@@ -328,8 +337,10 @@ public class AdminController extends Controller {
 
     descriptionColumn.setPrefWidth(800);
 
-    reviewsTable.getColumns()
-        .addAll(reviewColumn, ratingColumn, descriptionColumn, reviewCheckboxColumn);
+    reviewsTable.getColumns().add(reviewColumn);
+    reviewsTable.getColumns().add(ratingColumn);
+    reviewsTable.getColumns().add(descriptionColumn);
+    reviewsTable.getColumns().add(reviewCheckboxColumn);
     refreshReviewTable();
 
   }
@@ -339,7 +350,11 @@ public class AdminController extends Controller {
    */
   private void refreshReviewTable() {
     reviewsTable.getItems().clear();
-    allFlaggedReviews = databaseManager.getWineReviewDao().getAllFlaggedReviews();
+    try {
+      allFlaggedReviews = databaseManager.getWineReviewDao().getAllFlaggedReviews();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     reviewsTable.setItems(allFlaggedReviews);
 
   }
@@ -348,7 +363,7 @@ public class AdminController extends Controller {
    * Disables the action buttons if no reviews are present.
    */
   private void refreshReviewActions() {
-    if (allFlaggedReviews.size() == 0) {
+    if (allFlaggedReviews.isEmpty()) {
       keepAll.setDisable(true);
       keepSelected.setDisable(true);
       deleteAll.setDisable(true);
@@ -362,7 +377,7 @@ public class AdminController extends Controller {
   }
 
   @FXML
-  void onDeleteSelected() {
+  void onDeleteSelected() throws SQLException {
     for (int i = 0; i < selectedReviews.size(); i++) {
       databaseManager.getWineReviewDao().delete(selectedReviews.get(i));
       long wineId = selectedReviews.get(i).getWineId();
@@ -381,7 +396,7 @@ public class AdminController extends Controller {
   }
 
   @FXML
-  void onDeleteAll() {
+  void onDeleteAll() throws SQLException {
     databaseManager.getWineReviewDao().deleteAllFlaggedReviews();
     for (int i = 0; i < allFlaggedReviews.size(); i++) {
       long wineId = allFlaggedReviews.get(i).getWineId();
@@ -402,7 +417,11 @@ public class AdminController extends Controller {
   void onKeepAll() {
     for (int i = 0; i < allFlaggedReviews.size(); i++) {
       allFlaggedReviews.get(i).setFlag(0);
-      databaseManager.getWineReviewDao().updateWineReviewFlag(allFlaggedReviews.get(i));
+      try {
+        databaseManager.getWineReviewDao().updateWineReviewFlag(allFlaggedReviews.get(i));
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
       allFlaggedReviews.get(i).setSelected(false);
     }
     selectedReviews.clear();
@@ -416,7 +435,11 @@ public class AdminController extends Controller {
     log.info(selectedReviews.size());
     for (int i = 0; i < selectedReviews.size(); i++) {
       selectedReviews.get(i).setFlag(0);
-      databaseManager.getWineReviewDao().updateWineReviewFlag(selectedReviews.get(i));
+      try {
+        databaseManager.getWineReviewDao().updateWineReviewFlag(selectedReviews.get(i));
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
       //selectedReviews.get(i).setSelected(false);
     }
     refreshReviewTable();

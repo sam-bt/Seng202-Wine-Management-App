@@ -102,19 +102,19 @@ public class SocialController extends Controller {
   public void openReviewOnClick(WineReview selectedReview, Wine selectedWine) {
 
     String reviewerUsername = selectedReview.getUsername();
-    User reviewer = managerContext.getDatabaseManager().getUserDao().get(reviewerUsername);
+    User reviewer = getManagerContext().getDatabaseManager().getUserDao().get(reviewerUsername);
     WineReviewsService wineReviewsService = new WineReviewsService(
-        managerContext.getAuthenticationManager(),
-        managerContext.getDatabaseManager(),
+        getManagerContext().getAuthenticationManager(),
+        getManagerContext().getDatabaseManager(),
         selectedWine);
-    managerContext
+    getManagerContext()
         .getGuiManager()
         .openPopupReviewView(wineReviewsService, reviewer, selectedReview, selectedWine);
   }
 
   private void openReviewsInRange(ReviewFilters filters) throws SQLException {
 
-    ObservableList<Pair<WineReview, Wine>> reviews = managerContext.getDatabaseManager()
+    ObservableList<Pair<WineReview, Wine>> reviews = getManagerContext().getDatabaseManager()
         .getAggregatedDao().getWineReviewsAndWines(0, 100, filters);
 
     reviewsViewContainer.getChildren().clear();
@@ -124,7 +124,7 @@ public class SocialController extends Controller {
 
   @FXML
   void onSearch() {
-    managerContext.getGuiManager().openUserSearchPopup();
+    getManagerContext().getGuiManager().openUserSearchPopup();
   }
 
   @FXML

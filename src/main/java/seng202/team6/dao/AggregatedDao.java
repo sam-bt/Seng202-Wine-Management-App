@@ -56,7 +56,7 @@ public class AggregatedDao extends Dao {
    * @return An ObservableMap where the key is a Wine object and the value is the associated Note
    *        object.
    */
-  public ObservableMap<Wine, Note> getAllNotesMappedWithWinesByUser(User user) {
+  public ObservableMap<Wine, Note> getAllNotesMappedWithWinesByUser(User user) throws SQLException {
     Timer timer = new Timer();
     String sql = "SELECT WINE.ID as wine_id, WINE.*, NOTES.ID as note_id, NOTES.* "
         + "FROM NOTES "
@@ -75,8 +75,6 @@ public class AggregatedDao extends Dao {
       }
       log.info("Successfully retrieves {} wines with notes by user '{}' in {}ms",
           wineAndNotes.size(), user.getUsername(), timer.currentOffsetMilliseconds());
-    } catch (SQLException e) {
-      log.error("Failed to retrieve wines with notes by user '{}'", user.getUsername());
     }
     return wineAndNotes;
   }
@@ -87,7 +85,8 @@ public class AggregatedDao extends Dao {
    * @param wineList list of wines
    * @return wine-date pair with date added to list
    */
-  public ObservableList<WineDatePair> getWinesMappedWithDatesFromList(WineList wineList) {
+  public ObservableList<WineDatePair> getWinesMappedWithDatesFromList(WineList wineList)
+      throws SQLException {
     Timer timer = new Timer();
     String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE, "
         + "DATE_ADDED "
@@ -109,8 +108,6 @@ public class AggregatedDao extends Dao {
       }
       log.info("Successfully retrieves {} wines with dates in list {} in {}ms",
           winesAndDates.size(), wineList.id(), timer.currentOffsetMilliseconds());
-    } catch (SQLException e) {
-      log.error("Failed to retrieve wines with dates in list {}", wineList.id());
     }
     return winesAndDates;
   }
@@ -121,7 +118,7 @@ public class AggregatedDao extends Dao {
    * @param wineList wine list
    * @return list of wines
    */
-  public ObservableList<Wine> getWinesInList(WineList wineList) {
+  public ObservableList<Wine> getWinesInList(WineList wineList) throws SQLException {
     Timer timer = new Timer();
     String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
         + "FROM WINE "
@@ -141,8 +138,6 @@ public class AggregatedDao extends Dao {
       }
       log.info("Successfully retrieved {} wines in list {} in {}ms",
           wines.size(), wineList.id(), timer.currentOffsetMilliseconds());
-    } catch (SQLException e) {
-      log.error("Failed to retrieve wines in list {}", wineList.id());
     }
     return wines;
   }
@@ -206,7 +201,7 @@ public class AggregatedDao extends Dao {
    * @param vineyard The Vineyard object representing the vineyard from which to retrieve wines.
    * @return An ObservableList of Wine objects associated with the specified vineyard.
    */
-  public ObservableList<Wine> getWinesFromVineyard(Vineyard vineyard) {
+  public ObservableList<Wine> getWinesFromVineyard(Vineyard vineyard) throws SQLException {
     Timer timer = new Timer();
     String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
         + "FROM WINE "
@@ -224,8 +219,6 @@ public class AggregatedDao extends Dao {
       }
       log.info("Successfully retrieved {} wines from vineyard {} in {}ms",
           wines.size(), vineyard.getName(), timer.currentOffsetMilliseconds());
-    } catch (SQLException e) {
-      log.error("Failed to retrieve wines from vineyard {}", vineyard.getName());
     }
     return wines;
   }

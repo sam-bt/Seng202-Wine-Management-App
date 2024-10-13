@@ -108,14 +108,6 @@ public class GuiManager {
     mainController.updateNavigation();
   }
 
-  /**
-   * Gets if screen is disabled.
-   *
-   * @return if currently disabled
-   */
-  public boolean isDisabled() {
-    return mainController.isDisabled();
-  }
 
   /**
    * Switches the current scene.

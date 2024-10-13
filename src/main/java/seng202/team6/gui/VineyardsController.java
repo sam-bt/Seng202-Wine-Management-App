@@ -55,7 +55,7 @@ public class VineyardsController extends Controller {
     mapController.runOrQueueWhenReady(() -> mapController.enableToggleButtons());
     vineyardService.init();
 
-    VineyardDataStatService vineyardDataStatService = managerContext.getDatabaseManager()
+    VineyardDataStatService vineyardDataStatService = getManagerContext().getDatabaseManager()
         .getVineyardDataStatService();
     Set<String> uniqueNames = vineyardDataStatService.getUniqueNames();
     Set<String> uniqueAddresses = vineyardDataStatService.getUniqueAddresses();
@@ -135,7 +135,7 @@ public class VineyardsController extends Controller {
   }
 
   private void openDetailedVineyardView(Vineyard vineyard) {
-    Runnable backAction = () -> managerContext.getGuiManager().openVineyardsScreen();
-    managerContext.getGuiManager().openDetailedVineyardView(vineyard, backAction);
+    Runnable backAction = () -> getManagerContext().getGuiManager().openVineyardsScreen();
+    getManagerContext().getGuiManager().openDetailedVineyardView(vineyard, backAction);
   }
 }

@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import java.util.List;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ListChangeListener;
@@ -75,9 +76,9 @@ public class TourPlanningController extends Controller {
    */
   public TourPlanningController(ManagerContext context) {
     super(context);
-    vineyardToursService = new VineyardToursService(managerContext.getAuthenticationManager(),
-        managerContext.getDatabaseManager());
-    vineyardService = new VineyardService(managerContext.getDatabaseManager());
+    vineyardToursService = new VineyardToursService(getManagerContext().getAuthenticationManager(),
+        getManagerContext().getDatabaseManager());
+    vineyardService = new VineyardService(getManagerContext().getDatabaseManager());
     geolocationResolver = new GeolocationResolver();
     bindToVineyardToursService();
   }
@@ -174,7 +175,7 @@ public class TourPlanningController extends Controller {
       if (wineList == null) {
         return;
       }
-      managerContext.getDatabaseManager().getVineyardsDao()
+      getManagerContext().getDatabaseManager().getVineyardsDao()
           .getAllInList(wineList)
           .forEach(vineyard -> currentTourPlanningService.addVineyard(vineyard));
       openVineyardTour(vineyardTour);
@@ -187,7 +188,7 @@ public class TourPlanningController extends Controller {
    */
   @FXML
   public void onDeleteTourClick() {
-    GeneralPopupController popup = managerContext.getGuiManager().showPopup();
+    GeneralPopupController popup = getManagerContext().getGuiManager().showPopup();
     VineyardTour currentVineyardTour = currentTourPlanningService.getVineyardTour();
     popup.setTitle("Delete Tour Confirmation");
     popup.setMessage("Are you sure you would like to delete the tour '"
@@ -213,7 +214,7 @@ public class TourPlanningController extends Controller {
     }
 
     mapController.clearWineMarkers();
-    managerContext.getGuiManager().showLoadingIndicator(() -> {
+    getManagerContext().getGuiManager().showLoadingIndicator(() -> {
       List<GeoLocation> vineyardLocations = currentTourPlanningService.getVineyards().stream()
           .peek(vineyard -> mapController.addVineyardMaker(vineyard, false))
           .map(Vineyard::getGeoLocation)
@@ -247,13 +248,13 @@ public class TourPlanningController extends Controller {
       VineyardCardContent vineyardCardContent = new VineyardCardContent(vineyard, 150, 100);
       AddRemoveCard addRemoveCard = new AddRemoveCard(vineyardCardsContainer.widthProperty(),
           new SimpleDoubleProperty(), vineyardCardContent, true,
-          !vineyardToursService.isVineyardInTour(vineyardTour, vineyard), false,
+          !vineyardToursService.isVineyardInTour(vineyardTour, vineyard),
           () -> currentTourPlanningService.addVineyard(vineyard),
           () -> currentTourPlanningService.removeVineyard(vineyard),
           "Add winery to tour", "Remove winery from tour");
       vineyardCardsContainer.addCard(vineyard, addRemoveCard);
     });
-    currentTourPlanningService = new TourPlanningService(managerContext.getDatabaseManager(),
+    currentTourPlanningService = new TourPlanningService(getManagerContext().getDatabaseManager(),
         vineyardTour);
     currentTourPlanningService.getVineyards().addListener((ListChangeListener<Vineyard>) change -> {
       while (change.next()) {
@@ -294,7 +295,7 @@ public class TourPlanningController extends Controller {
    * calculate a route.
    */
   private void showNotEnoughVineyardsToCalculateError() {
-    GeneralPopupController popup = managerContext.getGuiManager().showErrorPopup();
+    GeneralPopupController popup = getManagerContext().getGuiManager().showErrorPopup();
     popup.setTitle("Error Calculating Route");
     popup.setMessage("Please add 2 or more vineyards to your itinerary to calculate a route.");
     popup.addOkButton();
@@ -304,7 +305,7 @@ public class TourPlanningController extends Controller {
    * Displays an error popup indicating that there was an issue calculating the route.
    */
   private void showCalculatingRouteError() {
-    GeneralPopupController popup = managerContext.getGuiManager().showErrorPopup();
+    GeneralPopupController popup = getManagerContext().getGuiManager().showErrorPopup();
     popup.setTitle("Error Calculating Route");
     popup.setMessage("There was an error calculating a route. Please try again later.");
     popup.addOkButton();
@@ -332,7 +333,7 @@ public class TourPlanningController extends Controller {
    * @return The GeneralPopupController handling the popup.
    */
   private GeneralPopupController setupCreateTourPopup(String title) {
-    GeneralPopupController popup = managerContext.getGuiManager().showPopup();
+    GeneralPopupController popup = getManagerContext().getGuiManager().showPopup();
     popup.setTitle(title);
     return popup;
   }
@@ -359,9 +360,14 @@ public class TourPlanningController extends Controller {
    */
   private ComboBox<WineList> createWineListComboBox() {
     ComboBox<WineList> wineListsComboBox = new ComboBox<>();
-    User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
-    ObservableList<WineList> wineLists = managerContext.getDatabaseManager().getWineListDao()
-        .getAll(user);
+    User user = getManagerContext().getAuthenticationManager().getAuthenticatedUser();
+    ObservableList<WineList> wineLists = null;
+    try {
+      wineLists = getManagerContext().getDatabaseManager().getWineListDao()
+          .getAll(user);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     wineListsComboBox.getItems().addAll(wineLists);
     return wineListsComboBox;
   }

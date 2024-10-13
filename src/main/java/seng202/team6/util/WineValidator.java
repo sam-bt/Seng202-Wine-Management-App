@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import seng202.team6.enums.ColourMatch;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
-import seng202.team6.util.Exceptions.ValidationException;
+import seng202.team6.util.exceptions.ValidationException;
 
 /**
  * Validator is used validating and unmarshalling data.

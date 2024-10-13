@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" maxHeight="1.7976931348623157E308"
   maxWidth="1.7976931348623157E308" prefHeight="780.0" prefWidth="1370.0"
-  stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/22"
+  stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/21"
   fx:controller="seng202.team6.gui.ConsumptionController" fx:id="rootBox">
   <children>
     <HBox VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"

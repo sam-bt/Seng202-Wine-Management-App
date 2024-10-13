@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Wine;
-import seng202.team6.util.Exceptions.ValidationException;
+import seng202.team6.util.exceptions.ValidationException;
 import seng202.team6.util.WineValidator;
 
 /**

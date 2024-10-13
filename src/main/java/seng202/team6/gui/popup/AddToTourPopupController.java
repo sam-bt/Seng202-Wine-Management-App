@@ -51,7 +51,7 @@ public class AddToTourPopupController extends Controller {
    */
   @FXML
   void onBackButtonClick() {
-    managerContext.getGuiManager().closePopup();
+    getManagerContext().getGuiManager().closePopup();
   }
 
   /**
@@ -65,9 +65,9 @@ public class AddToTourPopupController extends Controller {
               change.getAddedSubList().forEach(vineyardTour -> {
                 addRemoveCardsContainer.add(vineyardTour, vineyardTour.nameProperty(),
                     !vineyardToursService.isVineyardInTour(vineyardTour, vineyard),
-                    () -> managerContext.getDatabaseManager().getVineyardTourDao()
+                    () -> getManagerContext().getDatabaseManager().getVineyardTourDao()
                         .addVineyard(vineyardTour, vineyard),
-                    () -> managerContext.getDatabaseManager().getVineyardTourDao()
+                    () -> getManagerContext().getDatabaseManager().getVineyardTourDao()
                         .removeVineyard(vineyardTour, vineyard));
               });
             }

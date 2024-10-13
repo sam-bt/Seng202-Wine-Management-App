@@ -1,5 +1,6 @@
 package seng202.team6.service;
 
+import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.AuthenticationManager;
@@ -32,7 +33,7 @@ public class WineListService {
   /**
    * Initializes the service.
    */
-  public void init() {
+  public void init() throws SQLException {
     User user = authenticationManager.getAuthenticatedUser();
     wineLists.addAll(databaseManager.getWineListDao().getAll(user));
   }
@@ -44,7 +45,7 @@ public class WineListService {
    * @param wine     wine
    * @return if wine is in list
    */
-  public boolean isWineInList(WineList wineList, Wine wine) {
+  public boolean isWineInList(WineList wineList, Wine wine) throws SQLException {
     return databaseManager.getWineListDao().isWineInList(wineList, wine);
   }
 
@@ -54,7 +55,7 @@ public class WineListService {
    * @param user user
    * @param name name
    */
-  public void createWineList(User user, String name) {
+  public void createWineList(User user, String name) throws SQLException {
     WineList wineList = databaseManager.getWineListDao().create(user, name);
     wineLists.add(wineList);
   }
@@ -64,7 +65,7 @@ public class WineListService {
    *
    * @param wineList list of wines
    */
-  public void deleteWineList(WineList wineList) {
+  public void deleteWineList(WineList wineList) throws SQLException {
     wineLists.remove(wineList);
     databaseManager.getWineListDao().delete(wineList);
   }

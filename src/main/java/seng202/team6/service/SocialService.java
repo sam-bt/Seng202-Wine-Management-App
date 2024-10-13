@@ -1,8 +1,8 @@
 package seng202.team6.service;
 
+import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;
 import seng202.team6.model.WineReview;
@@ -13,7 +13,6 @@ import seng202.team6.model.WineReview;
  */
 public class SocialService {
 
-  private final AuthenticationManager authenticationManager;
   private final DatabaseManager databaseManager;
   private final User user;
   private final ObservableList<WineReview> userReviews = FXCollections.observableArrayList();
@@ -21,9 +20,7 @@ public class SocialService {
   /**
    * Constructor for the social service class.
    */
-  public SocialService(AuthenticationManager authenticationManager,
-      DatabaseManager databaseManager, User user) {
-    this.authenticationManager = authenticationManager;
+  public SocialService(DatabaseManager databaseManager, User user) {
     this.databaseManager = databaseManager;
     this.user = user;
   }
@@ -31,7 +28,7 @@ public class SocialService {
   /**
    * Initializer for the social service class.
    */
-  public void init() {
+  public void init() throws SQLException {
     userReviews.addAll(databaseManager.getWineReviewDao().getAll(user));
   }
 

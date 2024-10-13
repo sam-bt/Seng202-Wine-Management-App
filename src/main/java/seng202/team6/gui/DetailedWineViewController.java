@@ -1,7 +1,6 @@
 package seng202.team6.gui;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.SQLException;
 import javafx.beans.binding.StringBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -25,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.CircularScoreIndicator;
 import seng202.team6.gui.controls.UnmodifiableRating;
-import seng202.team6.managers.DatabaseManager;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Note;
 import seng202.team6.model.User;
@@ -34,7 +32,6 @@ import seng202.team6.model.Wine;
 import seng202.team6.model.WineReview;
 import seng202.team6.service.WineNoteService;
 import seng202.team6.service.WineReviewsService;
-import seng202.team6.util.ImageReader;
 import seng202.team6.util.WineImages;
 
 /**
@@ -109,10 +106,10 @@ public class DetailedWineViewController extends Controller {
   public DetailedWineViewController(ManagerContext managerContext, Wine viewedWine,
       Runnable backButtonAction) {
     super(managerContext);
-    this.wineReviewsService = new WineReviewsService(managerContext.getAuthenticationManager(),
-        managerContext.getDatabaseManager(), viewedWine);
-    this.wineNoteService = new WineNoteService(managerContext.getAuthenticationManager(),
-        managerContext.getDatabaseManager(), viewedWine);
+    this.wineReviewsService = new WineReviewsService(getManagerContext().getAuthenticationManager(),
+        getManagerContext().getDatabaseManager(), viewedWine);
+    this.wineNoteService = new WineNoteService(getManagerContext().getAuthenticationManager(),
+        getManagerContext().getDatabaseManager(), viewedWine);
     this.viewedWine = viewedWine;
     this.backButtonAction = backButtonAction;
     this.ratingStars = new UnmodifiableRating();
@@ -121,7 +118,7 @@ public class DetailedWineViewController extends Controller {
 
     String winery = viewedWine.getWinery();
     if (winery != null && !winery.isEmpty()) {
-      wineVineyard = managerContext.getDatabaseManager().getVineyardsDao().get(winery);
+      wineVineyard = getManagerContext().getDatabaseManager().getVineyardsDao().get(winery);
     }
   }
 
@@ -143,9 +140,9 @@ public class DetailedWineViewController extends Controller {
     viewingWineTitledPane.setText("Viewing Wine: " + viewedWine.getTitle());
 
     descriptionArea.setText(getOrDefault(viewedWine.getDescription()));
-    if (managerContext.getAuthenticationManager().isAuthenticated()) {
+    if (getManagerContext().getAuthenticationManager().isAuthenticated()) {
       setNotesVisible(true);
-      User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
+      User user = getManagerContext().getAuthenticationManager().getAuthenticatedUser();
       Note note = wineNoteService.loadUsersNote(user);
       notesTextbox.setText(note.getNote());
 
@@ -251,7 +248,7 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   void onAddReviewButtonClick() {
-    managerContext.getGuiManager().openPopupWineReview(wineReviewsService);
+    getManagerContext().getGuiManager().openPopupWineReview(wineReviewsService);
   }
 
   /**
@@ -259,18 +256,20 @@ public class DetailedWineViewController extends Controller {
    */
   @FXML
   void onOpenListsButtonClick() {
-    managerContext.getGuiManager().openAddToListPopup(viewedWine);
+    getManagerContext().getGuiManager().openAddToListPopup(viewedWine);
   }
 
   @FXML
   void onViewVineyardClick() {
-    managerContext.getGuiManager().openDetailedVineyardView(wineVineyard,
-        () -> managerContext.getGuiManager().openDetailedWineView(viewedWine, null));
+    getManagerContext().getGuiManager().openDetailedVineyardView(wineVineyard,
+        () -> getManagerContext().getGuiManager().openDetailedWineView(viewedWine, null));
+    getManagerContext().getGuiManager().openDetailedVineyardView(wineVineyard,
+        () -> getManagerContext().getGuiManager().openDetailedWineView(viewedWine, null));
   }
 
   @FXML
   void onCompareClick() {
-    managerContext.getGuiManager().openWineCompareScreen(viewedWine, null);
+    getManagerContext().getGuiManager().openWineCompareScreen(viewedWine, null);
   }
 
   /**
@@ -337,7 +336,11 @@ public class DetailedWineViewController extends Controller {
   private void flagReview(WineReview wineReview) {
     wineReview.setFlag(1);
     wineReview.setSelected(false);
-    managerContext.getDatabaseManager().getWineReviewDao().updateWineReviewFlag(wineReview);
+    try {
+      getManagerContext().getDatabaseManager().getWineReviewDao().updateWineReviewFlag(wineReview);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**

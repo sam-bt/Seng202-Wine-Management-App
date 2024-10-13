@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import java.util.Set;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -170,13 +171,19 @@ public class WineScreenController extends Controller {
     int begin = this.pageService.getMinRange();
     int end = this.pageService.getMaxRange();
 
-    managerContext.getGuiManager().showLoadingIndicator(() -> {
-      ObservableList<Wine> wines = managerContext.getDatabaseManager().getWineDao()
-              .getAllInRange(begin, end, filters);
+    getManagerContext().getGuiManager().showLoadingIndicator(() -> {
+      ObservableList<Wine> wines = null;
+      try {
+        wines = getManagerContext().getDatabaseManager().getWineDao()
+                .getAllInRange(begin, end, filters);
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
+      ObservableList<Wine> finalWines = wines;
       mapController.runOrQueueWhenReady(() -> {
         mapController.clearWineMarkers();
         mapController.clearHeatmap();
-        wines.stream()
+        finalWines.stream()
                 .filter(wine -> wine.getGeoLocation() != null)
                 .forEach(mapController::addWineMarker);
       });
@@ -207,7 +214,7 @@ public class WineScreenController extends Controller {
     final TableColumn<Wine, Integer> vintageColumn = new TableColumn<>("Vintage");
     final TableColumn<Wine, Integer> scoreColumn = new TableColumn<>("Score");
     final TableColumn<Wine, Float> abvColumn = new TableColumn<>("ABV%");
-    final TableColumn<Wine, Float> priceColumn = new TableColumn<>("NZD");
+    final TableColumn<Wine, Float> priceColumn = new TableColumn<>("Price");
 
     titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
     varietyColumn.setCellValueFactory(new PropertyValueFactory<>("variety"));
@@ -220,7 +227,7 @@ public class WineScreenController extends Controller {
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
     // Enable editing if admin
-    if (managerContext.getAuthenticationManager().isAdmin()) {
+    if (getManagerContext().getAuthenticationManager().isAdmin()) {
       titleColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       varietyColumn.setCellFactory(
@@ -303,8 +310,12 @@ public class WineScreenController extends Controller {
     );
 
     // update max pages
-    this.pageService.setTotalItems(
-        managerContext.getDatabaseManager().getWineDao().getCount(currentFilters));
+    try {
+      this.pageService.setTotalItems(
+          getManagerContext().getDatabaseManager().getWineDao().getCount(currentFilters));
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
 
     // Update table with filtered wines
     openWineRange(currentFilters);
@@ -325,7 +336,11 @@ public class WineScreenController extends Controller {
     this.currentFilters = null;
 
     // Update pages
-    pageService.setTotalItems(managerContext.getDatabaseManager().getWineDao().getCount());
+    try {
+      pageService.setTotalItems(getManagerContext().getDatabaseManager().getWineDao().getCount());
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
 
     // Update wines
     openWineRange(null);
@@ -373,7 +388,7 @@ public class WineScreenController extends Controller {
    */
   public void setFilterValues() {
 
-    WineDao wineDao = managerContext.getDatabaseManager().getWineDao();
+    WineDao wineDao = getManagerContext().getDatabaseManager().getWineDao();
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
 
     // Auto Complete boxes and range sliders
@@ -485,13 +500,13 @@ public class WineScreenController extends Controller {
   private void openDetailedWineView(Wine wine) {
     Runnable backAction;
     if (currentFilters == null && pageService.getPageNumber() == 1) { // Don't need to save state
-      backAction = () -> managerContext.getGuiManager()
+      backAction = () -> getManagerContext().getGuiManager()
           .openWineScreen();
     } else {
-      backAction = () -> managerContext.getGuiManager()
+      backAction = () -> getManagerContext().getGuiManager()
           .openWineScreen(pageService, currentFilters);
     }
-    managerContext.getGuiManager().openDetailedWineView(wine, backAction);
+    getManagerContext().getGuiManager().openDetailedWineView(wine, backAction);
   }
 
   /**
@@ -551,7 +566,11 @@ public class WineScreenController extends Controller {
         });
 
     // Set up max pages
-    pageService.setTotalItems(managerContext.getDatabaseManager().getWineDao().getCount());
+    try {
+      pageService.setTotalItems(getManagerContext().getDatabaseManager().getWineDao().getCount());
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     maxPageNumberRawViewer.setText("/" + pageService.getMaxPages()); // Set initial value
     maxPageNumberSimpleView.setText("/" + pageService.getMaxPages());
     pageService.maxPagesProperty().addListener((observableValue, oldValue, newValue) -> {

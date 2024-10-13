@@ -64,14 +64,14 @@ public class UserSearchPopupController extends Controller {
     if (event.getClickCount() == 2) {
       User user = userTableView.getSelectionModel().getSelectedItem();
       if (user != null) {
-        managerContext.getGuiManager().openUserProfilePopup(user);
+        getManagerContext().getGuiManager().openUserProfilePopup(user);
       }
     }
   }
 
   @FXML
   void onBackButtonClick() {
-    managerContext.getGuiManager().closePopup();
+    getManagerContext().getGuiManager().closePopup();
   }
 
   @FXML
@@ -81,7 +81,7 @@ public class UserSearchPopupController extends Controller {
     userTableView.getItems().clear();
 
     String searchName = searchTextField.getText();
-    ObservableList<User> results = managerContext.getDatabaseManager().getUserDao()
+    ObservableList<User> results = getManagerContext().getDatabaseManager().getUserDao()
         .getAllFromSearch(searchName);
 
     userTableColumn.setCellValueFactory(cellData ->

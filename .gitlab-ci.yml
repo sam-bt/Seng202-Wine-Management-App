@@ -9,6 +9,13 @@ junit:
   script:
     - ./gradlew test
 
+fx_version_check:
+  stage: test
+  before_script:
+    - cd scripts
+  script:
+    - ./warn_javafx_version_in_fxml.sh
+
 cucumber:
   stage: test
   script:

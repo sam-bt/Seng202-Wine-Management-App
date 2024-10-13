@@ -1,7 +1,7 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import java.util.Set;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -27,7 +27,6 @@ import org.controlsfx.control.Rating;
 import seng202.team6.gui.controls.AutoCompletionTextField;
 import seng202.team6.gui.controls.CircularScoreIndicator;
 import seng202.team6.gui.controls.UnmodifiableRating;
-import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.util.WineImages;
@@ -83,7 +82,6 @@ public class WineCompareController extends Controller {
     private VBox description;
     private GridPane attributesGrid;
     private VBox buttons;
-    private AutoCompletionTextField searchTextField;
     private Wine wine;
 
     /**
@@ -103,15 +101,20 @@ public class WineCompareController extends Controller {
       container.setPadding(new Insets(10));
       container.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 10px;");
 
-      Set<String> uniqueTitles = managerContext.getDatabaseManager().getWineDataStatService()
+      Set<String> uniqueTitles = getManagerContext().getDatabaseManager().getWineDataStatService()
           .getUniqueTitles();
-      searchTextField = new AutoCompletionTextField(wine == null ? "" : wine.getTitle());
+      AutoCompletionTextField searchTextField = new AutoCompletionTextField(
+          wine == null ? "" : wine.getTitle());
       searchTextField.setPrefWidth(300);
       searchTextField.getEntries().addAll(uniqueTitles);
       searchTextField.setOnSelectionAction(match -> {
-        Wine wine = managerContext.getDatabaseManager().getWineDao().getByExactTitle(match);
-        if (wine != null) {
-          setWine(wine);
+        try {
+          Wine wine = getManagerContext().getDatabaseManager().getWineDao().getByExactTitle(match);
+          if (wine != null) {
+            setWine(wine);
+          }
+        } catch (SQLException e) {
+          throw new RuntimeException(e);
         }
       });
 
@@ -290,18 +293,18 @@ public class WineCompareController extends Controller {
       detailedViewButton.setPrefWidth(200);
       detailedViewButton.getStyleClass().add("secondary-button");
       detailedViewButton.setOnMouseClicked((event) ->
-          managerContext.getGuiManager().openDetailedWineView(wine,
-              () -> managerContext.getGuiManager()
+          getManagerContext().getGuiManager().openDetailedWineView(wine,
+              () -> getManagerContext().getGuiManager()
                   .openWineCompareScreen(leftSide.wine, rightSide.wine)));
       buttonsWrapper.getChildren().add(detailedViewButton);
 
       // only add the open lists button is they are loggied in
-      if (managerContext.getAuthenticationManager().isAuthenticated()) {
+      if (getManagerContext().getAuthenticationManager().isAuthenticated()) {
         Button openListsButton = new Button("Open Lists");
         openListsButton.setPrefWidth(200);
         openListsButton.getStyleClass().add("secondary-button");
         openListsButton.setOnMouseClicked((event) ->
-            managerContext.getGuiManager().openAddToListPopup(wine));
+            getManagerContext().getGuiManager().openAddToListPopup(wine));
         buttonsWrapper.getChildren().add(openListsButton);
       }
 

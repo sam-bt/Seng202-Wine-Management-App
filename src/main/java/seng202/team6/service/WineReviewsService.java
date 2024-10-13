@@ -1,6 +1,7 @@
 package seng202.team6.service;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.Property;
@@ -55,7 +56,11 @@ public class WineReviewsService {
    */
   public void init() {
     String username = authenticationManager.getAuthenticatedUsername();
-    wineReviews.addAll(databaseManager.getWineReviewDao().getAll(wine));
+    try {
+      wineReviews.addAll(databaseManager.getWineReviewDao().getAll(wine));
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     usersReview.setValue(wineReviews.stream()
         .filter(wineReview -> wineReview.getUsername().equals(username))
         .findFirst()
@@ -68,7 +73,7 @@ public class WineReviewsService {
    * @param rating      rating
    * @param description description
    */
-  public void addOrUpdateUserReview(double rating, String description) {
+  public void addOrUpdateUserReview(double rating, String description) throws SQLException {
     User user = authenticationManager.getAuthenticatedUser();
     if (hasUserReviewed()) {
       WineReview usersReview = getUsersReview();
@@ -90,7 +95,7 @@ public class WineReviewsService {
   /**
    * Deletes users review.
    */
-  public void deleteUsersReview() {
+  public void deleteUsersReview() throws SQLException {
     WineReview wineReview = getUsersReview();
     if (wineReview != null) {
       databaseManager.getWineReviewDao().delete(wineReview);

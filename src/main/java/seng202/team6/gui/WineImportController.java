@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,8 +14,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -37,9 +34,9 @@ import seng202.team6.gui.popup.GeneralPopupController;
 import seng202.team6.managers.ManagerContext;
 import seng202.team6.model.Wine;
 import seng202.team6.service.WineImportService;
-import seng202.team6.util.Exceptions.ValidationException;
 import seng202.team6.util.ProcessCsv;
 import seng202.team6.util.WineValidator;
+import seng202.team6.util.exceptions.ValidationException;
 
 /**
  * Controller for wine import.
@@ -87,7 +84,7 @@ public class WineImportController extends Controller {
       return;
     }
 
-    managerContext.getGuiManager().showLoadingIndicator(() -> {
+    getManagerContext().getGuiManager().showLoadingIndicator(() -> {
       currentFileRows = ProcessCsv.getCsvRows(selectedFile);
       String[] columnNames = currentFileRows.removeFirst();
       selectedWineProperties.clear();
@@ -104,7 +101,7 @@ public class WineImportController extends Controller {
     if (!validate()) {
       return;
     }
-    managerContext.getGuiManager().showLoadingIndicator(() -> parseWines(false));
+    getManagerContext().getGuiManager().showLoadingIndicator(() -> parseWines(false));
   }
 
   /**
@@ -115,7 +112,7 @@ public class WineImportController extends Controller {
     if (!validate()) {
       return;
     }
-    managerContext.getGuiManager().showLoadingIndicator(() -> parseWines(true));
+    getManagerContext().getGuiManager().showLoadingIndicator(() -> parseWines(true));
   }
 
   /**
@@ -151,7 +148,7 @@ public class WineImportController extends Controller {
                 WinePropertyName.DESCRIPTION),
             importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.SCORE),
             importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.ABV),
-            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.NZD),
+            importService.extractPropertyFromRowOrDefault(valid, row, WinePropertyName.PRICE),
             null
         ));
       } catch (ValidationException e) {
@@ -163,9 +160,9 @@ public class WineImportController extends Controller {
     try {
 
       if (replace) {
-        managerContext.getDatabaseManager().getWineDao().replaceAll(parsedWines);
+        getManagerContext().getDatabaseManager().getWineDao().replaceAll(parsedWines);
       } else {
-        managerContext.getDatabaseManager().getWineDao().addAll(parsedWines);
+        getManagerContext().getDatabaseManager().getWineDao().addAll(parsedWines);
       }
     } catch (SQLException exception) {
       log.error("SQL error when replacing wines");
@@ -181,7 +178,7 @@ public class WineImportController extends Controller {
    */
   private boolean checkContainsTitleProperty() {
     if (!selectedWineProperties.containsValue(WinePropertyName.TITLE)) {
-      GeneralPopupController popup = managerContext.getGuiManager().showErrorPopup();
+      GeneralPopupController popup = getManagerContext().getGuiManager().showErrorPopup();
       popup.setTitle("Invalid Selections");
       popup.setMessage("The property TITLE is required but has not been selected");
       popup.addOkButton();
@@ -209,7 +206,7 @@ public class WineImportController extends Controller {
         selectedWineProperties);
 
     if (!duplicatedProperties.isEmpty()) {
-      GeneralPopupController popup = managerContext.getGuiManager().showErrorPopup();
+      GeneralPopupController popup = getManagerContext().getGuiManager().showErrorPopup();
       popup.setTitle("Invalid Selections");
       popup.setMessage("The property field(s) " + duplicatedProperties.stream()
           .map(WinePropertyName::name)

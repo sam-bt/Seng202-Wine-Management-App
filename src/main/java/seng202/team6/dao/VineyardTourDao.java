@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import seng202.team6.enums.Island;
 import seng202.team6.model.User;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardTour;

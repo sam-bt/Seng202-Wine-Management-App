@@ -1,12 +1,10 @@
 package seng202.team6.gui.popup;
 
+import java.sql.SQLException;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.VBox;
 import seng202.team6.gui.Controller;
 import seng202.team6.gui.controls.container.AddRemoveCardsContainer;
 import seng202.team6.managers.ManagerContext;
@@ -20,7 +18,6 @@ import seng202.team6.service.WineListService;
 public class AddToListPopupController extends Controller {
 
   private final WineListService wineListService;
-  private final ObservableMap<WineList, VBox> wineListWrappers = FXCollections.observableHashMap();
   private final Wine wine;
   @FXML
   ScrollPane wineListsContainer;
@@ -35,7 +32,7 @@ public class AddToListPopupController extends Controller {
   public AddToListPopupController(ManagerContext context, Wine wine) {
     super(context);
     this.wine = wine;
-    this.wineListService = new WineListService(managerContext.getAuthenticationManager(),
+    this.wineListService = new WineListService(getManagerContext().getAuthenticationManager(),
         context.getDatabaseManager());
     bindToWineListService();
   }
@@ -46,12 +43,11 @@ public class AddToListPopupController extends Controller {
         wineListsContainer.viewportBoundsProperty(),
         wineListsContainer.widthProperty());
     wineListsContainer.setContent(addRemoveCardsContainer);
-    wineListService.init();
   }
 
   @FXML
   void onBackButtonClick() {
-    managerContext.getGuiManager().closePopup();
+    getManagerContext().getGuiManager().closePopup();
   }
 
   private void bindToWineListService() {
@@ -59,11 +55,30 @@ public class AddToListPopupController extends Controller {
       while (change.next()) {
         if (change.wasAdded()) {
           change.getAddedSubList().forEach(wineList -> {
-            addRemoveCardsContainer.add(wineList, new SimpleStringProperty(wineList.name()),
-                !wineListService.isWineInList(wineList, wine),
-                () -> managerContext.getDatabaseManager().getWineListDao().addWine(wineList, wine),
-                () -> managerContext.getDatabaseManager().getWineListDao()
-                    .removeWine(wineList, wine));
+            try {
+
+              addRemoveCardsContainer.add(wineList, new SimpleStringProperty(wineList.name()),
+                  !wineListService.isWineInList(wineList, wine),
+                  () -> {
+                    try {
+                      getManagerContext().getDatabaseManager().getWineListDao()
+                          .addWine(wineList, wine);
+                    } catch (SQLException e) {
+                      throw new RuntimeException(e);
+                    }
+                  },
+                  () -> {
+                    try {
+                      getManagerContext().getDatabaseManager().getWineListDao()
+                          .removeWine(wineList, wine);
+                    } catch (SQLException e) {
+                      throw new RuntimeException(e);
+                    }
+                  });
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+
           });
         }
       }

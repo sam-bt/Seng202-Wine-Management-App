@@ -63,7 +63,7 @@ public class WineReviewDao extends Dao {
    * @return An ObservableList of all WineReview objects in the database belonging to the specified
    *        wine.
    */
-  public ObservableList<WineReview> getAll(Wine wine) {
+  public ObservableList<WineReview> getAll(Wine wine) throws SQLException {
     Timer timer = new Timer();
     String sql = "SELECT WINE_REVIEW.ID as wine_review_id, WINE_REVIEW.* "
         + "FROM WINE_REVIEW WHERE WINE_ID = ?";
@@ -77,10 +77,7 @@ public class WineReviewDao extends Dao {
             wineReviews.size(), wine.getKey(), timer.currentOffsetMilliseconds());
         return wineReviews;
       }
-    } catch (SQLException error) {
-      log.info("Failed to retrieve reviews for wine with ID {}", wine.getKey(), error);
     }
-    return FXCollections.emptyObservableList();
   }
 
   /**
@@ -90,7 +87,7 @@ public class WineReviewDao extends Dao {
    * @return An ObservableList of all WineReview objects in the database belonging to the specified
    *        user
    */
-  public ObservableList<WineReview> getAll(User user) {
+  public ObservableList<WineReview> getAll(User user) throws SQLException {
     Timer timer = new Timer();
     String sql = "SELECT WINE_REVIEW.ID as wine_review_id, WINE_REVIEW.* "
         + "FROM WINE_REVIEW "
@@ -105,10 +102,7 @@ public class WineReviewDao extends Dao {
             wineReviews.size(), user.getUsername(), timer.currentOffsetMilliseconds());
         return wineReviews;
       }
-    } catch (SQLException error) {
-      log.info("Failed to retrieve reviews for user '{}'", user.getUsername(), error);
     }
-    return FXCollections.emptyObservableList();
   }
 
   /**
@@ -118,7 +112,7 @@ public class WineReviewDao extends Dao {
    * @param end   The end index of the range (exclusive)
    * @return An ObservableList of WineReview objects within the specified range
    */
-  public ObservableList<WineReview> getAllInRange(int begin, int end) {
+  public ObservableList<WineReview> getAllInRange(int begin, int end) throws SQLException {
     Timer timer = new Timer();
     String sql = "SELECT WINE_REVIEW.ID as wine_review_id, WINE_REVIEW.* "
         + "FROM WINE_REVIEW "
@@ -135,10 +129,7 @@ public class WineReviewDao extends Dao {
             wineReviews.size(), begin, end, timer.currentOffsetMilliseconds());
         return wineReviews;
       }
-    } catch (SQLException error) {
-      log.info("Failed to retrieve reviews in range {}-{}", begin, end, error);
     }
-    return FXCollections.emptyObservableList();
   }
 
   /**
@@ -151,7 +142,8 @@ public class WineReviewDao extends Dao {
    * @param date        The date the wine was reviewed
    * @return The WineReview object with the specified parameters
    */
-  public WineReview add(User user, Wine wine, double rating, String description, Date date) {
+  public WineReview add(User user, Wine wine, double rating, String description, Date date)
+      throws SQLException {
     int flag = 0;
     Timer timer = new Timer();
     String insert = "INSERT INTO WINE_REVIEW VALUES (null, ?, ?, ?, ?, ?, ?)";
@@ -189,9 +181,6 @@ public class WineReviewDao extends Dao {
         log.warn("Could not create wine review for user '{}' and wine with ID {} in {}ms",
             user.getUsername(), wine.getKey(), timer.currentOffsetMilliseconds());
       }
-    } catch (SQLException error) {
-      log.info("Failed to create review for user '{}' and wine with ID {}",
-          user.getUsername(), wine.getKey(), error);
     }
     return null;
   }
@@ -201,7 +190,7 @@ public class WineReviewDao extends Dao {
    *
    * @param wineReview The wine review to be deleted
    */
-  public void delete(WineReview wineReview) {
+  public void delete(WineReview wineReview) throws SQLException {
     Timer timer = new Timer();
     String sql = "DELETE FROM WINE_REVIEW WHERE ID = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -215,10 +204,7 @@ public class WineReviewDao extends Dao {
         log.warn("Could not delete wine review with ID {} in {}ms", wineReview.getId(),
             timer.currentOffsetMilliseconds());
       }
-    } catch (SQLException error) {
-      log.error("Failed to delete wine review with ID {}", wineReview.getId(), error);
     }
-
     wineReviewCache.clear();
   }
 
@@ -227,7 +213,7 @@ public class WineReviewDao extends Dao {
    *
    * @param user is the user whose reviews will be removed
    */
-  public void deleteAllFromUser(User user) {
+  public void deleteAllFromUser(User user) throws SQLException {
     Timer timer = new Timer();
     String sql = "DELETE FROM WINE_REVIEW WHERE USERNAME = ?";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -237,9 +223,6 @@ public class WineReviewDao extends Dao {
         log.info("Successfully removed {} reviews in {}ms",
             rowsAffected, timer.currentOffsetMilliseconds());
       }
-    } catch (SQLException e) {
-      log.error("Failed to delete reviews in {}ms", timer.currentOffsetMilliseconds());
-      log.error(e.getMessage());
     }
   }
 
@@ -265,28 +248,25 @@ public class WineReviewDao extends Dao {
    *
    * @return an ObservableList of flagged reviews.
    */
-  public ObservableList<WineReview> getAllFlaggedReviews() {
+  public ObservableList<WineReview> getAllFlaggedReviews() throws SQLException {
     Timer timer = new Timer();
-    ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
+
     String sql = "SELECT * FROM WINE_REVIEW WHERE FLAG = 1";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       try (ResultSet resultSet = statement.executeQuery()) {
-        wineReviews = extractAllWineReviewsFromResultSet(resultSet, "ID");
+        ObservableList<WineReview> wineReviews =
+            extractAllWineReviewsFromResultSet(resultSet, "ID");
         log.info("Successfully retrieved all flagged reviews in {}ms",
             timer.currentOffsetMilliseconds());
         return wineReviews;
       }
-    } catch (SQLException error) {
-      log.error("Failed to retrieve flagged reviews!");
-      log.error(error.getMessage());
     }
-    return FXCollections.emptyObservableList();
   }
 
   /**
    * Deletes all flagged reviews (FLAG = '1') from the database.
    */
-  public void deleteAllFlaggedReviews() {
+  public void deleteAllFlaggedReviews() throws SQLException {
     Timer timer = new Timer();
     String sql = "DELETE FROM WINE_REVIEW WHERE FLAG = 1";
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -295,9 +275,6 @@ public class WineReviewDao extends Dao {
         log.info("Successfully removed {} reviews in {}ms",
             rowsAffected, timer.currentOffsetMilliseconds());
       }
-    } catch (SQLException e) {
-      log.error("Failed to delete reviews in {}ms", timer.currentOffsetMilliseconds());
-      log.error(e.getMessage());
     }
 
     wineReviewCache.clear();
@@ -309,7 +286,7 @@ public class WineReviewDao extends Dao {
    *
    * @param review The review to update.
    */
-  public void updateWineReviewFlag(WineReview review) {
+  public void updateWineReviewFlag(WineReview review) throws SQLException {
     log.info("Ran updateWineReviewFlag()");
     Timer timer = new Timer();
     String sql = "UPDATE WINE_REVIEW SET FLAG = ? WHERE ID = ?";
@@ -323,8 +300,6 @@ public class WineReviewDao extends Dao {
         log.info("Successfully updated {} reviews in {}ms",
             rowsAffected, timer.currentOffsetMilliseconds());
       }
-    } catch (SQLException error) {
-      log.error("Failed to update wine review with ID {}", review.getId(), error);
     }
   }
 
@@ -366,14 +341,22 @@ public class WineReviewDao extends Dao {
    */
   private void bindUpdater(WineReview wineReview) {
     wineReview.ratingProperty().addListener(((observableValue, before, after) -> {
-      updateAttribute(wineReview.getId(), "RATING", update -> {
-        update.setDouble(1, after.doubleValue());
-      });
+      try {
+        updateAttribute(wineReview.getId(), "RATING", update -> {
+          update.setDouble(1, after.doubleValue());
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     }));
     wineReview.descriptionProperty().addListener(((observableValue, before, after) -> {
-      updateAttribute(wineReview.getId(), "DESCRIPTION", update -> {
-        update.setString(1, after);
-      });
+      try {
+        updateAttribute(wineReview.getId(), "DESCRIPTION", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     }));
   }
 
@@ -384,7 +367,7 @@ public class WineReviewDao extends Dao {
    * @param attributeSetter callback to set attribute
    */
   private void updateAttribute(long id, String attributeName,
-      DatabaseManager.AttributeSetter attributeSetter) {
+      DatabaseManager.AttributeSetter attributeSetter) throws SQLException {
     Timer timer = new Timer();
     String sql = "UPDATE WINE_REVIEW set " + attributeName + " = ? where ID = ?";
     try (PreparedStatement update = connection.prepareStatement(sql)) {
@@ -399,9 +382,6 @@ public class WineReviewDao extends Dao {
         log.info("Could not update attribute '{}' for wine review with ID {} in {}ms",
             attributeName, id, timer.currentOffsetMilliseconds());
       }
-    } catch (SQLException error) {
-      log.error("Failed to update attribute '{}' for wine review with ID {} in {}ms",
-          attributeName, id, timer.currentOffsetMilliseconds(), error);
     }
   }
 }
