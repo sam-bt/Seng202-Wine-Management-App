@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.AdminController">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.AdminController">
   <children>
     <Label fx:id="loginMessageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="457.0" layoutY="218.0" prefHeight="17.0" prefWidth="456.0" textFill="RED">
       <font>
@@ -67,16 +67,21 @@
                                        <children>
                                           <AnchorPane fx:id="passwordBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="200.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
-                                                <Label fx:id="passwordBoxLabel" alignment="CENTER" text="Enter New Password" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="10.0">
+                                                <Label fx:id="passwordBoxLabel" alignment="CENTER" layoutX="50.0" layoutY="14.0" text="Enter New Password" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="14.0">
                                                    <font>
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
                                                 </Label>
                                                 <PasswordField fx:id="passwordField" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="40.0" />
-                                                <PasswordField fx:id="confirmField" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="90.0" />
-                                                <Button fx:id="acceptPassword" mnemonicParsing="false" onAction="#onNewPasswordAccept" styleClass="secondary-button" stylesheets="@../css/global.css" text="Accept" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="175.0" />
-                                                <Button fx:id="cancelPasswordButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onNewPasswordCancel" styleClass="secondary-button" stylesheets="@../css/global.css" text="Cancel" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="60.0" />
+                                                <PasswordField fx:id="confirmField" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="110.0" />
+                                                <Button fx:id="acceptPassword" mnemonicParsing="false" onAction="#onNewPasswordAccept" styleClass="secondary-button" stylesheets="@../css/global.css" text="Accept" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="175.0" />
+                                                <Button fx:id="cancelPasswordButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onNewPasswordCancel" styleClass="secondary-button" stylesheets="@../css/global.css" text="Cancel" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="60.0" />
                                                 <Label fx:id="passwordErrorLabel" alignment="TOP_CENTER" textAlignment="CENTER" textFill="RED" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="190.0">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="89.0" layoutY="84.0" text="Confirm New Password:">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
