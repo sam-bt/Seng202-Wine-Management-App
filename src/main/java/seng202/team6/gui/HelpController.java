@@ -29,7 +29,7 @@ public class HelpController extends Controller {
     String url = "";
     try {
       url = getClass().getResource("/html/ManualIndex.html").toExternalForm();
-      if (managerContext.getAuthenticationManager().isAdmin()) {
+      if (getManagerContext().getAuthenticationManager().isAdmin()) {
         url = getClass().getResource("/html/AdminIndex.html").toExternalForm();
       }
 
