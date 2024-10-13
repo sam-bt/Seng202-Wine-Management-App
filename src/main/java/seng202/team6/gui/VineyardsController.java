@@ -52,6 +52,7 @@ public class VineyardsController extends Controller {
   public void init() {
     mapController = new LeafletOsmController(webView.getEngine());
     mapController.initMap();
+    mapController.runOrQueueWhenReady(() -> mapController.enableToggleButtons());
     vineyardService.init();
 
     VineyardDataStatService vineyardDataStatService = managerContext.getDatabaseManager()

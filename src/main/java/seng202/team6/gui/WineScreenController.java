@@ -141,6 +141,7 @@ public class WineScreenController extends Controller {
     // Setup map
     mapController = new LeafletOsmController(webView.getEngine());
     mapController.initMap();
+    mapController.runOrQueueWhenReady(() -> mapController.enableToggleButtons());
 
     // Setup table with wine data
     setupTableColumns();
