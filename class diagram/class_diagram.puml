@@ -1,7 +1,28 @@
 @startuml
-top to bottom direction
+left to right direction
+
 
 package gui {
+
+
+    abstract class Controller
+    class AdminController extends Controller
+    class DetailedVineyardViewController extends Controller
+    class DetailedWineViewController extends Controller
+    class LeafletOsmController extends Controller
+    class ListScreenController extends Controller
+    class MainController extends Controller
+    class NotesController extends Controller
+    class RegisterController extends Controller
+    class SettingsController extends Controller
+    class SocialController extends Controller
+    class TourPlanningController extends Controller
+    class UpdatePasswordController extends Controller
+    class VineyardsController extends Controller
+    class WineCompareController extends Controller
+    class WineImportController extends Controller
+    class WineScreenController extends Controller
+
     package wrapper {
         class FXWrapper
         class FXWindow
@@ -17,42 +38,43 @@ package gui {
         class UserSearchPopupController
         class UserViewPopupController
         class WineReviewPopupController
+
+        AddToListPopupController --> Controller
+        AddToTourPopupController --> Controller
+        CreateListPopupController --> Controller
+        DeleteListPopupController --> Controller
+        GeneralPopupController --> Controller
+        ReviewViewPopupController --> Controller
+        UserSearchPopupController --> Controller
+        UserViewPopupController --> Controller
+        WineReviewPopupController --> Controller
+
+    }
+    package controls {
+        package card {
+          class AddRemoveCard extends Card
+          class Card
+        }
+        package container {
+          class AddRemoveContainer extends CardsContainer
+          class CardsContainer
+        }
+        package cardcontent {
+            class ItineraryItemCardContent extends Card
+            class VineyardCardContent extends Card
+        }
+        class AddRemoveButton
+        class AutoCompletionTextField
+        class ButtonsList
+        class CircularScoreIndicator
+        class CustomRangeSlider
+        class UnmodifiableRating
+        class ReviewCard extends Card
+        class WineCard extends Card
+
+
     }
 
-    abstract class Controller
-    class AdminController
-    class DetailedVineyardViewController
-    class DetailedWineViewController
-    class LeafletOsmController
-    class ListScreenController
-    class MainController
-    class NotesController
-    class RegisterController
-    class SettingsController
-    class SocialController
-    class TourPlanningController
-    class UpdatePasswordController
-    class VineyardsController
-    class WineCompareController
-    class WineImportController
-    class WineScreenController
-
-    AdminController --|> Controller
-    DetailedVineyardViewController --|> Controller
-    DetailedWineViewController --|> Controller
-    LeafletOsmController --|> Controller
-    ListScreenController --|> Controller
-    MainController --|> Controller
-    NotesController --|> Controller
-    RegisterController --|> Controller
-    SettingsController --|> Controller
-    SocialController --|> Controller
-    TourPlanningController --|> Controller
-    UpdatePasswordController --|> Controller
-    VineyardsController --|> Controller
-    WineCompareController --|> Controller
-    WineImportController --|> Controller
-    WineScreenController --|> Controller
 }
 
 package managers {
@@ -61,9 +83,9 @@ package managers {
     class DatabaseManager
     class GuiManager
 
-    ManagerContext o--> AuthenticationManager : "manages lifecycle"
-    ManagerContext o--> DatabaseManager : "manages lifecycle"
-    ManagerContext o--> GuiManager : "manages lifecycle"
+    ManagerContext o-- AuthenticationManager : "manages lifecycle"
+    ManagerContext o-- DatabaseManager : "manages lifecycle"
+    ManagerContext o-- GuiManager : "manages lifecycle"
 }
 
 package model {
@@ -93,23 +115,15 @@ package service {
 
 package dao {
     abstract class Dao
-    class AggregatedDao
-    class GeoLocationDao
-    class UserDao
-    class VineyardDao
-    class WineDao
-    class WineListDao
-    class WineNotesDao
-    class WineReviewDao
+    class AggregatedDao extends Dao
+    class GeoLocationDao extends Dao
+    class UserDao extends Dao
+    class VineyardDao extends Dao
+    class WineDao extends Dao
+    class WineListDao extends Dao
+    class WineNotesDao extends Dao
+    class WineReviewDao extends Dao
 
-    AggregatedDao --|> Dao
-    GeoLocationDao --|> Dao
-    UserDao --|> Dao
-    VineyardDao --|> Dao
-    WineDao --|> Dao
-    WineListDao --|> Dao
-    WineNotesDao --|> Dao
-    WineReviewDao --|> Dao
 }
 
 package enums {
@@ -124,19 +138,27 @@ package utils {
         class ValidationException
     }
 
-    class WineValidator
-    class PasswordUtil
-    class Timer
+    class DatabaseObjectUniquer
+    class DateFormatter
+    class FilterUtil
+    class GeolocationResolver
+    class IconPaths
     class ImageReader
+    class NoDecimalCurrencyStringConverter
+    class PasswordUtil
+    class ProcessCsv
+    class Timer
     class WineImages
+    class WineState
+    class WineValidator
     class YearStringConverter
 
-    WineValidator -- exceptions : "throws"
+    WineValidator --> exceptions : "throws"
 }
 
 class App
 
-managers ..> dao : "uses"
+managers --> dao : "uses"
 
 gui --> service : "uses"
 
@@ -144,14 +166,15 @@ gui --> utils : "uses"
 
 service --> managers : "uses"
 
-model --> service : "stores"
+dao --> model : "accesses"
+DatabaseManager --> dao : "stores"
 
-enums --> service : "stores"
+enums <-- service : "uses"
 
 wrapper -- MainController : "initialises"
 
 App -- wrapper : "initialises"
 
-GuiManager -- popups : "creates"
+GuiManager --> gui : "manages"
 
 @enduml
