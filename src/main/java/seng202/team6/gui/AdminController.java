@@ -113,7 +113,11 @@ public class AdminController extends Controller {
     userList.setOnMouseClicked(this::selectUser);
 
     //==========| Reviews Tab |==========<
-    allFlaggedReviews = databaseManager.getWineReviewDao().getAllFlaggedReviews();
+    try {
+      allFlaggedReviews = databaseManager.getWineReviewDao().getAllFlaggedReviews();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     setupReviewTable();
     refreshReviewActions();
 
@@ -183,7 +187,11 @@ public class AdminController extends Controller {
             + "This action cannot be undone");
     Optional<ButtonType> result = confirmation.showAndWait();
     if (result.get() == ButtonType.OK) {
-      databaseManager.getWineReviewDao().deleteAllFromUser(workingUser);
+      try {
+        databaseManager.getWineReviewDao().deleteAllFromUser(workingUser);
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
@@ -342,7 +350,11 @@ public class AdminController extends Controller {
    */
   private void refreshReviewTable() {
     reviewsTable.getItems().clear();
-    allFlaggedReviews = databaseManager.getWineReviewDao().getAllFlaggedReviews();
+    try {
+      allFlaggedReviews = databaseManager.getWineReviewDao().getAllFlaggedReviews();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     reviewsTable.setItems(allFlaggedReviews);
 
   }
@@ -405,7 +417,11 @@ public class AdminController extends Controller {
   void onKeepAll() {
     for (int i = 0; i < allFlaggedReviews.size(); i++) {
       allFlaggedReviews.get(i).setFlag(0);
-      databaseManager.getWineReviewDao().updateWineReviewFlag(allFlaggedReviews.get(i));
+      try {
+        databaseManager.getWineReviewDao().updateWineReviewFlag(allFlaggedReviews.get(i));
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
       allFlaggedReviews.get(i).setSelected(false);
     }
     selectedReviews.clear();
@@ -419,7 +435,11 @@ public class AdminController extends Controller {
     log.info(selectedReviews.size());
     for (int i = 0; i < selectedReviews.size(); i++) {
       selectedReviews.get(i).setFlag(0);
-      databaseManager.getWineReviewDao().updateWineReviewFlag(selectedReviews.get(i));
+      try {
+        databaseManager.getWineReviewDao().updateWineReviewFlag(selectedReviews.get(i));
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
       //selectedReviews.get(i).setSelected(false);
     }
     refreshReviewTable();

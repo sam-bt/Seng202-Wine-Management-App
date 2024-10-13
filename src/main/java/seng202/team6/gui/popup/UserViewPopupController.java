@@ -62,7 +62,11 @@ public class UserViewPopupController extends Controller {
     reviewsBox.setPrefWrapLength(600);
     reviewsBox.setAlignment(Pos.CENTER_LEFT);
 
-    socialService.init();
+    try {
+      socialService.init();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
 
     if (socialService.getUserReviews().isEmpty()) {
       noReviewsLabel.setVisible(true);
