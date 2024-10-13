@@ -238,7 +238,6 @@ public class ManageVineyardsController extends Controller {
     }
     if (!validateLogoUrl(logoUrl)) {
       popup.setErrorMessage("The logo URL was invalid and did not point to an image");
-      System.out.println(logoUrl);
       return false;
     }
     return true;
