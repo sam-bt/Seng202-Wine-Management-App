@@ -1,0 +1,21 @@
+@startuml
+left to right direction
+
+rectangle "Wino System" {
+    usecase "UC_1 View Raw Wines" as UC_1
+    usecase "UC_2 Browse Wines on Map" as UC_2
+    usecase "UC_3 Filter Wines" as UC_3
+    usecase "UC_15 View Specific Wine" as UC_15
+    usecase "UC_21 View All Reviews" as UC_21
+    usecase "UC_20 Filter Specific Reviews" as UC_20
+    usecase "UC_22 Compare Wines" as UC_22
+}
+
+User --> UC_1
+UC_1 .> UC_2 : extends
+UC_1 .> UC_3 : extends
+UC_1 .> UC_15 : extends
+User --> UC_21
+UC_21 .> UC_20 : extends
+User --> UC_22
+@enduml

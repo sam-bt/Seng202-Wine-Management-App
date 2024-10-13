@@ -1,0 +1,27 @@
+@startuml
+left to right direction
+
+rectangle "Wino System" {
+    usecase "UC_4 Register a User" as UC_4
+    usecase "UC_5 Login" as UC_5
+    usecase "UC_6 Update Password" as UC_6
+    usecase "UC_7 Logout" as UC_7
+    usecase "UC_11 View Personal Wine Lists" as UC_11
+    usecase "UC_12 Create Personal Wine Lists" as UC_12
+    usecase "UC_13 Add Wines to Personal Wine Lists" as UC_13
+    usecase "UC_14 Delete Personal Wine Lists" as UC_14
+    usecase "UC_19 Search Users" as UC_19
+    usecase "UC_48 Open Detailed View from List" as UC_48
+}
+
+User --> UC_4
+User --> UC_5
+UC_5 .> UC_6 : extends
+UC_5 .> UC_7 : extends
+UC_5 .> UC_11 : extends
+UC_5 .> UC_12 : extends
+UC_5 .> UC_13 : extends
+UC_5 .> UC_14 : extends
+UC_11 .> UC_48 : extends
+User --> UC_19
+@enduml

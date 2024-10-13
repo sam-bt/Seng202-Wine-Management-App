@@ -1,0 +1,60 @@
+@startuml
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor Admin
+
+rectangle "WINO System" {
+    usecase "UC_1 View Raw Wines" as UC_1
+    usecase "UC_2 Browse Wines on Map" as UC_2
+    usecase "UC_3 Filter Wines" as UC_3
+    usecase "UC_4 Register a User" as UC_4
+    usecase "UC_5 Login" as UC_5
+    usecase "UC_6 Update Password" as UC_6
+    usecase "UC_7 Logout" as UC_7
+    usecase "UC_10 Flag Review" as UC_10
+    usecase "UC_11 View Personal Wine Lists" as UC_11
+    usecase "UC_12 Create Personal Wine Lists" as UC_12
+    usecase "UC_13 Add Wines to Personal Wine Lists" as UC_13
+    usecase "UC_14 Delete Personal Wine Lists" as UC_14
+    usecase "UC_15 View Specific Wine" as UC_15
+    usecase "UC_16 Save Note on Specific Wine" as UC_16
+    usecase "UC_17" View User Profile from Review" as UC_17
+    usecase "UC_18 View User Profile from Search" as UC_19
+    usecase "UC_19 Search Users" as UC_19
+    usecase "UC_20 Filter Specific Reviews" as UC_20
+    usecase "UC_21 View All Reviews" as UC_21
+    usecase "UC_22 Compare Wines" as UC_22
+    usecase "UC_23 Compare Wines from Detailed Wine View" as UC_23
+    usecase "UC_24 View Another page of Wines" as UC_25
+    usecase "UC_25 View Vineyards Simple View" as UC_26
+    usecase "UC26 View Vineyards in a Map View" as UC_26
+    usecase "UC_27 View Detailed Information about Vineyards" as UC_27
+    usecase "UC_28 Filter Vineyards" as UC_28
+    usecase "UC_29 Create Tour Manually" as UC_29
+    usecase "UC_30 Create Tour from List" as UC_30
+    usecase "UC_31 Open Tour" as UC_31
+    usecase "UC_32 View Tour on Map" as UC_32
+    usecase "UC_33 Delete Tour" as UC_33
+    usecase "UC_34 View Simplified Wines" as UC_34
+    usecase "UC_35 View Notes" as UC_35
+    usecase "UC_36 View Note for a Wine" as UC_36
+    usecase "UC_37 Delete a Note for a Wine" as UC_37
+    usecase "UC_38 Edit Note from Notes Page" as UC_38
+}
+
+' use cases that dont depend on anything
+User --> UC_1
+User --> UC_2
+UC_1 .> UC_3 : extends
+User --> UC_4
+User --> UC_5
+UC_5 .> UC_6 : extends
+UC_5 .> UC_7 : extends
+UC_5 .> UC_10 : extends
+UC_5 .> UC_11 : extends
+UC_5 .> UC_12 : extends
+UC_5 .> UC_13 : extends
+UC_5 .> UC_14 : extends
+@enduml

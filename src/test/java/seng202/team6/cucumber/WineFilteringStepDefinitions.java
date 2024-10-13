@@ -13,12 +13,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.Filters;
+import seng202.team6.model.WineFilters;
 import seng202.team6.model.Wine;
 
 public class WineFilteringStepDefinitions {
+
   private DatabaseManager databaseManager;
-  private Filters filters;
+  private WineFilters wineFilters;
   private List<Wine> filteredWines;
 
   @Before
@@ -28,21 +29,21 @@ public class WineFilteringStepDefinitions {
 
   @After
   public void close() {
-    databaseManager.close();
+    databaseManager.teardown();
   }
 
   @Given("the user is viewing the raw wine data")
   public void theUserIsViewingTheRawWineData() {
-    filters = new Filters();
+    wineFilters = new WineFilters();
     filteredWines = new ArrayList<>();
   }
 
   @And("the wine with title: {string}, country: {string}, region: {string}, colour: {string}, vintage: {int}, score: {int}, abv: {float}, price ${float}")
-  public void theWineWithTitleRegionVintageScorePrice$(String title, String country, String region, String colour, int vintage, int score, float abv, float price)
+  public void theWineWithTitleRegionVintageScorePrice$(String title, String country, String region,
+      String colour, int vintage, int score, float abv, float price)
       throws SQLException {
     Wine wine = new Wine(
         -1,
-        null,
         title,
         "",
         country,
@@ -54,54 +55,57 @@ public class WineFilteringStepDefinitions {
         score,
         abv,
         price,
-        null);
-    databaseManager.addWines(List.of(wine));
+        null,
+        0.0);
+    databaseManager.getWineDao().addAll(List.of(wine));
   }
 
   @When("the user searches for title containing {string}")
-  public void theUserSearchesForTitleContaining(String title) {
-    filters.setTitle(title);
+  public void theUserSearchesForTitleContaining(String title) throws SQLException {
+    wineFilters.setTitle(title);
     applySearch();
   }
 
   @When("the user searches for country matching {string}")
-  public void theUserSearchesForCountryMatching(String country) {
-    filters.setCountry(country);
+  public void theUserSearchesForCountryMatching(String country) throws SQLException {
+    wineFilters.setCountry(country);
     applySearch();
   }
 
   @When("the user searches for colour matching {string}")
-  public void theUserSearchesForColourMatching(String colour) {
-    filters.setColor(colour);
+  public void theUserSearchesForColourMatching(String colour) throws SQLException {
+    wineFilters.setColor(colour);
     applySearch();
   }
 
 
   @When("the user searches for vintage between {int} and {int}")
-  public void theUserSearchesForVintageBetweenAnd(int minVintage, int maxVintage) {
-    filters.setMinVintage(minVintage);
-    filters.setMaxVintage(maxVintage);
+  public void theUserSearchesForVintageBetweenAnd(int minVintage, int maxVintage)
+      throws SQLException {
+    wineFilters.setMinVintage(minVintage);
+    wineFilters.setMaxVintage(maxVintage);
     applySearch();
   }
 
   @When("the user searches for score between {int} and {int}")
-  public void theUserSearchesForScoreBetweenAnd(int minScore, int maxScore) {
-    filters.setMinScore(minScore);
-    filters.setMaxScore(maxScore);
+  public void theUserSearchesForScoreBetweenAnd(int minScore, int maxScore) throws SQLException {
+    wineFilters.setMinScore(minScore);
+    wineFilters.setMaxScore(maxScore);
     applySearch();
   }
 
   @When("the user searches for abv between {double} and {double}")
-  public void theUserSearchesForAbvBetweenAnd(double minAbv, double maxAbv) {
-    filters.setMinAbv(minAbv);
-    filters.setMaxAbv(maxAbv);
+  public void theUserSearchesForAbvBetweenAnd(double minAbv, double maxAbv) throws SQLException {
+    wineFilters.setMinAbv(minAbv);
+    wineFilters.setMaxAbv(maxAbv);
     applySearch();
   }
 
   @When("the user searches for price between {double} and {double}")
-  public void theUserSearchesForPriceBetweenAnd(double minPrice, double maxPrice) {
-    filters.setMinPrice(minPrice);
-    filters.setMaxPrice(maxPrice);
+  public void theUserSearchesForPriceBetweenAnd(double minPrice, double maxPrice)
+      throws SQLException {
+    wineFilters.setMinPrice(minPrice);
+    wineFilters.setMaxPrice(maxPrice);
     applySearch();
   }
 
@@ -125,7 +129,8 @@ public class WineFilteringStepDefinitions {
 
 
   @Then("the list of wines is updated to show wines with vintage between {int} and {int}")
-  public void theListOfWinesIsUpdatedToShowWinesWithVintageBetweenAnd(int minVintage, int maxVintage) {
+  public void theListOfWinesIsUpdatedToShowWinesWithVintageBetweenAnd(int minVintage,
+      int maxVintage) {
     assertTrue(filteredWines.stream()
         .allMatch(wine -> wine.getVintage() >= minVintage && wine.getVintage() <= maxVintage));
   }
@@ -133,7 +138,8 @@ public class WineFilteringStepDefinitions {
   @Then("the list of wines is updated to show wines with score between {int} and {int}")
   public void theListOfWinesIsUpdatedToShowWinesWithScoreBetweenAnd(int minScore, int maxScore) {
     assertTrue(filteredWines.stream()
-        .allMatch(wine -> wine.getScorePercent() >= minScore && wine.getScorePercent() <= maxScore));
+        .allMatch(
+            wine -> wine.getScorePercent() >= minScore && wine.getScorePercent() <= maxScore));
   }
 
   @Then("the list of wines is updated to show wines with abv between {double} and {double}")
@@ -143,13 +149,14 @@ public class WineFilteringStepDefinitions {
   }
 
   @Then("the list of wines is updated to show wines with price between ${double} and ${double}")
-  public void theListOfWinesIsUpdatedToShowWinesWithPriceBetweenAnd(double minPrice, double maxPrice) {
+  public void theListOfWinesIsUpdatedToShowWinesWithPriceBetweenAnd(double minPrice,
+      double maxPrice) {
     assertTrue(filteredWines.stream()
         .allMatch(wine -> wine.getPrice() >= minPrice && wine.getPrice() <= maxPrice));
   }
 
-  private void applySearch() {
-    filteredWines = databaseManager.getWinesInRange(0, Integer.MAX_VALUE, filters);
+  private void applySearch() throws SQLException {
+    filteredWines = databaseManager.getWineDao().getAllInRange(0, Integer.MAX_VALUE, wineFilters);
   }
 
   @And("the list of wines has size {int}")

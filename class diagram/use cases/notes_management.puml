@@ -1,0 +1,15 @@
+@startuml
+left to right direction
+
+rectangle "Wino System" {
+    usecase "UC_35 View Notes" as UC_35
+    usecase "UC_36 View Note for a Wine" as UC_36
+    usecase "UC_37 Delete a Note for a Wine" as UC_37
+    usecase "UC_38 Edit Note from Notes Page" as UC_38
+}
+
+AuthenticatedUser --> UC_35
+AuthenticatedUser --> UC_36
+UC_36 .> UC_37 : extends
+UC_36 .> UC_38 : extends
+@enduml

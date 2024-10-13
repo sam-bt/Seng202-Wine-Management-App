@@ -10,46 +10,46 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.sql.SQLException;
+import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
-import seng202.team6.model.AuthenticationResponse;
-import seng202.team6.service.AuthenticationService;
+import seng202.team6.enums.AuthenticationResponse;
 
 public class UserLogoutStepDefinitions {
-  private AuthenticationService authenticationService;
+
+  private AuthenticationManager authenticationManager;
 
   @Before
   public void setup() throws SQLException {
-    DatabaseManager databaseManager = new DatabaseManager();
-    authenticationService = new AuthenticationService(databaseManager);
+    authenticationManager = new AuthenticationManager(new DatabaseManager());
   }
 
   @Given("the user is authenticated and wants to logout")
   public void theUserIsAuthenticatedAndWantsToLogout() {
     String username = "MyAccount";
-    String password = "MyPassword";
+    String password = "ValidPassword1!";
 
-    AuthenticationResponse registrationResponse = authenticationService.validateRegistration(
+    AuthenticationResponse registrationResponse = authenticationManager.validateRegistration(
         username, password, password);
     assertEquals(AuthenticationResponse.REGISTER_SUCCESS, registrationResponse);
 
-    AuthenticationResponse loginResponse = authenticationService.validateLogin(username, password);
+    AuthenticationResponse loginResponse = authenticationManager.validateLoginPassword(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, loginResponse);
 
-    assertTrue(authenticationService.isAuthenticated());
-    assertEquals(authenticationService.getAuthenticatedUsername(), username);
+    assertTrue(authenticationManager.isAuthenticated());
+    assertEquals(authenticationManager.getAuthenticatedUsername(), username);
   }
 
   @When("the user requests to logout")
   public void theUserRequestsToLogout() {
-    authenticationService.logout();
+    authenticationManager.logout();
   }
 
   @Then("the user is logged out of their account")
   public void theUserIsLoggedOutOfTheirAccount() {
-    assertFalse(authenticationService.isAuthenticated());
-    assertFalse(authenticationService.isAdmin());
-    assertFalse(authenticationService.isAdminFirstLogin());
-    assertNull(authenticationService.getAuthenticatedUsername());
+    assertFalse(authenticationManager.isAuthenticated());
+    assertFalse(authenticationManager.isAdmin());
+    assertFalse(authenticationManager.isAdminFirstLogin());
+    assertNull(authenticationManager.getAuthenticatedUsername());
   }
 
 }

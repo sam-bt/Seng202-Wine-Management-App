@@ -17,5 +17,11 @@ build/
 .gradle/
 
 # Database file
-sqlDatabase/
+database/
 *.db
+
+#uml picture
+class diagram/*.png
+
+# Environment variables
+src/main/resources/.env

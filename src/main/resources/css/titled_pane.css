@@ -1,5 +1,7 @@
 .titled-pane > .title {
     -fx-background-color: #F87171;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
 }
 
 .titled-pane > .title > *.text {

@@ -1,4 +1,5 @@
 Feature: User Login
+
   Scenario: Login successfully with correct username and password combination (AT_6)
     Given the user is not authenticated and is logging in
     When the user enters a correct username and password combination

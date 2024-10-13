@@ -1,0 +1,29 @@
+@startuml
+left to right direction
+
+rectangle "Wino System" {
+    usecase "UC_8 Delete Accounts" as UC_8
+    usecase "UC_9 Import Dataset" as UC_9
+    usecase "UC_39 Delete Users Review" as UC_39
+    usecase "UC_40 Change a users password" as UC_40
+    usecase "UC_41 Delete all users" as UC_41
+    usecase "UC_42 Keep Selected Review" as UC_42
+    usecase "UC_43 Delete Selected Review" as UC_43
+    usecase "UC_44 Keep All Reviews" as UC_44
+    usecase "UC_45 Delete All Reviews" as UC_45
+    usecase "UC_46 Create New Vineyard" as UC_46
+    usecase "UC_47 Delete User" as UC_47
+}
+
+Admin --> UC_8
+Admin --> UC_9
+Admin --> UC_39
+Admin --> UC_40
+Admin --> UC_41
+Admin --> UC_42
+Admin --> UC_44
+Admin --> UC_45
+Admin --> UC_46
+Admin --> UC_47
+
+@enduml
