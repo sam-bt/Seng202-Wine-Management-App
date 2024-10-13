@@ -205,7 +205,7 @@ public class WineReviewDao extends Dao {
             timer.currentOffsetMilliseconds());
       }
     }
-    wineReviewCache.clear();
+    wineReviewCache.removeObject(wineReview.getId());
   }
 
   /**
