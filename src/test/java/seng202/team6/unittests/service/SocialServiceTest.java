@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.sql.Date;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,9 @@ public class SocialServiceTest {
   private User user;
   private WineReviewDao wineReviewDao;
 
+  /**
+   * Sets up the database and social service before each test.
+   */
   @BeforeEach
   public void setUp() {
     // mock dependencies
@@ -35,10 +39,13 @@ public class SocialServiceTest {
     // Ensure correct return from mocked database
     when(databaseManager.getWineReviewDao()).thenReturn(wineReviewDao);
 
-    socialService = new SocialService(authenticationManager,
+    socialService = new SocialService(
         databaseManager, user);
   }
 
+  /**
+   * Tests that the initialize function populates the user reviews.
+   */
   @Test
   void testInitPopulatesUserReviews() {
 
@@ -62,6 +69,9 @@ public class SocialServiceTest {
     verify(wineReviewDao, times(1)).getAll(user);
   }
 
+  /**
+   * Tests that the user review is empty before getting initialized.
+   */
   @Test
   void testGetUserReviewsIsEmptyBeforeInit() {
     ObservableList<WineReview> wineReviews = FXCollections.observableArrayList();
@@ -72,10 +82,10 @@ public class SocialServiceTest {
 
   private void addReviewsToArray(ObservableList<WineReview> reviews) {
     Date date = new Date(System.currentTimeMillis());
-    reviews.add(new WineReview(1, 1, user.getUsername(), 3., "Not bad", date));
-    reviews.add(new WineReview(2, 2, user.getUsername(), 4., "Bad", date));
-    reviews.add(new WineReview(3, 3, user.getUsername(), 5., "Good", date));
-    reviews.add(new WineReview(4, 4, user.getUsername(), 6., "Good", date));
+    reviews.add(new WineReview(1, 1, user.getUsername(), 3., "Not bad", date, 0));
+    reviews.add(new WineReview(2, 2, user.getUsername(), 4., "Bad", date,0));
+    reviews.add(new WineReview(3, 3, user.getUsername(), 5., "Good", date,0));
+    reviews.add(new WineReview(4, 4, user.getUsername(), 6., "Good", date,0));
   }
 
 }
