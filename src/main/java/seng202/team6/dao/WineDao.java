@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javafx.collections.FXCollections;
@@ -337,7 +336,6 @@ public class WineDao extends Dao {
       connection.setAutoCommit(true);
     }
     log.info("Successfully {} wines in {}ms", wines.size(), timer.currentOffsetMilliseconds());
-
   }
 
   /**
@@ -347,6 +345,7 @@ public class WineDao extends Dao {
    */
   public void add(Wine wine) throws SQLException {
     addList(Collections.singletonList(wine));
+    updateUniques(wine); // Check if new wine updates uniques
   }
 
   /**
@@ -359,6 +358,9 @@ public class WineDao extends Dao {
     for (int i = 0; i < wines.size(); i += 2048) {
       addList(wines.subList(i, Math.min(wines.size(), i + 2048)));
     }
+
+    // Update uniques due to new values
+    updateUniques();
   }
 
   /**
@@ -439,7 +441,7 @@ public class WineDao extends Dao {
    *
    * @param set The ResultSet from which geolocations are to be extracted
    * @return The extract Geolocation if available, otherwise null if either the latitude or
-   *         longitude were null
+   *     longitude were null
    * @throws SQLException If an error occurs while processing the ResultSet
    */
   private GeoLocation createGeoLocation(ResultSet set) throws SQLException {
@@ -622,6 +624,26 @@ public class WineDao extends Dao {
     } catch (SQLException e) {
       log.error("Failed to update unique values wine cache", e);
     }
+  }
+
+  /**
+   * Update uniques that handles a single wine instead.
+   *
+   * @param wine The new wine to check
+   */
+  public void updateUniques(Wine wine) {
+
+    // Add wine data to sets
+    wineDataStatService.getUniqueTitles().add(wine.getTitle());
+    wineDataStatService.getUniqueCountries().add(wine.getCountry());
+    wineDataStatService.getUniqueWineries().add(wine.getWinery());
+    wineDataStatService.getUniqueColors().add(wine.getColor());
+
+    // Check mins and maxes
+    updateMinMax("vintage", wine.getVintage());
+    updateMinMax("score", wine.getScorePercent());
+    updateMinMax("abv", wine.getAbv());
+    updateMinMax("price", wine.getPrice());
   }
 
   /**
