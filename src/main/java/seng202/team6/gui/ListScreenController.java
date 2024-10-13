@@ -101,10 +101,15 @@ public class ListScreenController extends Controller {
     boolean canRemoveSelected = wineListService.canRemove(selectedWineList);
     deleteListRequestButton.setDisable(!canRemoveSelected);
     tabViewing.setText("VIEWING: " + selectedWineList.name());
-    ObservableList<Wine> observableList = getManagerContext()
-        .getDatabaseManager()
-        .getAggregatedDao()
-        .getWinesInList(selectedWineList);
+    ObservableList<Wine> observableList = null;
+    try {
+      observableList = getManagerContext()
+          .getDatabaseManager()
+          .getAggregatedDao()
+          .getWinesInList(selectedWineList);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     setupTableView(observableList);
   }
 

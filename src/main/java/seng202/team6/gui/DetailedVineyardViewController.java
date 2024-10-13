@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -69,8 +70,13 @@ public class DetailedVineyardViewController extends Controller {
     imageView.setImage(image);
     imageView.setPreserveRatio(true);
 
-    ObservableList<Wine> wines = getManagerContext().getDatabaseManager().getAggregatedDao()
-        .getWinesFromVineyard(vineyard);
+    ObservableList<Wine> wines = null;
+    try {
+      wines = getManagerContext().getDatabaseManager().getAggregatedDao()
+          .getWinesFromVineyard(vineyard);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     wines.forEach(this::createWineCard);
   }
 
