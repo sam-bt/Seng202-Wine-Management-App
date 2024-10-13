@@ -1,0 +1,18 @@
+@startuml
+left to right direction
+
+rectangle "Wino System" {
+    usecase "UC_29 Create Tour Manually" as UC_29
+    usecase "UC_30 Create Tour from List" as UC_30
+    usecase "UC_31 Open Tour" as UC_31
+    usecase "UC_32 View Tour on Map" as UC_32
+    usecase "UC_33 Delete Tour" as UC_33
+}
+
+AuthenticatedUser --> UC_29
+AuthenticatedUser --> UC_30
+UC_29 .> UC_31 : extends
+UC_30 .> UC_31 : extends
+UC_31 .> UC_32 : extends
+UC_31 .> UC_33 : extends
+@enduml

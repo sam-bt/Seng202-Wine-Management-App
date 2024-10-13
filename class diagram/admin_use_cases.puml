@@ -1,0 +1,14 @@
+@startuml
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor Admin
+
+rectangle "WINO System" {
+    usecase "UC_8 Delete Accounts" as UC_8
+    usecase "UC_9 Import Dataset" as UC_9
+    usecase "UC_46 Create New Vineyard" as UC_46
+    usecase "UC_47 Create New Vinetard "
+}
+@enduml

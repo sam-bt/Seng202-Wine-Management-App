@@ -1,0 +1,15 @@
+@startuml
+left to right direction
+
+rectangle "Wino System" {
+    usecase "UC_25 View Vineyards Simple View" as UC_25
+    usecase "UC_26 View Vineyards in a Map View" as UC_26
+    usecase "UC_27 View Detailed Information about Vineyards" as UC_27
+    usecase "UC_28 Filter Vineyards" as UC_28
+}
+
+User --> UC_25
+UC_25 .> UC_26 : extends
+UC_25 .> UC_27 : extends
+UC_25 .> UC_28 : extends
+@enduml
