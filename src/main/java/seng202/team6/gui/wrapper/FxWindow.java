@@ -37,11 +37,9 @@ public class FxWindow extends Application {
   public void start(Stage primaryStage) throws IOException {
     FXMLLoader baseLoader = new FXMLLoader(getClass().getResource("/fxml/fx_wrapper.fxml"));
     Parent root = baseLoader.load();
-
     FxWrapper baseController = baseLoader.getController();
     baseController.init(primaryStage);
-
-    primaryStage.setTitle("WINO App [DEV]");
+    primaryStage.setTitle("WINO");
     Scene scene = new Scene(root);
     primaryStage.setResizable(false);
     primaryStage.setMinHeight(900);
