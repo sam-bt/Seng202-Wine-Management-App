@@ -17,40 +17,40 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="400.0" prefWidth="1370.0" stylesheets="@../css/detailed_view.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.DetailedWineViewController">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="400.0" prefWidth="1370.0" stylesheets="@../css/detailed_view.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.DetailedWineViewController">
   <children>
-    <TitledPane fx:id="viewingWineTitledPane" animated="false" collapsible="false" prefHeight="780.0" prefWidth="1016.0" stylesheets="@../css/titled_pane.css" text="Viewing Wine: Wine Name">
+    <TitledPane fx:id="viewingWineTitledPane" animated="false" collapsible="false" focusTraversable="false" prefHeight="780.0" prefWidth="1016.0" stylesheets="@../css/titled_pane.css" text="Viewing Wine: Wine Name">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="336.0">
           <children>
             <GridPane layoutX="381.0" layoutY="49.0" prefHeight="214.0" prefWidth="616.0">
               <children>
-                <Label text="Variety:">
+                <Label focusTraversable="false" text="Variety:">
                   <font>
                     <Font size="16.0" />
                   </font>
                 </Label>
-                <Label text="Country:" GridPane.rowIndex="1">
+                <Label focusTraversable="false" text="Country:" GridPane.rowIndex="1">
                   <font>
                     <Font size="16.0" />
                   </font>
                 </Label>
-                <Label text="Vintage:" GridPane.rowIndex="2">
+                <Label focusTraversable="false" text="Vintage:" GridPane.rowIndex="2">
                   <font>
                     <Font size="16.0" />
                   </font>
                 </Label>
-                <Label text="Colour:" GridPane.columnIndex="3">
+                <Label focusTraversable="false" text="Colour:" GridPane.columnIndex="3">
                   <font>
                     <Font size="16.0" />
                   </font>
                 </Label>
-                <Label text="Region:" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                <Label focusTraversable="false" text="Region:" GridPane.columnIndex="3" GridPane.rowIndex="1">
                   <font>
                     <Font size="16.0" />
                   </font>
                 </Label>
-                <Label text="Price:" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                <Label focusTraversable="false" text="Price:" GridPane.columnIndex="3" GridPane.rowIndex="2">
                   <font>
                     <Font size="16.0" />
                   </font>
@@ -77,22 +77,22 @@
             </GridPane>
             <GridPane fx:id="descriptionScoreNotesGridPane" layoutX="14.0" layoutY="274.0" prefHeight="355.0" prefWidth="986.0">
               <children>
-                <Label text="Description">
+                <Label focusTraversable="false" text="Description">
                   <font>
                     <Font size="16.0" />
                   </font>
                 </Label>
-                <Label fx:id="noteLabel" text="My Notes" GridPane.rowIndex="3">
+                <Label fx:id="noteLabel" focusTraversable="false" text="My Notes" GridPane.rowIndex="3">
                   <font>
                     <Font size="16.0" />
                   </font>
                 </Label>
-                <Label text="Score" GridPane.columnIndex="2">
+                <Label focusTraversable="false" text="Score" GridPane.columnIndex="2">
                   <font>
                     <Font size="16.0" />
                   </font>
                 </Label>
-                <TextArea fx:id="descriptionArea" editable="false" prefHeight="200.0" prefWidth="647.0" wrapText="true" GridPane.rowIndex="1" />
+                <TextArea fx:id="descriptionArea" editable="false" focusTraversable="false" prefHeight="200.0" prefWidth="647.0" wrapText="true" GridPane.rowIndex="1" />
                 <TextArea fx:id="notesTextbox" prefHeight="200.0" prefWidth="200.0" styleClass="notes-area" GridPane.rowIndex="4" />
                         <WebView fx:id="webView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.rowSpan="2" />
               </children>
@@ -111,7 +111,7 @@
             </GridPane>
             <HBox fx:id="ratingsContainer" alignment="CENTER_LEFT" layoutX="381.0" layoutY="25.0" maxHeight="45.0" minHeight="30.0" prefHeight="30.0" prefWidth="616.0">
               <children>
-                <Label fx:id="ratingsLabel" text="Label">
+                <Label fx:id="ratingsLabel" focusTraversable="false" text="Label">
                   <HBox.margin>
                     <Insets left="10.0" />
                   </HBox.margin>
@@ -158,7 +158,7 @@
         <Font name="System Bold" size="24.0" />
       </font>
     </TitledPane>
-    <TitledPane animated="false" collapsible="false" layoutX="1032.0" prefHeight="780.0" prefWidth="338.0" stylesheets="@../css/titled_pane.css" text="Reviews">
+    <TitledPane animated="false" collapsible="false" focusTraversable="false" layoutX="1032.0" prefHeight="780.0" prefWidth="338.0" stylesheets="@../css/titled_pane.css" text="Reviews">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="336.0">
           <children>
@@ -169,7 +169,7 @@
                     <Font name="System Bold" size="16.0" />
                   </font>
                 </Button>
-                <Label fx:id="loginToReviewLabel" alignment="CENTER" disable="true" text="Login to add a review!" textAlignment="CENTER" visible="false">
+                <Label fx:id="loginToReviewLabel" alignment="CENTER" disable="true" focusTraversable="false" text="Login to add a review!" textAlignment="CENTER" visible="false">
                   <font>
                     <Font name="System Bold" size="16.0" />
                   </font>
@@ -182,7 +182,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutY="14.0" maxWidth="337.0" minWidth="-Infinity" prefHeight="661.0" prefWidth="336.0" stylesheets="@../css/scroll_pane.css">
+            <ScrollPane fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" layoutY="14.0" maxWidth="337.0" minWidth="-Infinity" prefHeight="661.0" prefWidth="336.0" stylesheets="@../css/scroll_pane.css">
               <content>
                 <VBox fx:id="reviewsBox" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
               </content>

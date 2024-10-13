@@ -46,7 +46,7 @@
                      <children>
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
-                              <TitledPane animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="450.0" text="Users">
+                              <TitledPane animated="false" collapsible="false" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="450.0" text="Users">
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
@@ -61,33 +61,10 @@
                                     <Font name="System Bold" size="16.0" />
                                  </font>
                               </TitledPane>
-                              <TitledPane animated="false" collapsible="false" prefWidth="550.0" text="Selected Actions">
+                              <TitledPane animated="false" collapsible="false" focusTraversable="false" prefWidth="550.0" text="Selected Actions">
                                 <content>
                                   <AnchorPane fx:id="selectedActionsPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="550.0">
                                        <children>
-                                          <AnchorPane fx:id="passwordBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="200.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <children>
-                                                <Label fx:id="passwordBoxLabel" alignment="CENTER" layoutX="50.0" layoutY="14.0" text="Enter New Password" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="14.0">
-                                                   <font>
-                                                      <Font name="System Bold" size="18.0" />
-                                                   </font>
-                                                </Label>
-                                                <PasswordField fx:id="passwordField" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="40.0" />
-                                                <PasswordField fx:id="confirmField" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="110.0" />
-                                                <Button fx:id="acceptPassword" mnemonicParsing="false" onAction="#onNewPasswordAccept" styleClass="secondary-button" stylesheets="@../css/global.css" text="Accept" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="175.0" />
-                                                <Button fx:id="cancelPasswordButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onNewPasswordCancel" styleClass="secondary-button" stylesheets="@../css/global.css" text="Cancel" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="60.0" />
-                                                <Label fx:id="passwordErrorLabel" alignment="TOP_CENTER" textAlignment="CENTER" textFill="RED" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="190.0">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label layoutX="89.0" layoutY="84.0" text="Confirm New Password:">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Label>
-                                             </children>
-                                          </AnchorPane>
                                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="250.0">
                                              <children>
                                                 <Label fx:id="userLabel" text="No User">
@@ -108,13 +85,36 @@
                                                       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                    </VBox.margin>
                                                 </Button>
-                                                <Button fx:id="resetPasswordButton" mnemonicParsing="false" onAction="#onResetPassword" styleClass="secondary-button" stylesheets="@../css/global.css" text="Reset Password">
+                                                <Button fx:id="resetPasswordButton" mnemonicParsing="false" onAction="#onResetPassword" prefHeight="34.0" prefWidth="211.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Reset Password">
                                                    <VBox.margin>
                                                       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                    </VBox.margin>
                                                 </Button>
                                              </children>
                                           </VBox>
+                                          <AnchorPane fx:id="passwordBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="200.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <Label fx:id="passwordBoxLabel" alignment="CENTER" focusTraversable="false" layoutX="50.0" layoutY="14.0" text="Enter New Password" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="14.0">
+                                                   <font>
+                                                      <Font name="System Bold" size="18.0" />
+                                                   </font>
+                                                </Label>
+                                                <PasswordField fx:id="passwordField" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="40.0" />
+                                                <PasswordField fx:id="confirmField" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="110.0" />
+                                                <Button fx:id="acceptPassword" mnemonicParsing="false" onAction="#onNewPasswordAccept" styleClass="secondary-button" stylesheets="@../css/global.css" text="Accept" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="175.0" />
+                                                <Button fx:id="cancelPasswordButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onNewPasswordCancel" styleClass="secondary-button" stylesheets="@../css/global.css" text="Cancel" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="60.0" />
+                                                <Label fx:id="passwordErrorLabel" alignment="TOP_CENTER" focusTraversable="false" textAlignment="CENTER" textFill="RED" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="190.0">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label focusTraversable="false" layoutX="89.0" layoutY="84.0" text="Confirm New Password:">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </AnchorPane>
                                        </children>
                                     </AnchorPane>
                                 </content>
@@ -177,8 +177,8 @@
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="220.0" prefWidth="40.0">
                                  <children>
-                                    <Button fx:id="keepSelected" mnemonicParsing="false" onAction="#onKeepSelected" styleClass="secondary-button" text="Keep Selected" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                    <Button fx:id="deleteSelected" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteSelected" styleClass="primary-button" text="Delete Selected" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0" />
+                                    <Button fx:id="keepSelected" mnemonicParsing="false" onAction="#onKeepSelected" prefHeight="34.0" prefWidth="175.0" styleClass="secondary-button" text="Keep Selected" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <Button fx:id="deleteSelected" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteSelected" prefHeight="34.0" prefWidth="175.0" styleClass="primary-button" text="Delete Selected" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0" />
                                     <Pane prefHeight="200.0" prefWidth="200.0" styleClass="primary-background" AnchorPane.bottomAnchor="115.0" AnchorPane.leftAnchor="-11.0" AnchorPane.rightAnchor="-11.0" AnchorPane.topAnchor="100.0">
                                        <children>
                                           <Label fx:id="bulkLabel" prefHeight="40.0" prefWidth="330.0" text="   Bulk Actions" textFill="WHITE">
@@ -188,8 +188,8 @@
                                           </Label>
                                        </children>
                                     </Pane>
-                                    <Button fx:id="keepAll" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onKeepAll" styleClass="secondary-button" text="Keep All" AnchorPane.topAnchor="150.0" />
-                                    <Button fx:id="deleteAll" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#onDeleteAll" styleClass="primary-button" text="Delete All" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="200.0" />
+                                    <Button fx:id="keepAll" layoutX="7.0" layoutY="163.0" mnemonicParsing="false" onAction="#onKeepAll" prefHeight="34.0" prefWidth="122.0" styleClass="secondary-button" text="Keep All" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="163.0" />
+                                    <Button fx:id="deleteAll" layoutX="26.0" layoutY="246.0" mnemonicParsing="false" onAction="#onDeleteAll" prefHeight="34.0" prefWidth="122.0" styleClass="primary-button" text="Delete All" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="220.0" />
                                  </children></AnchorPane>
                           </content>
                            <HBox.margin>
