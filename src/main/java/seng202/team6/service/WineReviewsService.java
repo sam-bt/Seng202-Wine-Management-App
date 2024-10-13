@@ -68,7 +68,7 @@ public class WineReviewsService {
   }
 
   /**
-   * Adds or removes a user review.
+   * Adds or update a user review.
    *
    * @param rating      rating
    * @param description description

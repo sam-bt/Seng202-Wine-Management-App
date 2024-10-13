@@ -1,10 +1,8 @@
 package seng202.team6.unittests.service;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javafx.beans.binding.StringBinding;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,4 +69,5 @@ public class WineReviewServiceTest {
     expectedCaption = "From " + wineReview.getUsername() + " on " + expectedFormattedDate;
     assertEquals(expectedCaption, captionBinding.get());
   }
+
 }
