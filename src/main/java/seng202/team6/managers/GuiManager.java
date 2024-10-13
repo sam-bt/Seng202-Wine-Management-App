@@ -18,6 +18,7 @@ import seng202.team6.gui.ConsumptionController;
 import seng202.team6.gui.Controller;
 import seng202.team6.gui.DetailedVineyardViewController;
 import seng202.team6.gui.DetailedWineViewController;
+import seng202.team6.gui.HelpController;
 import seng202.team6.gui.ListScreenController;
 import seng202.team6.gui.LoginController;
 import seng202.team6.gui.MainController;
@@ -473,6 +474,11 @@ public class GuiManager {
   public Parent loadImportWineScreen(Pane parent) {
     return loadFxml("/fxml/wine_import_screen.fxml",
         () -> new WineImportController(managerContext), parent);
+  }
+
+  public void launchHelpScreen() {
+    switchScene("/fxml/help_screen.fxml", "Help",
+        () -> new HelpController(managerContext));
   }
 
   /**
