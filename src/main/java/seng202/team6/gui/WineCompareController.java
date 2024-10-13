@@ -289,7 +289,7 @@ public class WineCompareController extends Controller {
       buttonsWrapper.setSpacing(20);
       buttonsWrapper.setAlignment(Pos.CENTER);
 
-      Button detailedViewButton = new Button("Open Detailed View");
+      Button detailedViewButton = new Button("Open Wine");
       detailedViewButton.setPrefWidth(200);
       detailedViewButton.getStyleClass().add("secondary-button");
       detailedViewButton.setOnMouseClicked((event) ->

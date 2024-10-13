@@ -1,10 +1,12 @@
 package seng202.team6.gui.popup;
 
 import java.sql.SQLException;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
+import org.apache.logging.log4j.LogManager;
 import seng202.team6.gui.Controller;
 import seng202.team6.gui.controls.container.AddRemoveCardsContainer;
 import seng202.team6.managers.ManagerContext;
@@ -43,6 +45,12 @@ public class AddToListPopupController extends Controller {
         wineListsContainer.viewportBoundsProperty(),
         wineListsContainer.widthProperty());
     wineListsContainer.setContent(addRemoveCardsContainer);
+
+    try {
+        wineListService.init();
+    } catch (SQLException error) {
+      LogManager.getLogger(getClass()).error("Failed to initialise the wine list service", error);
+    }
   }
 
   @FXML
