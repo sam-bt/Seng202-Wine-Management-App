@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class ConsumptionController extends Controller {
    *
    * @return history list
    */
-  private WineList getHistoryList() {
+  private WineList getHistoryList() throws SQLException {
     User user = getManagerContext().getAuthenticationManager().getAuthenticatedUser();
     return getManagerContext().getDatabaseManager().getWineListDao().getAll(user)
         .stream()
@@ -119,7 +120,7 @@ public class ConsumptionController extends Controller {
    *
    * @return all wines consumed in the past week
    */
-  private ObservableList<WineDatePair> getPastWeekConsumption() {
+  private ObservableList<WineDatePair> getPastWeekConsumption() throws SQLException {
     ObservableList<WineDatePair> wineHistory =
         getManagerContext().getDatabaseManager().getAggregatedDao()
             .getWinesMappedWithDatesFromList(getHistoryList());
@@ -181,10 +182,15 @@ public class ConsumptionController extends Controller {
    */
   @Override
   public void init() {
-    ObservableList<WineDatePair> observableList = getPastWeekConsumption();
-    updateHistoryList(observableList);
-    updateTotalConsumptionBar(observableList);
-    updateConsumptionGraph(getManagerContext().getDatabaseManager().getAggregatedDao()
-        .getWinesMappedWithDatesFromList(getHistoryList()));
+    try {
+
+      ObservableList<WineDatePair> observableList = getPastWeekConsumption();
+      updateHistoryList(observableList);
+      updateTotalConsumptionBar(observableList);
+      updateConsumptionGraph(getManagerContext().getDatabaseManager().getAggregatedDao()
+          .getWinesMappedWithDatesFromList(getHistoryList()));
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -60,7 +61,11 @@ public class NotesController extends Controller {
    */
   @Override
   public void init() {
-    populateTable();
+    try {
+      populateTable();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     deleteButton.setDisable(true);
     saveButton.setDisable(true);
   }
@@ -69,7 +74,7 @@ public class NotesController extends Controller {
    * Populates table columns using the wineTitle string property in the Note object. Called to
    * refresh the notes in the table.
    */
-  private void populateTable() {
+  private void populateTable() throws SQLException {
     User user = getManagerContext().getAuthenticationManager().getAuthenticatedUser();
     AggregatedDao aggregatedDao = getManagerContext().getDatabaseManager().getAggregatedDao();
     ObservableMap<Wine, Note> allNotesMappedWithWinesByUser = aggregatedDao
@@ -149,7 +154,11 @@ public class NotesController extends Controller {
     if (result.isPresent() && result.get() == ButtonType.OK) {
       // setting the note to empty will trigger the database to delete the note
       openedNote.setNote("");
-      populateTable();
+      try {
+        populateTable();
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
       clearNotesPanel();
     }
   }

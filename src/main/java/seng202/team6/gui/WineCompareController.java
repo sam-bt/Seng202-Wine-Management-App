@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import java.util.Set;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -107,9 +108,13 @@ public class WineCompareController extends Controller {
       searchTextField.setPrefWidth(300);
       searchTextField.getEntries().addAll(uniqueTitles);
       searchTextField.setOnSelectionAction(match -> {
-        Wine wine = getManagerContext().getDatabaseManager().getWineDao().getByExactTitle(match);
-        if (wine != null) {
-          setWine(wine);
+        try {
+          Wine wine = getManagerContext().getDatabaseManager().getWineDao().getByExactTitle(match);
+          if (wine != null) {
+            setWine(wine);
+          }
+        } catch (SQLException e) {
+          throw new RuntimeException(e);
         }
       });
 

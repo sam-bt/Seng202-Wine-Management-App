@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import javafx.beans.binding.StringBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -335,7 +336,11 @@ public class DetailedWineViewController extends Controller {
   private void flagReview(WineReview wineReview) {
     wineReview.setFlag(1);
     wineReview.setSelected(false);
-    getManagerContext().getDatabaseManager().getWineReviewDao().updateWineReviewFlag(wineReview);
+    try {
+      getManagerContext().getDatabaseManager().getWineReviewDao().updateWineReviewFlag(wineReview);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**

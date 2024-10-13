@@ -61,47 +61,49 @@ public class WineFilteringStepDefinitions {
   }
 
   @When("the user searches for title containing {string}")
-  public void theUserSearchesForTitleContaining(String title) {
+  public void theUserSearchesForTitleContaining(String title) throws SQLException {
     wineFilters.setTitle(title);
     applySearch();
   }
 
   @When("the user searches for country matching {string}")
-  public void theUserSearchesForCountryMatching(String country) {
+  public void theUserSearchesForCountryMatching(String country) throws SQLException {
     wineFilters.setCountry(country);
     applySearch();
   }
 
   @When("the user searches for colour matching {string}")
-  public void theUserSearchesForColourMatching(String colour) {
+  public void theUserSearchesForColourMatching(String colour) throws SQLException {
     wineFilters.setColor(colour);
     applySearch();
   }
 
 
   @When("the user searches for vintage between {int} and {int}")
-  public void theUserSearchesForVintageBetweenAnd(int minVintage, int maxVintage) {
+  public void theUserSearchesForVintageBetweenAnd(int minVintage, int maxVintage)
+      throws SQLException {
     wineFilters.setMinVintage(minVintage);
     wineFilters.setMaxVintage(maxVintage);
     applySearch();
   }
 
   @When("the user searches for score between {int} and {int}")
-  public void theUserSearchesForScoreBetweenAnd(int minScore, int maxScore) {
+  public void theUserSearchesForScoreBetweenAnd(int minScore, int maxScore) throws SQLException {
     wineFilters.setMinScore(minScore);
     wineFilters.setMaxScore(maxScore);
     applySearch();
   }
 
   @When("the user searches for abv between {double} and {double}")
-  public void theUserSearchesForAbvBetweenAnd(double minAbv, double maxAbv) {
+  public void theUserSearchesForAbvBetweenAnd(double minAbv, double maxAbv) throws SQLException {
     wineFilters.setMinAbv(minAbv);
     wineFilters.setMaxAbv(maxAbv);
     applySearch();
   }
 
   @When("the user searches for price between {double} and {double}")
-  public void theUserSearchesForPriceBetweenAnd(double minPrice, double maxPrice) {
+  public void theUserSearchesForPriceBetweenAnd(double minPrice, double maxPrice)
+      throws SQLException {
     wineFilters.setMinPrice(minPrice);
     wineFilters.setMaxPrice(maxPrice);
     applySearch();
@@ -153,7 +155,7 @@ public class WineFilteringStepDefinitions {
         .allMatch(wine -> wine.getPrice() >= minPrice && wine.getPrice() <= maxPrice));
   }
 
-  private void applySearch() {
+  private void applySearch() throws SQLException {
     filteredWines = databaseManager.getWineDao().getAllInRange(0, Integer.MAX_VALUE, wineFilters);
   }
 

@@ -72,7 +72,7 @@ public class WineDao extends Dao {
    *
    * @return The count of wines in the WINE table
    */
-  public int getCount() {
+  public int getCount() throws SQLException {
     Timer timer = new Timer();
     String sql = "SELECT COUNT(*) FROM WINE";
     try (Statement statement = connection.createStatement()) {
@@ -83,8 +83,6 @@ public class WineDao extends Dao {
           return count;
         }
       }
-    } catch (SQLException error) {
-      log.error("Failed to count the number of wines", error);
     }
     return 0;
   }
@@ -95,7 +93,7 @@ public class WineDao extends Dao {
    * @param filters filters to apply to wines before counting
    * @return number of wines after filtering
    */
-  public int getCount(WineFilters filters) {
+  public int getCount(WineFilters filters) throws SQLException {
     String sql = "SELECT count(*) from WINE "
         + "where TITLE like ? "
         + "and COUNTRY like ? "
@@ -129,13 +127,7 @@ public class WineDao extends Dao {
       ResultSet resultSet = statement.executeQuery();
       return resultSet.getInt(1);
 
-    } catch (SQLException e) {
-      LogManager.getLogger(this.getClass().getName())
-          .error("Unable to execute filtered count query", e);
     }
-
-    LogManager.getLogger(this.getClass().getName()).info("No wines found");
-    return -1; // <- Error occurred
   }
 
   /**
@@ -143,7 +135,7 @@ public class WineDao extends Dao {
    *
    * @return An ObservableList of all Wine objects in the database
    */
-  public ObservableList<Wine> getAll() {
+  public ObservableList<Wine> getAll() throws SQLException {
     Timer timer = new Timer();
     String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
         + "FROM WINE "
@@ -156,10 +148,7 @@ public class WineDao extends Dao {
             timer.currentOffsetMilliseconds());
         return wines;
       }
-    } catch (SQLException error) {
-      log.info("Failed to retrieve wines in range", error);
     }
-    return FXCollections.emptyObservableList();
   }
 
   /**
@@ -170,7 +159,8 @@ public class WineDao extends Dao {
    * @param filters The wine filters to be applied
    * @return An ObservableList of Wine objects within the specified range
    */
-  public ObservableList<Wine> getAllInRange(int begin, int end, WineFilters filters) {
+  public ObservableList<Wine> getAllInRange(int begin, int end, WineFilters filters)
+      throws SQLException {
     Timer timer = new Timer();
     String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
         + "FROM WINE "
@@ -216,10 +206,7 @@ public class WineDao extends Dao {
             begin, end, timer.currentOffsetMilliseconds());
         return wines;
       }
-    } catch (SQLException error) {
-      log.info("Failed to retrieve wines in range {}-{}", begin, end, error);
     }
-    return FXCollections.emptyObservableList();
   }
 
   /**
@@ -228,7 +215,7 @@ public class WineDao extends Dao {
    * @param id id of wine
    * @return wine of given id or null
    */
-  public Wine get(long id) {
+  public Wine get(long id) throws SQLException {
     String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
         + "FROM WINE "
         + "LEFT JOIN GEOLOCATION ON LOWER(WINE.REGION) LIKE LOWER(GEOLOCATION.NAME) "
@@ -246,8 +233,6 @@ public class WineDao extends Dao {
           log.info("Could not retrieve wine with ID {}", id);
         }
       }
-    } catch (SQLException error) {
-      log.info("Failed to retrieve wine with ID {}", id);
     }
     return null;
   }
@@ -258,7 +243,7 @@ public class WineDao extends Dao {
    * @param title The exact title of the wine to retrieve.
    * @return The Wine object if found, or null if no match is found.
    */
-  public Wine getByExactTitle(String title) {
+  public Wine getByExactTitle(String title) throws SQLException {
     Timer timer = new Timer();
     String sql = "SELECT WINE.ID as wine_id, WINE.*, GEOLOCATION.LATITUDE, GEOLOCATION.LONGITUDE "
         + "FROM WINE "
@@ -279,8 +264,6 @@ public class WineDao extends Dao {
         log.info("Could not retrieve wine with title '{}' in {}ms", title,
             timer.currentOffsetMilliseconds());
       }
-    } catch (SQLException error) {
-      log.info("Failed to retrieve wine with title '{}'", title);
     }
     return null;
   }
@@ -307,11 +290,8 @@ public class WineDao extends Dao {
 
     Timer timer = new Timer();
     String sql = "INSERT INTO WINE VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    try {
-      connection.setAutoCommit(false);
-    } catch (SQLException error) {
-      log.error("Failed to disable database auto committing", error);
-    }
+
+    connection.setAutoCommit(false);
 
     try (PreparedStatement statement = connection.prepareStatement(sql)) {
       for (int i = 0; i < wines.size(); i++) {
@@ -329,9 +309,6 @@ public class WineDao extends Dao {
         wines.get(i++).setKey(keys.getLong(1));
       }
       connection.commit();
-    } catch (SQLException error) {
-      log.error("Failed to add a batch of wines", error);
-      return;
     } finally {
       connection.setAutoCommit(true);
     }
@@ -366,17 +343,14 @@ public class WineDao extends Dao {
   /**
    * Removes all wines from the WINE table.
    */
-  public void removeAll() {
+  public void removeAll() throws SQLException {
     Timer timer = new Timer();
+    wineCache.clear();
     String sql = "DELETE FROM WINE";
     try (Statement statement = connection.createStatement()) {
       int rowsAffected = statement.executeUpdate(sql);
       log.info("Successfully removed {} wines in {}ms", rowsAffected,
           timer.currentOffsetMilliseconds());
-    } catch (SQLException error) {
-      log.error("Failed to remove all wines", error);
-    } finally {
-      wineCache.clear();
       updateUniques();
     }
   }
@@ -489,64 +463,112 @@ public class WineDao extends Dao {
    */
   private void bindUpdater(Wine wine) {
     wine.titleProperty().addListener((observableValue, before, after) -> {
-      updateAttribute(wine.getKey(), "TITLE", update -> {
-        update.setString(1, after);
-      });
+      try {
+        updateAttribute(wine.getKey(), "TITLE", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
     wine.varietyProperty().addListener((observableValue, before, after) -> {
-      updateAttribute(wine.getKey(), "VARIETY", update -> {
-        update.setString(1, after);
-      });
+      try {
+        updateAttribute(wine.getKey(), "VARIETY", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
     wine.countryProperty().addListener((observableValue, before, after) -> {
-      updateAttribute(wine.getKey(), "COUNTRY", update -> {
-        update.setString(1, after);
-      });
+      try {
+        updateAttribute(wine.getKey(), "COUNTRY", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
     wine.regionProperty().addListener((observableValue, before, after) -> {
-      updateAttribute(wine.getKey(), "REGION", update -> {
-        update.setString(1, after);
-      });
+      try {
+        updateAttribute(wine.getKey(), "REGION", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
     wine.wineryProperty().addListener((observableValue, before, after) -> {
-      updateAttribute(wine.getKey(), "WINERY", update -> {
-        update.setString(1, after);
-      });
+      try {
+        updateAttribute(wine.getKey(), "WINERY", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
     wine.colorProperty().addListener((observableValue, before, after) -> {
-      updateAttribute(wine.getKey(), "COLOR", update -> {
-        update.setString(1, after);
-      });
+      try {
+        updateAttribute(wine.getKey(), "COLOR", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
     wine.vintageProperty().addListener((observableValue, before, after) -> {
-      updateAttribute(wine.getKey(), "VINTAGE", update -> {
-        update.setInt(1, (int) after);
-      });
+      try {
+        updateAttribute(wine.getKey(), "VINTAGE", update -> {
+          update.setInt(1, (int) after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
     wine.descriptionProperty().addListener((observableValue, before, after) -> {
-      updateAttribute(wine.getKey(), "DESCRIPTION", update -> {
-        update.setString(1, after);
-      });
+      try {
+        updateAttribute(wine.getKey(), "DESCRIPTION", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
     wine.scorePercentProperty().addListener((observableValue, before, after) -> {
-      updateAttribute(wine.getKey(), "SCORE_PERCENT", update -> {
-        update.setInt(1, (int) after);
-      });
+      try {
+        updateAttribute(wine.getKey(), "SCORE_PERCENT", update -> {
+          update.setInt(1, (int) after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
     wine.abvProperty().addListener((observableValue, before, after) -> {
-      updateAttribute(wine.getKey(), "ABV", update -> {
-        update.setFloat(1, (float) after);
-      });
+      try {
+        updateAttribute(wine.getKey(), "ABV", update -> {
+          update.setFloat(1, (float) after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
     wine.priceProperty().addListener((observableValue, before, after) -> {
-      updateAttribute(wine.getKey(), "PRICE", update -> {
-        update.setFloat(1, (float) after);
-      });
+      try {
+        updateAttribute(wine.getKey(), "PRICE", update -> {
+          update.setFloat(1, (float) after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
     wine.averageRatingProperty().addListener((observableValue, before, after) -> {
-      updateAttribute(wine.getKey(), "AVERAGE_RATING", update -> {
-        update.setDouble(1, (double) after);
-      });
+      try {
+        updateAttribute(wine.getKey(), "AVERAGE_RATING", update -> {
+          update.setDouble(1, (double) after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
   }
 
@@ -557,7 +579,7 @@ public class WineDao extends Dao {
    * @param attributeSetter callback to set attribute
    */
   private void updateAttribute(long id, String attributeName,
-      DatabaseManager.AttributeSetter attributeSetter) {
+      DatabaseManager.AttributeSetter attributeSetter) throws SQLException {
     if (id == -1) {
       log.warn("Skipping attribute update '{}' for wine with ID -1",
           attributeName);
@@ -577,9 +599,6 @@ public class WineDao extends Dao {
         log.info("Could not update attribute '{}' for wine with ID {} in {}ms",
             attributeName, id, timer.currentOffsetMilliseconds());
       }
-    } catch (SQLException error) {
-      log.error("Failed to update attribute '{}' for wine with ID {} in {}ms",
-          attributeName, id, timer.currentOffsetMilliseconds(), error);
     }
   }
 
@@ -590,7 +609,7 @@ public class WineDao extends Dao {
    * When the cache is invalidated by write operations to the database this must be called.
    * </p>
    */
-  public void updateUniques() {
+  public void updateUniques() throws SQLException {
     wineDataStatService.reset();
     String query = "SELECT title, country, winery, color, vintage, score_percent, abv, price "
         + "FROM wine";
@@ -621,8 +640,6 @@ public class WineDao extends Dao {
         updateMinMax("price", price);
       }
       log.info("Successfully updated unique values wine cache");
-    } catch (SQLException e) {
-      log.error("Failed to update unique values wine cache", e);
     }
   }
 
