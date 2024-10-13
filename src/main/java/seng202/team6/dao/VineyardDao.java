@@ -9,10 +9,12 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardFilters;
 import seng202.team6.model.VineyardTour;
+import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 import seng202.team6.service.VineyardDataStatService;
 import seng202.team6.util.DatabaseObjectUniquer;
@@ -234,6 +236,30 @@ public class VineyardDao extends Dao {
   }
 
   /**
+   * Deletes a vineyard from the database.
+   *
+   * @param vineyard the vineyard to be deleted
+   */
+  public void remove(Vineyard vineyard) {
+    Timer timer = new Timer();
+    String sql = "DELETE FROM VINEYARD WHERE ID = ?;";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setLong(1, vineyard.getId());
+
+      int rowsAffected = statement.executeUpdate();
+      if (rowsAffected == 1) {
+        log.info("Successfully deleted vineyard with ID {} in {}ms", vineyard.getId(),
+            timer.currentOffsetMilliseconds());
+      } else {
+        log.warn("Could not delete vineyard with ID {} in {}ms", vineyard.getId(),
+            timer.currentOffsetMilliseconds());
+      }
+    } catch (SQLException e) {
+      log.error("Failed to delete vineyard with ID {}", vineyard.getId());
+    }
+  }
+
+  /**
    * Retrieves all vineyards associated with a given vineyard tour.
    *
    * @param vineyardTour The VineyardTour object.
@@ -393,6 +419,94 @@ public class VineyardDao extends Dao {
       return null;
     }
     return new GeoLocation(latitude, longitude);
+  }
+
+  /**
+   * Binds listeners to the Vineyard object to ensure that any changes to the vineyards properties
+   * are automatically reflected in the database.
+   *
+   * @param vineyard The Vineyard object to bind listeners to
+   */
+  private void bindUpdater(Vineyard vineyard) {
+    vineyard.nameProperty().addListener((observableValue, before, after) -> {
+      try {
+        updateAttribute(vineyard.getId(), "NAME", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
+    });
+    vineyard.addressProperty().addListener((observableValue, before, after) -> {
+      try {
+        updateAttribute(vineyard.getId(), "ADDRESS", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
+    });
+    vineyard.regionProperty().addListener((observableValue, before, after) -> {
+      try {
+        updateAttribute(vineyard.getId(), "REGION", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
+    });
+    vineyard.websiteProperty().addListener((observableValue, before, after) -> {
+      try {
+        updateAttribute(vineyard.getId(), "WEBSITE", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
+    });
+    vineyard.descriptionProperty().addListener((observableValue, before, after) -> {
+      try {
+        updateAttribute(vineyard.getId(), "DESCRIPTION", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
+    });
+    vineyard.logoUrlProperty().addListener((observableValue, before, after) -> {
+      try {
+        updateAttribute(vineyard.getId(), "LOGO_URL", update -> {
+          update.setString(1, after);
+        });
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
+    });
+  }
+
+  /**
+   * Updates a specific attribute of the user in the WINE table.
+   *
+   * @param attributeName   name of attribute
+   * @param attributeSetter callback to set attribute
+   */
+  private void updateAttribute(long id, String attributeName,
+      DatabaseManager.AttributeSetter attributeSetter) throws SQLException {
+    Timer timer = new Timer();
+    String sql = "UPDATE VINEYARD set " + attributeName + " = ? where ID = ?";
+    try (PreparedStatement update = connection.prepareStatement(sql)) {
+      attributeSetter.setAttribute(update);
+      update.setLong(2, id);
+
+      int rowsAffected = update.executeUpdate();
+      if (rowsAffected == 1) {
+        log.info("Successfully updated attribute '{}' for vineyard with ID {} in {}ms",
+            attributeName, id, timer.currentOffsetMilliseconds());
+      } else {
+        log.info("Could not update attribute '{}' for vineyard with ID {} in {}ms",
+            attributeName, id, timer.currentOffsetMilliseconds());
+      }
+    }
   }
 
   /**

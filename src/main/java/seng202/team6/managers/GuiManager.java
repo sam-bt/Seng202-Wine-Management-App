@@ -20,6 +20,7 @@ import seng202.team6.gui.HelpController;
 import seng202.team6.gui.ListScreenController;
 import seng202.team6.gui.LoginController;
 import seng202.team6.gui.MainController;
+import seng202.team6.gui.ManageVineyardsController;
 import seng202.team6.gui.NotesController;
 import seng202.team6.gui.RegisterController;
 import seng202.team6.gui.SettingsController;
@@ -471,6 +472,17 @@ public class GuiManager {
   public void launchHelpScreen() {
     switchScene("/fxml/help_screen.fxml", "Help",
         () -> new HelpController(managerContext));
+  }
+
+  /**
+   * Launches the manage vineyards screen under a given node.
+   *
+   * @param parent node to add to
+   * @return node that was added
+   */
+  public Parent loadManageVineyardsScreen(Pane parent) {
+    return loadFxml("/fxml/manage_vineyards_screen.fxml",
+        () -> new ManageVineyardsController(managerContext), parent);
   }
 
   /**

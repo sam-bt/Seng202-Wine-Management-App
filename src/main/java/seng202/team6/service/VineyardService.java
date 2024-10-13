@@ -1,8 +1,10 @@
 package seng202.team6.service;
 
+import java.util.Map;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;
+import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardFilters;
 
@@ -29,6 +31,36 @@ public class VineyardService {
   public void init() {
     applyFilters(null);
     databaseManager.getVineyardsDao().updateUniques();
+  }
+
+  /**
+   * Creates a new vineyard. This method also adds the geolocation to the database in case it is an
+   * address that does not yet exist.
+   *
+   * @param name the name of the vineyard
+   * @param address the address of the vineyard
+   * @param region the region of the vineyard
+   * @param website the website of the vineyard
+   * @param logoUrl the logoUrl of the vineyard
+   * @param description the description of the vineyard
+   * @param geoLocation the geoLocation of the vineyard
+   */
+  public void create(String name, String address, String region, String website, String logoUrl,
+      String description, GeoLocation geoLocation) {
+    Vineyard vineyard = databaseManager.getVineyardsDao()
+        .add(name, address, region, website, description, logoUrl, geoLocation);
+    databaseManager.getGeoLocationDao().addAll(Map.of(name, geoLocation));
+    vineyards.add(vineyard);
+  }
+
+  /**
+   * Deletes a vineyard.
+   *
+   * @param vineyard the vineyard to be deleted
+   */
+  public void delete(Vineyard vineyard) {
+    databaseManager.getVineyardsDao().remove(vineyard);
+    vineyards.remove(vineyard);
   }
 
   /**
