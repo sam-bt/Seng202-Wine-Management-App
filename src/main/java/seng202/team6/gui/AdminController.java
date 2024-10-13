@@ -74,6 +74,8 @@ public class AdminController extends Controller {
   @FXML
   private VBox importWinesScreenContainer;
   @FXML
+  private VBox manageVineyardsContainer;
+  @FXML
   private AnchorPane passwordBox;
   @FXML
   private PasswordField passwordField;
@@ -117,17 +119,26 @@ public class AdminController extends Controller {
     refreshReviewActions();
 
     //==========| Data Tab |==========<
-    VBox parent = (VBox) getManagerContext().getGuiManager().loadImportWineScreen(
+    VBox importWinesParent = (VBox) getManagerContext().getGuiManager().loadImportWineScreen(
         importWinesScreenContainer);
-    VBox.setVgrow(parent, Priority.ALWAYS);
-    parent.minHeightProperty().bind(importWinesScreenContainer.minHeightProperty());
-    parent.maxHeightProperty().bind(importWinesScreenContainer.maxHeightProperty());
-    parent.prefHeightProperty().bind(importWinesScreenContainer.prefHeightProperty());
-    parent.minWidthProperty().bind(importWinesScreenContainer.minWidthProperty());
-    parent.maxWidthProperty().bind(importWinesScreenContainer.maxWidthProperty());
-    parent.prefWidthProperty().bind(importWinesScreenContainer.prefWidthProperty());
+    VBox.setVgrow(importWinesParent, Priority.ALWAYS);
+    importWinesParent.minHeightProperty().bind(importWinesScreenContainer.minHeightProperty());
+    importWinesParent.maxHeightProperty().bind(importWinesScreenContainer.maxHeightProperty());
+    importWinesParent.prefHeightProperty().bind(importWinesScreenContainer.prefHeightProperty());
+    importWinesParent.minWidthProperty().bind(importWinesScreenContainer.minWidthProperty());
+    importWinesParent.maxWidthProperty().bind(importWinesScreenContainer.maxWidthProperty());
+    importWinesParent.prefWidthProperty().bind(importWinesScreenContainer.prefWidthProperty());
 
-
+    // manage vineyards tab
+    VBox manageVineyardsParent = (VBox) getManagerContext().getGuiManager()
+        .loadManageVineyardsScreen(manageVineyardsContainer);
+    VBox.setVgrow(manageVineyardsParent, Priority.ALWAYS);
+    manageVineyardsParent.minHeightProperty().bind(manageVineyardsContainer.minHeightProperty());
+    manageVineyardsParent.maxHeightProperty().bind(manageVineyardsContainer.maxHeightProperty());
+    manageVineyardsParent.prefHeightProperty().bind(manageVineyardsContainer.prefHeightProperty());
+    manageVineyardsParent.minWidthProperty().bind(manageVineyardsContainer.minWidthProperty());
+    manageVineyardsParent.maxWidthProperty().bind(manageVineyardsContainer.maxWidthProperty());
+    manageVineyardsParent.prefWidthProperty().bind(manageVineyardsContainer.prefWidthProperty());
   }
 
   //=================================| USER MANAGEMENT |=================================<

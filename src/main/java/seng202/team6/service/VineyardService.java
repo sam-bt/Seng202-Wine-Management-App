@@ -31,6 +31,16 @@ public class VineyardService {
     databaseManager.getVineyardsDao().updateUniques();
   }
 
+  public void create(Vineyard vineyard, String name, String address, String region, String logoUrl,
+      String description) {
+
+  }
+
+  public void delete(Vineyard vineyard) {
+    // todo - call vineyard dao and remove it from db
+    vineyards.remove(vineyard);
+  }
+
   /**
    * Clears the list of vineyards currently loaded and adds a range of vineyards which meet the
    * specified filter criteria.
