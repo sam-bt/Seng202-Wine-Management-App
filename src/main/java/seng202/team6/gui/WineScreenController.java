@@ -404,6 +404,14 @@ public class WineScreenController extends Controller {
     vintageSlider.configure(minVintage, maxVintage, tickUnit, 0, yearConverter);
     abvSlider.configure(minAbv, maxAbv, 1, 0, null);
 
+    // Handle a special case for score slider as we hard set its min and max
+    if (minScore >= maxScore) {
+      scoreSlider.setMin(0);
+      scoreSlider.setMax(1);
+      scoreSlider.setShowTickLabels(false);
+      scoreSlider.setDisable(true);
+    }
+
     // Set slider handles to min and max values
     // Fixes a graphic issue where the slider values don't change with the min and max adjustments
     resetSliderThumbs();
