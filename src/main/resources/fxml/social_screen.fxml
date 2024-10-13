@@ -14,9 +14,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.WineScreenController">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="780.0" prefWidth="1370.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.WineScreenController">
   <children>
-    <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Options">
+    <TitledPane animated="false" collapsible="false" focusTraversable="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Options">
       <content>
         <AnchorPane fx:id="filtersPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="316.0" styleClass="filters-pane" stylesheets="@../css/titled_pane.css">
           <children>
@@ -25,17 +25,17 @@
                 <Font name="System Bold" size="18.0" />
               </font>
             </Button>
-                  <Label layoutX="15.0" layoutY="189.0" prefHeight="20.0" prefWidth="188.0" text="Wine Name">
+                  <Label focusTraversable="false" layoutX="15.0" layoutY="189.0" prefHeight="20.0" prefWidth="188.0" text="Wine Name">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label layoutX="15.0" layoutY="249.0" prefHeight="20.0" prefWidth="114.0" text="User">
+                  <Label focusTraversable="false" layoutX="15.0" layoutY="249.0" prefHeight="20.0" prefWidth="114.0" text="User">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label layoutX="17.0" layoutY="309.0" prefHeight="20.0" prefWidth="110.0" text="Rating">
+                  <Label focusTraversable="false" layoutX="17.0" layoutY="309.0" prefHeight="20.0" prefWidth="110.0" text="Rating">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -45,14 +45,14 @@
       </content>
     </TitledPane>
 
-    <TitledPane animated="false" collapsible="false" layoutX="330.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/titled_pane.css" text="Reviews">
+    <TitledPane animated="false" collapsible="false" focusTraversable="false" layoutX="330.0" prefHeight="780.0" prefWidth="1040.0" stylesheets="@../css/titled_pane.css" text="Reviews">
       <content>
         <VBox minHeight="720.0" prefHeight="720.0" prefWidth="1014.0">
           <children>
             <GridPane prefHeight="729.0" prefWidth="1229.0">
               <children>
                 <HBox prefHeight="28.0" prefWidth="914.0" />
-                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="705.0" prefWidth="789.0" stylesheets="@../css/scroll_pane.css">
+                        <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" prefHeight="705.0" prefWidth="789.0" stylesheets="@../css/scroll_pane.css">
                            <content>
                               <TilePane fx:id="reviewsViewContainer" hgap="10.0" prefColumns="3" prefHeight="552.0" prefTileWidth="325.0" prefWidth="1013.0" vgap="10.0">
                                  <padding>

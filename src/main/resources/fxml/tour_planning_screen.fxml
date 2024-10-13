@@ -41,7 +41,7 @@
         <Font name="System Bold" size="24.0" />
       </font>
     </TitledPane>
-      <TabPane fx:id="tabPane" minWidth="1040.0" prefHeight="200.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="45.0">
+      <TabPane fx:id="tabPane" focusTraversable="false" minWidth="1040.0" prefHeight="200.0" prefWidth="1040.0" stylesheets="@../css/tabs_pane.css" tabClosingPolicy="UNAVAILABLE" tabMinHeight="45.0">
         <tabs>
           <Tab fx:id="planTourTab" text="Plan Tour">
                <content>
@@ -49,7 +49,7 @@
                      <children>
                         <HBox fx:id="noTourSelectedContainer" alignment="CENTER">
                            <children>
-                              <Label text="Select or create a tour" />
+                              <Label focusTraversable="false" text="Select or create a tour" />
                            </children>
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -59,7 +59,7 @@
                            <children>
                               <HBox alignment="CENTER" prefHeight="0.0" prefWidth="1040.0" VBox.vgrow="NEVER">
                                  <children>
-                                    <Label fx:id="viewingTourLabel" text="Label" textAlignment="CENTER">
+                                    <Label fx:id="viewingTourLabel" focusTraversable="false" text="Label" textAlignment="CENTER">
                                        <font>
                                           <Font name="System Bold" size="24.0" />
                                        </font>
@@ -69,11 +69,11 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0" stylesheets="@../css/split_pane.css" VBox.vgrow="ALWAYS">
+                              <SplitPane dividerPositions="0.5" focusTraversable="false" prefHeight="160.0" prefWidth="200.0" stylesheets="@../css/split_pane.css" VBox.vgrow="ALWAYS">
                                 <items>
                                  <VBox prefHeight="713.0" spacing="20.0" style="-fx-border-color: gray; -fx-border-radius: 20px;">
                                    <children>
-                                     <Label alignment="CENTER" text="Select Vineyards" textAlignment="CENTER">
+                                     <Label alignment="CENTER" focusTraversable="false" text="Select Vineyards" textAlignment="CENTER">
                                        <font>
                                          <Font size="18.0" />
                                        </font>
@@ -94,7 +94,7 @@
                               
                                        <VBox prefHeight="713.0" spacing="20.0" style="-fx-border-color: gray; -fx-border-radius: 20px;">
                                    <children>
-                                     <Label alignment="CENTER" text="Current Itinerary" textAlignment="CENTER">
+                                     <Label alignment="CENTER" focusTraversable="false" text="Current Itinerary" textAlignment="CENTER">
                                        <font>
                                          <Font size="18.0" />
                                        </font>
