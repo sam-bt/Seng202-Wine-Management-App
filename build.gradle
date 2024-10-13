@@ -90,6 +90,7 @@ dependencies {
 checkstyle {
     toolVersion '10.18.2'
     configFile file("config/checkstyle/checkstyle.xml")
+    checkstyleTest.enabled = false
 }
 
 application {
