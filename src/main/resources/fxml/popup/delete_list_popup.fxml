@@ -15,7 +15,10 @@
          <content>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
                <children>
-                  <Label fx:id="deleteLabel" layoutX="58.0" layoutY="62.0" prefHeight="87.0" prefWidth="371.0" />
+                  <Label fx:id="deleteLabel" alignment="CENTER" focusTraversable="false" layoutX="29.0" layoutY="78.0" prefHeight="140.0" prefWidth="397.0" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font></Label>
                   <Button layoutX="50.0" layoutY="271.0" maxWidth="125.0" minWidth="125.0" mnemonicParsing="false" onAction="#onBackButtonClick" prefWidth="125.0" styleClass="secondary-button" stylesheets="@../../css/global.css" text="Back">
                      <font>
                         <Font name="System Bold" size="16.0" />

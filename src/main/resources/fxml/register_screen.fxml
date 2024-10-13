@@ -15,35 +15,35 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="478.0" prefWidth="454.0">
           <children>
-                <Label fx:id="passwordErrorLabel" alignment="CENTER" contentDisplay="CENTER" ellipsisString="" focusTraversable="false" layoutX="-1.0" layoutY="208.0" prefHeight="57.0" prefWidth="456.0" textAlignment="CENTER" textFill="RED" wrapText="true">
+                <Label fx:id="passwordErrorLabel" alignment="CENTER" contentDisplay="CENTER" ellipsisString="" focusTraversable="false" layoutX="-1.0" layoutY="227.0" prefHeight="57.0" prefWidth="456.0" textAlignment="CENTER" textFill="RED" wrapText="true">
                   <font>
                     <Font size="14.0" />
                   </font>
                 </Label>
+            <Label focusTraversable="false" layoutX="72.0" layoutY="284.0" text="Confirm Password">
+              <font>
+                <Font size="16.0" />
+              </font>
+            </Label>
+            <Label focusTraversable="false" layoutX="81.0" layoutY="49.0" text="Username">
+              <font>
+                <Font size="16.0" />
+              </font>
+            </Label>
+            <Label focusTraversable="false" layoutX="72.0" layoutY="165.0" text="Password">
+              <font>
+                <Font size="16.0" />
+              </font>
+            </Label>
+            <TextField fx:id="usernameField" layoutX="72.0" layoutY="78.0" prefHeight="33.0" prefWidth="300.0" promptText="Enter your username" stylesheets="@../css/text_field.css" />
+            <PasswordField fx:id="passwordField" layoutX="72.0" layoutY="192.0" prefHeight="33.0" prefWidth="300.0" promptText="Enter your password" stylesheets="@../css/text_field.css" />
+            <PasswordField fx:id="confirmPasswordField" layoutX="72.0" layoutY="318.0" prefHeight="33.0" prefWidth="300.0" promptText="Re-enter your password" stylesheets="@../css/text_field.css" />
             <Button fx:id="createAccountButton" layoutX="122.0" layoutY="393.0" mnemonicParsing="false" onAction="#onConfirm" prefHeight="35.0" prefWidth="200.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Create Account">
               <font>
                 <Font name="System Bold" size="16.0" />
               </font>
             </Button>
-            <Label focusTraversable="false" layoutX="72.0" layoutY="276.0" text="Confirm Password">
-              <font>
-                <Font size="16.0" />
-              </font>
-            </Label>
-            <Label focusTraversable="false" layoutX="74.0" layoutY="35.0" text="Username">
-              <font>
-                <Font size="16.0" />
-              </font>
-            </Label>
-            <Label focusTraversable="false" layoutX="77.0" layoutY="139.0" text="Password">
-              <font>
-                <Font size="16.0" />
-              </font>
-            </Label>
-            <PasswordField fx:id="confirmPasswordField" layoutX="67.0" layoutY="307.0" prefHeight="33.0" prefWidth="300.0" promptText="Re-enter your password" stylesheets="@../css/text_field.css" />
-            <PasswordField fx:id="passwordField" layoutX="72.0" layoutY="175.0" prefHeight="33.0" prefWidth="300.0" promptText="Enter your password" stylesheets="@../css/text_field.css" />
-            <TextField fx:id="usernameField" layoutX="72.0" layoutY="67.0" prefHeight="33.0" prefWidth="300.0" promptText="Enter your username" stylesheets="@../css/text_field.css" />
-                  <Label fx:id="usernameErrorLabel" alignment="CENTER" contentDisplay="CENTER" ellipsisString="" focusTraversable="false" layoutX="-6.0" layoutY="110.0" prefHeight="29.0" prefWidth="456.0" textAlignment="CENTER" textFill="RED" wrapText="true">
+                  <Label fx:id="usernameErrorLabel" alignment="CENTER" contentDisplay="CENTER" ellipsisString="" focusTraversable="false" layoutX="-1.0" layoutY="127.0" prefHeight="29.0" prefWidth="456.0" textAlignment="CENTER" textFill="RED" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>

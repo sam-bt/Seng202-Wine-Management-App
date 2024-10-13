@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.xmlbeans.impl.xb.xsdschema.Attribute.Use;
 import org.junit.jupiter.api.AfterEach;
@@ -38,6 +39,7 @@ import seng202.team6.model.VineyardTour;
 import seng202.team6.model.Wine;
 import seng202.team6.model.WineDatePair;
 import seng202.team6.model.WineFilters;
+import seng202.team6.model.WineList;
 import seng202.team6.service.VineyardService;
 
 /**
@@ -197,5 +199,12 @@ public class VineyardDaoTest {
     assertTrue(vineyardDao.vineyardsTableHasData());
 
   }
+
+  @Test
+  void testRemove() throws SQLException {
+    vineyardDao.remove(testVineyard1);
+    assertEquals(2, vineyardDao.getCount());
+  }
+
 
 }

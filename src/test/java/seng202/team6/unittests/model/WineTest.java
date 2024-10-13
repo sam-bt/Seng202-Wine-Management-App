@@ -133,4 +133,34 @@ class WineTest {
     wine.setPrice(22f);
     assertEquals(22f, wine.getPrice());
   }
+
+  @Test
+  void checkTwoDifferentEqual() {
+    Wine wine2 = new Wine(-1, "", "", "", "", "", "", -1, "", 0, 0f, 0f, null, 0.0);
+    assertEquals((wine.equals(wine2)), true);
+  }
+
+  @Test
+  void checkSameObjectEqual() {
+    assertEquals((wine.equals(wine)), true);
+  }
+
+  @Test
+  void checkNotEqual() {
+    Wine wine2 = new Wine(2, "NOT THE SAME", "", "", "", "", "", -1, "", 0, 0f, 0f, null, 0.0);
+    assertEquals((wine.equals(wine2)), false);
+  }
+
+  @Test
+  void checkEqualWithNull() {
+    Wine wine2 = null;
+    assertEquals((wine.equals(wine2)), false);
+  }
+
+  @Test
+  void checkDefaultConstructor() {
+    Wine wine2 = new Wine();
+    Wine checkAgainst = new Wine(-1, "", "", "", "", "", "", -1, "", 0, 0f, 0f, null, 0.0);
+    assertEquals((wine2.equals(checkAgainst)), true);
+  }
 }
