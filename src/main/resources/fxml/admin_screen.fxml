@@ -37,7 +37,7 @@
           </Tab>
             <Tab text="Manage Vineyards">
                <content>
-                  <VBox fx:id="importWinesScreenContainer1" prefHeight="200.0" prefWidth="100.0" />
+                  <VBox fx:id="manageVineyardsContainer" prefHeight="200.0" prefWidth="100.0" />
                </content>
             </Tab>
           <Tab text="Manage Users">

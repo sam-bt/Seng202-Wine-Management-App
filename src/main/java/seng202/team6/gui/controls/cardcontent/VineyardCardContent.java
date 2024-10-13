@@ -1,5 +1,6 @@
 package seng202.team6.gui.controls.cardcontent;
 
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,6 +14,8 @@ import seng202.team6.util.ImageReader;
  */
 public class VineyardCardContent extends VBox {
 
+  private final ImageView logoView;
+
   /**
    * Constructs a VineyardCardContent with the specified vineyard and logo dimensions.
    *
@@ -21,8 +24,7 @@ public class VineyardCardContent extends VBox {
    * @param logoHeight the desired height for the logo image
    */
   public VineyardCardContent(Vineyard vineyard, int logoWidth, int logoHeight) {
-    Image logo = ImageReader.loadImageFromUrl(vineyard.getLogoUrl());
-    ImageView logoView = new ImageView(logo);
+    logoView = new ImageView();
     logoView.setFitWidth(logoWidth);
     logoView.setFitHeight(logoHeight);
     logoView.setPreserveRatio(true);
@@ -33,5 +35,23 @@ public class VineyardCardContent extends VBox {
     wrapper.setMinHeight(logoHeight);
     wrapper.setAlignment(Pos.CENTER);
     getChildren().add(wrapper);
+
+    // set up the listener for logo URL changes
+    ChangeListener<String> logoUrlListener = (observable, oldValue, newValue) ->
+        updateLogo(newValue);
+    vineyard.logoUrlProperty().addListener(logoUrlListener);
+
+    // initial update
+    updateLogo(vineyard.getLogoUrl());
+  }
+
+  /**
+   * Updates the logo image with the given URL.
+   *
+   * @param url the URL of the new logo image
+   */
+  private void updateLogo(String url) {
+    Image logo = ImageReader.loadImageFromUrl(url);
+    logoView.setImage(logo);
   }
 }
