@@ -12,6 +12,9 @@ WINO is an intuitive kiosk application designed for wine enthusiasts, casual dri
 
 WINO is designed for quick and hassle-free installation on kiosks, with straightforward setup procedures for administrators.
 
+# Admin Credentials
+The application ships with a default admin account. The username is 'admin' and the password is 'admin'. Upon first time log in, you will be prompted to change this password.
+
 ## Authors
 
 - SENG202 Teaching team
