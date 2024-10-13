@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.net.URISyntaxException;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -16,8 +17,10 @@ import seng202.team6.gui.controls.card.Card;
 import seng202.team6.gui.controls.cardcontent.VineyardCardContent;
 import seng202.team6.gui.popup.GeneralPopupController;
 import seng202.team6.managers.ManagerContext;
+import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.service.VineyardService;
+import seng202.team6.util.GeolocationResolver;
 import seng202.team6.util.ImageReader;
 
 public class ManageVineyardsController extends Controller {
@@ -114,15 +117,22 @@ public class ManageVineyardsController extends Controller {
       return;
     }
     popup.addButton("Create", () -> createVineyard(popup, nameTextField.getText(),
-        addressTextField.getText(), regionTextField.getText(), logoUrlTextField.getText(),
-        descriptionTextArea.getText()));
+        addressTextField.getText(), regionTextField.getText(), websiteTextField.getText(),
+        logoUrlTextField.getText(), descriptionTextArea.getText()));
   }
 
   private void createVineyard(GeneralPopupController popup, String name, String address,
-      String region, String logoUrl, String description) {
+      String region, String website, String logoUrl, String description) {
     if (!validateFields(popup, null, name, address, region, logoUrl)) {
       return;
     }
+    getManagerContext().getGuiManager().showLoadingIndicator(() -> {
+      GeoLocation geoLocation = validateLogoUrlAndGeolocation(popup, address, logoUrl);
+      if (geoLocation == null) {
+        return;
+      }
+      vineyardService.create(name, address, region, website, logoUrl, description, geoLocation);
+    });
     popup.close();
   }
 
@@ -170,6 +180,22 @@ public class ManageVineyardsController extends Controller {
       return false;
     }
     return true;
+  }
+
+  private GeoLocation validateLogoUrlAndGeolocation(GeneralPopupController popup, String address,
+      String logoUrl) {
+    if (!validateLogoUrl(logoUrl)) {
+      popup.setErrorMessage("The logo URL was invalid and did not point to an image");
+      return null;
+    }
+
+    GeolocationResolver geolocationResolver = new GeolocationResolver();
+    try {
+      return geolocationResolver.resolveLocation(address).join();
+    } catch (Exception error) {
+      popup.setErrorMessage("The address was invalid and could not be resolved.");
+      return null;
+    }
   }
 
   private boolean validateLogoUrl(String imageUrl) {

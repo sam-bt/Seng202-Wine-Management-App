@@ -1,8 +1,10 @@
 package seng202.team6.service;
 
+import java.util.Map;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seng202.team6.managers.DatabaseManager;
+import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardFilters;
 
@@ -31,13 +33,16 @@ public class VineyardService {
     databaseManager.getVineyardsDao().updateUniques();
   }
 
-  public void create(Vineyard vineyard, String name, String address, String region, String logoUrl,
-      String description) {
-
+  public void create(String name, String address, String region, String website, String logoUrl,
+      String description, GeoLocation geoLocation) {
+    Vineyard vineyard = databaseManager.getVineyardsDao()
+        .add(name, address, region, website, description, logoUrl, geoLocation);
+    databaseManager.getGeoLocationDao().addAll(Map.of(name, geoLocation));
+    vineyards.add(vineyard);
   }
 
   public void delete(Vineyard vineyard) {
-    // todo - call vineyard dao and remove it from db
+    databaseManager.getVineyardsDao().remove(vineyard);
     vineyards.remove(vineyard);
   }
 
