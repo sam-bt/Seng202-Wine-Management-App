@@ -28,7 +28,6 @@ public class MainController extends Controller {
   private AnchorPane popupContent;
   @FXML
   private BorderPane loadingSpinnerPane;
-
   @FXML
   private MenuBar menuBar;
 
@@ -53,8 +52,6 @@ public class MainController extends Controller {
   private HBox listsButton;
   @FXML
   private HBox notesButton;
-  @FXML
-  private HBox consumptionButton;
 
   // vineyard submenu
   @FXML
@@ -305,7 +302,6 @@ public class MainController extends Controller {
     // profile submenu
     listsButton.setOnMouseClicked(event -> guiManager.openListScreen());
     notesButton.setOnMouseClicked(event -> guiManager.openNotesScreen());
-    consumptionButton.setOnMouseClicked(event -> guiManager.openConsumptionScreen());
 
     // vineyards submenu
     viewVineyardsButton.setOnMouseClicked(event -> guiManager.openVineyardsScreen());

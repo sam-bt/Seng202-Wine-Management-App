@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seng202.team6.enums.PopupType;
 import seng202.team6.gui.AdminController;
-import seng202.team6.gui.ConsumptionController;
 import seng202.team6.gui.Controller;
 import seng202.team6.gui.DetailedVineyardViewController;
 import seng202.team6.gui.DetailedWineViewController;
@@ -252,14 +251,6 @@ public class GuiManager {
   public void openNotesScreen() {
     switchScene("/fxml/notes_screen.fxml", "My Notes",
         () -> new NotesController(managerContext));
-  }
-
-  /**
-   * Launches the consumption screen.
-   */
-  public void openConsumptionScreen() {
-    switchScene("/fxml/consumption_screen.fxml", "Consumption",
-        () -> new ConsumptionController(managerContext));
   }
 
   /**

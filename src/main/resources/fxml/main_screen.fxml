@@ -153,11 +153,6 @@
             <Label text="Notes" />
           </children>
         </HBox>
-        <HBox fx:id="consumptionButton" alignment="CENTER" fillHeight="false" styleClass="sub-menu-item">
-          <children>
-            <Label text="Consumption" />
-          </children>
-        </HBox>
       </children>
       <opaqueInsets>
         <Insets />
