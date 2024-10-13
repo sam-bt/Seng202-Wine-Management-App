@@ -1,5 +1,6 @@
 package seng202.team6.gui.popup;
 
+import java.sql.SQLException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import seng202.team6.gui.Controller;
@@ -55,7 +56,11 @@ public class DeleteListPopupController extends Controller {
    */
   @FXML
   public void onDeleteListConfirmClick() {
-    wineListService.deleteWineList(wineListToDelete);
+    try {
+      wineListService.deleteWineList(wineListToDelete);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     getManagerContext().getGuiManager().closePopup();
   }
 }

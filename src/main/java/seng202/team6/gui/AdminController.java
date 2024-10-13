@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import java.util.Optional;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
@@ -364,7 +365,7 @@ public class AdminController extends Controller {
   }
 
   @FXML
-  void onDeleteSelected() {
+  void onDeleteSelected() throws SQLException {
     for (int i = 0; i < selectedReviews.size(); i++) {
       databaseManager.getWineReviewDao().delete(selectedReviews.get(i));
       long wineId = selectedReviews.get(i).getWineId();
@@ -383,7 +384,7 @@ public class AdminController extends Controller {
   }
 
   @FXML
-  void onDeleteAll() {
+  void onDeleteAll() throws SQLException {
     databaseManager.getWineReviewDao().deleteAllFlaggedReviews();
     for (int i = 0; i < allFlaggedReviews.size(); i++) {
       long wineId = allFlaggedReviews.get(i).getWineId();

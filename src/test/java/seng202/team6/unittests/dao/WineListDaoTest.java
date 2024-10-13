@@ -54,7 +54,7 @@ public class WineListDaoTest {
    * Tests creating a new wine list for the test user. Verifies that the created list has the correct name.
    */
   @Test
-  void testCreateList() {
+  void testCreateList() throws SQLException {
 
     WineList testList = wineListDao.create(testUser, "testList");
 
@@ -67,7 +67,7 @@ public class WineListDaoTest {
    * retrieved and that they have the correct names.
    */
   @Test
-  void testGetLists() {
+  void testGetLists() throws SQLException {
 
     WineList testList1 = wineListDao.create(testUser, "testList1");
     WineList testList2 = wineListDao.create(testUser, "testList2");
@@ -85,7 +85,7 @@ public class WineListDaoTest {
    * remaining lists are correct.
    */
   @Test
-  void testDeleteList() {
+  void testDeleteList() throws SQLException {
 
     WineList testList1 = wineListDao.create(testUser, "testList1");
     WineList testList2 = wineListDao.create(testUser, "testList2");

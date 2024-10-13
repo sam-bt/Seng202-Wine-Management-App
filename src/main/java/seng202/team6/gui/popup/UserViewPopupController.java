@@ -1,5 +1,6 @@
 package seng202.team6.gui.popup;
 
+import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -114,7 +115,12 @@ public class UserViewPopupController extends Controller {
         + "-fx-border-color: black; "
         + "-fx-border-insets: 10;");
 
-    Wine wine = getManagerContext().getDatabaseManager().getWineDao().get(wineReview.getWineId());
+    Wine wine;
+    try {
+      wine = getManagerContext().getDatabaseManager().getWineDao().get(wineReview.getWineId());
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     if (wine != null) {
       Label titleLabel = new Label(wine.getTitle());
       titleLabel.textProperty().bind(wine.titleProperty());

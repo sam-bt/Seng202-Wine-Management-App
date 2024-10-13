@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.collections.ListChangeListener;
@@ -111,7 +112,11 @@ public class ListScreenController extends Controller {
    * Initializes the page making sure the tab for creating lists is hidden.
    */
   public void initialize() {
-    wineListService.init();
+    try {
+      wineListService.init();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**

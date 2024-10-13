@@ -33,6 +33,7 @@ public class WineListServiceTest {
   public void setup() throws SQLException {
     databaseManager = new DatabaseManager();
     authenticationManager = new AuthenticationManager(databaseManager);
+    authenticationManager.setAuthenticatedUser(databaseManager.getUserDao().get("admin"));
     wineListService = new WineListService(authenticationManager, databaseManager);
   }
 
@@ -64,13 +65,13 @@ public class WineListServiceTest {
    * Tests to see that a wine is not in a list.
    */
   @Test
-  public void isWineInListInvalid() {
+  public void isWineInListInvalid() throws SQLException {
     WineList wineList = databaseManager.getWineListDao()
         .create(databaseManager.getUserDao().get("admin"), "list");
     Wine wine = new Wine(-1, "New Wine", "Variety", "New Zealand",
         "Region", "Winery", "White", 2020, "Description",
         10, 4f, 10f, null, 50);
-    databaseManager.getWineListDao().addWine(wineList, wine);
+    databaseManager.getWineDao().add(wine);
     boolean inList = wineListService.isWineInList(wineList, wine);
     assertFalse(inList);
   }
@@ -79,7 +80,7 @@ public class WineListServiceTest {
    * Tests that a valid wineList can be created.
    */
   @Test
-  public void createWineListValid() {
+  public void createWineListValid() throws SQLException {
     User user = databaseManager.getUserDao().get("admin");
     wineListService.createWineList(user, "New List");
     boolean inList = databaseManager.getWineListDao()
@@ -91,7 +92,7 @@ public class WineListServiceTest {
    * Tests that an invalid wineList cannot be created.
    */
   @Test
-  public void createWineListInvalid() {
+  public void createWineListInvalid() throws SQLException {
     User user = databaseManager.getUserDao().get("admin");
     wineListService.createWineList(user, "New List");
     boolean inList = databaseManager.getWineListDao()
@@ -123,7 +124,7 @@ public class WineListServiceTest {
    * Tests deleting an invalid list.
    */
   @Test
-  public void deleteWineListValid() {
+  public void deleteWineListValid() throws SQLException {
     User user = databaseManager.getUserDao().get("admin");
     wineListService.createWineList(user, "New List");
     WineList wineList = databaseManager.getWineListDao().getAll(user).getLast();
@@ -137,7 +138,7 @@ public class WineListServiceTest {
    * Tests deleting an invalid list.
    */
   @Test
-  public void deleteWineListInValid() {
+  public void deleteWineListInValid() throws SQLException {
     User user = databaseManager.getUserDao().get("admin");
     wineListService.createWineList(user, "New List");
     WineList wineList = new WineList(-1, "Not Valid");

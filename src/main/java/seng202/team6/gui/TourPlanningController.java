@@ -1,5 +1,6 @@
 package seng202.team6.gui;
 
+import java.sql.SQLException;
 import java.util.List;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ListChangeListener;
@@ -360,8 +361,13 @@ public class TourPlanningController extends Controller {
   private ComboBox<WineList> createWineListComboBox() {
     ComboBox<WineList> wineListsComboBox = new ComboBox<>();
     User user = getManagerContext().getAuthenticationManager().getAuthenticatedUser();
-    ObservableList<WineList> wineLists = getManagerContext().getDatabaseManager().getWineListDao()
-        .getAll(user);
+    ObservableList<WineList> wineLists = null;
+    try {
+      wineLists = getManagerContext().getDatabaseManager().getWineListDao()
+          .getAll(user);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
     wineListsComboBox.getItems().addAll(wineLists);
     return wineListsComboBox;
   }
