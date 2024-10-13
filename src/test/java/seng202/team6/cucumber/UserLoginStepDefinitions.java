@@ -42,6 +42,7 @@ public class UserLoginStepDefinitions {
   public void theUserEntersAnInvalidUsernameOrPasswordCombination() {
     username = "MyAccount";
     password = "invalidpass";
+
   }
 
   @When("the user enters a correct username and password combination")
@@ -53,7 +54,7 @@ public class UserLoginStepDefinitions {
 
   @Then("the account is logged in")
   public void theAccountIsLoggedIn() {
-    AuthenticationResponse response = authenticationManager.validateLogin(username, password);
+    AuthenticationResponse response = authenticationManager.validateLoginPassword(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, response);
     assertTrue(authenticationManager.isAuthenticated());
     assertEquals(username, authenticationManager.getAuthenticatedUsername());
@@ -61,8 +62,9 @@ public class UserLoginStepDefinitions {
 
   @Then("the account is not logged in")
   public void theAccountIsNotLoggedIn() {
-    AuthenticationResponse response = authenticationManager.validateLogin(username, password);
-    assertEquals(AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION, response);
+
+    AuthenticationResponse response = authenticationManager.validateLoginPassword(username, password);
+    assertEquals(AuthenticationResponse.INVALID_LOGIN_USERNAME, response);
     assertFalse(authenticationManager.isAuthenticated());
     assertNotEquals(username, authenticationManager.getAuthenticatedUsername());
   }

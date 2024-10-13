@@ -36,7 +36,7 @@ public class AuthenticationManagerTest {
   }
 
   /**
-   * Closes the database manager connection after each test method
+   * Closes the database manager connection after each test method.
    */
   @AfterEach
   public void close() {
@@ -116,14 +116,13 @@ public class AuthenticationManagerTest {
   @Test
   public void testLoginEmptyFields() {
     String username = "";
-    String password = validPass;
-    AuthenticationResponse response = authenticationManager.validateLogin(username, password);
-    assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
+    AuthenticationResponse response = authenticationManager.validateLoginUsername(username);
+    assertEquals(AuthenticationResponse.MISSING_USERNAME_FIELD, response);
 
     username = "MyAccount";
-    password = "";
-    response = authenticationManager.validateLogin(username, password);
-    assertEquals(AuthenticationResponse.MISSING_FIELDS, response);
+    String password = "";
+    response = authenticationManager.validateLoginPassword(username, password);
+    assertEquals(AuthenticationResponse.MISSING_PASSWORD_FIELD, response);
   }
 
   /**
@@ -177,7 +176,7 @@ public class AuthenticationManagerTest {
     String password = validPass;
     registerAccount(username, password);
 
-    AuthenticationResponse response = authenticationManager.validateLogin(username, password);
+    AuthenticationResponse response = authenticationManager.validateLoginPassword(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, response);
   }
 
@@ -190,7 +189,7 @@ public class AuthenticationManagerTest {
     String password = validPass;
     registerAccount(username, password);
 
-    authenticationManager.validateLogin(username, password);
+    authenticationManager.validateLoginPassword(username, password);
     authenticationManager.logout();
     assertFalse(authenticationManager.isAuthenticated());
     assertFalse(authenticationManager.isAdmin());
@@ -198,7 +197,7 @@ public class AuthenticationManagerTest {
   }
 
   /**
-   * Tests a valid user registration scenario.
+   * Tests an invalid user registration scenario.
    */
   @Test
   public void testUpdatePassEqualUsername() {
@@ -208,7 +207,7 @@ public class AuthenticationManagerTest {
 
     AuthenticationResponse response = authenticationManager.validateUpdate(username, password,
         username, username);
-    assertEquals(AuthenticationResponse.SAME_AS_USERNAME, response);
+    assertEquals(AuthenticationResponse.INVALID_PASSWORD, response);
   }
 
   /**
@@ -217,9 +216,8 @@ public class AuthenticationManagerTest {
   @Test
   public void testLoginInvalidUsernamePasswordCombination() {
     String username = "MyAccount";
-    String password = validPass;
-    AuthenticationResponse response = authenticationManager.validateLogin(username, password);
-    assertEquals(AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION, response);
+    AuthenticationResponse response = authenticationManager.validateLoginUsername(username);
+    assertEquals(AuthenticationResponse.INVALID_LOGIN_USERNAME, response);
   }
 
   /**
@@ -232,7 +230,7 @@ public class AuthenticationManagerTest {
     registerAccount(username, password);
 
     password = "OtherValidPass2024!";
-    AuthenticationResponse response = authenticationManager.validateLogin(username, password);
+    AuthenticationResponse response = authenticationManager.validateLoginPassword(username, password);
     assertEquals(AuthenticationResponse.INVALID_USERNAME_PASSWORD_COMBINATION, response);
   }
 

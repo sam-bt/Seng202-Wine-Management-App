@@ -32,7 +32,7 @@ public class UserLogoutStepDefinitions {
         username, password, password);
     assertEquals(AuthenticationResponse.REGISTER_SUCCESS, registrationResponse);
 
-    AuthenticationResponse loginResponse = authenticationManager.validateLogin(username, password);
+    AuthenticationResponse loginResponse = authenticationManager.validateLoginPassword(username, password);
     assertEquals(AuthenticationResponse.LOGIN_SUCCESS, loginResponse);
 
     assertTrue(authenticationManager.isAuthenticated());

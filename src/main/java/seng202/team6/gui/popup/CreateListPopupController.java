@@ -20,7 +20,7 @@ public class CreateListPopupController extends Controller {
   @FXML
   private TextField listNameTextField;
   @FXML
-  private Label errorText;
+  private Label errorMessageLabel;
 
   /**
    * Constructor.
@@ -47,18 +47,30 @@ public class CreateListPopupController extends Controller {
    */
   @FXML
   public void onCreateListConfirmButton(ActionEvent actionEvent) {
+    resetFields();
     String name = listNameTextField.getText();
     List<WineList> wineLists = wineListService.getWineLists();
     if (wineLists.stream().anyMatch(wineList -> wineList.name().equals(name))) {
-      errorText.setText("List Already Exists");
-      errorText.setVisible(true);
+      errorMessageLabel.setText("List Already Exists");
+      errorMessageLabel.setVisible(true);
     } else {
+      String errorMessage = "";
 
-      if (name.length() < 3 || name.length() > 10 || !name.matches("[a-zA-Z0-9_]+")) {
-        errorText.setText("Invalid List Name");
-        errorText.setVisible(true);
+      if (name.length() < 3 || name.length() > 10 || !name.matches("[a-zA-Z0-9_ ]+")) {
+        if ((name.length() < 3 || name.length() > 10) && !name.matches("[a-zA-Z0-9_ ]")) {
+          errorMessage +=
+              "List name must be between 3 and 10 characters and cannot contain special characters";
+        } else if (name.length() < 3 || name.length() > 10) {
+          errorMessage += "List name must be between 3 and 10 characters";
+        } else if (!name.matches("[a-zA-Z0-9_ ]")) {
+          errorMessage += "List name cannot contain special characters";
+        }
+        listNameTextField.getStyleClass().add("error-text-field");
+        errorMessageLabel.setText(errorMessage);
+
+        errorMessageLabel.setVisible(true);
       } else {
-        errorText.setVisible(false);
+        errorMessageLabel.setVisible(false);
 
         User user = managerContext.getAuthenticationManager().getAuthenticatedUser();
         wineListService.createWineList(user, name);
@@ -68,4 +80,13 @@ public class CreateListPopupController extends Controller {
       }
     }
   }
+
+  private void resetFields() {
+    errorMessageLabel.setText("");
+    errorMessageLabel.setVisible(false);
+    listNameTextField.getStyleClass().add("normal-text-field");
+    listNameTextField.getStyleClass().remove("error-text-field");
+
+  }
+
 }

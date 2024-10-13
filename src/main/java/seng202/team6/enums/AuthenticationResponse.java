@@ -12,9 +12,17 @@ public enum AuthenticationResponse {
   MISSING_FIELDS("All fields must be filled."),
 
   /**
-   * Indicates that the confirmed password does not match the original password.
+   * Indicates that the username field is empty.
    */
-  MISMATCHING_CONFIRMED_PASSWORD("Passwords do not match."),
+  MISSING_USERNAME_FIELD("Please enter a username"),
+
+  /**
+   * Indicates that the password field is empty.
+   */
+  MISSING_PASSWORD_FIELD("Please enter a password"),
+
+
+
 
   /**
    * Indicates that the provided username is invalid.
@@ -22,7 +30,15 @@ public enum AuthenticationResponse {
   INVALID_USERNAME(
       "Invalid username, Please make sure that your name is between 3 and"
           + " 15 characters long and only contains letters, numbers or underscores."),
+  /**
+   * Indicates the provided username has an invalid length.
+   */
+  INVALID_USERNAME_LENGTH("Username must be between 3 and 15 characters long"),
 
+  /**
+   * Indicates the provided username has a special character or space.
+   */
+  INVALID_USERNAME_SYMBOL("Username cannot contain special characters or spaces"),
   /**
    * Indicates that the provided password is invalid.
    */
@@ -31,9 +47,49 @@ public enum AuthenticationResponse {
           + "lowercase letter, an uppercase letter, a number and a special character."),
 
   /**
+   * Indicates that the given password is the same as the username.
+   */
+  SAME_AS_USERNAME("Password cannot be the same as username"),
+
+  /**
+   * Indicates that the provided password has an invalid length.
+   */
+  INVALID_PASSWORD_LENGTH("Password must be between 8 and 30 characters long"),
+
+  /**
+   * Indicates that the provided password has a space.
+   */
+  INVALID_PASSWORD_CONTAINS_SPACES("Password cannot contain spaces"),
+
+  /**
+   * Indicates that the provided password is missing a symbol.
+   */
+  INVALID_PASSWORD_HEADER("Missing a "),
+
+  /**
+   * Indicates that the provided password is missing a lowercase.
+   */
+  INVALID_PASSWORD_MISSING_LOWERCASE("lowercase, "),
+  /**
+   * Indicates that the provided password is missing an uppercase.
+   */
+  INVALID_PASSWORD_MISSING_UPPERCASE("uppercase, "),
+
+  /**
+   * Indicates that the provided password is missing a number.
+   */
+  INVALID_PASSWORD_MISSING_NUMBER("number, "),
+
+  /**
+   * Indicates that the provided password is missing a special character.
+   */
+
+  INVALID_PASSWORD_MISSING_SPECIAL_CHAR("special character"),
+
+  /**
    * Indicates that the given username is already registered.
    */
-  USERNAME_ALREADY_REGISTERED("The given username is already registered to an account."),
+  USERNAME_ALREADY_REGISTERED("Username is already in use"),
 
   /**
    * Indicates a successful registration.
@@ -46,9 +102,22 @@ public enum AuthenticationResponse {
   INVALID_USERNAME_PASSWORD_COMBINATION("Username or Password is Incorrect."),
 
   /**
+   * Indicates that the username is invalid.
+   */
+  INVALID_LOGIN_USERNAME("User cannot be found"),
+  /**
+   * Indicates that the password is invalid.
+   */
+  INVALID_LOGIN_PASSWORD("Incorrect password"),
+  /**
    * Indicates a successful login.
    */
   LOGIN_SUCCESS(null),
+
+  /**
+   * Indicates the username is valid.
+   */
+  VALID_LOGIN_USERNAME(null),
 
   /**
    * Indicates that the old password provided is incorrect.
@@ -66,6 +135,11 @@ public enum AuthenticationResponse {
   OLD_PASSWORD_SAME_AS_NEW("New password cannot be same as old password."),
 
   /**
+   * Indicates that the confirmed password does not match the original password.
+   */
+  MISMATCHING_CONFIRMED_PASSWORD("Passwords do not match."),
+
+  /**
    * Indicates a successful password change.
    */
   PASSWORD_CHANGED_SUCCESS(null),
@@ -80,19 +154,17 @@ public enum AuthenticationResponse {
    */
   UNEXPECTED_ERROR("An unexpected error occurred. Please try again."),
 
-  SAME_AS_USERNAME("Your password cannot be the same as your username"),
-
   /**
    * Password constraints.
    */
   PASSWORD_CONSTRAINTS(
       "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*.()\\-+={\\[\\]}])"
           + "[A-Za-z0-9!@#$%^&*.()\\-+={\\[\\]}]{8,30}$");
+
   /**
    * The message associated with the authentication response.
    */
   private final String message;
-
 
   /**
    * Constructs an AuthenticationResponse with the specified message.
