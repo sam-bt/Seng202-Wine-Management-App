@@ -21,6 +21,9 @@ public class HelpController extends Controller{
     @FXML
     private void initialize() {
         String url = getClass().getResource("/html/ManualIndex.html").toExternalForm();
+        if (managerContext.getAuthenticationManager().isAdmin()) {
+            url = getClass().getResource("/html/AdminIndex.html").toExternalForm();
+        }
         webView.getEngine().setUserStyleSheetLocation(getClass().getResource("/css/helppages.css").toExternalForm());
         webView.getEngine().load(url);
 

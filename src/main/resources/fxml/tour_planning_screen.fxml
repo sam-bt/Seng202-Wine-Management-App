@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<HBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.TourPlanningController">
+<HBox spacing="15.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.TourPlanningController">
   <children>
     <TitledPane animated="false" collapsible="false" prefHeight="780.0" prefWidth="318.0" stylesheets="@../css/titled_pane.css" text="Vineyard Tours">
       <content>
@@ -121,7 +121,7 @@
                                           <Font name="System Bold" size="16.0" />
                                        </font>
                                     </Button>
-                                    <Button alignment="CENTER" mnemonicParsing="false" onMouseClicked="#onCalculateTourClick" prefHeight="33.0" prefWidth="167.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Calculate Route">
+                                    <Button alignment="CENTER" mnemonicParsing="false" onMouseClicked="#onCalculateTourClick" prefHeight="33.0" prefWidth="200.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Calculate Route">
                                        <font>
                                           <Font name="System Bold" size="16.0" />
                                        </font>
