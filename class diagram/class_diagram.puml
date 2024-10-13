@@ -1,0 +1,157 @@
+@startuml
+top to bottom direction
+
+package gui {
+    package wrapper {
+        class FXWrapper
+        class FXWindow
+    }
+
+    package popups {
+        class AddToListPopupController
+        class AddToTourPopupController
+        class CreateListPopupController
+        class DeleteListPopupController
+        class GeneralPopupController
+        class ReviewViewPopupController
+        class UserSearchPopupController
+        class UserViewPopupController
+        class WineReviewPopupController
+    }
+
+    abstract class Controller
+    class AdminController
+    class DetailedVineyardViewController
+    class DetailedWineViewController
+    class LeafletOsmController
+    class ListScreenController
+    class MainController
+    class NotesController
+    class RegisterController
+    class SettingsController
+    class SocialController
+    class TourPlanningController
+    class UpdatePasswordController
+    class VineyardsController
+    class WineCompareController
+    class WineImportController
+    class WineScreenController
+
+    AdminController --|> Controller
+    DetailedVineyardViewController --|> Controller
+    DetailedWineViewController --|> Controller
+    LeafletOsmController --|> Controller
+    ListScreenController --|> Controller
+    MainController --|> Controller
+    NotesController --|> Controller
+    RegisterController --|> Controller
+    SettingsController --|> Controller
+    SocialController --|> Controller
+    TourPlanningController --|> Controller
+    UpdatePasswordController --|> Controller
+    VineyardsController --|> Controller
+    WineCompareController --|> Controller
+    WineImportController --|> Controller
+    WineScreenController --|> Controller
+}
+
+package managers {
+    class ManagerContext
+    class AuthenticationManager
+    class DatabaseManager
+    class GuiManager
+
+    ManagerContext o--> AuthenticationManager : "manages lifecycle"
+    ManagerContext o--> DatabaseManager : "manages lifecycle"
+    ManagerContext o--> GuiManager : "manages lifecycle"
+}
+
+package model {
+    class GeoLocation
+    class Note
+    class ReviewFilters
+    class VineyardFilters
+    class User
+    class VineyardTour
+    class Wine
+    class WineFilters
+    class WineReview
+}
+
+package service {
+    class PageServiceService
+    class SocialService
+    class TourPlanningService
+    class VineyardDataStatService
+    class WineDataStatService
+    class VineyardToursService
+    class WineImportService
+    class WineListService
+    class WineNoteService
+    class WineReviewsService
+}
+
+package dao {
+    abstract class Dao
+    class AggregatedDao
+    class GeoLocationDao
+    class UserDao
+    class VineyardDao
+    class WineDao
+    class WineListDao
+    class WineNotesDao
+    class WineReviewDao
+
+    AggregatedDao --|> Dao
+    GeoLocationDao --|> Dao
+    UserDao --|> Dao
+    VineyardDao --|> Dao
+    WineDao --|> Dao
+    WineListDao --|> Dao
+    WineNotesDao --|> Dao
+    WineReviewDao --|> Dao
+}
+
+package enums {
+    enum AuthenticationResponse
+    enum ColourMatch
+    enum PopupType
+    enum WineNameProperty
+}
+
+package utils {
+    package exceptions {
+        class ValidationException
+    }
+
+    class WineValidator
+    class PasswordUtil
+    class Timer
+    class ImageReader
+    class WineImages
+    class YearStringConverter
+
+    WineValidator -- exceptions : "throws"
+}
+
+class App
+
+managers ..> dao : "uses"
+
+gui --> service : "uses"
+
+gui --> utils : "uses"
+
+service --> managers : "uses"
+
+model --> service : "stores"
+
+enums --> service : "stores"
+
+wrapper -- MainController : "initialises"
+
+App -- wrapper : "initialises"
+
+GuiManager -- popups : "creates"
+
+@enduml
