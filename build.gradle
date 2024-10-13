@@ -158,6 +158,7 @@ jacoco {
 }
 
 jacocoTestReport {
+    Task->dependsOn(startScripts)
     executionData fileTree(project.rootDir) {
         include '**/*.exec'
     }
