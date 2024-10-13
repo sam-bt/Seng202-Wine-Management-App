@@ -2,6 +2,7 @@ package seng202.team6.gui;
 
 import java.sql.SQLException;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -350,6 +351,7 @@ public class TourPlanningController extends Controller {
     TextField nameTextField = new TextField();
     nameTextField.setMaxWidth(Double.MAX_VALUE);
     optionsWrapper.getChildren().addAll(nameLabel, nameTextField);
+    Platform.runLater(nameTextField::requestFocus);
     return nameTextField;
   }
 
