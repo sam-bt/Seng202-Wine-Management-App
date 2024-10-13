@@ -3,11 +3,13 @@ package seng202.team6.gui;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import seng202.team6.gui.controls.WineCard;
 import seng202.team6.managers.ManagerContext;
@@ -35,6 +37,10 @@ public class DetailedVineyardViewController extends Controller {
   TextField websiteTextbox;
   @FXML
   TextArea descriptionTextbox;
+  @FXML
+  Button openToursButton;
+  @FXML
+  HBox buttonsContainer;
 
   /**
    * Constructs the Detailed Vineyard View Controller.
@@ -54,6 +60,10 @@ public class DetailedVineyardViewController extends Controller {
     addressTextbox.textProperty().bind(vineyard.addressProperty());
     websiteTextbox.textProperty().bind(vineyard.websiteProperty());
     descriptionTextbox.textProperty().bind(vineyard.descriptionProperty());
+
+    if (!managerContext.getAuthenticationManager().isAuthenticated()) {
+      buttonsContainer.getChildren().remove(openToursButton);
+    }
 
     Image image = ImageReader.loadImageFromUrl(vineyard.getLogoUrl());
     imageView.setImage(image);

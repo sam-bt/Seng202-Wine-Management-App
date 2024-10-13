@@ -17,14 +17,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="400.0" prefWidth="1370.0" stylesheets="@../css/detailed_view.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.DetailedVineyardViewController">
+<AnchorPane maxHeight="780.0" maxWidth="1370.0" minHeight="780.0" minWidth="1370.0" prefHeight="400.0" prefWidth="1370.0" stylesheets="@../css/detailed_view.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng202.team6.gui.DetailedVineyardViewController">
   <children>
     <TitledPane fx:id="viewingVineyardTitledPane" animated="false" collapsible="false" prefHeight="780.0" prefWidth="1016.0" stylesheets="@../css/titled_pane.css" text="Viewing Vineyard: Vineyard Name">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="336.0">
           <children>
             <HBox fx:id="ratingsContainer" alignment="CENTER_LEFT" layoutX="381.0" layoutY="25.0" maxHeight="45.0" minHeight="30.0" prefHeight="30.0" prefWidth="616.0" />
-                  <HBox alignment="CENTER" layoutX="-3.0" layoutY="674.0" prefHeight="35.0" prefWidth="1016.0" spacing="20.0">
+                  <HBox fx:id="buttonsContainer" alignment="CENTER" layoutX="-3.0" layoutY="674.0" prefHeight="35.0" prefWidth="1016.0" spacing="20.0">
                      <children>
                   <Button fx:id="backButton" maxWidth="175.0" minWidth="175.0" mnemonicParsing="false" onMouseClicked="#onBackButtonClick" prefWidth="175.0" styleClass="secondary-button" stylesheets="@../css/global.css" text="Back">
                     <font>
