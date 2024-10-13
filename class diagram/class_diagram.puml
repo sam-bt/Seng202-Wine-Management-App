@@ -138,11 +138,19 @@ package utils {
         class ValidationException
     }
 
-    class WineValidator
-    class PasswordUtil
-    class Timer
+    class DatabaseObjectUniquer
+    class DateFormatter
+    class FilterUtil
+    class GeolocationResolver
+    class IconPaths
     class ImageReader
+    class NoDecimalCurrencyStringConverter
+    class PasswordUtil
+    class ProcessCsv
+    class Timer
     class WineImages
+    class WineState
+    class WineValidator
     class YearStringConverter
 
     WineValidator --> exceptions : "throws"
