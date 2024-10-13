@@ -79,6 +79,13 @@ public class DatabaseObjectUniquer<T> {
   }
 
   /**
+   * Removes all objects from the cache.
+   */
+  public void removeAll() {
+    objects.clear();
+  }
+
+  /**
    * Returns an upper bound for alive objects.
    *
    * @return number of objects in map

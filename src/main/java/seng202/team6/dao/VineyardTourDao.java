@@ -135,6 +135,7 @@ public class VineyardTourDao extends Dao {
         log.warn("Could not remove vineyard tour ID {} in {}ms", vineyardTour.getId(),
             vineyardTour.getId(), timer.currentOffsetMilliseconds());
       }
+      wineTourCache.removeObject(vineyardTour.getId());
     } catch (SQLException error) {
       log.error("Failed to remove vineyard tour with ID {}",
           vineyardTour.getId(), vineyardTour.getId(), error);

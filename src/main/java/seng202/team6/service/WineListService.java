@@ -77,7 +77,7 @@ public class WineListService {
    * @return if item can be removed
    */
   public boolean canRemove(WineList wineList) {
-    return !wineList.name().equals("Favourites") && !wineList.name().equals("History");
+    return !wineList.name().equals("Favourites");
   }
 
   /**

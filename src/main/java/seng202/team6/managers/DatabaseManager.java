@@ -175,13 +175,6 @@ public class DatabaseManager {
             + "INSERT INTO LIST_NAME (USERNAME, NAME) "
             + "VALUES (NEW.USERNAME, 'Favourites'); "
             + "END",
-        "CREATE TRIGGER IF NOT EXISTS HISTORY_LIST"
-            + "AFTER INSERT ON USER "
-            + "FOR EACH ROW "
-            + "BEGIN "
-            + "INSERT INTO LIST_NAME (USERNAME, NAME) "
-            + "VALUES (NEW.USERNAME, 'History'); "
-            + "END",
         "INSERT INTO USER (USERNAME, PASSWORD, ROLE, SALT) "
             + "SELECT 'admin', '" + hashedAdminPassword + "', 'admin', '" + salt + "' "
             + "WHERE NOT EXISTS ("
