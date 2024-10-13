@@ -13,7 +13,6 @@ import seng202.team6.model.GeoLocation;
 import seng202.team6.model.Vineyard;
 import seng202.team6.model.VineyardFilters;
 import seng202.team6.model.VineyardTour;
-import seng202.team6.model.Wine;
 import seng202.team6.model.WineList;
 import seng202.team6.service.VineyardDataStatService;
 import seng202.team6.util.DatabaseObjectUniquer;
@@ -412,59 +411,4 @@ public class VineyardDao extends Dao {
     }
   }
 
-  /**
-   * Inserts the default vineyards data in batches from the CSV file into the database.
-   *
-   * @param sql  The SQL insert statement for geolocations.
-   * @param rows The list of vineyard data from the CSV.
-   * @return The total number of rows successfully inserted into the database.
-   */
-  private int batchInsertVineyards(String sql, List<String[]> rows) {
-    int rowsAffected = 0;
-    int batchSize = 2048;
-
-    try (PreparedStatement statement = connection.prepareStatement(sql)) {
-      for (int i = 1; i < rows.size(); i++) {
-        String[] row = rows.get(i);
-        String name = row[0];
-        String address = row[1];
-        String region = row[2];
-        String website = row[3];
-        String description = row[4];
-        String logoUrl = row[5];
-
-        statement.setString(1, name);
-        statement.setString(2, address);
-        statement.setString(3, region);
-        statement.setString(4, website);
-        statement.setString(5, description);
-        statement.setString(6, logoUrl);
-        statement.addBatch();
-
-        if (i > 1 && i % batchSize == 0) {
-          rowsAffected += executeBatch(statement);
-        }
-      }
-      rowsAffected += executeBatch(statement);
-
-    } catch (SQLException error) {
-      log.error("Failed to add default vineyards", error);
-    }
-    return rowsAffected;
-  }
-
-  /**
-   * Executes a batch of insert operations for geolocation data.
-   *
-   * @param statement The prepared statement with batched insert operations.
-   * @return The total number of rows affected by the batch execution.
-   * @throws SQLException If there is an error executing the batch.
-   */
-  private int executeBatch(PreparedStatement statement) throws SQLException {
-    int rowsAffected = 0;
-    for (int rowsAffectedInBatch : statement.executeBatch()) {
-      rowsAffected += rowsAffectedInBatch;
-    }
-    return rowsAffected;
-  }
 }

@@ -2,7 +2,6 @@ package seng202.team6.service;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import seng202.team6.enums.Island;
 import seng202.team6.managers.AuthenticationManager;
 import seng202.team6.managers.DatabaseManager;
 import seng202.team6.model.User;

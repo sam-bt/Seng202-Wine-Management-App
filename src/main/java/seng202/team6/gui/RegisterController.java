@@ -74,7 +74,7 @@ public class RegisterController extends Controller {
 
     if (!usernameNull && !passwordNull && !confirmPasswordNull) {
       AuthenticationResponse response
-          = managerContext.getAuthenticationManager().validateRegistration(
+          = getManagerContext().getAuthenticationManager().validateRegistration(
           username, password, confirmPassword);
       switch (response) {
         case AuthenticationResponse.USERNAME_ALREADY_REGISTERED:;
@@ -156,9 +156,9 @@ public class RegisterController extends Controller {
 
 
       if (response == AuthenticationResponse.REGISTER_SUCCESS) {
-        managerContext.getAuthenticationManager().validateLoginPassword(username, password);
-        managerContext.getGuiManager().updateNavigation();
-        managerContext.getGuiManager().openWineScreen();
+        getManagerContext().getAuthenticationManager().validateLoginPassword(username, password);
+        getManagerContext().getGuiManager().updateNavigation();
+        getManagerContext().getGuiManager().openWineScreen();
       }
     } else {
       usernameErrorLabel.setText("Please enter a username");

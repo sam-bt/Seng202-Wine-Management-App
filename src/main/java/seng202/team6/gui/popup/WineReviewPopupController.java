@@ -83,13 +83,13 @@ public class WineReviewPopupController extends Controller {
 
   @FXML
   void onBackButtonClick() {
-    managerContext.getGuiManager().closePopup();
+    getManagerContext().getGuiManager().closePopup();
   }
 
   @FXML
   void onDeleteButtonClick() {
     wineReviewsService.deleteUsersReview();
-    managerContext.getGuiManager().closePopup();
+    getManagerContext().getGuiManager().closePopup();
   }
 
   @FXML
@@ -97,6 +97,6 @@ public class WineReviewPopupController extends Controller {
     double rating = ratingStars.getRating();
     String description = descriptionTextArea.getText();
     wineReviewsService.addOrUpdateUserReview(rating, description);
-    managerContext.getGuiManager().closePopup();
+    getManagerContext().getGuiManager().closePopup();
   }
 }

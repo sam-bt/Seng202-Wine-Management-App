@@ -1,12 +1,9 @@
 package seng202.team6.gui.popup;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.VBox;
 import seng202.team6.gui.Controller;
 import seng202.team6.gui.controls.container.AddRemoveCardsContainer;
 import seng202.team6.managers.ManagerContext;
@@ -20,7 +17,6 @@ import seng202.team6.service.WineListService;
 public class AddToListPopupController extends Controller {
 
   private final WineListService wineListService;
-  private final ObservableMap<WineList, VBox> wineListWrappers = FXCollections.observableHashMap();
   private final Wine wine;
   @FXML
   ScrollPane wineListsContainer;
@@ -35,7 +31,7 @@ public class AddToListPopupController extends Controller {
   public AddToListPopupController(ManagerContext context, Wine wine) {
     super(context);
     this.wine = wine;
-    this.wineListService = new WineListService(managerContext.getAuthenticationManager(),
+    this.wineListService = new WineListService(getManagerContext().getAuthenticationManager(),
         context.getDatabaseManager());
     bindToWineListService();
   }
@@ -51,7 +47,7 @@ public class AddToListPopupController extends Controller {
 
   @FXML
   void onBackButtonClick() {
-    managerContext.getGuiManager().closePopup();
+    getManagerContext().getGuiManager().closePopup();
   }
 
   private void bindToWineListService() {
@@ -61,8 +57,9 @@ public class AddToListPopupController extends Controller {
           change.getAddedSubList().forEach(wineList -> {
             addRemoveCardsContainer.add(wineList, new SimpleStringProperty(wineList.name()),
                 !wineListService.isWineInList(wineList, wine),
-                () -> managerContext.getDatabaseManager().getWineListDao().addWine(wineList, wine),
-                () -> managerContext.getDatabaseManager().getWineListDao()
+                () -> getManagerContext().getDatabaseManager().getWineListDao()
+                    .addWine(wineList, wine),
+                () -> getManagerContext().getDatabaseManager().getWineListDao()
                     .removeWine(wineList, wine));
           });
         }

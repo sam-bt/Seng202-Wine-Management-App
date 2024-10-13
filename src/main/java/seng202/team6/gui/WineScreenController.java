@@ -170,8 +170,8 @@ public class WineScreenController extends Controller {
     int begin = this.pageService.getMinRange();
     int end = this.pageService.getMaxRange();
 
-    managerContext.getGuiManager().showLoadingIndicator(() -> {
-      ObservableList<Wine> wines = managerContext.getDatabaseManager().getWineDao()
+    getManagerContext().getGuiManager().showLoadingIndicator(() -> {
+      ObservableList<Wine> wines = getManagerContext().getDatabaseManager().getWineDao()
               .getAllInRange(begin, end, filters);
       mapController.runOrQueueWhenReady(() -> {
         mapController.clearWineMarkers();
@@ -220,7 +220,7 @@ public class WineScreenController extends Controller {
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
     // Enable editing if admin
-    if (managerContext.getAuthenticationManager().isAdmin()) {
+    if (getManagerContext().getAuthenticationManager().isAdmin()) {
       titleColumn.setCellFactory(
           wineStringTableColumn -> new TextFieldTableCell<>(stringConverter));
       varietyColumn.setCellFactory(
@@ -304,7 +304,7 @@ public class WineScreenController extends Controller {
 
     // update max pages
     this.pageService.setTotalItems(
-        managerContext.getDatabaseManager().getWineDao().getCount(currentFilters));
+        getManagerContext().getDatabaseManager().getWineDao().getCount(currentFilters));
 
     // Update table with filtered wines
     openWineRange(currentFilters);
@@ -325,7 +325,7 @@ public class WineScreenController extends Controller {
     this.currentFilters = null;
 
     // Update pages
-    pageService.setTotalItems(managerContext.getDatabaseManager().getWineDao().getCount());
+    pageService.setTotalItems(getManagerContext().getDatabaseManager().getWineDao().getCount());
 
     // Update wines
     openWineRange(null);
@@ -373,7 +373,7 @@ public class WineScreenController extends Controller {
    */
   public void setFilterValues() {
 
-    WineDao wineDao = managerContext.getDatabaseManager().getWineDao();
+    WineDao wineDao = getManagerContext().getDatabaseManager().getWineDao();
     WineDataStatService wineDataStatService = wineDao.getWineDataStatService();
 
     // Auto Complete boxes and range sliders
@@ -485,13 +485,13 @@ public class WineScreenController extends Controller {
   private void openDetailedWineView(Wine wine) {
     Runnable backAction;
     if (currentFilters == null && pageService.getPageNumber() == 1) { // Don't need to save state
-      backAction = () -> managerContext.getGuiManager()
+      backAction = () -> getManagerContext().getGuiManager()
           .openWineScreen();
     } else {
-      backAction = () -> managerContext.getGuiManager()
+      backAction = () -> getManagerContext().getGuiManager()
           .openWineScreen(pageService, currentFilters);
     }
-    managerContext.getGuiManager().openDetailedWineView(wine, backAction);
+    getManagerContext().getGuiManager().openDetailedWineView(wine, backAction);
   }
 
   /**
@@ -551,7 +551,7 @@ public class WineScreenController extends Controller {
         });
 
     // Set up max pages
-    pageService.setTotalItems(managerContext.getDatabaseManager().getWineDao().getCount());
+    pageService.setTotalItems(getManagerContext().getDatabaseManager().getWineDao().getCount());
     maxPageNumberRawViewer.setText("/" + pageService.getMaxPages()); // Set initial value
     maxPageNumberSimpleView.setText("/" + pageService.getMaxPages());
     pageService.maxPagesProperty().addListener((observableValue, oldValue, newValue) -> {

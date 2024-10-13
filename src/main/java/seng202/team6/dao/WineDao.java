@@ -124,7 +124,7 @@ public class WineDao extends Dao {
       statement.setDouble(paramIndex++, filters.getMinAbv());
       statement.setDouble(paramIndex++, filters.getMaxAbv());
       statement.setDouble(paramIndex++, filters.getMinPrice());
-      statement.setDouble(paramIndex++, filters.getMaxPrice());
+      statement.setDouble(paramIndex, filters.getMaxPrice());
 
       ResultSet resultSet = statement.executeQuery();
       return resultSet.getInt(1);
@@ -478,7 +478,7 @@ public class WineDao extends Dao {
     statement.setInt(startIndex++, wine.getScorePercent());
     statement.setFloat(startIndex++, wine.getAbv());
     statement.setFloat(startIndex++, wine.getPrice());
-    statement.setDouble(startIndex++, wine.getAverageRating());
+    statement.setDouble(startIndex, wine.getAverageRating());
   }
 
   /**

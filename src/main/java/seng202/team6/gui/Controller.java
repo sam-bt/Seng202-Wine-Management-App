@@ -10,7 +10,16 @@ public abstract class Controller {
   /**
    * Shared state between controllers.
    */
-  protected ManagerContext managerContext;
+  private ManagerContext managerContext;
+
+  /**
+   * Gets the manager context.
+   *
+   * @return manager context
+   */
+  protected ManagerContext getManagerContext() {
+    return managerContext;
+  }
 
   /**
    * Constructor.

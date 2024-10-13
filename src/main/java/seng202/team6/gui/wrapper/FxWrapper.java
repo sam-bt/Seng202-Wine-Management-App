@@ -35,6 +35,8 @@ public class FxWrapper {
   private Pane pane;
   private Stage stage;
 
+  ManagerContext managerContext;
+
   /**
    * Initialises the wrapper. Responsible for creating the WinoManger and passing in functions for
    * FXML.
@@ -86,6 +88,21 @@ public class FxWrapper {
     task.setOnSucceeded(event -> executorService.shutdown());
     task.setOnFailed(event -> executorService.shutdown());
     this.stage = stage;
+    try {
+      DatabaseManager databaseManager = new DatabaseManager("database", "database.db");
+      GuiManager guiManager = new GuiManager(this);
+      this.managerContext = new ManagerContext(
+          databaseManager,
+          guiManager,
+          new AuthenticationManager(databaseManager)
+      );
+      guiManager.setManagerContext(managerContext);
+      stage.setOnCloseRequest((event) -> managerContext.getDatabaseManager().teardown());
+    } catch (Exception exception) {
+      // If we fail to initialize the managers we are kinda screwed
+      throw new RuntimeException("Failed to instantiate manager context", exception);
+    }
+    loadScreen("/fxml/main_screen.fxml", "Home", () -> new MainController(this.managerContext));
   }
 
 

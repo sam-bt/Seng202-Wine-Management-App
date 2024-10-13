@@ -47,8 +47,7 @@ public class UserViewPopupController extends Controller {
    */
   public UserViewPopupController(ManagerContext context, User user) {
     super(context);
-    this.socialService = new SocialService(managerContext.getAuthenticationManager(),
-        managerContext.getDatabaseManager(), user);
+    this.socialService = new SocialService(getManagerContext().getDatabaseManager(), user);
     this.user = user;
     bindToSocialService();
   }
@@ -115,7 +114,7 @@ public class UserViewPopupController extends Controller {
         + "-fx-border-color: black; "
         + "-fx-border-insets: 10;");
 
-    Wine wine = managerContext.getDatabaseManager().getWineDao().get(wineReview.getWineId());
+    Wine wine = getManagerContext().getDatabaseManager().getWineDao().get(wineReview.getWineId());
     if (wine != null) {
       Label titleLabel = new Label(wine.getTitle());
       titleLabel.textProperty().bind(wine.titleProperty());
@@ -142,15 +141,15 @@ public class UserViewPopupController extends Controller {
 
   @FXML
   void onBackButtonClick() {
-    managerContext.getGuiManager().closePopup();
+    getManagerContext().getGuiManager().closePopup();
   }
 
   private void openReviewView(WineReview review, Wine wine) {
-    managerContext.getGuiManager().closePopup();
-    User user = managerContext.getDatabaseManager().getUserDao().get(review.getUsername());
-    managerContext.getGuiManager().openPopupReviewView(
-        new WineReviewsService(managerContext.getAuthenticationManager(),
-            managerContext.getDatabaseManager(), wine), user, review, wine);
+    getManagerContext().getGuiManager().closePopup();
+    User user = getManagerContext().getDatabaseManager().getUserDao().get(review.getUsername());
+    getManagerContext().getGuiManager().openPopupReviewView(
+        new WineReviewsService(getManagerContext().getAuthenticationManager(),
+            getManagerContext().getDatabaseManager(), wine), user, review, wine);
   }
 
 }

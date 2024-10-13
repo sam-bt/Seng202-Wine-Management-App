@@ -61,7 +61,7 @@ public class DetailedVineyardViewController extends Controller {
     websiteTextbox.textProperty().bind(vineyard.websiteProperty());
     descriptionTextbox.textProperty().bind(vineyard.descriptionProperty());
 
-    if (!managerContext.getAuthenticationManager().isAuthenticated()) {
+    if (!getManagerContext().getAuthenticationManager().isAuthenticated()) {
       buttonsContainer.getChildren().remove(openToursButton);
     }
 
@@ -69,7 +69,7 @@ public class DetailedVineyardViewController extends Controller {
     imageView.setImage(image);
     imageView.setPreserveRatio(true);
 
-    ObservableList<Wine> wines = managerContext.getDatabaseManager().getAggregatedDao()
+    ObservableList<Wine> wines = getManagerContext().getDatabaseManager().getAggregatedDao()
         .getWinesFromVineyard(vineyard);
     wines.forEach(this::createWineCard);
   }
@@ -84,7 +84,7 @@ public class DetailedVineyardViewController extends Controller {
 
   @FXML
   void onOpenToursClick() {
-    managerContext.getGuiManager().openAddToTourPopup(vineyard);
+    getManagerContext().getGuiManager().openAddToTourPopup(vineyard);
   }
 
   /**
@@ -104,7 +104,7 @@ public class DetailedVineyardViewController extends Controller {
   }
 
   private void openDetailedWineView(Wine wine) {
-    Runnable backAction = () -> managerContext.getGuiManager().openVineyardsScreen();
-    managerContext.getGuiManager().openDetailedWineView(wine, backAction);
+    Runnable backAction = () -> getManagerContext().getGuiManager().openVineyardsScreen();
+    getManagerContext().getGuiManager().openDetailedWineView(wine, backAction);
   }
 }
