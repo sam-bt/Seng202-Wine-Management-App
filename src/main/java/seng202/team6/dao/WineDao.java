@@ -58,7 +58,7 @@ public class WineDao extends Dao {
             + "WINERY         VARCHAR(64),"
             + "COLOR          VARCHAR(32),"
             + "VINTAGE        INTEGER,"
-            + "DESCRIPTION    INTEGER,"
+            + "DESCRIPTION    TEXT,"
             + "SCORE_PERCENT  INTEGER,"
             + "ABV            FLOAT,"
             + "PRICE          FLOAT,"
