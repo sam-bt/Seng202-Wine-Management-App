@@ -63,12 +63,12 @@
 <div class="leaflet-top leaflet-right">
   <div class="toggle-buttons-container">
     <!-- responsible for toggling the heatmap view-->
-    <button class="toggle-button hidden" onclick="onToggleHeatMapClick()">
+    <button id="toggle-heatmap" class="toggle-button hidden" onclick="onToggleHeatMapClick()">
       Toggle Heatmap
     </button>
 
     <!-- responsible for toggling the markers view-->
-    <button class="toggle-button hidden" onclick="onToggleMarkersClick()">
+    <button id="toggle-markers" class="toggle-button hidden" onclick="onToggleMarkersClick()">
       Toggle Markers
     </button>
   </div>
@@ -125,7 +125,8 @@
       setView: setView,
       clearMarkers: clearMarkers,
       clearHeatMap: clearHeatMap,
-    displayRoute: displayRoute,
+      displayRoute: displayRoute,
+      enableToggleButtons: enableToggleButtons,
   };
 
   // creates the leaflet map and adds the tile layer to it
@@ -346,6 +347,13 @@
           return;
       }
       map.removeLayer(wineMarkersLayer);
+  }
+
+  function enableToggleButtons() {
+      const toggleHeatmap = document.getElementById("toggle-heatmap");
+      const toggleMarkers = document.getElementById("toggle-markers");
+      toggleHeatmap.classList.remove('hidden')
+      toggleMarkers.classList.remove('hidden')
   }
 </script>
 </body>
