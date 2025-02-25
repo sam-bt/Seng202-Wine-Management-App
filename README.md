@@ -4,6 +4,8 @@
 
 WINO is an intuitive kiosk application designed for wine enthusiasts, casual drinkers, and tourists alike. With a user-friendly interface, WINO provides a comprehensive platform for all things wine, making it easy to explore and engage with the world of viticulture.
 
+This Application was produced for the Seng202 Course at the University of Canterbury
+
 ## Features
 - **Wine & Vineyard Information**: Access detailed information about various wines and vineyards, including tasting notes, production methods, and more.
 - **Geographical Mapping**: Visualize the locations of wineries and vineyards on an interactive map, making it simple to discover new favorites.
